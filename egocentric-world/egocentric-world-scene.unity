@@ -332,14 +332,14 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 28d505800ad2e1c47963bba3d22e8e76, type: 3}
-    version: 0.0.8
-    description: "\u6607\u964D\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u306E\u5B9F\u9A13\u7528\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002\r\n[\u30BD\u30FC\u30B9\u30B3\u30FC\u30C9](https://github.com/oocytanb/cytanb-tso-collab)"
+    version: 0.0.9
+    description: "\u6607\u964D\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u306E\u5B9F\u9A13\u7528\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002\r"
     exporterVersion: 0.17
     specVersion: 
     modelDataLicenseType: 8
-    modelDataOtherLicenseUrl: https://opensource.org/licenses/MIT
+    modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
     scriptLicenseType: 8
-    scriptOtherLicenseUrl: https://opensource.org/licenses/MIT
+    scriptOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
     scriptWriteProtected: 0
     scriptEnableDebugging: 0
     scriptFormat: 0
