@@ -8,7 +8,7 @@
 
 ## Softwares / Assets
 
-- [Unity](https://unity3d.com/) 2018.2
+- [Unity](https://unity3d.com/) 2018.4
 - [VCI](https://github.com/virtual-cast/VCI)
 - [Blender](https://www.blender.org/) 2.79
 - [cytanb-vci-lua](https://github.com/oocytanb/cytanb-vci-lua)
