@@ -571,9 +571,9 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 400014, guid: 694804a3122b6284a85f465aaa249304, type: 3}
+    - target: {fileID: 400044, guid: 694804a3122b6284a85f465aaa249304, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 400024, guid: 694804a3122b6284a85f465aaa249304, type: 3}
       propertyPath: m_LocalScale.z
@@ -582,6 +582,14 @@ PrefabInstance:
     - target: {fileID: 400024, guid: 694804a3122b6284a85f465aaa249304, type: 3}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400038, guid: 694804a3122b6284a85f465aaa249304, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 400014, guid: 694804a3122b6284a85f465aaa249304, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 400034, guid: 694804a3122b6284a85f465aaa249304, type: 3}
       propertyPath: m_RootOrder
@@ -590,14 +598,6 @@ PrefabInstance:
     - target: {fileID: 400034, guid: 694804a3122b6284a85f465aaa249304, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400038, guid: 694804a3122b6284a85f465aaa249304, type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 400044, guid: 694804a3122b6284a85f465aaa249304, type: 3}
-      propertyPath: m_RootOrder
-      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 694804a3122b6284a85f465aaa249304, type: 3}
@@ -634,7 +634,7 @@ MonoBehaviour:
     scriptLicenseType: 8
     scriptOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
     scriptWriteProtected: 0
-    scriptEnableDebugging: 1
+    scriptEnableDebugging: 0
     scriptFormat: 0
   Scripts:
   - name: main.lua
