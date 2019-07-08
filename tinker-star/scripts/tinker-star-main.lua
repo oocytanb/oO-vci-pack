@@ -12,28 +12,45 @@ local COLOR_LIST = {
     Color.__new(0.93, 0.2, 0.31)
 }
 
+local UpdatePeriod = TimeSpan.FromMilliseconds(500)
+local chunkEvaluatedTime = vci.me.Time
+local lastUpdateTime = vci.me.Time
+local lastColorIndex = -1
+
 -- アイテムを設置したときの初期化処理
 if vci.assets.IsMine then
-    vci.state.Set("colorIndex", 1)
-    vci.assets._ALL_SetMaterialColorFromIndex(0, COLOR_LIST[1])
+    vci.state.Set('colorIndex', 1)
+else
+    print('on guest init: colorIndex = ' .. tostring(vci.state.Get('colorIndex')))
+end
+
+local function GetColorIndex()
+    return vci.state.Get('colorIndex') or 1
 end
 
 -- SubItem をトリガーでつかむと呼び出される。
 function onGrab(target)
-    print("onGrab: " .. target)
+    print('onGrab: ' .. target)
 end
 
 -- グリップしてアイテムを使用すると呼び出される。
 function onUse(use)
-    local colorIndex = vci.state.Get("colorIndex")
-    if colorIndex == nil then
-        colorIndex = 1
-    end
-    colorIndex = colorIndex % #COLOR_LIST + 1
-    vci.state.Set("colorIndex", colorIndex)
+    local colorIndex = GetColorIndex() % #COLOR_LIST + 1
+    vci.state.Set('colorIndex', colorIndex)
 
     local color = COLOR_LIST[colorIndex]
-    print("onUse: " .. use .. "    colorIndex=" .. colorIndex .. "    color=" .. tostring(color))
+    print('onUse: ' .. use .. '    colorIndex=' .. colorIndex .. '    color=' .. tostring(color))
+end
 
-    vci.assets._ALL_SetMaterialColorFromIndex(0, color)
+function updateAll()
+    local time = vci.me.Time
+    if time >= lastUpdateTime + UpdatePeriod then
+        lastUpdateTime = time
+        local colorIndex = GetColorIndex()
+        if colorIndex ~= lastColorIndex then
+            print('color index changed: ' .. colorIndex .. '  | time = ' .. (time - chunkEvaluatedTime).TotalMilliseconds .. ' ms')
+            lastColorIndex = colorIndex
+            vci.assets.SetMaterialColorFromIndex(0, COLOR_LIST[colorIndex])
+        end
+    end
 end
