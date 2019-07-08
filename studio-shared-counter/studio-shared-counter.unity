@@ -310,7 +310,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 171cd3115590f0c4caad60a161814cee, type: 3}
-    version: 0.1.0
+    version: 0.2.1
     description: "\u5171\u6709\u5909\u6570\u306E\u5B9F\u9A13\u7528\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
     exporterVersion: 0.17
     specVersion: 

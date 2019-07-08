@@ -382,7 +382,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 7054eac09fd29a04391539e44752f35b, type: 3}
-    version: 0.2.0
+    version: 0.2.1
     description: "\u30B5\u30F3\u30D7\u30EB\u7528\u306E\u5358\u7D14\u306A VCI \u3067\u3059\u3002"
     exporterVersion: 0.17
     specVersion: 
