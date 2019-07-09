@@ -19,24 +19,23 @@ local lastColorIndex = -1
 
 -- アイテムを設置したときの初期化処理
 if vci.assets.IsMine then
-    vci.state.Set('colorIndex', 1)
-else
-    print('on guest init: colorIndex = ' .. tostring(vci.state.Get('colorIndex')))
+    vci.state.Set('colorIndex', 0)
 end
-
-local function GetColorIndex()
-    return vci.state.Get('colorIndex') or 1
-end
+print('on chunk evaluated: colorIndex = ' .. tostring(vci.state.Get('colorIndex')))
 
 function updateAll()
     local time = vci.me.Time
-    if time >= lastUpdateTime + UpdatePeriod then
+    local waitTime = lastUpdateTime + (lastColorIndex < 0 and TimeSpan.FromMilliseconds(10) or UpdatePeriod)
+    if time >= waitTime then
         lastUpdateTime = time
-        local colorIndex = GetColorIndex()
-        if colorIndex ~= lastColorIndex then
-            print('color index changed: ' .. colorIndex .. '  | time = ' .. (time - chunkEvaluatedTime).TotalMilliseconds .. ' ms')
+        local colorIndex = vci.state.Get('colorIndex')
+        if colorIndex and colorIndex ~= lastColorIndex then
+            if lastColorIndex < 0 then
+                print('sync time = ' .. (time - chunkEvaluatedTime).TotalMilliseconds .. ' ms')
+            end
+            print('color index changed: ' .. colorIndex)
             lastColorIndex = colorIndex
-            vci.assets.SetMaterialColorFromIndex(0, COLOR_LIST[colorIndex])
+            vci.assets.SetMaterialColorFromIndex(0, COLOR_LIST[colorIndex % #COLOR_LIST + 1])
         end
     end
 end
@@ -48,9 +47,7 @@ end
 
 -- グリップしてアイテムを使用すると呼び出される。
 function onUse(use)
-    local colorIndex = GetColorIndex() % #COLOR_LIST + 1
-    local color = COLOR_LIST[colorIndex]
-    print('onUse: ' .. use .. '  | colorIndex = ' .. colorIndex .. ' , color = ' .. tostring(color))
-    vci.state.Set('colorIndex', colorIndex)
+    print('onUse: ' .. use)
+    vci.state.Add('colorIndex', 1)
     lastUpdateTime = TimeSpan.Zero
 end

@@ -10,9 +10,7 @@ local chunkEvaluatedTime = vci.me.Time
 local lastUpdateTime = TimeSpan.Zero
 local lastCounter = -1
 
-local function GetCounter()
-    return vci.studio.shared.Get(SHARED_COUNTER_NAME) or 0
-end
+print('on chunk evaluated: counter = ' .. tostring(vci.studio.shared.Get(SHARED_COUNTER_NAME)))
 
 local function setCounterUV(counter)
     -- 0 ～ 9 までの UV 座標を設定する。
@@ -23,11 +21,15 @@ end
 
 function updateAll()
     local time = vci.me.Time
-    if time >= lastUpdateTime + UpdatePeriod then
+    local waitTime = lastUpdateTime + (lastCounter < 0 and TimeSpan.FromMilliseconds(10) or UpdatePeriod)
+    if time >= waitTime then
         lastUpdateTime = time
-        local counter = GetCounter()
-        if counter ~= lastCounter then
-            print('counter changed: ' .. counter .. '  | time = ' .. (time - chunkEvaluatedTime).TotalMilliseconds .. ' ms')
+        local counter = vci.studio.shared.Get(SHARED_COUNTER_NAME)
+        if counter and counter ~= lastCounter then
+            if lastCounter < 0 then
+                print('sync time = ' .. (time - chunkEvaluatedTime).TotalMilliseconds .. ' ms')
+            end
+            print('counter changed: ' .. counter)
             lastCounter = counter
             setCounterUV(counter)
         end
@@ -41,8 +43,7 @@ end
 
 -- グリップしてアイテムを使用すると呼び出される。
 function onUse(use)
-    local counter = GetCounter() + 1
-    print('onUse: ' .. use .. '  | counter = ' .. counter)
-    vci.studio.shared.Set(SHARED_COUNTER_NAME, counter)
+    print('onUse: ' .. use)
+    vci.studio.shared.Add(SHARED_COUNTER_NAME, 1)
     lastUpdateTime = TimeSpan.Zero
 end
