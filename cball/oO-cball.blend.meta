@@ -1,0 +1,175 @@
+fileFormatVersion: 2
+guid: f9ea1260e349c6e489c5be5b17860adf
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: ball-cup
+    100002: ball-cup-collider-back
+    100004: ball-cup-collider-base
+    100006: ball-cup-collider-front
+    100008: ball-cup-collider-left
+    100010: ball-cup-collider-right
+    100012: ball-cup-light
+    100014: cball_cytanb-ball
+    100016: impact-force-gauge
+    100018: impact-spin-gauge
+    100020: //RootNode
+    400000: ball-cup
+    400002: ball-cup-collider-back
+    400004: ball-cup-collider-base
+    400006: ball-cup-collider-front
+    400008: ball-cup-collider-left
+    400010: ball-cup-collider-right
+    400012: ball-cup-light
+    400014: cball_cytanb-ball
+    400016: impact-force-gauge
+    400018: impact-spin-gauge
+    400020: //RootNode
+    2100000: impact-force-gauge-mat__cball-main_png
+    2100002: cball-mat__cball-main_png
+    2100004: ball-cup-mat
+    2100006: transparent-mat
+    2100008: ball-cup-light-mat
+    2300000: ball-cup
+    2300002: ball-cup-collider-back
+    2300004: ball-cup-collider-base
+    2300006: ball-cup-collider-front
+    2300008: ball-cup-collider-left
+    2300010: ball-cup-collider-right
+    2300012: ball-cup-light
+    2300014: cball_cytanb-ball
+    2300016: impact-force-gauge
+    2300018: impact-spin-gauge
+    3300000: ball-cup
+    3300002: ball-cup-collider-back
+    3300004: ball-cup-collider-base
+    3300006: ball-cup-collider-front
+    3300008: ball-cup-collider-left
+    3300010: ball-cup-collider-right
+    3300012: ball-cup-light
+    3300014: cball_cytanb-ball
+    3300016: impact-force-gauge
+    3300018: impact-spin-gauge
+    4300000: impact-force-gauge
+    4300002: impact-spin-gauge
+    4300004: ball-cup
+    4300006: ball-cup-collider-front
+    4300008: ball-cup-collider-left
+    4300010: ball-cup-collider-right
+    4300012: ball-cup-collider-back
+    4300014: ball-cup-collider-base
+    4300016: ball-cup-light
+    4300018: cball_cytanb-ball
+    7400000: Default Take
+    9500000: //RootNode
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ball-cup-light-mat
+    second: {fileID: 2100000, guid: 3f3f894edf16ad743b53cb7375e02162, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ball-cup-mat
+    second: {fileID: 2100000, guid: 0779e16514a317e4289bbdae6f21e84a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cball-mat__cball-main_png
+    second: {fileID: 2100000, guid: 3ac4117746e41c54796cfb38bd0ea610, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: impact-force-gauge-mat__cball-main_png
+    second: {fileID: 2100000, guid: 30d081942b0b4a742ac3b96097596700, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: transparent-mat
+    second: {fileID: 2100000, guid: 79f3bb3901b6b694a8e63f0d3fa9b4e9, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
