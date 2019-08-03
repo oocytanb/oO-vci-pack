@@ -42,7 +42,7 @@ local ballRespawnOffsetY = 0.75
 local ballKinematicTime = TimeSpan.FromMilliseconds(200)
 local ballKinematicVelocityThreshold = 0.5
 local ballKinematicVelocityFactor = 0.3
-local ballKinematicAngularFactor = 2.0
+local ballKinematicAngularFactor = 1.5
 local ballInpactVelocityScale = 12.0
 local ballInpactAngularScale = 12.0
 local ballForwardOffsetFactor = 0.1
@@ -374,7 +374,6 @@ local OnUpdateImpactGauge = function (deltaTime)
             else
                 impactSpinGaugeRatio = ratio
             end
-
         elseif impactPhase == 3 then
             -- パワーの入力フェーズ
             local ratio = cytanb.PingPong(impactGaugeRatioPerSec * (vci.me.Time - impactGaugeStartTime).TotalSeconds, 1)
@@ -430,20 +429,20 @@ local OnUpdateBall = function (deltaTime)
                 end
 
                 -- スピンを適用する処理
-                local velocityMagnitude = velocity.magnitude
+                local horzVelocity = Vector3.__new(velocity.x, 0, velocity.z)
+                local velocityMagnitude = horzVelocity.magnitude
                 if velocityMagnitude > 0.0025 and angularVelocityMagnitude ~= 0 then
-                    local vo = Vector3.Cross(ballSimAngularVelocity * (ballSimAngularFactor / deltaSec), velocity / velocityMagnitude)
+                    local vcr = Vector3.__new(0, ballSimAngularVelocity.y, 0)
+                    local vo = Vector3.Cross(vcr * (ballSimAngularFactor / deltaSec), horzVelocity / velocityMagnitude)
                     local vca = Vector3.__new(vo.x, 0, vo.z)
                     ball.AddForce(vca)
 
                     -- cytanb.LogTrace('vca: ', vca, ', vo: ', vo, ', velocity: ', velocity)
                 end
 
-                -- local horzVelocity = Vector3.__new(velocity.x, 0, velocity.z)
-                -- local velocityMagnitude = horzVelocity.magnitude
+                -- local velocityMagnitude = velocity.magnitude
                 -- if velocityMagnitude > 0.0025 and angularVelocityMagnitude ~= 0 then
-                --     local vcr = Vector3.__new(0, ballSimAngularVelocity.y, 0)
-                --     local vo = Vector3.Cross(vcr * (ballSimAngularFactor / deltaSec), horzVelocity / velocityMagnitude)
+                --     local vo = Vector3.Cross(ballSimAngularVelocity * (ballSimAngularFactor / deltaSec), velocity / velocityMagnitude)
                 --     local vca = Vector3.__new(vo.x, 0, vo.z)
                 --     ball.AddForce(vca)
 
