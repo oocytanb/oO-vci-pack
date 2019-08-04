@@ -27,36 +27,78 @@ local IsHorizontalAttitude = function (rotation, up, angleAccuracy)
     end
 end
 
-local cballNS = 'cytanb.cball'
+local cballNS = 'com.github.oocytanb.oO-vci-pack.cball'
 local respawnBallMessageName = cballNS .. '.respawn-ball'
 local buildStandLightMessageName = cballNS .. '.build-standlight'
 local jumpStandLightMessageName = cballNS .. '.jump-standlight'
 
 local hiddenPosition = Vector3.__new(0x1000, 0x1000, 0x1000)
 
+--- ゲージの毎秒の変化率。
 local impactGaugeRatioPerSec = 1
+
+--- ゲージの UV の最大値。
 local impactGaugeMaxUV = 0.135
+
+--- ゲージの表示時間。
 local impactGaugeDisplayTime = TimeSpan.FromSeconds(2)
 
+--- ボールのリスポーン位置のオフセット。
 local ballRespawnOffsetY = 0.75
+
+--- 投球動作として、リリースポイントからさかのぼって速度計算に反映する時間。(100 - 250 ms 程度)
 local ballKinematicTime = TimeSpan.FromMilliseconds(200)
+
+--- 投球動作とみなす速度の閾値。
 local ballKinematicVelocityThreshold = 0.5
-local ballKinematicVelocityFactor = 0.3
-local ballKinematicAngularFactor = 1.5
+
+--- 投球動作による速度係数。(0.25 - 0.75 程度)
+local ballKinematicVelocityFactor = 0.5
+
+--- 投球動作による角速度係数。(1.5 - 8.0 程度)
+local ballKinematicAngularFactor = 5.0
+
+--- 入力タイミングによる速度のスケール。
 local ballInpactVelocityScale = 12.0
+
+--- 入力タイミングによる角速度のスケール。
 local ballInpactAngularScale = 12.0
+
+--- 体のコライダーとの接触を避けるための、オフセット係数。
 local ballForwardOffsetFactor = 0.1
+
+--- 体のコライダーとの接触を避けるための、オフセットの最大値。
 local ballMaxForwardOffset = 0.5
+
+--- ボールがアクティブであることを判定する閾値。
 local ballActiveThreshold = ballRespawnOffsetY + 0.25
+
+--- ボールがリスポーンするまでの待ち時間。
 local ballWaitingTime = TimeSpan.FromSeconds(30)
+
+--- ボールのプレイエリアの半径。これを超えるとリスポーンする。
 local ballPlayAreaRadius = 30
 
-local standLightHorizontalAttitudeAccuracy = 5.0
+--- ボールの回転のシミレーション係数。
+local ballSimAngularFactor = 0.01
+
+--- ボールの回転抵抗のシミュレーション係数。
+local ballSimAngularDrag = 0.1
+
+--- ライトの水平姿勢判定の閾値。
+local standLightHorizontalAttitudeThreshold = 5.0
+
+--- ライトのジャンプ係数。
 local standLightJumpFactor = 100
+
+--- ライトがリスポーンするまでの待ち時間。
 local standLightWaitingTime = TimeSpan.FromSeconds(60)
+
+--- ライトにメッセージを送るインターバル時間。
 local standLightRequestIntervalTime = TimeSpan.FromSeconds(3)
 
-local itemLoaded = false
+--- VCI がロードされたか。
+local vciLoaded = false
 
 local ballTag = '#cytanb-ball'
 local ballName = 'cball' .. ballTag
@@ -73,26 +115,44 @@ local impactForceGaugeMat = 'impact-force-gauge-mat'
 local impactForceGauge
 local impactSpinGauge
 
+--- ボールがつかまれているか。
 local ballGrabbed = false
-local ballLastPosition = Vector3.zero
-local ballLastRotation = Quaternion.identity
+
+--- ボールのトランスフォームのキュー。
 local ballTransformQueue = cytanb.CreateCircularQueue(32)
-local ballSimAngularFactor = 0.01
-local ballSimAngularDrag = 0.1
+
+--- ボールの角速度のシミュレーション値。
 local ballSimAngularVelocity = Vector3.zero
 
+--- 入力タイミングによる投球フェーズ。
 local impactPhase = 0
+
+--- 入力タイミングによる投球のパワーの比率。
 local impactForceGaugeRatio = 0
+
+--- 入力タイミングによる投球のスピンの比率。
 local impactSpinGaugeRatio = 0
+
+--- 入力タイミングによる投球のゲージの表示開始時間。
 local impactGaugeStartTime = TimeSpan.Zero
 
+--- カップがつかまれているか。
 local cupGrabbed = false
+
+--- カップのクリック数。
 local cupClickCount = 0
+
+--- カップのクリック時間。
 local cupClickTime = TimeSpan.Zero
 
+--- ライトを組み立てるリクエストを送った時間。
 local standLightsLastRequestTime = vci.me.Time
 
-cytanb.SetLogLevel(cytanb.LogLevelTrace)
+-- cytanb.SetLogLevel(cytanb.LogLevelTrace)
+
+local OfferBallTransform = function (position, rotation, time)
+    ballTransformQueue.Offer({position = position, rotation = rotation, time = time or vci.me.Time})
+end
 
 local StandLightFromName = function (name)
     local indexStr = string.sub(name, #standLightPrefix + 1)
@@ -105,11 +165,12 @@ local StandLightFromName = function (name)
     end
 end
 
+-- 「ボールが当たったみたい。私、飛ばなきゃ！えいっ！ ＞＜」
 local JumpStandLight = function (light)
     local li = light.item
     local ls = light.status
     local now = vci.me.Time
-    if li.IsMine and ls.jumpTime + standLightRequestIntervalTime < now and IsHorizontalAttitude(li.GetRotation(), Vector3.up, standLightHorizontalAttitudeAccuracy) then
+    if li.IsMine and ls.jumpTime + standLightRequestIntervalTime < now and IsHorizontalAttitude(li.GetRotation(), Vector3.up, standLightHorizontalAttitudeThreshold) then
         ls.jumpTime = now
         local rx = math.random()
         local dx = (rx * 2 >= 1 and 1 or -1) * (rx * 0.2 + 0.1)
@@ -121,7 +182,7 @@ local JumpStandLight = function (light)
     end
 end
 
--- ゲージをリセットする。
+--- ゲージをリセットする。
 local ResetGauge = function ()
     impactPhase = 0
     impactSpinGaugeRatio = 0
@@ -136,7 +197,7 @@ local ResetGauge = function ()
     vci.assets.SetMaterialTextureOffsetFromName(impactForceGaugeMat, Vector2.zero)
 end
 
--- ボールをカップへ戻す。
+--- ボールをカップへ戻す。
 local RespawnBall = function ()
     ResetGauge()
 
@@ -149,15 +210,17 @@ local RespawnBall = function ()
         ball.SetVelocity(Vector3.zero)
         ball.SetAngularVelocity(Vector3.zero)
 
-        ballLastPosition = ballCup.GetPosition() + Vector3.__new(0, ballRespawnOffsetY, 0)
-        ballLastRotation = Quaternion.identity
-        ball.SetPosition(ballLastPosition)
-        ball.SetRotation(ballLastRotation)
-        cytanb.LogDebug('on respawn ball: position = ', ballLastPosition)
+        local ballPos = ballCup.GetPosition() + Vector3.__new(0, ballRespawnOffsetY, 0)
+        local ballRot = Quaternion.identity
+        ball.SetPosition(ballPos)
+        ball.SetRotation(ballRot)
+        ballTransformQueue.Clear()
+        OfferBallTransform(ballPos, ballRot)
+        cytanb.LogDebug('on respawn ball: position = ', ballPos)
     end
 end
 
--- コントローラーの運動による投球
+--- コントローラーの運動による投球
 local ThrowBallByKinematic = function ()
     if not ball.IsMine then
         return
@@ -232,11 +295,10 @@ local ThrowBallByKinematic = function ()
         end
     end
 
-    ballLastPosition = ballPos
-    ballLastRotation = ballRot
+    OfferBallTransform(ballPos, ballRot)
 end
 
--- 入力タイミングによる投球
+--- 入力タイミングによる投球
 local ThrowBallByInputTiming = function ()
     if not ball.IsMine then
         return
@@ -256,17 +318,16 @@ local ThrowBallByInputTiming = function ()
     -- 体のコライダーに接触しないように、オフセットを足す
     local ballPos = ball.GetPosition() + forwardOffset
     ball.SetPosition(ballPos)
-    ballLastPosition = ballPos
-    ballLastRotation = ball.GetRotation()
+
+    ballTransformQueue.Clear()
+    OfferBallTransform(ballPos, ball.GetRotation())
 end
 
 local OnLoad = function ()
     cytanb.LogTrace('OnLoad')
-    itemLoaded = true
+    vciLoaded = true
 
     ball = vci.assets.GetSubItem(ballName)
-    ballLastPosition = ball.GetPosition()
-    ballLastRotation = ball.GetRotation()
     ballCup = vci.assets.GetSubItem(ballCupName)
 
     standLights = {}
@@ -328,8 +389,8 @@ local OnLoad = function ()
     cytanb.OnInstanceMessage(jumpStandLightMessageName, function (sender, name, parameterMap)
         local targets = parameterMap.targets
         if targets then
-            for i = 1, standLightCount do
-                if targets[i] then
+            for i, v in pairs(targets) do
+                if i <= standLightCount and v then
                     cytanb.LogDebug('onJumpStandLight: index = ', i)
                     JumpStandLight(standLights[i])
                 end
@@ -338,6 +399,7 @@ local OnLoad = function ()
     end)
 end
 
+--- ゲージの表示を更新する。
 local OnUpdateImpactGauge = function (deltaTime)
     if impactPhase < 1 then
         return
@@ -400,6 +462,7 @@ local OnUpdateImpactGauge = function (deltaTime)
     end
 end
 
+--- ボールの更新処理をする。カーブさせるための計算をする。
 local OnUpdateBall = function (deltaTime)
     if not ball.IsMine then
         return
@@ -409,16 +472,15 @@ local OnUpdateBall = function (deltaTime)
     local ballRot = ball.GetRotation()
     local respawned = false
 
-    if ballGrabbed then
-        ballTransformQueue.Offer({position = ballPos, rotation = ballRot, time = vci.me.Time})
-    else
+    if not ballGrabbed and not ballTransformQueue.IsEmpty() then
+        local lastTransform = ballTransformQueue.PollLast()
         -- カップとの距離が離れていたら、ボールが転がっているものとして処理する
         local cupDistance = (ballPos - ballCup.GetPosition()).magnitude
         if cupDistance > ballActiveThreshold then
             if vci.me.Time <= impactGaugeStartTime + ballWaitingTime and cupDistance <= ballPlayAreaRadius then
                 -- ボールの前回位置と現在位置から速度を計算する
                 local deltaSec = deltaTime.TotalSeconds
-                local velocity = (ballPos - ballLastPosition) / deltaSec
+                local velocity = (ballPos - lastTransform.position) / deltaSec
 
                 -- 角速度を計算する
                 ballSimAngularVelocity = ballSimAngularVelocity * (1.0 - math.min(1.0, ballSimAngularDrag * deltaSec))
@@ -432,11 +494,11 @@ local OnUpdateBall = function (deltaTime)
                 local horzVelocity = Vector3.__new(velocity.x, 0, velocity.z)
                 local velocityMagnitude = horzVelocity.magnitude
                 if velocityMagnitude > 0.0025 and angularVelocityMagnitude ~= 0 then
+                    -- 水平方向の力を計算する
                     local vcr = Vector3.__new(0, ballSimAngularVelocity.y, 0)
                     local vo = Vector3.Cross(vcr * (ballSimAngularFactor / deltaSec), horzVelocity / velocityMagnitude)
                     local vca = Vector3.__new(vo.x, 0, vo.z)
                     ball.AddForce(vca)
-
                     -- cytanb.LogTrace('vca: ', vca, ', vo: ', vo, ', velocity: ', velocity)
                 end
 
@@ -445,21 +507,18 @@ local OnUpdateBall = function (deltaTime)
                 --     local vo = Vector3.Cross(ballSimAngularVelocity * (ballSimAngularFactor / deltaSec), velocity / velocityMagnitude)
                 --     local vca = Vector3.__new(vo.x, 0, vo.z)
                 --     ball.AddForce(vca)
-
                 --     -- cytanb.LogTrace('vca: ', vca, ', vo: ', vo, ', velocity: ', velocity)
                 -- end
 
                 -- local horzVelocity = Vector3.__new(velocity.x, 0, velocity.z)
                 -- if horzVelocity.sqrMagnitude > 0.0025 and angularVelocityMagnitude ~= 0 then
-                    -- local vo = cytanb.ApplyQuaternionToVector3(Quaternion.AngleAxis(ballSimAngularVelocity.y >= 0 and 90 or -90, Vector3.up), horzVelocity).normalized
-                    -- local curveScale = ballSimAngularFactor * math.abs(ballSimAngularVelocity.y) / deltaSec
-                    -- local vca = vo * curveScale
-                    -- ball.AddForce(vca)
-
-                    -- cytanb.LogTrace('velocity: ', velocity, ', horz: ', horzVelocity, ', vo: ', vo, ', angularVelocity: ', ballSimAngularVelocity)
-                    -- cytanb.LogTrace('curveScale: ', curveScale, ', vca: ', vca)
+                --     local vo = cytanb.ApplyQuaternionToVector3(Quaternion.AngleAxis(ballSimAngularVelocity.y >= 0 and 90 or -90, Vector3.up), horzVelocity).normalized
+                --     local curveScale = ballSimAngularFactor * math.abs(ballSimAngularVelocity.y) / deltaSec
+                --     local vca = vo * curveScale
+                --     ball.AddForce(vca)
+                --     cytanb.LogTrace('velocity: ', velocity, ', horz: ', horzVelocity, ', vo: ', vo, ', angularVelocity: ', ballSimAngularVelocity)
+                --     cytanb.LogTrace('curveScale: ', curveScale, ', vca: ', vca)
                 -- end
-
             elseif not cupGrabbed then
                 -- タイムアウトしたかエリア外に出たボールをカップへ戻す。
                 cytanb.LogTrace('elapsed: ' , (vci.me.Time - impactGaugeStartTime).TotalSeconds, ', distance: ', cupDistance)
@@ -470,11 +529,11 @@ local OnUpdateBall = function (deltaTime)
     end
 
     if not respawned then
-        ballLastPosition = ballPos
-        ballLastRotation = ballRot
+        OfferBallTransform(ballPos, ballRot)
     end
 end
 
+--- ライトが倒れた判定、復活処理を行う。
 local OnUpdateStandLight = function (deltaTime)
     if not vci.assets.IsMine then
         return
@@ -486,7 +545,7 @@ local OnUpdateStandLight = function (deltaTime)
         local light = standLights[i]
         local li = light.item
         local ls = light.status
-        local horizontalAttitude = IsHorizontalAttitude(li.GetRotation(), Vector3.up, standLightHorizontalAttitudeAccuracy)
+        local horizontalAttitude = IsHorizontalAttitude(li.GetRotation(), Vector3.up, standLightHorizontalAttitudeThreshold)
         if horizontalAttitude then
             if not ls.active then
                 -- 復活した
@@ -565,14 +624,12 @@ local UpdateCw = coroutine.wrap(function ()
     -- return 0
 end)
 
--- 全ユーザーで、毎フレーム呼び出される。
 function updateAll ()
     UpdateCw()
 end
 
--- SubItem をトリガーでつかむと呼び出される。
 function onGrab (target)
-    if not itemLoaded then
+    if not vciLoaded then
         return
     end
 
@@ -588,7 +645,7 @@ function onGrab (target)
 end
 
 function onUngrab (target)
-    if not itemLoaded then
+    if not vciLoaded then
         return
     end
 
@@ -621,9 +678,8 @@ function onUngrab (target)
     end
 end
 
--- グリップしてアイテムを使用すると呼び出される。
 function onUse (use)
-    if not itemLoaded then
+    if not vciLoaded then
         return
     end
 
@@ -645,7 +701,7 @@ function onUse (use)
 end
 
 function onCollisionEnter (item, hit)
-    if not itemLoaded then
+    if not vciLoaded then
         return
     end
 
