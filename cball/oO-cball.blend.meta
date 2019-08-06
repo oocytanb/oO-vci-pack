@@ -14,6 +14,19 @@ ModelImporter:
     100016: impact-force-gauge
     100018: impact-spin-gauge
     100020: //RootNode
+    100022: cball-settings-altitude-knob
+    100024: cball-settings-altitude-switch
+    100026: cball-settings-angular-velocity-knob
+    100028: cball-settings-angular-velocity-switch
+    100030: cball-settings-close-switch
+    100032: cball-settings-panel
+    100034: cball-settings-velocity-knob
+    100036: cball-settings-velocity-switch
+    100038: cball-settings-panel-collider
+    100040: cball-settings-panel-collider-bottom
+    100042: cball-settings-panel-collider-left
+    100044: cball-settings-panel-collider-right
+    100046: cball-settings-panel-collider-top
     400000: ball-cup
     400002: ball-cup-collider-back
     400004: ball-cup-collider-base
@@ -25,11 +38,26 @@ ModelImporter:
     400016: impact-force-gauge
     400018: impact-spin-gauge
     400020: //RootNode
+    400022: cball-settings-altitude-knob
+    400024: cball-settings-altitude-switch
+    400026: cball-settings-angular-velocity-knob
+    400028: cball-settings-angular-velocity-switch
+    400030: cball-settings-close-switch
+    400032: cball-settings-panel
+    400034: cball-settings-velocity-knob
+    400036: cball-settings-velocity-switch
+    400038: cball-settings-panel-collider
+    400040: cball-settings-panel-collider-bottom
+    400042: cball-settings-panel-collider-left
+    400044: cball-settings-panel-collider-right
+    400046: cball-settings-panel-collider-top
     2100000: impact-force-gauge-mat__cball-main_png
     2100002: cball-mat__cball-main_png
     2100004: ball-cup-mat
     2100006: transparent-mat
     2100008: ball-cup-light-mat
+    2100010: transparent-mat_001
+    2100012: cball-settings-mat__cball-main_png_001
     2300000: ball-cup
     2300002: ball-cup-collider-back
     2300004: ball-cup-collider-base
@@ -40,6 +68,19 @@ ModelImporter:
     2300014: cball_cytanb-ball
     2300016: impact-force-gauge
     2300018: impact-spin-gauge
+    2300020: cball-settings-altitude-knob
+    2300022: cball-settings-altitude-switch
+    2300024: cball-settings-angular-velocity-knob
+    2300026: cball-settings-angular-velocity-switch
+    2300028: cball-settings-close-switch
+    2300030: cball-settings-panel
+    2300032: cball-settings-velocity-knob
+    2300034: cball-settings-velocity-switch
+    2300036: cball-settings-panel-collider
+    2300038: cball-settings-panel-collider-bottom
+    2300040: cball-settings-panel-collider-left
+    2300042: cball-settings-panel-collider-right
+    2300044: cball-settings-panel-collider-top
     3300000: ball-cup
     3300002: ball-cup-collider-back
     3300004: ball-cup-collider-base
@@ -50,6 +91,19 @@ ModelImporter:
     3300014: cball_cytanb-ball
     3300016: impact-force-gauge
     3300018: impact-spin-gauge
+    3300020: cball-settings-altitude-knob
+    3300022: cball-settings-altitude-switch
+    3300024: cball-settings-angular-velocity-knob
+    3300026: cball-settings-angular-velocity-switch
+    3300028: cball-settings-close-switch
+    3300030: cball-settings-panel
+    3300032: cball-settings-velocity-knob
+    3300034: cball-settings-velocity-switch
+    3300036: cball-settings-panel-collider
+    3300038: cball-settings-panel-collider-bottom
+    3300040: cball-settings-panel-collider-left
+    3300042: cball-settings-panel-collider-right
+    3300044: cball-settings-panel-collider-top
     4300000: impact-force-gauge
     4300002: impact-spin-gauge
     4300004: ball-cup
@@ -60,6 +114,19 @@ ModelImporter:
     4300014: ball-cup-collider-base
     4300016: ball-cup-light
     4300018: cball_cytanb-ball
+    4300020: cball-settings-altitude-switch
+    4300022: cball-settings-angular-velocity-switch
+    4300024: cball-settings-close-switch
+    4300026: cball-settings-panel
+    4300028: cball-settings-altitude-knob
+    4300030: cball-settings-angular-velocity-knob
+    4300032: cball-settings-velocity-knob
+    4300034: cball-settings-velocity-switch
+    4300036: cball-settings-panel-collider
+    4300038: cball-settings-panel-collider-top
+    4300040: cball-settings-panel-collider-left
+    4300042: cball-settings-panel-collider-right
+    4300044: cball-settings-panel-collider-bottom
     7400000: Default Take
     9500000: //RootNode
   externalObjects:
@@ -78,6 +145,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: cball-mat__cball-main_png
     second: {fileID: 2100000, guid: 3ac4117746e41c54796cfb38bd0ea610, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cball-settings-mat__cball-main_png_001
+    second: {fileID: 2100000, guid: 3ebbd35f5eb3e5b4b8cd710c04ba115c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
