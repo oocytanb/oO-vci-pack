@@ -717,8 +717,8 @@ function onUse (use)
         elseif cupClickCount == 3 then
             cytanb.EmitMessage(showSettingsPanelMessageName)
         end
-    elseif (use == settingsPanel.GetName() and not settingsPanelGrabbed) or use == closeSwitch.GetName() then
-        if settingsPanel.IsMine then
+    elseif use == closeSwitch.GetName() then
+        if not settingsPanelGrabbed and settingsPanel.IsMine then
             settingsPanel.SetPosition(hiddenPosition)
         end
     elseif adjustmentSwitches[use] then
