@@ -396,12 +396,16 @@ local OnLoad = function ()
         local cupPosition = ballCup.GetPosition()
         if Vector3.Distance(cupPosition, settingsPanel.GetPosition()) > settings.settingsPanelDistanceThreshold then
             -- 設定パネルが離れていた場合は、近づけて表示する。
-            local position = Vector3.__new(cupPosition.x - 1.0, cupPosition.y, cupPosition.z)
+            local position = cupPosition + settings.settingsPanelOffset
             cytanb.LogTrace('ShowSettingsPanel: posotion = ', position)
             settingsPanel.SetPosition(position)
-            settingsPanel.SetRotation(Quaternion.LookRotation(ballCup.GetPosition() - position) * Quaternion.AngleAxis(-90, Vector3.up))
+            settingsPanel.SetRotation(Quaternion.LookRotation(Vector3.__new(- settings.settingsPanelOffset.x, 0, - settings.settingsPanelOffset.z)))
         end
     end)
+
+    if vci.assets.IsMine then
+        cytanb.EmitMessage(showSettingsPanelMessageName)
+    end
 end
 
 --- ゲージの表示を更新する。

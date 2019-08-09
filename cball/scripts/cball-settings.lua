@@ -31,7 +31,7 @@ return {
     ballKinematicMinAngularVelocityFactor = 0.5,
 
     --- 投球動作による角速度係数の最大値。
-    ballKinematicMaxAngularVelocityFactor = 7.5,
+    ballKinematicMaxAngularVelocityFactor = 8.5,
 
     --- 投球動作による仰俯角係数の最小値。
     ballKinematicMinAltitudeFactor = -25,
@@ -58,7 +58,7 @@ return {
     ballInpactMaxAltitudeScale = 45,
 
     --- ボールの回転のシミレーション係数。
-    ballSimAngularFactor = 0.01,
+    ballSimAngularFactor = 0.04,
 
     --- ボールの回転抵抗のシミュレーション係数。
     ballSimAngularDrag = 0.1,
@@ -101,6 +101,9 @@ return {
 
     --- ライトにメッセージを送るインターバル時間。
     standLightRequestIntervalTime = TimeSpan.FromSeconds(3),
+
+    --- 設定パネルを表示するオフセット位置。
+    settingsPanelOffset = Vector3.__new(-1.25, 0.25, 0),
 
     --- 設定パネルの距離の閾値。
     settingsPanelDistanceThreshold = 3.0,
