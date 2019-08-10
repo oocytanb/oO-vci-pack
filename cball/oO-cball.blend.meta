@@ -27,6 +27,7 @@ ModelImporter:
     100042: cball-settings-panel-collider-left
     100044: cball-settings-panel-collider-right
     100046: cball-settings-panel-collider-top
+    100048: cball-settings-panel-handle-light
     400000: ball-cup
     400002: ball-cup-collider-back
     400004: ball-cup-collider-base
@@ -51,6 +52,7 @@ ModelImporter:
     400042: cball-settings-panel-collider-left
     400044: cball-settings-panel-collider-right
     400046: cball-settings-panel-collider-top
+    400048: cball-settings-panel-handle-light
     2100000: impact-force-gauge-mat__cball-main_png
     2100002: cball-mat__cball-main_png
     2100004: ball-cup-mat
@@ -58,6 +60,8 @@ ModelImporter:
     2100008: ball-cup-light-mat
     2100010: transparent-mat_001
     2100012: cball-settings-mat__cball-main_png_001
+    2100014: cball-settings-mat__cball-main_png
+    2100016: cball-settings-panel-handle-led-mat__cball-settings-panel-handle-light_png
     2300000: ball-cup
     2300002: ball-cup-collider-back
     2300004: ball-cup-collider-base
@@ -81,6 +85,7 @@ ModelImporter:
     2300040: cball-settings-panel-collider-left
     2300042: cball-settings-panel-collider-right
     2300044: cball-settings-panel-collider-top
+    2300046: cball-settings-panel-handle-light
     3300000: ball-cup
     3300002: ball-cup-collider-back
     3300004: ball-cup-collider-base
@@ -104,6 +109,7 @@ ModelImporter:
     3300040: cball-settings-panel-collider-left
     3300042: cball-settings-panel-collider-right
     3300044: cball-settings-panel-collider-top
+    3300046: cball-settings-panel-handle-light
     4300000: impact-force-gauge
     4300002: impact-spin-gauge
     4300004: ball-cup
@@ -127,8 +133,10 @@ ModelImporter:
     4300040: cball-settings-panel-collider-left
     4300042: cball-settings-panel-collider-right
     4300044: cball-settings-panel-collider-bottom
+    4300046: cball-settings-panel-handle-light
     7400000: Default Take
     9500000: //RootNode
+    2186277476908879412: ImportLogs
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -148,8 +156,18 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: cball-settings-mat__cball-main_png
+    second: {fileID: 2100000, guid: 3972e82f09e83f24d972b7bb5ca26653, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: cball-settings-mat__cball-main_png_001
     second: {fileID: 2100000, guid: 3ebbd35f5eb3e5b4b8cd710c04ba115c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cball-settings-panel-handle-led-mat__cball-settings-panel-handle-light_png
+    second: {fileID: 2100000, guid: 26ce882de39bcaf449c11d8be6f27659, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

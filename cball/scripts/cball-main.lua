@@ -37,7 +37,7 @@ local ApplyAltitudeAngle = function (vec, angle)
     end
 end
 
-local settings = require('cball-settings')
+local settings = require('cball-settings').Load(_ENV)
 
 local cballNS = 'com.github.oocytanb.oO-vci-pack.cball'
 local respawnBallMessageName = cballNS .. '.respawn-ball'
@@ -505,7 +505,7 @@ local OnUpdateBall = function (deltaTime)
                 if velocityMagnitude > 0.0025 and angularVelocityMagnitude ~= 0 then
                     -- 水平方向の力を計算する
                     local vcr = Vector3.__new(0, ballSimAngularVelocity.y, 0)
-                    local vo = Vector3.Cross(vcr * (settings.ballSimAngularFactor / deltaSec), horzVelocity / velocityMagnitude)
+                    local vo = Vector3.Cross(vcr * (settings.ballSimAngularFactor * settings.ballSimMass / deltaSec), horzVelocity / velocityMagnitude)
                     local vca = Vector3.__new(vo.x, 0, vo.z)
                     ball.AddForce(vca)
                     -- cytanb.LogTrace('vca: ', vca, ', vo: ', vo, ', velocity: ', velocity)
@@ -513,7 +513,7 @@ local OnUpdateBall = function (deltaTime)
 
                 -- local velocityMagnitude = velocity.magnitude
                 -- if velocityMagnitude > 0.0025 and angularVelocityMagnitude ~= 0 then
-                --     local vo = Vector3.Cross(ballSimAngularVelocity * (settings.ballSimAngularFactor / deltaSec), velocity / velocityMagnitude)
+                --     local vo = Vector3.Cross(ballSimAngularVelocity * (settings.ballSimAngularFactor * settings.ballSimMass / deltaSec), velocity / velocityMagnitude)
                 --     local vca = Vector3.__new(vo.x, 0, vo.z)
                 --     ball.AddForce(vca)
                 --     -- cytanb.LogTrace('vca: ', vca, ', vo: ', vo, ', velocity: ', velocity)
@@ -522,7 +522,7 @@ local OnUpdateBall = function (deltaTime)
                 -- local horzVelocity = Vector3.__new(velocity.x, 0, velocity.z)
                 -- if horzVelocity.sqrMagnitude > 0.0025 and angularVelocityMagnitude ~= 0 then
                 --     local vo = cytanb.ApplyQuaternionToVector3(Quaternion.AngleAxis(ballSimAngularVelocity.y >= 0 and 90 or -90, Vector3.up), horzVelocity).normalized
-                --     local curveScale = settings.ballSimAngularFactor * math.abs(ballSimAngularVelocity.y) / deltaSec
+                --     local curveScale = settings.ballSimAngularFactor * settings.ballSimMass * math.abs(ballSimAngularVelocity.y) / deltaSec
                 --     local vca = vo * curveScale
                 --     ball.AddForce(vca)
                 --     cytanb.LogTrace('velocity: ', velocity, ', horz: ', horzVelocity, ', vo: ', vo, ', angularVelocity: ', ballSimAngularVelocity)
@@ -531,7 +531,7 @@ local OnUpdateBall = function (deltaTime)
 
                 -- 床抜けの対策。
                 if ballPos.y < 0 and ballPos.y < lastTransform.position.y then
-                    local leapY = math.max(lastTransform.position.y - ballPos.y, 0.25)
+                    local leapY = 0.25 - ballPos.y
                     local leapV = Vector3.__new(0, leapY / (deltaSec ^ 2), 0)
                     cytanb.LogDebug('leap ball: position = ', ballPos, ', leapY = ', leapY, ', force = ', leapV)
                     ball.SetPosition(Vector3.__new(ballPos.x, 0.125, ballPos.z))

@@ -3,154 +3,161 @@
 --  MIT Licensed
 ----------------------------------------------------------------
 
-local ballTag = '#cytanb-ball'
-
 return {
-    --- 速度の調整値。初期設定値を変更する場合はこの値を変更する。([-5, 5] の範囲)
-    ballVelocityAdjustment = 0,
+    Load = function (mainEnv)
+        local ballTag = '#cytanb-ball'
 
-    --- 角速度の調整値。初期設定値を変更する場合はこの値を変更する。([-5, 5] の範囲)
-    ballAngularVelocityAdjustment = 0,
+        return {
+            --- 速度の調整値。初期設定値を変更する場合はこの値を変更する。([-5, 5] の範囲)
+            ballVelocityAdjustment = 0,
 
-    --- 仰俯角の調整値。初期設定値を変更する場合はこの値を変更する。([-5, 5] の範囲)
-    ballAltitudeAdjustment = 0,
+            --- 角速度の調整値。初期設定値を変更する場合はこの値を変更する。([-5, 5] の範囲)
+            ballAngularVelocityAdjustment = 0,
 
-    --- 投球動作として、リリースポイントからさかのぼって速度計算に反映する時間。([100, 250] ms 程度の範囲)
-    ballKinematicTime = TimeSpan.FromMilliseconds(200),
+            --- 仰俯角の調整値。初期設定値を変更する場合はこの値を変更する。([-5, 5] の範囲)
+            ballAltitudeAdjustment = 0,
 
-    --- 投球動作とみなす速度の閾値。
-    ballKinematicVelocityThreshold = 1.0,
+            --- 投球動作として、リリースポイントからさかのぼって速度計算に反映する時間。([100, 250] ms 程度の範囲)
+            ballKinematicTime = TimeSpan.FromMilliseconds(200),
 
-    --- 投球動作による速度係数の最小値。
-    ballKinematicMinVelocityFactor = 0.125,
+            --- 投球動作とみなす速度の閾値。
+            ballKinematicVelocityThreshold = 1.0,
 
-    --- 投球動作による速度係数の最大値。
-    ballKinematicMaxVelocityFactor = 0.875,
+            --- 投球動作による速度係数の最小値。
+            ballKinematicMinVelocityFactor = 0.125,
 
-    --- 投球動作による角速度係数の最小値。
-    ballKinematicMinAngularVelocityFactor = 0.5,
+            --- 投球動作による速度係数の最大値。
+            ballKinematicMaxVelocityFactor = 0.875,
 
-    --- 投球動作による角速度係数の最大値。
-    ballKinematicMaxAngularVelocityFactor = 8.5,
+            --- 投球動作による角速度係数の最小値。
+            ballKinematicMinAngularVelocityFactor = 0.5,
 
-    --- 投球動作による仰俯角係数の最小値。
-    ballKinematicMinAltitudeFactor = -25,
+            --- 投球動作による角速度係数の最大値。
+            ballKinematicMaxAngularVelocityFactor = 7.5,
 
-    --- 投球動作による仰俯角係数の最大値。
-    ballKinematicMaxAltitudeFactor = 25,
+            --- 投球動作による仰俯角係数の最小値。
+            ballKinematicMinAltitudeFactor = -25,
 
-    --- 入力タイミングによる速度のスケールの最小値。
-    ballInpactMinVelocityScale = 2.0,
+            --- 投球動作による仰俯角係数の最大値。
+            ballKinematicMaxAltitudeFactor = 25,
 
-    --- 入力タイミングによる速度のスケールの最大値。
-    ballInpactMaxVelocityScale = 22.0,
+            --- 入力タイミングによる速度のスケールの最小値。
+            ballInpactMinVelocityScale = 2.0,
 
-    --- 入力タイミングによる角速度のスケールの最小値。
-    ballInpactMinAngularVelocityScale = 2.0,
+            --- 入力タイミングによる速度のスケールの最大値。
+            ballInpactMaxVelocityScale = 22.0,
 
-    --- 入力タイミングによる角速度のスケールの最大値。
-    ballInpactMaxAngularVelocityScale = 22.0,
+            --- 入力タイミングによる角速度のスケールの最小値。
+            ballInpactMinAngularVelocityScale = 2.0,
 
-    --- 入力タイミングによる仰俯角のスケールの最小値。
-    ballInpactMinAltitudeScale = -45,
+            --- 入力タイミングによる角速度のスケールの最大値。
+            ballInpactMaxAngularVelocityScale = 22.0,
 
-    --- 入力タイミングによる仰俯角のスケールの最大値。
-    ballInpactMaxAltitudeScale = 45,
+            --- 入力タイミングによる仰俯角のスケールの最小値。
+            ballInpactMinAltitudeScale = -45.0,
 
-    --- ボールの回転のシミレーション係数。
-    ballSimAngularFactor = 0.04,
+            --- 入力タイミングによる仰俯角のスケールの最大値。
+            ballInpactMaxAltitudeScale = 45.0,
 
-    --- ボールの回転抵抗のシミュレーション係数。
-    ballSimAngularDrag = 0.1,
+            --- ボールの質量のシミュレーション値。
+            ballSimMass = 35.0,
 
-    --- 体のコライダーとの接触を避けるための、オフセット係数。
-    ballForwardOffsetFactor = 0.1,
+            --- ボールの回転抵抗のシミュレーション値。
+            ballSimAngularDrag = 0.1,
 
-    --- 体のコライダーとの接触を避けるための、オフセットの最大値。
-    ballMaxForwardOffset = 0.5,
+            --- ボールの回転のシミレーション係数。
+            ballSimAngularFactor = 0.0012,
 
-    --- ボールのリスポーン位置のオフセット。
-    ballRespawnOffsetY = 0.75,
+            --- 体のコライダーとの接触を避けるための、オフセット係数。
+            ballForwardOffsetFactor = 0.1,
 
-    --- ボールがアクティブであることを判定する閾値。
-    ballActiveThreshold = 0.75 + 0.25,
+            --- 体のコライダーとの接触を避けるための、オフセットの最大値。
+            ballMaxForwardOffset = 0.5,
 
-    --- ボールがリスポーンするまでの待ち時間。
-    ballWaitingTime = TimeSpan.FromSeconds(30),
+            --- ボールのリスポーン位置のオフセット。
+            ballRespawnOffsetY = 0.75,
 
-    --- ボールのプレイエリアの半径。これを超えるとリスポーンする。
-    ballPlayAreaRadius = 30,
+            --- ボールがアクティブであることを判定する閾値。
+            ballActiveThreshold = 0.75 + 0.25,
 
-    --- ゲージの毎秒の変化率。
-    impactGaugeRatioPerSec = 1,
+            --- ボールがリスポーンするまでの待ち時間。
+            ballWaitingTime = TimeSpan.FromSeconds(30),
 
-    --- ゲージの UV の最大値。
-    impactGaugeMaxUV = 0.135,
+            --- ボールのプレイエリアの半径。これを超えるとリスポーンする。
+            ballPlayAreaRadius = 30,
 
-    --- ゲージの表示時間。
-    impactGaugeDisplayTime = TimeSpan.FromSeconds(2),
+            --- ゲージの毎秒の変化率。
+            impactGaugeRatioPerSec = 1,
 
-    --- ライトの水平姿勢判定の閾値。
-    standLightHorizontalAttitudeThreshold = 5.0,
+            --- ゲージの UV の最大値。
+            impactGaugeMaxUV = 0.135,
 
-    --- ライトのジャンプ係数。
-    standLightJumpFactor = 100,
+            --- ゲージの表示時間。
+            impactGaugeDisplayTime = TimeSpan.FromSeconds(2),
 
-    --- ライトがリスポーンするまでの待ち時間。
-    standLightWaitingTime = TimeSpan.FromSeconds(60),
+            --- ライトの水平姿勢判定の閾値。
+            standLightHorizontalAttitudeThreshold = 5.0,
 
-    --- ライトにメッセージを送るインターバル時間。
-    standLightRequestIntervalTime = TimeSpan.FromSeconds(3),
+            --- ライトのジャンプ係数。
+            standLightJumpFactor = 100,
 
-    --- 設定パネルを表示するオフセット位置。
-    settingsPanelOffset = Vector3.__new(-1.25, 0.25, 0),
+            --- ライトがリスポーンするまでの待ち時間。
+            standLightWaitingTime = TimeSpan.FromSeconds(60),
 
-    --- 設定パネルの距離の閾値。
-    settingsPanelDistanceThreshold = 3.0,
+            --- ライトにメッセージを送るインターバル時間。
+            standLightRequestIntervalTime = TimeSpan.FromSeconds(3),
 
-    --- 設定パネルの調節スイッチのY座標。
-    settingsPanelAdjustmentSwitchNeutralPositionY = -0.1185,
+            --- 設定パネルを表示するオフセット位置。
+            settingsPanelOffset = Vector3.__new(-0.8, 0.25, 0),
 
-    --- 設定パネルの調節スイッチの目盛り。
-    settingsPanelAdjustmentSwitchDivisionScale = 0.01,
+            --- 設定パネルの距離の閾値。
+            settingsPanelDistanceThreshold = 3.0,
 
-    --- ボールのタグ名。
-    ballTag = ballTag,
+            --- 設定パネルの調節スイッチのY座標。
+            settingsPanelAdjustmentSwitchNeutralPositionY = -0.1185,
 
-    --- ボールのオブジェクト名。
-    ballName = 'cball' .. ballTag,
+            --- 設定パネルの調節スイッチの目盛り。
+            settingsPanelAdjustmentSwitchDivisionScale = 0.01,
 
-    --- ボールのカップのオブジェクト名。
-    ballCupName = 'ball-cup',
+            --- ボールのタグ名。
+            ballTag = ballTag,
 
-    --- ライトのオブジェクト名の接頭辞。
-    standLightPrefix = 'oO-standlight-',
+            --- ボールのオブジェクト名。
+            ballName = 'cball' .. ballTag,
 
-    --- ライトのオブジェクト数。
-    standLightCount = 3,
+            --- ボールのカップのオブジェクト名。
+            ballCupName = 'ball-cup',
 
-    --- 威力のゲージのマテリアル名。
-    impactForceGaugeMat = 'impact-force-gauge-mat',
+            --- ライトのオブジェクト名の接頭辞。
+            standLightPrefix = 'oO-standlight-',
 
-    --- 威力のゲージのオブジェクト名。
-    impactForceGaugeName = 'impact-force-gauge',
+            --- ライトのオブジェクト数。
+            standLightCount = 3,
 
-    --- スピンゲージのオブジェクト名。
-    impactSpinGaugeName = 'impact-spin-gauge',
+            --- 威力のゲージのマテリアル名。
+            impactForceGaugeMat = 'impact-force-gauge-mat',
 
-    --- 設定パネルのオブジェクト名。
-    settingsPanelName = 'cball-settings-panel',
+            --- 威力のゲージのオブジェクト名。
+            impactForceGaugeName = 'impact-force-gauge',
 
-    --- 設定パネルの閉じるスイッチのオブジェクト名。
-    closeSwitchName = 'cball-settings-close-switch',
+            --- スピンゲージのオブジェクト名。
+            impactSpinGaugeName = 'impact-spin-gauge',
 
-    --- 設定パネルの調節スイッチのオブジェクト名。
-    adjustmentSwitchNames = {
-        {switchName = 'cball-settings-velocity-switch', knobName = 'cball-settings-velocity-knob', propertyName = 'ballVelocityAdjustment'},
-        {switchName = 'cball-settings-angular-velocity-switch', knobName = 'cball-settings-angular-velocity-knob', propertyName = 'ballAngularVelocityAdjustment'},
-        {switchName = 'cball-settings-altitude-switch', knobName = 'cball-settings-altitude-knob', propertyName = 'ballAltitudeAdjustment'}
-    },
+            --- 設定パネルのオブジェクト名。
+            settingsPanelName = 'cball-settings-panel',
 
-    --- デバッギングを有効にするか。
-    enableDebugging = false
+            --- 設定パネルの閉じるスイッチのオブジェクト名。
+            closeSwitchName = 'cball-settings-close-switch',
+
+            --- 設定パネルの調節スイッチのオブジェクト名。
+            adjustmentSwitchNames = {
+                {switchName = 'cball-settings-velocity-switch', knobName = 'cball-settings-velocity-knob', propertyName = 'ballVelocityAdjustment'},
+                {switchName = 'cball-settings-angular-velocity-switch', knobName = 'cball-settings-angular-velocity-knob', propertyName = 'ballAngularVelocityAdjustment'},
+                {switchName = 'cball-settings-altitude-switch', knobName = 'cball-settings-altitude-knob', propertyName = 'ballAltitudeAdjustment'}
+            },
+
+            --- デバッギングを有効にするか。
+            enableDebugging = false
+        }
+    end
 }
