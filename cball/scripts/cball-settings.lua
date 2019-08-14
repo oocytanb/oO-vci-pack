@@ -3,19 +3,104 @@
 --  MIT Licensed
 ----------------------------------------------------------------
 
+local CreateLocalSharedProperties = function (lspid, loadid, studioTimeGetter)
+    local maxAliveTime = TimeSpan.FromSeconds(5)
+    local aliveLspid = '58d17509-83b7-486b-be8f-aa74b7d6cc75'
+    local listenerMapKey = '__CYTANB_LOCAL_SHARED_PROPERTIES_LISTENER_MAP'
+    local propertyChangeEventName = 'property_change'
+    local expiredEventName = 'expired'
+
+    if type(lspid) ~= 'string' or type(loadid) ~= 'string' then
+        error('Invalid argument')
+    end
+
+    local aliveMap = _G[aliveLspid]
+    if not aliveMap then
+        aliveMap = {}
+        _G[aliveLspid] = aliveMap
+    end
+    aliveMap[loadid] = studioTimeGetter()
+
+    local pmap = _G[lspid]
+    if not pmap then
+        pmap = {[listenerMapKey] = {}}
+        _G[lspid] = pmap
+    end
+    local listenerMap = pmap[listenerMapKey]
+
+    return {
+        propertyChangeEventName = propertyChangeEventName,
+
+        expiredEventName = expiredEventName,
+
+        GetLspID = function ()
+            return lspid
+        end,
+
+        GetLoadID = function()
+            return loadid
+        end,
+
+        GetProperty = function (key, defaultValue)
+            local value = pmap[key]
+            if value == nil then
+                return defaultValue
+            else
+                return value
+            end
+        end,
+
+        SetProperty = function (key, value)
+            if key == listenerMapKey then
+                error('Invalid argument: key = ', key)
+            end
+
+            local now = studioTimeGetter()
+            local oldValue = pmap[key]
+            pmap[key] = value
+            for listener, id in pairs(listenerMap) do
+                local t = aliveMap[id]
+                if t and t + maxAliveTime >= now then
+                    listener(propertyChangeEventName, key, value, oldValue)
+                else
+                    -- 期限切れしたリスナーを解除する
+                    listener(expiredEventName, key, value, oldValue)
+                    listenerMap[listener] = nil
+                end
+            end
+        end,
+
+        AddListener = function (listener)
+            listenerMap[listener] = loadid
+        end,
+
+        RemoveListener = function (listener)
+            listenerMap[listener] = nil
+        end,
+
+        UpdateAlive = function ()
+            aliveMap[loadid] = studioTimeGetter()
+        end
+    }
+end
+
 return {
-    Load = function (mainEnv)
+    Load = function (mainEnv, loadid)
+        local cballSettingsLspid = 'e63ae798-cdd4-42c0-a2a0-33655c9514a4'
         local ballTag = '#cytanb-ball'
+        local ballVelocityAdjustmentPropertyName = 'ballVelocityAdjustment'
+        local ballAngularVelocityAdjustmentPropertyName = 'ballAngularVelocityAdjustment'
+        local ballAltitudeAdjustmentPropertyName = 'ballAltitudeAdjustment'
 
         return {
-            --- 速度の調整値。初期設定値を変更する場合はこの値を変更する。([-5, 5] の範囲)
-            ballVelocityAdjustment = 0,
+            --- 速度の調整値の初期設定値。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
+            [ballVelocityAdjustmentPropertyName] = 0,
 
-            --- 角速度の調整値。初期設定値を変更する場合はこの値を変更する。([-5, 5] の範囲)
-            ballAngularVelocityAdjustment = 0,
+            --- 角速度の調整値の初期設定値。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
+            [ballAngularVelocityAdjustmentPropertyName] = 0,
 
-            --- 仰俯角の調整値。初期設定値を変更する場合はこの値を変更する。([-5, 5] の範囲)
-            ballAltitudeAdjustment = 0,
+            --- 仰俯角の調整値の初期設定値。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
+            [ballAltitudeAdjustmentPropertyName] = 0,
 
             --- 投球動作として、リリースポイントからさかのぼって速度計算に反映する時間。([100, 250] ms 程度の範囲)
             ballKinematicTime = TimeSpan.FromMilliseconds(200),
@@ -114,7 +199,7 @@ return {
             settingsPanelDistanceThreshold = 3.0,
 
             --- 設定パネルの調節スイッチのY座標。
-            settingsPanelAdjustmentSwitchNeutralPositionY = -0.1185,
+            settingsPanelAdjustmentSwitchNeutralPositionY = -0.1245,
 
             --- 設定パネルの調節スイッチの目盛り。
             settingsPanelAdjustmentSwitchDivisionScale = 0.01,
@@ -151,10 +236,22 @@ return {
 
             --- 設定パネルの調節スイッチのオブジェクト名。
             adjustmentSwitchNames = {
-                {switchName = 'cball-settings-velocity-switch', knobName = 'cball-settings-velocity-knob', propertyName = 'ballVelocityAdjustment'},
-                {switchName = 'cball-settings-angular-velocity-switch', knobName = 'cball-settings-angular-velocity-knob', propertyName = 'ballAngularVelocityAdjustment'},
-                {switchName = 'cball-settings-altitude-switch', knobName = 'cball-settings-altitude-knob', propertyName = 'ballAltitudeAdjustment'}
+                {switchName = 'cball-settings-velocity-switch', knobName = 'cball-settings-velocity-knob', propertyName = ballVelocityAdjustmentPropertyName},
+                {switchName = 'cball-settings-angular-velocity-switch', knobName = 'cball-settings-angular-velocity-knob', propertyName = ballAngularVelocityAdjustmentPropertyName},
+                {switchName = 'cball-settings-altitude-switch', knobName = 'cball-settings-altitude-knob', propertyName = ballAltitudeAdjustmentPropertyName}
             },
+
+            --- 速度の調整値のプロパティ名。
+            ballVelocityAdjustmentPropertyName = ballVelocityAdjustmentPropertyName,
+
+            --- 角速度の調整値のプロパティ名。
+            ballAngularVelocityAdjustmentPropertyName = ballAngularVelocityAdjustmentPropertyName,
+
+            --- 仰俯角の調整値のプロパティ名。
+            ballAltitudeAdjustmentPropertyName = ballAltitudeAdjustmentPropertyName,
+
+            --- ローカルの共有プロパティ。
+            localSharedProperties = CreateLocalSharedProperties(cballSettingsLspid, loadid, function () return mainEnv.vci.me.Time end),
 
             --- デバッギングを有効にするか。
             enableDebugging = false

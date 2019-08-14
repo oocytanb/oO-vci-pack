@@ -209,9 +209,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: cball#cytanb-ball
       objectReference: {fileID: 0}
-    - target: {fileID: 400034, guid: f9ea1260e349c6e489c5be5b17860adf, type: 3}
+    - target: {fileID: 400000, guid: f9ea1260e349c6e489c5be5b17860adf, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 400014, guid: f9ea1260e349c6e489c5be5b17860adf, type: 3}
       propertyPath: m_RootOrder
@@ -285,6 +285,10 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 400034, guid: f9ea1260e349c6e489c5be5b17860adf, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 400036, guid: f9ea1260e349c6e489c5be5b17860adf, type: 3}
       propertyPath: m_RootOrder
       value: 12
@@ -304,10 +308,6 @@ PrefabInstance:
     - target: {fileID: 400048, guid: f9ea1260e349c6e489c5be5b17860adf, type: 3}
       propertyPath: m_RootOrder
       value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: f9ea1260e349c6e489c5be5b17860adf, type: 3}
-      propertyPath: m_RootOrder
-      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9ea1260e349c6e489c5be5b17860adf, type: 3}
@@ -383,7 +383,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 753107a3c841da84eb4bd95304b50ca6, type: 3}
-    version: 0.3.5
+    version: 0.4.2
     description: "- \u6295\u3052\u3066\u904A\u3079\u308B\u30DC\u30FC\u30EB\u3067\u3059\u3002\r\n-
       \u56DE\u8EE2\u3092\u304B\u3051\u3066\u6295\u3052\u308B\u3068\u30AB\u30FC\u30D6\u3057\u307E\u3059\u3002\n-
       \u30DC\u30FC\u30EB\u3092\u63E1\u3063\u3066\u30B0\u30EA\u30C3\u30D7\u3059\u308B\u3053\u3068\u3067\u3001\u30BF\u30A4\u30DF\u30F3\u30B0\u5165\u529B\u306B\u3088\u308B\u6295\u7403\u3082\u51FA\u6765\u307E\u3059\u3002\r"

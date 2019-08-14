@@ -37,7 +37,7 @@ local ApplyAltitudeAngle = function (vec, angle)
     end
 end
 
-local settings = require('cball-settings').Load(_ENV)
+local settings = require('cball-settings').Load(_ENV, tostring(cytanb.RandomUUID()))
 
 local cballNS = 'com.github.oocytanb.oO-vci-pack.cball'
 local respawnBallMessageName = cballNS .. '.respawn-ball'
@@ -50,7 +50,7 @@ local vciLoaded = false
 
 local hiddenPosition
 
-local ball, ballCup, standLights, impactForceGauge, impactSpinGauge, settingsPanel, closeSwitch, adjustmentSwitches
+local ball, ballCup, standLights, impactForceGauge, impactSpinGauge, settingsPanel, closeSwitch, adjustmentSwitches, propertyNameSwitchMap
 
 --- 設定パネルがつかまれているか。
 local settingsPanelGrabbed = false
@@ -95,27 +95,30 @@ end
 local CreateAdjustmentSwitch = function (switchName, knobName, propertyName)
     local knob = vci.assets.GetSubItem(knobName)
     local initialKnobPosition = knob.GetLocalPosition()
-    local inputCount = math.floor(cytanb.Clamp(settings[propertyName], -5, 5))
-
-    local UpdateKnob = function ()
-        local value = cytanb.PingPong(inputCount + 5, 10) - 5
-        knob.SetLocalPosition(Vector3.__new(initialKnobPosition.x, settings.settingsPanelAdjustmentSwitchNeutralPositionY + value * settings.settingsPanelAdjustmentSwitchDivisionScale, initialKnobPosition.z))
-        return value
-    end
-
-    UpdateKnob()
+    local defaultValue = math.floor(cytanb.Clamp(settings[propertyName], -5, 5))
+    local value = defaultValue
 
     local self
     self = {
         item = vci.assets.GetSubItem(switchName),
-        DoInput = function ()
-            inputCount = inputCount + 1
-            local value = UpdateKnob()
-            settings[propertyName] = value
-            cytanb.LogTrace('on DoInput[', switchName, ']: value = ', value, ', count = ', inputCount)
+
+        GetValue = function ()
             return value
+        end,
+
+        DoInput = function ()
+            local inputCount = settings.localSharedProperties.GetProperty(propertyName, defaultValue) + 1
+            settings.localSharedProperties.SetProperty(propertyName, inputCount)
+        end,
+
+        Update = function ()
+            local inputCount = settings.localSharedProperties.GetProperty(propertyName, defaultValue)
+            value = cytanb.PingPong(inputCount + 5, 10) - 5
+            knob.SetLocalPosition(Vector3.__new(initialKnobPosition.x, settings.settingsPanelAdjustmentSwitchNeutralPositionY + value * settings.settingsPanelAdjustmentSwitchDivisionScale, initialKnobPosition.z))
+            cytanb.LogTrace('on update[', switchName, ']: value = ', value, ', count = ', inputCount)
         end
     }
+    self.Update()
     return self
 end
 
@@ -249,13 +252,13 @@ local ThrowBallByKinematic = function ()
         end
         ballTransformQueue.Clear()
 
-        totalVelocity = totalVelocity * CalcAdjustment(settings.ballVelocityAdjustment, settings.ballKinematicMinVelocityFactor, settings.ballKinematicMaxVelocityFactor)
-        totalAngularVelocity = totalAngularVelocity * CalcAdjustment(settings.ballAngularVelocityAdjustment, settings.ballKinematicMinAngularVelocityFactor, settings.ballKinematicMaxAngularVelocityFactor)
+        totalVelocity = totalVelocity * CalcAdjustment(propertyNameSwitchMap[settings.ballVelocityAdjustmentPropertyName].GetValue(), settings.ballKinematicMinVelocityFactor, settings.ballKinematicMaxVelocityFactor)
+        totalAngularVelocity = totalAngularVelocity * CalcAdjustment(propertyNameSwitchMap[settings.ballAngularVelocityAdjustmentPropertyName].GetValue(), settings.ballKinematicMinAngularVelocityFactor, settings.ballKinematicMaxAngularVelocityFactor)
 
         local velocityMagnitude = totalVelocity.magnitude
         cytanb.LogTrace('velocity magnitude: ', velocityMagnitude)
         if velocityMagnitude > settings.ballKinematicVelocityThreshold then
-            local velocity = ApplyAltitudeAngle(totalVelocity, CalcAdjustment(settings.ballAltitudeAdjustment, settings.ballKinematicMinAltitudeFactor, settings.ballKinematicMaxAltitudeFactor))
+            local velocity = ApplyAltitudeAngle(totalVelocity, CalcAdjustment(propertyNameSwitchMap[settings.ballAltitudeAdjustmentPropertyName].GetValue(), settings.ballKinematicMinAltitudeFactor, settings.ballKinematicMaxAltitudeFactor))
             local forwardOffset = velocity * (math.min(velocityMagnitude * settings.ballForwardOffsetFactor, settings.ballMaxForwardOffset) / velocityMagnitude)
             cytanb.LogTrace('Throw ball by kinematic: velocity: ', velocity, ', angularVelocity: ', totalAngularVelocity)
             ballSimAngularVelocity = totalAngularVelocity
@@ -281,11 +284,11 @@ local ThrowBallByInputTiming = function ()
 
     cytanb.LogTrace('Throw ball by input timing: impactSpinGaugeRatio: ', impactSpinGaugeRatio, ', impactForceGaugeRatio: ', impactForceGaugeRatio)
     local forward = impactForceGauge.GetForward()
-    local forwardScale = CalcAdjustment(settings.ballVelocityAdjustment, settings.ballInpactMinVelocityScale, settings.ballInpactMaxVelocityScale) * impactForceGaugeRatio
+    local forwardScale = CalcAdjustment(propertyNameSwitchMap[settings.ballVelocityAdjustmentPropertyName].GetValue(), settings.ballInpactMinVelocityScale, settings.ballInpactMaxVelocityScale) * impactForceGaugeRatio
     local forwardOffset = forward * math.min(forwardScale * settings.ballForwardOffsetFactor, settings.ballMaxForwardOffset)
-    local velocity = ApplyAltitudeAngle(forward * forwardScale, CalcAdjustment(settings.ballAltitudeAdjustment, settings.ballInpactMinAltitudeScale, settings.ballInpactMaxAltitudeScale))
+    local velocity = ApplyAltitudeAngle(forward * forwardScale, CalcAdjustment(propertyNameSwitchMap[settings.ballAltitudeAdjustmentPropertyName].GetValue(), settings.ballInpactMinAltitudeScale, settings.ballInpactMaxAltitudeScale))
 
-    ballSimAngularVelocity = Vector3.up * (CalcAdjustment(settings.ballAngularVelocityAdjustment, settings.ballInpactMinAngularVelocityScale, settings.ballInpactMaxAngularVelocityScale) * math.pi * impactSpinGaugeRatio)
+    ballSimAngularVelocity = Vector3.up * (CalcAdjustment(propertyNameSwitchMap[settings.ballAngularVelocityAdjustmentPropertyName].GetValue(), settings.ballInpactMinAngularVelocityScale, settings.ballInpactMaxAngularVelocityScale) * math.pi * impactSpinGaugeRatio)
     cytanb.LogTrace('velocity: ', velocity, ', angularVelocity: ', ballSimAngularVelocity)
 
     ball.SetVelocity(velocity)
@@ -334,10 +337,29 @@ local OnLoad = function ()
 
     closeSwitch = vci.assets.GetSubItem(settings.closeSwitchName)
 
+    propertyNameSwitchMap = {}
     adjustmentSwitches = {}
     for index, entry in ipairs(settings.adjustmentSwitchNames) do
-        adjustmentSwitches[entry.switchName] = CreateAdjustmentSwitch(entry.switchName, entry.knobName, entry.propertyName)
+        local switch = CreateAdjustmentSwitch(entry.switchName, entry.knobName, entry.propertyName)
+        propertyNameSwitchMap[entry.propertyName] = switch
+        adjustmentSwitches[entry.switchName] = switch
     end
+
+    settings.localSharedProperties.AddListener(function (eventName, key, value, oldValue)
+        if eventName == settings.localSharedProperties.propertyChangeEventName then
+            -- cytanb.LogInfo('localSharedProperties: on ', eventName, ', key = ', key, ', value = ', value)
+            local switch = propertyNameSwitchMap[key]
+            if switch then
+                switch.Update()
+            end
+        elseif eventName == settings.localSharedProperties.expiredEventName then
+            cytanb.LogInfo('localSharedProperties: on ', eventName)
+            -- 期限切れとなったので、アンロード処理をする
+            vciLoaded = false
+        else
+            cytanb.LogInfo('localSharedProperties: unknown event: ', eventName)
+        end
+    end)
 
     cytanb.OnInstanceMessage(respawnBallMessageName, function (sender, name, parameterMap)
         RespawnBall()
@@ -347,29 +369,38 @@ local OnLoad = function ()
     cytanb.OnInstanceMessage(buildStandLightMessageName, function (sender, name, parameterMap)
         cytanb.LogDebug('onBuildStandLight')
 
-        local targets = parameterMap.targets
-        -- targets が指定されていない場合は、すべてが対象
-        local allTargets = not parameterMap.targets
+        local buildStandLight = function (light, options)
+            if not light then
+                return
+            end
 
-        for i = 1, settings.standLightCount do
-            if allTargets or targets[i] then
-                local light = standLights[i]
-                local li = light.item
-                local ls = light.status
-                local transform = targets and targets[i] and targets[i].transform
-                if transform then
-                    -- transform が指定されていた場合は、respawnPosition を変更する。
-                    ls.respawnPosition = Vector3.__new(transform.positionX, transform.positionY >= 0 and transform.positionY or 0.25, transform.positionZ)
-                end
-                ls.active = true
-                ls.inactiveTime = vci.me.Time
-                ls.jumpTime = TimeSpan.Zero
-                if li.IsMine then
-                    li.SetRotation(Quaternion.identity)
-                    li.SetPosition(ls.respawnPosition)
-                    li.SetVelocity(Vector3.zero)
-                    li.SetAngularVelocity(Vector3.zero)
-                end
+            local li = light.item
+            local ls = light.status
+            local transform = options and options.transform
+            if transform then
+                -- transform が指定されていた場合は、respawnPosition を変更する。
+                ls.respawnPosition = Vector3.__new(transform.positionX, transform.positionY >= 0 and transform.positionY or 0.25, transform.positionZ)
+            end
+            ls.active = true
+            ls.inactiveTime = vci.me.Time
+            ls.jumpTime = TimeSpan.Zero
+            if li.IsMine then
+                li.SetRotation(Quaternion.identity)
+                li.SetPosition(ls.respawnPosition)
+                li.SetVelocity(Vector3.zero)
+                li.SetAngularVelocity(Vector3.zero)
+            end
+        end
+
+        local targets = parameterMap.targets
+        if targets then
+            for i, options in pairs(targets) do
+                buildStandLight(standLights[i], options)
+            end
+        else
+            -- targets が指定されていない場合は、すべてが対象
+            for i = 1, settings.standLightCount do
+                buildStandLight(standLights[i], nil)
             end
         end
     end)
@@ -625,6 +656,7 @@ local UpdateCw = coroutine.wrap(function ()
     end
 
     -- ロード完了。
+    settings.localSharedProperties.UpdateAlive()
     OnLoad()
     frameCount = frameCount + 1
     coroutine.yield(100)
@@ -634,6 +666,7 @@ local UpdateCw = coroutine.wrap(function ()
     while true do
         local time = vci.me.Time
         local delta = time - lastTime
+        settings.localSharedProperties.UpdateAlive()
         OnUpdate(delta > TimeSpan.Zero and delta or TimeSpan.FromTicks(100))
         lastTime = time
         frameCount = frameCount + 1
