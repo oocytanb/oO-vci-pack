@@ -42,6 +42,7 @@ local settings = require('cball-settings').Load(_ENV, tostring(cytanb.RandomUUID
 local cballNS = 'com.github.oocytanb.oO-vci-pack.cball'
 local respawnBallMessageName = cballNS .. '.respawn-ball'
 local buildStandLightMessageName = cballNS .. '.build-standlight'
+local buildAllStandLightsMessageName = cballNS .. '.build-all-standlights'
 local jumpStandLightMessageName = cballNS .. '.jump-standlight'
 local showSettingsPanelMessageName = cballNS .. '.show-settings-panel'
 
@@ -135,10 +136,36 @@ local StandLightFromName = function (name)
     local indexStr = string.sub(name, #settings.standLightPrefix + 1)
     local num = tonumber(indexStr)
     local index = num and math.floor(num) + 1 or -1
-    if index >= 1 and index <= settings.standLightCount then
-        return standLights[index], index
+    if index >= 1 then
+        local light = index <= settings.standLightCount and standLights[index] or nil
+        return light, index
     else
         return nil, index
+    end
+end
+
+local IsBallInContactWithStandLight = function (ballPosition, standLightPosition)
+    return (ballPosition - standLightPosition).sqrMagnitude <= (settings.ballSimRadius * 3.0) ^ 2
+end
+
+local BuildStandLight = function (light, respawnPosition)
+    if not light then
+        return
+    end
+
+    local li = light.item
+    local ls = light.status
+    if respawnPosition then
+        ls.respawnPosition = respawnPosition
+    end
+    ls.active = true
+    ls.inactiveTime = vci.me.Time
+    ls.jumpTime = TimeSpan.Zero
+    if li.IsMine then
+        li.SetRotation(Quaternion.identity)
+        li.SetPosition(ls.respawnPosition)
+        li.SetVelocity(Vector3.zero)
+        li.SetAngularVelocity(Vector3.zero)
     end
 end
 
@@ -369,50 +396,42 @@ local OnLoad = function ()
     cytanb.OnInstanceMessage(buildStandLightMessageName, function (sender, name, parameterMap)
         cytanb.LogDebug('onBuildStandLight')
 
-        local buildStandLight = function (light, options)
-            if not light then
-                return
-            end
-
-            local li = light.item
-            local ls = light.status
-            local transform = options and options.transform
-            if transform then
-                -- transform が指定されていた場合は、respawnPosition を変更する。
-                ls.respawnPosition = Vector3.__new(transform.positionX, transform.positionY >= 0 and transform.positionY or 0.25, transform.positionZ)
-            end
-            ls.active = true
-            ls.inactiveTime = vci.me.Time
-            ls.jumpTime = TimeSpan.Zero
-            if li.IsMine then
-                li.SetRotation(Quaternion.identity)
-                li.SetPosition(ls.respawnPosition)
-                li.SetVelocity(Vector3.zero)
-                li.SetAngularVelocity(Vector3.zero)
-            end
-        end
-
         local targets = parameterMap.targets
         if targets then
             for i, options in pairs(targets) do
-                buildStandLight(standLights[i], options)
-            end
-        else
-            -- targets が指定されていない場合は、すべてが対象
-            for i = 1, settings.standLightCount do
-                buildStandLight(standLights[i], nil)
+                local transform = options and options.transform
+                local respawnPosition = transform and Vector3.__new(transform.positionX, transform.positionY >= 0 and transform.positionY or 0.25, transform.positionZ) or nil
+                BuildStandLight(standLights[i], respawnPosition)
             end
         end
     end)
 
-    -- ライトをジャンプさせる
-    cytanb.OnInstanceMessage(jumpStandLightMessageName, function (sender, name, parameterMap)
+    -- 全てのライトを組み立てる。別 VCI から送られてくるケースも考慮する。
+    cytanb.OnMessage(buildAllStandLightsMessageName, function (sender, name, parameterMap)
+        for i = 1, settings.standLightCount do
+            BuildStandLight(standLights[i])
+        end
+    end)
+
+    -- ライトをジャンプさせる。別 VCI から送られてくるケースも考慮する。
+    cytanb.OnMessage(jumpStandLightMessageName, function (sender, name, parameterMap)
+        local ballTransform = parameterMap.ball
+        if not ballTransform then
+            -- 古いバージョンのメッセージなので、無視する
+            return
+        end
+
+        local ballPos = Vector3.__new(ballTransform.positionX, ballTransform.positionY, ballTransform.positionZ)
         local targets = parameterMap.targets
         if targets then
             for i, v in pairs(targets) do
-                if i <= settings.standLightCount and v then
-                    cytanb.LogDebug('onJumpStandLight: index = ', i)
-                    JumpStandLight(standLights[i])
+                if i >= 1 and i <= settings.standLightCount and v then
+                    local light = standLights[i]
+                    local li = light.item
+                    if IsBallInContactWithStandLight(ballPos, li.GetPosition()) then
+                        cytanb.LogTrace('onJumpStandLight: index = ', i)
+                        JumpStandLight(light)
+                    end
                 end
             end
         end
@@ -750,7 +769,7 @@ function onUse (use)
         if cupClickCount == 1 then
             cytanb.EmitMessage(respawnBallMessageName)
         elseif cupClickCount == 2 then
-            cytanb.EmitMessage(buildStandLightMessageName, {})
+            cytanb.EmitMessage(buildAllStandLightsMessageName)
         elseif cupClickCount == 3 then
             cytanb.EmitMessage(showSettingsPanelMessageName)
         end
@@ -772,15 +791,20 @@ function onCollisionEnter (item, hit)
         if string.startsWith(hit, settings.standLightPrefix) then
             cytanb.LogTrace('onCollisionEnter: item = ', item, ', hit = ', hit)
             local light, index = StandLightFromName(hit)
-            if light then
-                local li = light.item
-                if ball.IsMine and not li.IsMine then
-                    -- ライトとボールの操作権が別ユーザーであれば、位置の同期のタイミングによっては、
-                    -- ライト側で衝突イベントが発生しないため、メッセージで送る。
-                    local targets = {}
-                    targets[index] = true
-                    cytanb.EmitMessage(jumpStandLightMessageName, {targets = targets})
-                end
+            -- インデックスが有効である場合は、ライトに衝突した
+            if index >= 1 and (
+                -- light が取れない場合は、より多くのライトが実装された別 VCI に衝突した
+                not light or (
+                    -- 自身のライトとは距離が離れている場合は、同名オブジェクトの別 VCI に衝突した
+                    not IsBallInContactWithStandLight(ball.GetPosition(), light.item.GetPosition()) or (
+                        -- ライトとボールの操作権が別ユーザーであれば、位置同期の補間によっては、
+                        -- ライト側で衝突イベントが発生しないため、メッセージで送る。
+                        ball.IsMine and not light.item.IsMine
+                    )
+                )
+            ) then
+                cytanb.LogTrace('  emitMessage: ', jumpStandLightMessageName)
+                cytanb.EmitMessage(jumpStandLightMessageName, {ball = cytanb.GetSubItemTransform(ball), targets = {[index] = true}})
             end
         end
     elseif string.startsWith(item, settings.standLightPrefix) and string.find(hit, settings.ballTag, 1, true) then
@@ -788,8 +812,9 @@ function onCollisionEnter (item, hit)
         local light = StandLightFromName(item)
         if light then
             local li = light.item
-            if li.IsMine and (not ball.IsMine or hit ~= ball.GetName()) then
+            if li.IsMine and (not IsBallInContactWithStandLight(ball.GetPosition(), li.GetPosition()) or not ball.IsMine) then
                 -- ライトとボールの操作権が別ユーザーか、別 VCI のボールであれば、自力で飛ぶ。
+                cytanb.LogTrace('  jump by myself: ', item)
                 JumpStandLight(light)
             end
         end

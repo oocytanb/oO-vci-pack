@@ -144,6 +144,9 @@ return {
             --- 入力タイミングによる仰俯角のスケールの最大値。
             ballInpactMaxAltitudeScale = 45.0,
 
+            --- ボールの半径のシミュレーション値。
+            ballSimRadius = 0.1085,
+
             --- ボールの質量のシミュレーション値。
             ballSimMass = 35.0,
 
