@@ -201,14 +201,17 @@ local ResetGauge = function ()
     vci.assets.SetMaterialTextureOffsetFromName(settings.impactForceGaugeMat, Vector2.zero)
 end
 
---- ボールをカップへ戻す。
-local RespawnBall = function ()
-    ResetGauge()
-
+local ResetBallCup = function ()
     if ballCup.IsMine and not cupGrabbed and not IsHorizontalAttitude(ballCup.GetRotation()) then
         cytanb.LogTrace('reset cup rotation')
         ballCup.SetRotation(Quaternion.identity)
     end
+end
+
+--- ボールをカップへ戻す。
+local RespawnBall = function ()
+    ResetGauge()
+    ResetBallCup()
 
     if ball.IsMine then
         ball.SetVelocity(Vector3.zero)
@@ -256,7 +259,7 @@ local ThrowBallByKinematic = function ()
             if deltaSec > Vector3.kEpsilon then
                 -- 古いデータほど係数を下げる
                 local deltaVelocityFactor = math.max(0.0, 1.0 - (now - st).totalSeconds * 1.25)
-                cytanb.LogTrace('deltaVelocityFactor = ', deltaVelocityFactor)
+                -- cytanb.LogTrace('deltaVelocityFactor = ', deltaVelocityFactor)
 
                 local dp = sp - element.position
                 local velocity = dp * deltaVelocityFactor / deltaSec
@@ -271,8 +274,7 @@ local ThrowBallByKinematic = function ()
                 end
             end
 
-            cytanb.LogTrace('totalVelocity: ', totalVelocity, ', totalAngularVelocity: ', totalAngularVelocity)
-
+            -- cytanb.LogTrace('totalVelocity: ', totalVelocity, ', totalAngularVelocity: ', totalAngularVelocity)
             st = element.time
             sp = element.position
             sr = element.rotation
@@ -723,6 +725,7 @@ function onUngrab (target)
 
     if target == ballCup.GetName() then
         cupGrabbed = false
+        ResetBallCup()
     elseif target == ball.GetName() then
         if ballGrabbed then
             ballGrabbed = false

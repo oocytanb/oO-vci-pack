@@ -58,6 +58,7 @@ local CreateLocalSharedProperties = function (lspid, loadid, studioTimeGetter)
             local now = studioTimeGetter()
             local oldValue = pmap[key]
             pmap[key] = value
+
             for listener, id in pairs(listenerMap) do
                 local t = aliveMap[id]
                 if t and t + maxAliveTime >= now then
@@ -66,6 +67,7 @@ local CreateLocalSharedProperties = function (lspid, loadid, studioTimeGetter)
                     -- 期限切れしたリスナーを解除する
                     listener(expiredEventName, key, value, oldValue)
                     listenerMap[listener] = nil
+                    aliveMap[id] = nil
                 end
             end
         end,
@@ -109,13 +111,13 @@ return {
             ballKinematicVelocityThreshold = 1.0,
 
             --- 投球動作による速度係数の最小値。
-            ballKinematicMinVelocityFactor = 0.125,
+            ballKinematicMinVelocityFactor = 0.0625,
 
             --- 投球動作による速度係数の最大値。
             ballKinematicMaxVelocityFactor = 0.875,
 
             --- 投球動作による角速度係数の最小値。
-            ballKinematicMinAngularVelocityFactor = 0.5,
+            ballKinematicMinAngularVelocityFactor = 0.0625,
 
             --- 投球動作による角速度係数の最大値。
             ballKinematicMaxAngularVelocityFactor = 7.5,
@@ -139,10 +141,10 @@ return {
             ballInpactMaxAngularVelocityScale = 22.0,
 
             --- 入力タイミングによる仰俯角のスケールの最小値。
-            ballInpactMinAltitudeScale = -45.0,
+            ballInpactMinAltitudeScale = -75.0,
 
             --- 入力タイミングによる仰俯角のスケールの最大値。
-            ballInpactMaxAltitudeScale = 45.0,
+            ballInpactMaxAltitudeScale = 75.0,
 
             --- ボールの半径のシミュレーション値。
             ballSimRadius = 0.1085,
@@ -169,10 +171,10 @@ return {
             ballActiveThreshold = 0.75 + 0.25,
 
             --- ボールがリスポーンするまでの待ち時間。
-            ballWaitingTime = TimeSpan.FromSeconds(30),
+            ballWaitingTime = TimeSpan.FromSeconds(60),
 
             --- ボールのプレイエリアの半径。これを超えるとリスポーンする。
-            ballPlayAreaRadius = 30,
+            ballPlayAreaRadius = 100,
 
             --- ゲージの毎秒の変化率。
             impactGaugeRatioPerSec = 1,
