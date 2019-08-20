@@ -5,6 +5,7 @@
 
 local CreateLocalSharedProperties = function (lspid, loadid, studioTimeGetter)
     local maxAliveTime = TimeSpan.FromSeconds(5)
+    local clientLspid = '84cda5f8-ebd7-442c-9269-5160dac50b9e'
     local aliveLspid = '58d17509-83b7-486b-be8f-aa74b7d6cc75'
     local listenerMapKey = '__CYTANB_LOCAL_SHARED_PROPERTIES_LISTENER_MAP'
     local propertyChangeEventName = 'property_change'
@@ -12,6 +13,12 @@ local CreateLocalSharedProperties = function (lspid, loadid, studioTimeGetter)
 
     if type(lspid) ~= 'string' or type(loadid) ~= 'string' then
         error('Invalid argument')
+    end
+
+    local clientID = _G[clientLspid]
+    if not clientID then
+        clientID = loadid
+        _G[clientLspid] = clientID
     end
 
     local aliveMap = _G[aliveLspid]
@@ -37,8 +44,12 @@ local CreateLocalSharedProperties = function (lspid, loadid, studioTimeGetter)
             return lspid
         end,
 
-        GetLoadID = function()
+        GetLoadID = function ()
             return loadid
+        end,
+
+        GetClientID = function ()
+            return clientID
         end,
 
         GetProperty = function (key, defaultValue)
@@ -90,6 +101,7 @@ return {
     Load = function (mainEnv, loadid)
         local cballSettingsLspid = 'e63ae798-cdd4-42c0-a2a0-33655c9514a4'
         local ballTag = '#cytanb-ball'
+        local targetTag = '#cytanb-target'
         local ballVelocityAdjustmentPropertyName = 'ballVelocityAdjustment'
         local ballAngularVelocityAdjustmentPropertyName = 'ballAngularVelocityAdjustment'
         local ballAltitudeAdjustmentPropertyName = 'ballAltitudeAdjustment'
@@ -188,8 +200,20 @@ return {
             --- ライトの水平姿勢判定の閾値。
             standLightHorizontalAttitudeThreshold = 5.0,
 
-            --- ライトのジャンプ係数。
-            standLightJumpFactor = 100,
+            --- ライトの最小ヒットマグニチュード。
+            standLightMinHitMagnitude = 0.5,
+
+            --- ライトの最大ヒットマグニチュード。
+            standLightMaxHitMagnitude = 1.5,
+
+            --- ライトのY方向の最小ヒットマグニチュード。
+            standLightMinHitMagnitudeY = 0.5,
+
+            --- ライトのY方向の最大ヒットマグニチュード。
+            standLightMaxHitMagnitudeY = 0.75,
+
+            --- ライトにヒットしたときの力の係数。
+            standLightHitForceFactor = 2.0,
 
             --- ライトがリスポーンするまでの待ち時間。
             standLightWaitingTime = TimeSpan.FromSeconds(60),
@@ -218,8 +242,14 @@ return {
             --- ボールのカップのオブジェクト名。
             ballCupName = 'ball-cup',
 
+            --- ターゲットのタグ名。
+            targetTag = targetTag,
+
             --- ライトのオブジェクト名の接頭辞。
-            standLightPrefix = 'oO-standlight-',
+            standLightPrefix = 'oO-standlight' .. targetTag .. '#',
+
+            --- ライトのエフェクトのオブジェクト名の接頭辞。
+            standLightEfkPrefix = 'standlight-efk#',
 
             --- ライトのオブジェクト数。
             standLightCount = 3,
@@ -255,8 +285,14 @@ return {
             --- 仰俯角の調整値のプロパティ名。
             ballAltitudeAdjustmentPropertyName = ballAltitudeAdjustmentPropertyName,
 
+            --- アバターのコライダー名リスト。
+            avatarColliders = {'Head', 'Chest', 'Hips', 'RightArm', 'LeftArm', 'RightHand', 'LeftHand', 'RightThigh', 'LeftThigh', 'RightFoot', 'LeftFoot', 'RightToes', 'LeftToes'},
+
             --- ローカルの共有プロパティ。
             localSharedProperties = CreateLocalSharedProperties(cballSettingsLspid, loadid, function () return mainEnv.vci.me.Time end),
+
+            --- エフェクトを有効にするか。
+            enableEfk = true,
 
             --- デバッギングを有効にするか。
             enableDebugging = false
