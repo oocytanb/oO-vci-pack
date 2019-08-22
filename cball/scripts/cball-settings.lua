@@ -197,6 +197,9 @@ return {
             --- ゲージの表示時間。
             impactGaugeDisplayTime = TimeSpan.FromSeconds(2),
 
+            --- ライトの質量のシミュレーション値。
+            standLightSimMass = 1.0,
+
             --- ライトの水平姿勢判定の閾値。
             standLightHorizontalAttitudeThreshold = 5.0,
 
@@ -248,11 +251,11 @@ return {
             --- ライトのオブジェクト名の接頭辞。
             standLightPrefix = 'oO-standlight' .. targetTag .. '#',
 
-            --- ライトのエフェクトのオブジェクト名の接頭辞。
-            standLightEfkPrefix = 'standlight-efk#',
-
             --- ライトのオブジェクト数。
             standLightCount = 3,
+
+            --- ライトのエフェクトのオブジェクト名。
+            standLightEfkName = 'standlight-efk',
 
             --- 威力のゲージのマテリアル名。
             impactForceGaugeMat = 'impact-force-gauge-mat',

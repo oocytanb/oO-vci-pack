@@ -53,7 +53,7 @@ local hiddenPosition
 
 local avatarColliderMap = cytanb.ListToMap(settings.avatarColliders, true)
 
-local ball, ballCup, standLights, impactForceGauge, impactSpinGauge, settingsPanel, closeSwitch, adjustmentSwitches, propertyNameSwitchMap
+local ball, ballCup, standLights, standLightEfkContainer, standLightEfk, impactForceGauge, impactSpinGauge, settingsPanel, closeSwitch, adjustmentSwitches, propertyNameSwitchMap
 
 --- 設定パネルがつかまれているか。
 local settingsPanelGrabbed = false
@@ -137,9 +137,9 @@ local OfferBallTransform = function (position, rotation, time)
     ballTransformQueue.Offer({position = position, rotation = rotation, time = time or vci.me.Time})
 end
 
-local EmitHit = function (targetName)
+local EmitHitBall = function (targetName)
     if not ball.IsMine then
-        cytanb.LogWarn('Unexpected operation: ball is not mine @EmitHit')
+        cytanb.LogWarn('Unexpected operation: ball is not mine @EmitHitBall')
         return
     end
 
@@ -152,10 +152,10 @@ local EmitHit = function (targetName)
         local dp = et.position - st.position
         local deltaSec = (et.time - st.time).TotalSeconds
         velocity = dp / (deltaSec > 0 and deltaSec or 0.000001)
-        cytanb.LogTrace('EmitHit: deltaPos = ', dp, ', deltaSec = ', deltaSec)
+        cytanb.LogTrace('EmitHitBall: deltaPos = ', dp, ', deltaSec = ', deltaSec)
     else
         velocity = Vector3.zero
-        cytanb.LogTrace('EmitHit: zero velocity')
+        cytanb.LogTrace('EmitHitBall: zero velocity')
     end
 
     cytanb.LogTrace('  emit ', hitMessageName, ': target = ', targetName, ', velocity = ', velocity, ', boundCount = ', ballBoundCount)
@@ -175,6 +175,52 @@ local EmitHit = function (targetName)
             name = targetName
         },
         directHit = ballBoundCount == 0
+    })
+end
+
+
+local EmitHitStandLight = function (light, targetName)
+    local li = light.item
+    local ls = light.status
+    if not li.IsMine then
+        cytanb.LogWarn('Unexpected operation: light is not mine @EmitHitStandLight')
+        return
+    end
+
+    local now = vci.me.Time
+    if now > ls.inactiveTime + settings.standLightRequestIntervalTime then
+        -- 自身のライトが倒れている状態でヒットした場合は、無視する
+        return
+    end
+
+    local deltaSec = (now - ls.inactiveTime).TotalSeconds
+    local velocity
+    if deltaSec > 0 then
+        local dp = li.GetPosition() - ls.respawnPosition
+        velocity = dp / deltaSec
+        cytanb.LogTrace('EmitHitStandLight: deltaPos = ', dp, ', deltaSec = ', deltaSec)
+    else
+        velocity = Vector3.zero
+        cytanb.LogTrace('EmitHitStandLight: zero velocity')
+    end
+
+    cytanb.LogTrace('  emit ', hitMessageName, ': target = ', targetName, ', velocity = ', velocity)
+    cytanb.EmitMessage(hitMessageName, {
+        source = {
+            name = li.GetName(),
+            transform = cytanb.GetSubItemTransform(li),
+            velocity = {
+                x = velocity.x,
+                y = velocity.y,
+                z = velocity.z
+            },
+            mass = settings.standLightSimMass,
+            clientID = settings.localSharedProperties.GetClientID()
+        },
+        target = {
+            name = targetName
+        },
+        directHit = false
     })
 end
 
@@ -224,9 +270,9 @@ local HitStandLight = function (light)
     if not ls.active and now <= ls.inactiveTime + settings.standLightRequestIntervalTime then
         -- ライトが倒れた直後ならエフェクトを再生する
         if settings.enableEfk and ls.directHit then
-            cytanb.LogTrace('play ', li.GetName(), ' efk: ', light.efk.EffectName, ', directHit = ', ls.directHit)
-            light.efkContainer.SetPosition(li.GetPosition())
-            light.efk.Play()
+            cytanb.LogTrace('play ', li.GetName(), ', directHit = ', ls.directHit)
+            standLightEfkContainer.SetPosition(li.GetPosition())
+            standLightEfk.Play()
         end
         ls.readyInactiveTime = TimeSpan.Zero
         ls.directHit = false
@@ -392,18 +438,11 @@ local OnLoad = function ()
     standLights = {}
     for i = 1, settings.standLightCount do
         local item = vci.assets.GetSubItem(settings.standLightPrefix .. (i - 1))
-        local efkContainerName = settings.standLightEfkPrefix .. (i - 1)
-        local efkContainer = vci.assets.GetSubItem(efkContainerName)
-        local efk = vci.assets.GetEffekseerEmitter(efkContainerName)
-        if not efkContainer or not efk then
-            settings.enableEfk = false
-        end
         standLights[i] = {
             item = item,
-            efkContainer = efkContainer,
-            efk = efk,
             status = {
                 respawnPosition = item.GetPosition(),
+                grabbed = false,
                 active = true,
                 inactiveTime = TimeSpan.Zero,
                 readyInactiveTime = TimeSpan.Zero,
@@ -412,6 +451,9 @@ local OnLoad = function ()
             }
         }
     end
+
+    standLightEfkContainer = vci.assets.GetSubItem(settings.standLightEfkName)
+    standLightEfk = vci.assets.GetEffekseerEmitter(settings.standLightEfkName)
 
     impactForceGauge = vci.assets.GetSubItem(settings.impactForceGaugeName)
     impactForceGauge.SetPosition(hiddenPosition)
@@ -474,8 +516,6 @@ local OnLoad = function ()
 
     -- ターゲットにヒットした。別 VCI から送られてくるケースも考慮する。
     cytanb.OnMessage(hitMessageName, function (sender, name, parameterMap)
-        --     velocity = velocity,
-
         local light, index = StandLightFromName(parameterMap.target.name)
         if light then
             local li = light.item
@@ -495,7 +535,7 @@ local OnLoad = function ()
                     cytanb.LogTrace('ready inactive: ', li.GetName(), ', directHit = ', ls.directHit)
                     ls.readyInactiveTime = now
 
-                    if li.IsMine and source.clientID ~= settings.localSharedProperties.GetClientID() then
+                    if li.IsMine and not ls.grabbed and source.clientID ~= settings.localSharedProperties.GetClientID() then
                         -- ライトの操作権があり、ソースのクライアントIDが自身のIDと異なる場合は、ソースの操作権が別ユーザーであるため、自力で倒れる
                         local hitForce
                         local sourceVelocity = source.velocity and Vector3.__new(source.velocity.x, source.velocity.y, source.velocity.z) or Vector3.zero
@@ -785,6 +825,11 @@ function onGrab (target)
         ballTransformQueue.Clear()
     elseif target == settingsPanel.GetName() then
         settingsPanelGrabbed = true
+    elseif string.startsWith(target, settings.standLightPrefix) then
+        local light = StandLightFromName(target)
+        if light then
+            light.status.grabbed = true
+        end
     end
 end
 
@@ -814,6 +859,8 @@ function onUngrab (target)
         cytanb.LogTrace('ungrab ', target, ', index = ', index, ', light = ', type(light))
         if light then
             local li = light.item
+            local ls = light.status
+            ls.grabbed = false
             if li.IsMine then
                 local targets = {}
                 targets[index] = {transform = cytanb.GetSubItemTransform(li)}
@@ -861,13 +908,22 @@ function onCollisionEnter (item, hit)
         return
     end
 
-    if item == ball.GetName() and ball.IsMine and not ballGrabbed then
+    if item == ball.GetName() then
+        if ball.IsMine and not ballGrabbed then
+            if string.find(hit, settings.targetTag, 1, true) then
+                EmitHitBall(hit)
+            elseif not avatarColliderMap[hit] then
+                -- ライトかアバターのコライダー以外に衝突した場合は、カウントアップする
+                ballBoundCount = ballBoundCount + 1
+                cytanb.LogTrace('ball bounds: hit = ', hit, ', boundCount = ', ballBoundCount)
+            end
+        end
+    elseif string.startsWith(item, settings.standLightPrefix) then
         if string.find(hit, settings.targetTag, 1, true) then
-            EmitHit(hit)
-        elseif not avatarColliderMap[hit] then
-            -- ライトかアバターのコライダー以外に衝突した場合は、カウントアップする
-            ballBoundCount = ballBoundCount + 1
-            cytanb.LogTrace('ball bounds: hit = ', hit, ', boundCount = ', ballBoundCount)
+            local light = StandLightFromName(item)
+            if light and light.item.IsMine and not light.status.grabbed then
+                EmitHitStandLight(light, hit)
+            end
         end
     end
 end

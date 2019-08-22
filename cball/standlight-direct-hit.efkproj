@@ -8,6 +8,9 @@
           <MaxGeneration>
             <Value>8</Value>
           </MaxGeneration>
+          <LocationEffectType>1</LocationEffectType>
+          <RotationEffectType>1</RotationEffectType>
+          <ScaleEffectType>1</ScaleEffectType>
           <Life>
             <Center>80</Center>
             <Max>80</Max>
