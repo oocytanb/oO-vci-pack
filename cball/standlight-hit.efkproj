@@ -6,7 +6,7 @@
       <Node>
         <CommonValues>
           <MaxGeneration>
-            <Value>15</Value>
+            <Value>3</Value>
           </MaxGeneration>
           <LocationEffectType>1</LocationEffectType>
           <RotationEffectType>1</RotationEffectType>
@@ -37,24 +37,24 @@
             </Location>
             <Velocity>
               <X>
-                <Max>0.02</Max>
-                <Min>-0.02</Min>
+                <Max>0.01</Max>
+                <Min>-0.01</Min>
               </X>
               <Y>
-                <Center>0.12</Center>
-                <Max>0.13</Max>
-                <Min>0.11</Min>
+                <Center>0.065</Center>
+                <Max>0.07</Max>
+                <Min>0.05999999</Min>
               </Y>
               <Z>
-                <Max>0.02</Max>
-                <Min>-0.02</Min>
+                <Max>0.01</Max>
+                <Min>-0.01</Min>
               </Z>
             </Velocity>
             <Acceleration>
               <Y>
-                <Center>-0.003</Center>
-                <Max>-0.003</Max>
-                <Min>-0.003</Min>
+                <Center>-0.002</Center>
+                <Max>-0.002</Max>
+                <Min>-0.002</Min>
               </Y>
             </Acceleration>
           </PVA>
@@ -66,9 +66,9 @@
           <Type>3</Type>
           <SinglePVA>
             <Scale>
-              <Center>0.2</Center>
-              <Max>0.25</Max>
-              <Min>0.15</Min>
+              <Center>0.085</Center>
+              <Max>0.09499999</Max>
+              <Min>0.07500001</Min>
             </Scale>
           </SinglePVA>
         </ScalingValues>

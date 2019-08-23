@@ -120,7 +120,7 @@ Material:
     - _SrcBlend: 1
     - _UVSec: 0
     - _UvAnimRotation: 0
-    - _UvAnimScrollX: 0.0075
+    - _UvAnimScrollX: 0.011
     - _UvAnimScrollY: -0.002
     - _ZWrite: 1
     m_Colors:

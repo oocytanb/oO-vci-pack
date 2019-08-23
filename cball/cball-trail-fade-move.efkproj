@@ -6,15 +6,15 @@
       <Node>
         <CommonValues>
           <MaxGeneration>
-            <Value>15</Value>
+            <Value>4</Value>
           </MaxGeneration>
           <LocationEffectType>1</LocationEffectType>
           <RotationEffectType>1</RotationEffectType>
           <ScaleEffectType>1</ScaleEffectType>
           <Life>
-            <Center>80</Center>
-            <Max>80</Max>
-            <Min>80</Min>
+            <Center>220</Center>
+            <Max>240</Max>
+            <Min>200</Min>
           </Life>
         </CommonValues>
         <LocationValues>
@@ -26,9 +26,8 @@
                 <Min>-0.1</Min>
               </X>
               <Y>
-                <Center>0.1</Center>
-                <Max>0.15</Max>
-                <Min>0.05</Min>
+                <Max>0.1</Max>
+                <Min>-0.1</Min>
               </Y>
               <Z>
                 <Max>0.1</Max>
@@ -37,26 +36,18 @@
             </Location>
             <Velocity>
               <X>
-                <Max>0.02</Max>
-                <Min>-0.02</Min>
+                <Max>0.0001</Max>
+                <Min>-0.0001</Min>
               </X>
               <Y>
-                <Center>0.12</Center>
-                <Max>0.13</Max>
-                <Min>0.11</Min>
+                <Max>0.0001</Max>
+                <Min>-0.0001</Min>
               </Y>
               <Z>
-                <Max>0.02</Max>
-                <Min>-0.02</Min>
+                <Max>0.0001</Max>
+                <Min>-0.0001</Min>
               </Z>
             </Velocity>
-            <Acceleration>
-              <Y>
-                <Center>-0.003</Center>
-                <Max>-0.003</Max>
-                <Min>-0.003</Min>
-              </Y>
-            </Acceleration>
           </PVA>
         </LocationValues>
         <RotationValues>
@@ -66,24 +57,55 @@
           <Type>3</Type>
           <SinglePVA>
             <Scale>
-              <Center>0.2</Center>
-              <Max>0.25</Max>
-              <Min>0.15</Min>
+              <Center>0.04</Center>
+              <Max>0.06</Max>
+              <Min>0.02</Min>
             </Scale>
           </SinglePVA>
         </ScalingValues>
         <RendererCommonValues>
-          <ColorTexture>textures/cball-particles-sq.png</ColorTexture>
+          <ColorTexture>textures/cball-particles-cr.png</ColorTexture>
+          <FadeInType>1</FadeInType>
+          <FadeIn>
+            <Frame>30</Frame>
+            <StartSpeed>10</StartSpeed>
+          </FadeIn>
+          <FadeOutType>1</FadeOutType>
+          <FadeOut>
+            <Frame>30</Frame>
+            <StartSpeed>-10</StartSpeed>
+          </FadeOut>
         </RendererCommonValues>
         <DrawingValues>
           <Sprite>
+            <ColorAll>1</ColorAll>
             <ColorAll_Fixed>
               <R>172</R>
               <B>172</B>
             </ColorAll_Fixed>
+            <ColorAll_Random>
+              <R>
+                <Center>159</Center>
+                <Min>64</Min>
+                <DrawnAs>0</DrawnAs>
+              </R>
+              <G>
+                <Center>159</Center>
+                <Min>64</Min>
+                <DrawnAs>0</DrawnAs>
+              </G>
+              <B>
+                <Center>159</Center>
+                <Min>64</Min>
+                <DrawnAs>0</DrawnAs>
+              </B>
+              <A>
+                <DrawnAs>0</DrawnAs>
+              </A>
+            </ColorAll_Random>
           </Sprite>
         </DrawingValues>
-        <Name>sq</Name>
+        <Name>cr</Name>
         <Children />
       </Node>
     </Children>
@@ -91,6 +113,6 @@
   <ToolVersion>1.43d</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
-  <EndFrame>120</EndFrame>
+  <EndFrame>240</EndFrame>
   <IsLoop>True</IsLoop>
 </EffekseerProject>

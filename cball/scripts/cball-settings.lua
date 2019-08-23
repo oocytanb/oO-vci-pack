@@ -105,6 +105,8 @@ return {
         local ballVelocityAdjustmentPropertyName = 'ballVelocityAdjustment'
         local ballAngularVelocityAdjustmentPropertyName = 'ballAngularVelocityAdjustment'
         local ballAltitudeAdjustmentPropertyName = 'ballAltitudeAdjustment'
+        local efkLevelPropertyName = 'efkLevel'
+        local audioVolumePropertyName = 'audioVolume'
 
         return {
             --- 速度の調整値の初期設定値。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
@@ -115,6 +117,12 @@ return {
 
             --- 仰俯角の調整値の初期設定値。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
             [ballAltitudeAdjustmentPropertyName] = 0,
+
+            --- エフェクトレベルの初期設定値。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
+            [efkLevelPropertyName] = 0,
+
+            --- 音量の初期設定値。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
+            [audioVolumePropertyName] = -5,
 
             --- 投球動作として、リリースポイントからさかのぼって速度計算に反映する時間。([100, 250] ms 程度の範囲)
             ballKinematicTime = TimeSpan.FromMilliseconds(200),
@@ -183,10 +191,25 @@ return {
             ballActiveThreshold = 0.75 + 0.25,
 
             --- ボールがリスポーンするまでの待ち時間。
-            ballWaitingTime = TimeSpan.FromSeconds(60),
+            ballWaitingTime = TimeSpan.FromSeconds(90),
 
             --- ボールのプレイエリアの半径。これを超えるとリスポーンする。
             ballPlayAreaRadius = 100,
+
+            --- ボールが近距離にあると判定する距離。
+            ballNearDistance = 5,
+
+            --- ボールの軌跡を表示する速度の閾値。
+            ballTrailVelocityThreshold = 1.4,
+
+            --- ボールの軌跡を補間する距離の係数。
+            ballTrailInterpolationDistanceFactor = 5.0,
+
+            --- ボールの軌跡の毎秒の補間ノード数の基準値。
+            ballTrailInterpolationNodesPerSec = 300,
+
+            --- ボールの軌跡の毎フレームの補間ノード数の基準値。
+            ballTrailInterpolationNodesPerFrame = 5,
 
             --- ゲージの毎秒の変化率。
             impactGaugeRatioPerSec = 1,
@@ -245,6 +268,9 @@ return {
             --- ボールのオブジェクト名。
             ballName = 'cball' .. ballTag,
 
+            --- ボールのエフェクトのオブジェクト名。
+            ballEfkName = 'ball-efk',
+
             --- ボールのカップのオブジェクト名。
             ballCupName = 'ball-cup',
 
@@ -291,6 +317,12 @@ return {
             --- 仰俯角の調整値のプロパティ名。
             ballAltitudeAdjustmentPropertyName = ballAltitudeAdjustmentPropertyName,
 
+            --- エフェクトレベルのプロパティ名。
+            efkLevelPropertyName = efkLevelPropertyName,
+
+            --- 音量のプロパティ名。
+            audioVolumePropertyName = audioVolumePropertyName,
+
             --- スコアのヒット数のプロパティ名。
             scoreHitCountPropertyName = 'scoreHitCount',
 
@@ -302,9 +334,6 @@ return {
 
             --- ローカルの共有プロパティ。
             localSharedProperties = CreateLocalSharedProperties(cballSettingsLspid, loadid, function () return mainEnv.vci.me.Time end),
-
-            --- エフェクトを有効にするか。
-            enableEfk = true,
 
             --- デバッギングを有効にするか。
             enableDebugging = false

@@ -383,7 +383,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 753107a3c841da84eb4bd95304b50ca6, type: 3}
-    version: 0.5.5
+    version: 0.5.7
     description: "- \u6295\u3052\u3066\u904A\u3079\u308B\u30DC\u30FC\u30EB\u3067\u3059\u3002\r\n-
       \u56DE\u8EE2\u3092\u304B\u3051\u3066\u6295\u3052\u308B\u3068\u30AB\u30FC\u30D6\u3057\u307E\u3059\u3002\n-
       \u30DC\u30FC\u30EB\u3092\u63E1\u3063\u3066\u30B0\u30EA\u30C3\u30D7\u3059\u308B\u3053\u3068\u3067\u3001\u30BF\u30A4\u30DF\u30F3\u30B0\u5165\u529B\u306B\u3088\u308B\u6295\u7403\u3082\u51FA\u6765\u307E\u3059\u3002\r"
@@ -1095,6 +1095,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1327664077}
+  - component: {fileID: 1327664079}
   - component: {fileID: 1327664078}
   m_Layer: 0
   m_Name: standlight-efk
@@ -1130,6 +1131,99 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectAsset: {fileID: 11400000, guid: 512c24d8434919049b68b31401e92b99, type: 2}
+  playOnStart: 0
+  isLooping: 0
+--- !u!114 &1327664079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1327664076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d396bcb8480c24eb784eebe6096a99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectAsset: {fileID: 11400000, guid: 2ffda5d8b7dc55741a1bd0838051089a, type: 2}
+  playOnStart: 0
+  isLooping: 0
+--- !u!1 &1354631663
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1354631664}
+  - component: {fileID: 1354631665}
+  - component: {fileID: 1354631667}
+  - component: {fileID: 1354631666}
+  m_Layer: 0
+  m_Name: ball-efk
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1354631664
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1354631663}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 473979080}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1354631665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1354631663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d396bcb8480c24eb784eebe6096a99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectAsset: {fileID: 11400000, guid: 2b908ad791f852747b730ce9ae457e34, type: 2}
+  playOnStart: 0
+  isLooping: 0
+--- !u!114 &1354631666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1354631663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d396bcb8480c24eb784eebe6096a99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectAsset: {fileID: 11400000, guid: d653969118fdf8844ad642b4ba88f838, type: 2}
+  playOnStart: 0
+  isLooping: 0
+--- !u!114 &1354631667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1354631663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d396bcb8480c24eb784eebe6096a99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectAsset: {fileID: 11400000, guid: 6980d19eab7689045a4efe050b55ef94, type: 2}
   playOnStart: 0
   isLooping: 0
 --- !u!1001 &1970456560
