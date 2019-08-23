@@ -158,8 +158,8 @@ return {
             --- 入力タイミングによる仰俯角のスケールの最大値。
             ballInpactMaxAltitudeScale = 75.0,
 
-            --- ボールの半径のシミュレーション値。
-            ballSimRadius = 0.1085,
+            --- ボールの長辺のシミュレーション値。
+            ballSimLongSide = 0.217,
 
             --- ボールの質量のシミュレーション値。
             ballSimMass = 35.0,
@@ -196,6 +196,9 @@ return {
 
             --- ゲージの表示時間。
             impactGaugeDisplayTime = TimeSpan.FromSeconds(2),
+
+            --- ライトの長辺のシミュレーション値。
+            standLightSimLongSide = 0.56,
 
             --- ライトの質量のシミュレーション値。
             standLightSimMass = 1.0,
@@ -287,6 +290,12 @@ return {
 
             --- 仰俯角の調整値のプロパティ名。
             ballAltitudeAdjustmentPropertyName = ballAltitudeAdjustmentPropertyName,
+
+            --- スコアのヒット数のプロパティ名。
+            scoreHitCountPropertyName = 'scoreHitCount',
+
+            --- スコアのダイレクトヒット数のプロパティ名。
+            scoreDirectHitCountPropertyName = 'scoreDirectHitCount',
 
             --- アバターのコライダー名リスト。
             avatarColliders = {'Head', 'Chest', 'Hips', 'RightArm', 'LeftArm', 'RightHand', 'LeftHand', 'RightThigh', 'LeftThigh', 'RightFoot', 'LeftFoot', 'RightToes', 'LeftToes'},

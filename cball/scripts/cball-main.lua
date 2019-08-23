@@ -27,14 +27,18 @@ local IsHorizontalAttitude = function (rotation, up, angleAccuracy)
     end
 end
 
-local ApplyAltitudeAngle = function (vec, angle)
-    local axis = Vector3.Cross(Vector3.up, vec)
+local ApplyAltitudeAngle = function (vec, angle, upwards)
+    local axis = Vector3.Cross(upwards or Vector3.up, vec)
     if axis == Vector3.zero then
-        -- 垂直方向のベクトルであれば、元のベクトルを返す。
+        -- upwards と軸が同じであれば、元のベクトルを返す。
         return vec
     else
         return cytanb.ApplyQuaternionToVector3(Quaternion.AngleAxis(- angle, axis), vec)
     end
+end
+
+local IsContactWithTarget = function (sourcePosition, sourceLongSide, targetPosition, targetLongSide)
+    return (sourcePosition - targetPosition).sqrMagnitude <= (sourceLongSide + targetLongSide) ^ 2
 end
 
 local settings = require('cball-settings').Load(_ENV, tostring(cytanb.RandomUUID()))
@@ -121,7 +125,7 @@ local CreateAdjustmentSwitch = function (switchName, knobName, propertyName)
             local inputCount = settings.localSharedProperties.GetProperty(propertyName, defaultValue)
             value = cytanb.PingPong(inputCount + 5, 10) - 5
             knob.SetLocalPosition(Vector3.__new(initialKnobPosition.x, settings.settingsPanelAdjustmentSwitchNeutralPositionY + value * settings.settingsPanelAdjustmentSwitchDivisionScale, initialKnobPosition.z))
-            cytanb.LogTrace('on update[', switchName, ']: value = ', value, ', count = ', inputCount)
+            cytanb.LogInfo('on update[', switchName, ']: value = ', value, ', count = ', inputCount)
         end
     }
     self.Update()
@@ -168,6 +172,7 @@ local EmitHitBall = function (targetName)
                 y = velocity.y,
                 z = velocity.z
             },
+            longSide = settings.ballSimLongSide,
             mass = settings.ballSimMass,
             clientID = settings.localSharedProperties.GetClientID()
         },
@@ -204,7 +209,10 @@ local EmitHitStandLight = function (light, targetName)
         cytanb.LogTrace('EmitHitStandLight: zero velocity')
     end
 
-    cytanb.LogTrace('  emit ', hitMessageName, ': target = ', targetName, ', velocity = ', velocity)
+    --@todo hitMessage が来る前に、ライトがターゲットに当たった場合は、hitClientID を正しく設定できないので、対策を考える。
+    local hitClientID = now <= ls.hitMessageTime + settings.standLightRequestIntervalTime and ls.hitClientID or ''
+
+    cytanb.LogTrace('  emit ', hitMessageName, ': target = ', targetName, ', velocity = ', velocity, ', hitClientID = ', hitClientID)
     cytanb.EmitMessage(hitMessageName, {
         source = {
             name = li.GetName(),
@@ -214,8 +222,9 @@ local EmitHitStandLight = function (light, targetName)
                 y = velocity.y,
                 z = velocity.z
             },
+            longSide = settings.standLightSimLongSide,
             mass = settings.standLightSimMass,
-            clientID = settings.localSharedProperties.GetClientID()
+            clientID = hitClientID
         },
         target = {
             name = targetName
@@ -236,10 +245,6 @@ local StandLightFromName = function (name)
     end
 end
 
-local IsBallInContactWithStandLight = function (ballPosition, standLightPosition)
-    return (ballPosition - standLightPosition).sqrMagnitude <= (settings.ballSimRadius * 6.0) ^ 2
-end
-
 local BuildStandLight = function (light, respawnPosition)
     if not light then
         return
@@ -254,6 +259,7 @@ local BuildStandLight = function (light, respawnPosition)
     ls.inactiveTime = vci.me.Time
     ls.readyInactiveTime = TimeSpan.Zero
     ls.hitMessageTime = TimeSpan.Zero
+    ls.hitClientID = ''
     ls.directHit = false
     if li.IsMine then
         li.SetRotation(Quaternion.identity)
@@ -268,14 +274,22 @@ local HitStandLight = function (light)
     local ls = light.status
     local now = vci.me.Time
     if not ls.active and now <= ls.inactiveTime + settings.standLightRequestIntervalTime then
-        -- ライトが倒れた直後ならエフェクトを再生する
+        -- ライトが倒れた直後ならヒットしたものとして判定
+        if ls.hitClientID == settings.localSharedProperties.GetClientID() then
+            -- スコアを更新
+            local propertyName = ls.directHit and settings.scoreDirectHitCountPropertyName or settings.scoreHitCountPropertyName
+            local score = (settings.localSharedProperties.GetProperty(propertyName) or 0) + 1
+            settings.localSharedProperties.SetProperty(propertyName, score)
+            cytanb.LogInfo(propertyName, ': ', score)
+        end
+
         if settings.enableEfk and ls.directHit then
             cytanb.LogTrace('play ', li.GetName(), ', directHit = ', ls.directHit)
             standLightEfkContainer.SetPosition(li.GetPosition())
             standLightEfk.Play()
         end
+
         ls.readyInactiveTime = TimeSpan.Zero
-        ls.directHit = false
     end
 end
 
@@ -447,6 +461,7 @@ local OnLoad = function ()
                 inactiveTime = TimeSpan.Zero,
                 readyInactiveTime = TimeSpan.Zero,
                 hitMessageTime = TimeSpan.Zero,
+                hitClientID = '',
                 directHit = false
             }
         }
@@ -516,52 +531,55 @@ local OnLoad = function ()
 
     -- ターゲットにヒットした。別 VCI から送られてくるケースも考慮する。
     cytanb.OnMessage(hitMessageName, function (sender, name, parameterMap)
+        local source = parameterMap.source
+        local sourceTransform = source.transform
         local light, index = StandLightFromName(parameterMap.target.name)
-        if light then
-            local li = light.item
-            local ls = light.status
-            local source = parameterMap.source
-            local sourceTransform = source.transform
-            local sourcePos = Vector3.__new(sourceTransform.positionX, sourceTransform.positionY, sourceTransform.positionZ)
-            local now = vci.me.Time
-            if IsBallInContactWithStandLight(sourcePos, li.GetPosition()) and now > ls.hitMessageTime + settings.standLightRequestIntervalTime then
-                -- 自 VCI のターゲットにヒットした
-                cytanb.LogTrace('onHitMessage: standLight[', index, ']')
-                ls.hitMessageTime = now
-                ls.directHit = parameterMap.directHit
+        if not sourceTransform or not light then
+            return
+        end
 
-                if ls.active then
-                    -- ライトが倒れていないので、レディ状態をセットする
-                    cytanb.LogTrace('ready inactive: ', li.GetName(), ', directHit = ', ls.directHit)
-                    ls.readyInactiveTime = now
+        local li = light.item
+        local ls = light.status
+        local sourcePos = Vector3.__new(sourceTransform.positionX, sourceTransform.positionY, sourceTransform.positionZ)
+        local now = vci.me.Time
+        if IsContactWithTarget(sourcePos, source.longSide or 1.0, li.GetPosition(), settings.standLightSimLongSide) and now > ls.hitMessageTime + settings.standLightRequestIntervalTime then
+            -- 自 VCI のターゲットにヒットした
+            cytanb.LogTrace('onHitMessage: standLight[', index, ']')
+            ls.hitMessageTime = now
+            ls.hitClientID = source.clientID
+            ls.directHit = parameterMap.directHit
 
-                    if li.IsMine and not ls.grabbed and source.clientID ~= settings.localSharedProperties.GetClientID() then
-                        -- ライトの操作権があり、ソースのクライアントIDが自身のIDと異なる場合は、ソースの操作権が別ユーザーであるため、自力で倒れる
-                        local hitForce
-                        local sourceVelocity = source.velocity and Vector3.__new(source.velocity.x, source.velocity.y, source.velocity.z) or Vector3.zero
-                        local horzSqrMagnitude = sourceVelocity.x ^ 2 + sourceVelocity.y ^ 2
-                        cytanb.LogTrace(' horzSqrMagnitude = ', horzSqrMagnitude, ', source.velocity = ', source.velocity)
-                        if horzSqrMagnitude > 0.0025 then
-                            local horzMagnitude = math.sqrt(horzSqrMagnitude)
-                            local im = cytanb.Clamp(horzMagnitude, settings.standLightMinHitMagnitude, settings.standLightMaxHitMagnitude) / horzMagnitude
-                            hitForce = Vector3.__new(sourceVelocity.x * im, cytanb.Clamp(sourceVelocity.y, settings.standLightMinHitMagnitudeY, settings.standLightMaxHitMagnitudeY), sourceVelocity.z * im)
-                            cytanb.LogTrace(li.GetName(), ' self-hit: source force = ', hitForce)
-                        else
-                            local rx = math.random()
-                            local dx = (rx * 2 >= 1 and 1 or -1) * (rx * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
-                            local rz = math.random()
-                            local dz = (rz * 2 >= 1 and 1 or -1) * (rz * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
-                            local dy = math.random() * (settings.standLightMaxHitMagnitudeY - settings.standLightMinHitMagnitudeY) + settings.standLightMinHitMagnitudeY
-                            hitForce = Vector3.__new(dx, dy, dz)
-                            cytanb.LogTrace(li.GetName(), ' self-hit: random force = ', hitForce)
-                        end
+            if ls.active then
+                -- ライトが倒れていないので、レディ状態をセットする
+                cytanb.LogTrace('ready inactive: ', li.GetName(), ', directHit = ', ls.directHit)
+                ls.readyInactiveTime = now
 
-                        local mass = source.mass > 0 and source.mass or 1.0
-                        li.AddForce(hitForce * (mass * settings.standLightHitForceFactor))
+                if li.IsMine and not ls.grabbed and source.clientID ~= settings.localSharedProperties.GetClientID() then
+                    -- ライトの操作権があり、ソースのクライアントIDが自身のIDと異なる場合は、ソースの操作権が別ユーザーであるため、自力で倒れる
+                    local hitForce
+                    local sourceVelocity = source.velocity and Vector3.__new(source.velocity.x, source.velocity.y, source.velocity.z) or Vector3.zero
+                    local horzSqrMagnitude = sourceVelocity.x ^ 2 + sourceVelocity.y ^ 2
+                    cytanb.LogTrace(' horzSqrMagnitude = ', horzSqrMagnitude, ', source.velocity = ', source.velocity)
+                    if horzSqrMagnitude > 0.0025 then
+                        local horzMagnitude = math.sqrt(horzSqrMagnitude)
+                        local im = cytanb.Clamp(horzMagnitude, settings.standLightMinHitMagnitude, settings.standLightMaxHitMagnitude) / horzMagnitude
+                        hitForce = Vector3.__new(sourceVelocity.x * im, cytanb.Clamp(sourceVelocity.y, settings.standLightMinHitMagnitudeY, settings.standLightMaxHitMagnitudeY), sourceVelocity.z * im)
+                        cytanb.LogTrace(li.GetName(), ' self-hit: source force = ', hitForce)
+                    else
+                        local rx = math.random()
+                        local dx = (rx * 2 >= 1 and 1 or -1) * (rx * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
+                        local rz = math.random()
+                        local dz = (rz * 2 >= 1 and 1 or -1) * (rz * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
+                        local dy = math.random() * (settings.standLightMaxHitMagnitudeY - settings.standLightMinHitMagnitudeY) + settings.standLightMinHitMagnitudeY
+                        hitForce = Vector3.__new(dx, dy, dz)
+                        cytanb.LogTrace(li.GetName(), ' self-hit: random force = ', hitForce)
                     end
-                else
-                    HitStandLight(light)
+
+                    local mass = source.mass > 0 and source.mass or 1.0
+                    li.AddForce(hitForce * (mass * settings.standLightHitForceFactor))
                 end
+            else
+                HitStandLight(light)
             end
         end
     end)
