@@ -286,6 +286,12 @@ return {
             --- ライトのエフェクトのオブジェクト名。
             standLightEfkName = 'standlight-efk',
 
+            --- ライトのヒット音のクリップ名の接頭辞。
+            standLightHitAudioPrefix = 'standlight-hit-',
+
+            --- ライトのダイレクトヒット音のクリップ名。
+            standLightDirectHitAudioName = 'standlight-direct-hit',
+
             --- 威力のゲージのマテリアル名。
             impactForceGaugeMat = 'impact-force-gauge-mat',
 

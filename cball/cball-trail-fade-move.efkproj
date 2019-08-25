@@ -36,16 +36,16 @@
             </Location>
             <Velocity>
               <X>
-                <Max>0.0001</Max>
-                <Min>-0.0001</Min>
+                <Max>0.00015</Max>
+                <Min>-0.00015</Min>
               </X>
               <Y>
-                <Max>0.0001</Max>
-                <Min>-0.0001</Min>
+                <Max>0.00015</Max>
+                <Min>-0.00015</Min>
               </Y>
               <Z>
-                <Max>0.0001</Max>
-                <Min>-0.0001</Min>
+                <Max>0.00015</Max>
+                <Min>-0.00015</Min>
               </Z>
             </Velocity>
           </PVA>

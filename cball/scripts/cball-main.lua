@@ -101,6 +101,7 @@ local standLightsLastRequestTime = vci.me.Time
 if settings.enableDebugging then
     cytanb.SetLogLevel(cytanb.LogLevelTrace)
     settings[settings.efkLevelPropertyName] = 5
+    settings[settings.audioVolumePropertyName] = 5
 end
 
 local CreateAdjustmentSwitch = function (switchName, knobName, propertyName)
@@ -300,6 +301,22 @@ local HitStandLight = function (light)
             efk.Play()
         end
 
+        local volume = cytanb.Clamp(0.0, (settings[settings.audioVolumePropertyName] + 5) / 10.0, 1.0)
+        if volume > 0 then
+            local clipName
+            if ls.directHit then
+                clipName = settings.standLightDirectHitAudioName
+            else
+                local l, i = StandLightFromName(li.GetName())
+                clipName = settings.standLightHitAudioPrefix .. (i - 1)
+                if light ~= l then
+                    cytanb.LogWarn('eq-test failed')
+                end
+            end
+            cytanb.LogTrace('play audio: ', clipName, ', volume = ', volume)
+            vci.assets.audio.PlayOneShot(clipName, volume)
+        end
+
         ls.readyInactiveTime = TimeSpan.Zero
     end
 end
@@ -330,10 +347,6 @@ end
 local RespawnBall = function ()
     ResetGauge()
     ResetBallCup()
-
-    ballEfk._ALL_Stop()
-    ballEfkFade._ALL_Stop()
-    ballEfkFadeMove._ALL_Stop()
 
     if ball.IsMine then
         ball.SetVelocity(Vector3.zero)
