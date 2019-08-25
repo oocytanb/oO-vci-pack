@@ -100,8 +100,10 @@ local standLightsLastRequestTime = vci.me.Time
 
 if settings.enableDebugging then
     cytanb.SetLogLevel(cytanb.LogLevelTrace)
-    settings[settings.efkLevelPropertyName] = 5
-    settings[settings.audioVolumePropertyName] = 5
+    if settings[settings.efkLevelPropertyName] == 0 then
+        -- デバッグ用にエフェクトの初期値を設定する
+        settings[settings.efkLevelPropertyName] = 3
+    end
 end
 
 local CreateAdjustmentSwitch = function (switchName, knobName, propertyName)
@@ -109,6 +111,8 @@ local CreateAdjustmentSwitch = function (switchName, knobName, propertyName)
     local initialKnobPosition = knob.GetLocalPosition()
     local defaultValue = math.floor(cytanb.Clamp(settings[propertyName], -5, 5))
     local value = defaultValue
+    local grabCount = 0
+    local grabTime = TimeSpan.Zero
 
     local self
     self = {
@@ -118,7 +122,14 @@ local CreateAdjustmentSwitch = function (switchName, knobName, propertyName)
             return value
         end,
 
-        DoInput = function ()
+        DoInput = function (byGrab)
+            if byGrab then
+                -- Grab による入力の場合は、移動させるためにつかんだ時の誤操作を避けるために、2クリック以上で入力を受け付ける
+                grabCount, grabTime = DetectClicks(grabCount, grabTime, settings.settingsPanelGrabClickTiming)
+                if grabCount <= 1 then
+                    return
+                end
+            end
             local inputCount = settings.localSharedProperties.GetProperty(propertyName, defaultValue) + 1
             settings.localSharedProperties.SetProperty(propertyName, inputCount)
         end,
@@ -285,7 +296,7 @@ local HitStandLight = function (light)
             cytanb.LogInfo(propertyName, ': ', score)
         end
 
-        local efkLevel = settings[settings.efkLevelPropertyName]
+        local efkLevel = propertyNameSwitchMap[settings.efkLevelPropertyName].GetValue()
         local efk
         if ls.directHit and efkLevel >= 0 then
             efk = standLightDirectHitEfk
@@ -301,7 +312,7 @@ local HitStandLight = function (light)
             efk.Play()
         end
 
-        local volume = cytanb.Clamp(0.0, (settings[settings.audioVolumePropertyName] + 5) / 10.0, 1.0)
+        local volume = cytanb.Clamp(0.0, (propertyNameSwitchMap[settings.audioVolumePropertyName].GetValue() + 5) / 10.0, 1.0)
         if volume > 0 then
             local clipName
             if ls.directHit then
@@ -756,13 +767,13 @@ local OnUpdateBall = function (deltaTime)
                     end
                 end
 
-                local efkLevel = settings[settings.efkLevelPropertyName]
+                local efkLevel = propertyNameSwitchMap[settings.efkLevelPropertyName].GetValue()
                 if efkLevel >= 3 then
-                    local vmag = velocity.magnitude
-                    if vmag >= settings.ballTrailVelocityThreshold then
+                    local vm = velocity.magnitude
+                    if vm >= settings.ballTrailVelocityThreshold then
                         local near = cupSqrDistance <= settings.ballNearDistance ^ 2
-                        local vmagNodes = math.max(1, math.ceil(vmag / (settings.ballSimLongSide * settings.ballTrailInterpolationDistanceFactor)))
-                        local nodes = math.min(vmagNodes, math.min(settings.ballTrailInterpolationNodesPerSec * deltaSec, settings.ballTrailInterpolationNodesPerFrame) + math.max(0, math.floor((efkLevel - 3) * 2)))
+                        local vmNodes = math.max(1, math.ceil(vm / (settings.ballSimLongSide * settings.ballTrailInterpolationDistanceFactor)))
+                        local nodes = math.min(vmNodes, settings.ballTrailInterpolationNodesPerFrame + math.max(0, math.floor((efkLevel - 3) * 2)))
                         local iNodes = 1.0 / nodes
                         local efk
                         if near then
@@ -779,10 +790,10 @@ local OnUpdateBall = function (deltaTime)
                             efk = ballEfk
                         end
 
-                        -- cytanb.LogTrace('ballEfk: vmagNodes = ', vmagNodes, ', nodesPerSec = ', settings.ballTrailInterpolationNodesPerSec * deltaSec, ', near = ', near, ', efkName = ', efk.EffectName)
+                        -- cytanb.LogTrace('ballEfk: vmNodes = ', vmNodes, ', near = ', near, ', efkName = ', efk.EffectName)
                         for i = 1, nodes do
                             local trailPos = Vector3.Lerp(lastPos, ballPos, i * iNodes)
-                            -- cytanb.LogTrace('  ballEfk lerp: velocity.sqrMagnitude = ', vmag, ', lerp nodes = ', nodes, ', trailPos = ', trailPos)
+                            -- cytanb.LogTrace('  ballEfk lerp: velocity.sqrMagnitude = ', vm, ', lerp nodes = ', nodes, ', trailPos = ', trailPos)
                             ballEfkContainer.SetPosition(trailPos)
                             efk.Play()
                         end
@@ -920,6 +931,8 @@ function onGrab (target)
         if light then
             light.status.grabbed = true
         end
+    elseif adjustmentSwitches[target] then
+        adjustmentSwitches[target].DoInput(true)
     end
 end
 
@@ -989,7 +1002,7 @@ function onUse (use)
             settingsPanel.SetPosition(hiddenPosition)
         end
     elseif adjustmentSwitches[use] then
-        adjustmentSwitches[use].DoInput()
+        adjustmentSwitches[use].DoInput(false)
     end
 end
 

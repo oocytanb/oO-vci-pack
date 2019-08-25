@@ -6,7 +6,7 @@
       <Node>
         <CommonValues>
           <MaxGeneration>
-            <Value>4</Value>
+            <Value>2</Value>
           </MaxGeneration>
           <LocationEffectType>1</LocationEffectType>
           <RotationEffectType>1</RotationEffectType>

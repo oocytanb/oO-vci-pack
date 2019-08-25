@@ -205,9 +205,6 @@ return {
             --- ボールの軌跡を補間する距離の係数。
             ballTrailInterpolationDistanceFactor = 5.0,
 
-            --- ボールの軌跡の毎秒の補間ノード数の基準値。
-            ballTrailInterpolationNodesPerSec = 300,
-
             --- ボールの軌跡の毎フレームの補間ノード数の基準値。
             ballTrailInterpolationNodesPerFrame = 5,
 
@@ -257,10 +254,13 @@ return {
             settingsPanelDistanceThreshold = 3.0,
 
             --- 設定パネルの調節スイッチのY座標。
-            settingsPanelAdjustmentSwitchNeutralPositionY = -0.1245,
+            settingsPanelAdjustmentSwitchNeutralPositionY = -0.1,
 
             --- 設定パネルの調節スイッチの目盛り。
             settingsPanelAdjustmentSwitchDivisionScale = 0.01,
+
+            --- 設定パネルのグラブによるクリックタイミング。
+            settingsPanelGrabClickTiming = TimeSpan.FromMilliseconds(2000),
 
             --- ボールのタグ名。
             ballTag = ballTag,
@@ -311,7 +311,9 @@ return {
             adjustmentSwitchNames = {
                 {switchName = 'cball-settings-velocity-switch', knobName = 'cball-settings-velocity-knob', propertyName = ballVelocityAdjustmentPropertyName},
                 {switchName = 'cball-settings-angular-velocity-switch', knobName = 'cball-settings-angular-velocity-knob', propertyName = ballAngularVelocityAdjustmentPropertyName},
-                {switchName = 'cball-settings-altitude-switch', knobName = 'cball-settings-altitude-knob', propertyName = ballAltitudeAdjustmentPropertyName}
+                {switchName = 'cball-settings-altitude-switch', knobName = 'cball-settings-altitude-knob', propertyName = ballAltitudeAdjustmentPropertyName},
+                {switchName = 'cball-settings-efk-switch', knobName = 'cball-settings-efk-knob', propertyName = efkLevelPropertyName},
+                {switchName = 'cball-settings-volume-switch', knobName = 'cball-settings-volume-knob', propertyName = audioVolumePropertyName}
             },
 
             --- 速度の調整値のプロパティ名。
