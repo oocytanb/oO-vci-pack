@@ -1,0 +1,190 @@
+fileFormatVersion: 2
+guid: e1205e07347dc9b449fd2aecbb8f035a
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: altitude-arrow
+    100004: altitude-down-ray
+    100006: altitude-sphere
+    100008: altitude-up-ray
+    100010: angular-arrow
+    100012: angular-sphere
+    100014: velocity-arrow
+    100016: velocity-sphere
+    100018: efk-curve-1
+    100020: efk-curve-2
+    100022: efk-curve-3
+    100024: efk-L
+    100026: efk-M
+    100028: efk-S
+    100030: speaker-cone
+    100032: speaker-wave-L
+    100034: speaker-wave-S
+    100036: speaker-wave-surface
+    400000: //RootNode
+    400002: altitude-arrow
+    400004: altitude-down-ray
+    400006: altitude-sphere
+    400008: altitude-up-ray
+    400010: angular-arrow
+    400012: angular-sphere
+    400014: velocity-arrow
+    400016: velocity-sphere
+    400018: efk-curve-1
+    400020: efk-curve-2
+    400022: efk-curve-3
+    400024: efk-L
+    400026: efk-M
+    400028: efk-S
+    400030: speaker-cone
+    400032: speaker-wave-L
+    400034: speaker-wave-S
+    400036: speaker-wave-surface
+    2100000: unnamed
+    2100002: cball-icons-mat__cball-icons-tex_png
+    2300000: //RootNode
+    2300002: altitude-arrow
+    2300004: altitude-down-ray
+    2300006: altitude-sphere
+    2300008: altitude-up-ray
+    2300010: angular-arrow
+    2300012: angular-sphere
+    2300014: velocity-arrow
+    2300016: velocity-sphere
+    2300018: efk-curve-1
+    2300020: efk-curve-2
+    2300022: efk-curve-3
+    2300024: efk-L
+    2300026: efk-M
+    2300028: efk-S
+    2300030: speaker-cone
+    2300032: speaker-wave-L
+    2300034: speaker-wave-S
+    2300036: speaker-wave-surface
+    3300000: //RootNode
+    3300002: altitude-arrow
+    3300004: altitude-down-ray
+    3300006: altitude-sphere
+    3300008: altitude-up-ray
+    3300010: angular-arrow
+    3300012: angular-sphere
+    3300014: velocity-arrow
+    3300016: velocity-sphere
+    3300018: efk-curve-1
+    3300020: efk-curve-2
+    3300022: efk-curve-3
+    3300024: efk-L
+    3300026: efk-M
+    3300028: efk-S
+    3300030: speaker-cone
+    3300032: speaker-wave-L
+    3300034: speaker-wave-S
+    3300036: speaker-wave-surface
+    4300000: angular-arrow
+    4300002: altitude-down-ray
+    4300004: altitude-up-ray
+    4300006: altitude-sphere
+    4300008: altitude-arrow
+    4300010: angular-sphere
+    4300012: velocity-arrow
+    4300014: velocity-sphere
+    4300016: efk-M
+    4300018: efk-S
+    4300020: efk-L
+    4300022: efk-curve-3
+    4300024: efk-curve-2
+    4300026: efk-curve-1
+    4300028: speaker-wave-S
+    4300030: speaker-wave-surface
+    4300032: speaker-wave-L
+    4300034: speaker-cone
+    7400000: Default Take
+    9500000: //RootNode
+    2186277476908879412: ImportLogs
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
