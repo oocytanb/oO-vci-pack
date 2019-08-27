@@ -373,79 +373,101 @@ local RespawnBall = function ()
     end
 end
 
+local IsInThrowingMotion = function ()
+    local queueSize = ballTransformQueue.Size()
+    if not ball.IsMine or queueSize < 2 then
+        return false
+    end
+
+    local head = ballTransformQueue.Get(queueSize)
+    local prev = ballTransformQueue.Get(queueSize - 1)
+
+    local deltaSec = (head.time - prev.time).totalSeconds
+    local dp = head.position - prev.position
+    if deltaSec > 0 then
+        local velocity = dp.magnitude / deltaSec
+        local b = velocity >= settings.ballKinematicVelocityThreshold * 0.5
+        cytanb.LogTrace('test throwing motion: ', b, ', velocity = ', velocity, ', deltaSec = ', deltaSec)
+        return b
+    else
+        return false
+    end
+end
+
 --- コントローラーの運動による投球
 local ThrowBallByKinematic = function ()
-    if not ball.IsMine then
+    if not ball.IsMine or ballTransformQueue.Size() < 2 then
         return
     end
 
-    local now = vci.me.Time
-    local ballPos = ball.GetPosition()
-    local ballRot = ball.GetRotation()
+    local headTransform = ballTransformQueue.PollLast()
+    local headTime = headTransform.time
+    local ballPos = headTransform.position
+    local ballRot = headTransform.rotation
 
-    if not ballTransformQueue.IsEmpty() then
-        local totalVelocity = Vector3.zero
-        local totalAngularVelocity = Vector3.zero
+    local totalVelocity = Vector3.zero
+    local totalAngularVelocity = Vector3.zero
 
-        local st = now
-        local sp = ballPos
-        local sr = ballRot
+    local st = headTime
+    local sp = ballPos
+    local sr = ballRot
 
-        while true do
-            local element = ballTransformQueue.PollLast()
-            if not element then
-                break
-            end
-
-            if now - element.time > settings.ballKinematicTime then
-                break
-            end
-
-            local deltaSec = (st - element.time).totalSeconds
-            if deltaSec > Vector3.kEpsilon then
-                -- 古いデータほど係数を下げる
-                local deltaVelocityFactor = math.max(0.0, 1.0 - (now - st).totalSeconds * 1.25)
-                -- cytanb.LogTrace('deltaVelocityFactor = ', deltaVelocityFactor)
-
-                local dp = sp - element.position
-                local velocity = dp * deltaVelocityFactor / deltaSec
-                totalVelocity = totalVelocity + velocity
-
-                local dr = sr * Quaternion.Inverse(element.rotation)
-                local da, axis = cytanb.QuaternionToAngleAxis(dr)
-                if (da ~= 0 and da ~= 360) or not Vector3.right then
-                    local angular = - (da <= 180 and 1 or da - 360)
-                    local angularVelocity = axis * ((angular >= 0 and 1 or -1) * cytanb.Clamp(angular / deltaSec, -360, 360) * math.pi / 180 * deltaVelocityFactor)
-                    totalAngularVelocity = totalAngularVelocity + angularVelocity
-                end
-            end
-
-            -- cytanb.LogTrace('totalVelocity: ', totalVelocity, ', totalAngularVelocity: ', totalAngularVelocity)
-            st = element.time
-            sp = element.position
-            sr = element.rotation
+    while true do
+        local element = ballTransformQueue.PollLast()
+        if not element then
+            break
         end
-        ballTransformQueue.Clear()
 
-        totalVelocity = totalVelocity * CalcAdjustment(propertyNameSwitchMap[settings.ballVelocityAdjustmentPropertyName].GetValue(), settings.ballKinematicMinVelocityFactor, settings.ballKinematicMaxVelocityFactor)
-        totalAngularVelocity = totalAngularVelocity * CalcAdjustment(propertyNameSwitchMap[settings.ballAngularVelocityAdjustmentPropertyName].GetValue(), settings.ballKinematicMinAngularVelocityFactor, settings.ballKinematicMaxAngularVelocityFactor)
-
-        local velocityMagnitude = totalVelocity.magnitude
-        cytanb.LogTrace('velocity magnitude: ', velocityMagnitude)
-        if velocityMagnitude > settings.ballKinematicVelocityThreshold then
-            local velocity = ApplyAltitudeAngle(totalVelocity, CalcAdjustment(propertyNameSwitchMap[settings.ballAltitudeAdjustmentPropertyName].GetValue(), settings.ballKinematicMinAltitudeFactor, settings.ballKinematicMaxAltitudeFactor))
-            local forwardOffset = velocity * (math.min(velocityMagnitude * settings.ballForwardOffsetFactor, settings.ballMaxForwardOffset) / velocityMagnitude)
-            cytanb.LogTrace('Throw ball by kinematic: velocity: ', velocity, ', angularVelocity: ', totalAngularVelocity)
-            ballSimAngularVelocity = totalAngularVelocity
-            ball.SetVelocity(velocity)
-            ball.SetAngularVelocity(totalAngularVelocity)
-
-            -- 体のコライダーに接触しないように、オフセットを足す
-            ballPos = ball.GetPosition() + forwardOffset
-            ball.SetPosition(ballPos)
-        else
-            ballSimAngularVelocity = Vector3.zero
+        if headTime - element.time > settings.ballKinematicTime then
+            break
         end
+
+        -- cytanb.LogTrace('test-eq-transform: time = ', st == element.time, ', pos = ', sp == element.position, ', rot = ', sr == element.rotation)
+
+        local deltaSec = (st - element.time).totalSeconds
+        if deltaSec > Vector3.kEpsilon then
+            -- 古いデータほど係数を下げる
+            local deltaVelocityFactor = math.max(0.0, 1.0 - (headTime - st).totalSeconds * 1.25)
+            -- cytanb.LogTrace('deltaVelocityFactor = ', deltaVelocityFactor)
+
+            local dp = sp - element.position
+            local velocity = dp * deltaVelocityFactor / deltaSec
+            totalVelocity = totalVelocity + velocity
+
+            local dr = sr * Quaternion.Inverse(element.rotation)
+            local da, axis = cytanb.QuaternionToAngleAxis(dr)
+            if (da ~= 0 and da ~= 360) or not Vector3.right then
+                local angular = - (da <= 180 and 1 or da - 360)
+                local angularVelocity = axis * ((angular >= 0 and 1 or -1) * cytanb.Clamp(angular / deltaSec, -360, 360) * math.pi / 180 * deltaVelocityFactor)
+                totalAngularVelocity = totalAngularVelocity + angularVelocity
+            end
+        end
+
+        -- cytanb.LogTrace('totalVelocity: ', totalVelocity, ', totalAngularVelocity: ', totalAngularVelocity)
+        st = element.time
+        sp = element.position
+        sr = element.rotation
+    end
+    ballTransformQueue.Clear()
+
+    totalVelocity = totalVelocity * CalcAdjustment(propertyNameSwitchMap[settings.ballVelocityAdjustmentPropertyName].GetValue(), settings.ballKinematicMinVelocityFactor, settings.ballKinematicMaxVelocityFactor)
+    totalAngularVelocity = totalAngularVelocity * CalcAdjustment(propertyNameSwitchMap[settings.ballAngularVelocityAdjustmentPropertyName].GetValue(), settings.ballKinematicMinAngularVelocityFactor, settings.ballKinematicMaxAngularVelocityFactor)
+
+    local velocityMagnitude = totalVelocity.magnitude
+    cytanb.LogTrace('velocity magnitude: ', velocityMagnitude)
+    if velocityMagnitude > settings.ballKinematicVelocityThreshold then
+        local velocity = ApplyAltitudeAngle(totalVelocity, CalcAdjustment(propertyNameSwitchMap[settings.ballAltitudeAdjustmentPropertyName].GetValue(), settings.ballKinematicMinAltitudeFactor, settings.ballKinematicMaxAltitudeFactor))
+        local forwardOffset = velocity * (math.min(velocityMagnitude * settings.ballForwardOffsetFactor, settings.ballMaxForwardOffset) / velocityMagnitude)
+        cytanb.LogTrace('Throw ball by kinematic: velocity: ', velocity, ', angularVelocity: ', totalAngularVelocity)
+        ballSimAngularVelocity = totalAngularVelocity
+        ball.SetVelocity(velocity)
+        ball.SetAngularVelocity(totalAngularVelocity)
+
+        -- 体のコライダーに接触しないように、オフセットを足す
+        ballPos = ball.GetPosition() + forwardOffset
+        ball.SetPosition(ballPos)
+    else
+        ballSimAngularVelocity = Vector3.zero
     end
 
     OfferBallTransform(ballPos, ballRot)
@@ -982,7 +1004,9 @@ function onUse (use)
     end
 
     if use == ball.GetName() then
-        if ballGrabbed and impactPhase < 3 then
+        -- 入力タイミングのフェーズを進行する。
+        -- ただし、運動による投球動作に入っている場合は、入力タイミングモードに移行しない。
+        if ballGrabbed and impactPhase < 3 and not (impactPhase == 0 and IsInThrowingMotion()) then
             impactPhase = impactPhase + 1
             impactGaugeStartTime = vci.me.Time
         end
