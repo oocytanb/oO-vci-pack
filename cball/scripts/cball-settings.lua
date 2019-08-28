@@ -125,7 +125,7 @@ return {
             [audioVolumePropertyName] = -5,
 
             --- 投球動作として、リリースポイントからさかのぼって速度計算に反映する時間。([100, 250] ms 程度の範囲)
-            ballKinematicTime = TimeSpan.FromMilliseconds(200),
+            ballKinematicTime = TimeSpan.FromMilliseconds(135),
 
             --- 投球動作とみなす速度の閾値。
             ballKinematicVelocityThreshold = 1.0,
@@ -199,11 +199,14 @@ return {
             --- ボールが近距離にあると判定する距離。
             ballNearDistance = 5,
 
+            --- ボールが遠距離にあると判定する距離。
+            ballFarDistance = 20,
+
             --- ボールの軌跡を表示する速度の閾値。
             ballTrailVelocityThreshold = 1.4,
 
             --- ボールの軌跡を補間する距離の係数。
-            ballTrailInterpolationDistanceFactor = 5.0,
+            ballTrailInterpolationDistanceFactor = 0.5,
 
             --- ボールの軌跡の毎フレームの補間ノード数の基準値。
             ballTrailInterpolationNodesPerFrame = 5,
@@ -268,8 +271,23 @@ return {
             --- ボールのオブジェクト名。
             ballName = 'cball' .. ballTag,
 
-            --- ボールのエフェクトのオブジェクト名。
-            ballEfkName = 'ball-efk',
+            --- ボールのエフェクトのコンテナー名。
+            ballEfkContainerName = 'ball-efk',
+
+            --- ボールのエフェクト名。
+            ballEfkName = 'cball-trail',
+
+            --- ボールのエフェクト名(フェード有り)。
+            ballEfkFadeName = 'cball-trail-fade',
+
+            --- ボールのエフェクト名(フェード+ムーブ有り)。
+            ballEfkFadeMoveName = 'cball-trail-fade-move',
+
+            --- ボールのエフェクト名(生成数1)。
+            ballEfkOneName = 'cball-trail-one',
+
+            --- ボールのエフェクト名(生成数1,大)。
+            ballEfkOneLargeName = 'cball-trail-one-large',
 
             --- ボールのカップのオブジェクト名。
             ballCupName = 'ball-cup',
@@ -283,8 +301,14 @@ return {
             --- ライトのオブジェクト数。
             standLightCount = 3,
 
-            --- ライトのエフェクトのオブジェクト名。
-            standLightEfkName = 'standlight-efk',
+            --- ライトのエフェクトのコンテナー名。
+            standLightEfkContainerName = 'standlight-efk',
+
+            --- ライトのエフェクト名。(ヒット)
+            standLightHitEfkName = 'standlight-hit',
+
+            --- ライトのエフェクト名。(ダイレクトヒット)
+            standLightDirectHitEfkName = 'standlight-direct-hit',
 
             --- ライトのヒット音のクリップ名の接頭辞。
             standLightHitAudioPrefix = 'standlight-hit-',
@@ -342,6 +366,9 @@ return {
 
             --- ローカルの共有プロパティ。
             localSharedProperties = CreateLocalSharedProperties(cballSettingsLspid, loadid, function () return mainEnv.vci.me.Time end),
+
+            --- スローイングのエフェクトを有効にするか。
+            enableThrowingEfk = false,
 
             --- デバッギングを有効にするか。
             enableDebugging = false
