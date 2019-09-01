@@ -1,6 +1,6 @@
 # cytanb-anim-cam
 
-- アニメーションでカメラを動かす VCI のテンプレートです。
+- アニメーションでカメラを動かすための、VCI のテンプレートです。
 - PV 撮影など、カメラワークを事前に作っておく場合に使えるかもしれません。
 - Unity 上でカメラ追従用のオブジェクトに対して、アニメーションを作成して利用します。
 - 試作段階につき、予告なく機能更新されることがあります。
@@ -40,3 +40,7 @@
 - `VCI Sub Item`, `Collider`, `Rigidbody` コンポーネントが必要です。
 
 - 装着できるようにする場合は、`VCI Attachable` コンポーネントを追加することが出来ます。
+
+## Download
+
+Git の扱いに慣れていない方は、[Unity package](https://www.dropbox.com/s/grgq7396uxmwn9n/cytanb-anim-cam-0.0.2.vci.unitypackage?dl=0) を利用することが出来ます。
