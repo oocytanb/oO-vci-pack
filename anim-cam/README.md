@@ -21,14 +21,18 @@
 ### `anim-cam-container`: カメラマーカーのコンテナーオブジェクト
 ![anim-cam-container](docs/unity-inspector-anim-cam-container.png)
 
+![anim-cam-marker-animation](docs/unity-anim-cam-marker-animation.png)
+
 - アニメーションを行うためのコンポーネントを追加しています。VCAS 1.7.2a で導入された仕組みを利用します。
+
+- アニメーションの初期位置を、サブアイテムをつかんで移動出来るようにする場合は、`VCI Sub Item`, `Rigidbody`, `Collider` コンポーネントを追加します。
 
 ### `anim-cam-marker`: カメラマーカーオブジェクト
 ![anim-cam-marker](docs/unity-inspector-anim-cam-marker.png)
 
 - カメラを追従させるためのマーカーオブジェクトです。
 
-- このオブジェクトをアニメーションで、位置と回転させると、スクリプトがカメラの位置と回転を合わせるようになっています。
+- このオブジェクトを、アニメーションで位置と回転をさせると、スクリプトがカメラの位置と回転を合わせるようになっています。
 
 - ユーザーごとにローカルで処理するため、`VCI Sub Item` コンポーネントは付けません。
 
@@ -37,10 +41,10 @@
 
 - グリップすることで、カメラアニメーションの再生・停止の切り替えを行います。
 
-- `VCI Sub Item`, `Collider`, `Rigidbody` コンポーネントが必要です。
+- `VCI Sub Item`, `Rigidbody`, `Collider` コンポーネントが必要です。
 
 - 装着できるようにする場合は、`VCI Attachable` コンポーネントを追加することが出来ます。
 
 ## Download
 
-Git の扱いに慣れていない方は、[Unity package](https://www.dropbox.com/s/grgq7396uxmwn9n/cytanb-anim-cam-0.0.2.vci.unitypackage?dl=0) を利用することが出来ます。
+Git の扱いに慣れていない方は、[Unity package](https://www.dropbox.com/s/1u2mh7feav0zxl6/cytanb-anim-cam-latest.unitypackage?dl=0) を利用することが出来ます。

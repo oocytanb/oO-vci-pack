@@ -42,8 +42,8 @@ local conf = {
     --- 連続してアニメーションクリップを再生する例:
     --- ```
     --- directives = {
-    ---     {type = 'play', name = 'anim-cam-clip-0', length = TimeSpan.FromSeconds(16)},
-    ---     {type = 'play', name = 'anim-cam-clip-1', length = TimeSpan.FromSeconds(31)}
+    ---     {type = 'play', name = 'anim-cam-clip-0', length = TimeSpan.FromSeconds(61)},
+    ---     {type = 'play', name = 'anim-cam-clip-1', length = TimeSpan.FromSeconds(141)}
     --- },
     --- ```
     directives = {
@@ -62,7 +62,10 @@ local conf = {
 
     --- カメラのコンテナーオブジェクトの初期位置をワールド座標へセットするかを指定する。(true | false)
     --- アイテムを設置した位置を初期位置とする場合は、false を指定する。
-    camContainerTransformToWorld = true
+    camContainerTransformToWorld = true,
+
+    --- デバッグ機能を有効にするかを指定する。(true | false)
+    enableDebugging = false
 }
 
 ---@type cytanb @See `cytanb_annotations.lua`
@@ -71,6 +74,22 @@ GetSubItemTransform=function(aX)local aY=aX.GetPosition()local aZ=aX.GetRotation
 
 local animCamNS = 'com.github.oocytanb.oO-vci-pack.anim-cam'
 local togglePlayMessageName = animCamNS .. '.toggle-play'
+
+---@class StudioSystemCameraAccessor
+---@field get ExportSystemCamera
+---@field has boolean
+
+---@class StudioSystemCameraCollection
+---@field HandiCamera StudioSystemCameraAccessor
+---@field AutoFollowCamera StudioSystemCameraAccessor
+---@field SwitchingCamera StudioSystemCameraAccessor
+---@field WindowCamera StudioSystemCameraAccessor
+local StudioSystemCameraCollection = cytanb.SetConstEach({}, {
+    HandiCamera = {get = vci.studio.GetHandiCamera, has = vci.studio.HasHandiCamera},
+    AutoFollowCamera = {get = vci.studio.GetAutoFollowCamera, has = vci.studio.HasAutoFollowCamera},
+    SwitchingCamera = {get = vci.studio.GetSwitchingCamera, has = vci.studio.HasSwitchingCamera},
+    WindowCamera = {get = vci.studio.GetWindowCamera, has = vci.studio.HasWindowCamera}
+})
 
 ---@class DirectiveProcessorState DirectiveProcessor の状態。
 ---@field stop number @停止している。
@@ -88,17 +107,11 @@ local DirectiveProcessorState = cytanb.SetConstEach({}, {
 
 ---@return DirectiveProcessor
 local CreateDirectiveProcessor = function (directives, animator, camMarker, stopOnCameraGrabbed, systemCamName)
-    local systemCameraGetters = {
-        HandiCamera = vci.studio.GetHandiCamera,
-        AutoFollowCamera = vci.studio.GetAutoFollowCamera,
-        SwitchingCamera = vci.studio.GetSwitchingCamera,
-        WindowCamera = vci.studio.GetWindowCamera
-    }
-
-    if not systemCamName then
+    local systemCamAccessor = StudioSystemCameraCollection[systemCamName]
+    if not systemCamAccessor then
         systemCamName = 'HandiCamera'
+        systemCamAccessor = StudioSystemCameraCollection.HandiCamera
     end
-
     local systemCam = nil
     local currentIndex = -1
     local entryExpectedTime = TimeSpan.MaxValue
@@ -112,7 +125,7 @@ local CreateDirectiveProcessor = function (directives, animator, camMarker, stop
 
         if dir.type == 'play' then
             if not dir.name then
-                cytanb.LogError('Invalid directive parameter: animation clip name is not specified')
+                cytanb.LogError('INVALID DIRECTIVE PARAMETER: animation clip name is not specified')
                 return DirectiveProcessorState.stop, TimeSpan.MaxValue
             end
 
@@ -120,7 +133,7 @@ local CreateDirectiveProcessor = function (directives, animator, camMarker, stop
             local expectedTime = dir.length and vci.me.time + dir.length or TimeSpan.MaxValue
             return DirectiveProcessorState.processing, expectedTime
         else
-            cytanb.LogError('Unsupported directive: ', dir.type)
+            cytanb.LogError('UNSUPPORTED DIRECTIVE: type = ', dir.type)
             return DirectiveProcessorState.stop, TimeSpan.MaxValue
         end
     end
@@ -129,13 +142,13 @@ local CreateDirectiveProcessor = function (directives, animator, camMarker, stop
     self = {
         Start = function ()
             if not vci.assets.IsMine then
-                cytanb.LogError('Unexpected: not vci.assets.IsMine')
+                cytanb.LogError('UNSUPPORTED OPERATION: not vci.assets.IsMine')
                 return false
             end
 
             self.Stop()
 
-            systemCam = systemCameraGetters[systemCamName]()
+            systemCam = systemCamAccessor.get()
             if not systemCam then
                 cytanb.LogWarn('SYSTEM_CAMERA_NOT_FOUND: ', systemCamName)
                 return false
@@ -151,7 +164,7 @@ local CreateDirectiveProcessor = function (directives, animator, camMarker, stop
 
         Stop = function ()
             if not vci.assets.IsMine then
-                cytanb.LogError('Unexpected: not vci.assets.IsMine')
+                cytanb.LogError('UNSUPPORTED OPERATION: not vci.assets.IsMine')
                 return false
             end
 
@@ -168,6 +181,13 @@ local CreateDirectiveProcessor = function (directives, animator, camMarker, stop
             end
 
             if state ~= DirectiveProcessorState.processing then
+                return
+            end
+
+            if not systemCamAccessor.has() then
+                -- カメラが削除されたため、停止する。
+                cytanb.LogWarn('SYSTEM_CAMERA_LOST: ', systemCamName)
+                self.Stop()
                 return
             end
 
@@ -206,6 +226,10 @@ local camContainer, camSwitch
 
 ---@type DirectiveProcessor
 local directiveProcessor
+
+if conf.enableDebugging then
+    cytanb.SetLogLevel(cytanb.LogLevelTrace)
+end
 
 local OnLoad = function ()
     cytanb.LogTrace('OnLoad')
@@ -257,7 +281,7 @@ local UpdateCw = coroutine.wrap(function ()
 
         local now = vci.me.Time
         if now > startTime + MaxWaitTime then
-            cytanb.LogError('Timeout: Could not receive Instance ID.')
+            cytanb.LogError('TIMEOUT: Could not receive Instance ID.')
             return -1
         end
 
