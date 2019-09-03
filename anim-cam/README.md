@@ -6,6 +6,9 @@
 - 試作段階につき、予告なく機能更新されることがあります。
 - 間違いや使いづらい点などがございましたら、適宜修正してお使いください。
 
+## 紹介動画
+[![cytanb-anim-cam 紹介動画](https://img.youtube.com/vi/PktRFwR1R5Y/0.jpg)](https://www.youtube.com/watch?v=PktRFwR1R5Y)
+
 ## オブジェクトの階層構造
 
 ### 階層
