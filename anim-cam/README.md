@@ -28,7 +28,7 @@
 
 - アニメーションを行うためのコンポーネントを追加しています。VCAS 1.7.2a で導入された仕組みを利用します。
 
-- アニメーションの初期位置を、サブアイテムをつかんで移動出来るようにする場合は、`VCI Sub Item`, `Rigidbody`, `Collider` コンポーネントを追加します。
+- `VCI Sub Item`, `Rigidbody`, `Collider` コンポーネントを追加しています。アニメーションの基準位置を、サブアイテムをつかんで移動出来るようになります。
 
 ### `anim-cam-marker`: カメラマーカーオブジェクト
 ![anim-cam-marker](docs/unity-inspector-anim-cam-marker.png)
