@@ -37,53 +37,60 @@ local conf = {
     offsetV = 2048 / 4096
 }
 
-local vciLoaded = false
-local initialUpdateSkipped = false
-
-local lastLot = -1
-local lotsMap = {}
-local lotsMapSize = 0
-
-local DrawLot = function ()
-    if lotsMapSize <= 0 then
-        -- 空になったので作り直す
-        if conf.patternCount <= 0 then
-            print('Error | INVALID patternCount: ' .. tostring(conf.patternCount))
-            return -1
-        end
-
-        lotsMapSize = conf.patternCount
-        for i = 0, lotsMapSize - 1 do
-            local r = math.random(0, lotsMapSize - 1)
-            if r < i and lotsMap[r] then
-                -- 存在する番号であったら、交換する
-                lotsMap[i] = lotsMap[r]
-                lotsMap[r] = i
-            else
-                -- 存在しなければ、番号をそのままセットする
-                lotsMap[i] = i
-            end
-        end
-
-        if lastLot == lotsMap[lotsMapSize - 1] then
-            -- 最後に引いた番号と同じであれば、先頭と入れ替える
-            local head = lotsMap[0]
-            lotsMap[0] = lotsMap[lotsMapSize - 1]
-            lotsMap[lotsMapSize - 1] = head
-        end
-
-        -- print('shuffle lots')
-        -- for i = 0, lotsMapSize - 1 do
-        --     print('  lots[' .. i .. '] = ' .. lotsMap[i])
-        -- end
+local CreateLots = function (size)
+    local lotsSize = math.floor(size)
+    if lotsSize <= 0 then
+        print('Error | INVALID PARAMETER: size = ' .. tostring(size))
+        return nil
     end
 
-    lastLot = lotsMap[lotsMapSize - 1]
-    lotsMapSize = lotsMapSize - 1
-    return lastLot
+    local remainSize = 0
+    local lotsMap = {}
+    local lastLot = -1
+
+    return {
+        Draw = function ()
+            if remainSize <= 0 then
+                -- 空になったので作り直す
+                for i = 0, lotsSize - 1 do
+                    local r = math.random(0, lotsSize - 1)
+                    if r < i and lotsMap[r] then
+                        -- 存在する番号であったら、交換する
+                        lotsMap[i] = lotsMap[r]
+                        lotsMap[r] = i
+                    else
+                        -- 存在しなければ、番号をそのままセットする
+                        lotsMap[i] = i
+                    end
+                end
+
+                if lastLot == lotsMap[lotsSize - 1] then
+                    -- 最後に引いた番号と同じであれば、先頭と入れ替える
+                    local head = lotsMap[0]
+                    lotsMap[0] = lotsMap[lotsSize - 1]
+                    lotsMap[lotsSize - 1] = head
+                end
+
+                remainSize = lotsSize
+
+                -- print('shuffle lots')
+                -- for i = 0, remainSize - 1 do
+                --     print('  lots[' .. i .. '] = ' .. lotsMap[i])
+                -- end
+            end
+
+            lastLot = lotsMap[remainSize - 1]
+            remainSize = remainSize - 1
+            return lastLot
+        end
+    }
 end
 
-local function ChangeImagePattern (index)
+local vciLoaded = false
+local initialUpdateSkipped = false
+local lots = CreateLots(conf.patternCount)
+
+local ChangeImagePattern = function (index)
     print('ChangeImagePattern: index = ' .. index)
     local vi = math.floor(index / conf.horizontalPatternCount)
     local ui = index - vi * conf.horizontalPatternCount
@@ -101,7 +108,7 @@ function updateAll ()
         -- ロード完了
         vciLoaded = true
         math.randomseed(os.time()-os.clock()*10000)
-        ChangeImagePattern(DrawLot())
+        ChangeImagePattern(lots.Draw())
     end
 end
 
@@ -109,5 +116,5 @@ function onUse (use)
     if not vciLoaded then
         return
     end
-    ChangeImagePattern(DrawLot())
+    ChangeImagePattern(lots.Draw())
 end
