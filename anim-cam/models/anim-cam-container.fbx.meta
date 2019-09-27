@@ -1,32 +1,16 @@
 fileFormatVersion: 2
-guid: 1280e0e2a80e21343bb27c148994215b
+guid: 104b8a69f0009e04b8f09685f02aef1a
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
-    100000: anim-cam-container
-    100002: anim-cam-marker
-    100004: anim-cam-switch
-    100006: //RootNode
-    400000: anim-cam-container
-    400002: anim-cam-marker
-    400004: anim-cam-switch
-    400006: //RootNode
+    100000: //RootNode
+    400000: //RootNode
     2100000: anim-cam-mat
-    2300000: anim-cam-container
-    2300002: anim-cam-marker
-    2300004: anim-cam-switch
-    3300000: anim-cam-container
-    3300002: anim-cam-marker
-    3300004: anim-cam-switch
-    4300000: anim-cam-switch
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: anim-cam-marker
     4300002: anim-cam-container
-    4300004: anim-cam-marker
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: anim-cam-mat
-    second: {fileID: 2100000, guid: 49e357803f02ba041b6c261ff82255fd, type: 2}
+  externalObjects: {}
   materials:
     importMaterials: 1
     materialName: 0

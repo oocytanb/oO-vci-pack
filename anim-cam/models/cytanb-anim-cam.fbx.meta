@@ -1,0 +1,179 @@
+fileFormatVersion: 2
+guid: 4b15e22d561c71742a4519c0a68c4218
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: anim-cam-next-switch
+    100002: anim-cam-play-display-placeholder
+    100004: anim-cam-play-switch
+    100006: anim-cam-prev-switch
+    100008: //RootNode
+    100010: anim-cam-next-display
+    100012: anim-cam-play-display
+    100014: anim-cam-prev-display
+    100016: anim-cam-switch
+    100018: anim-cam-switch-display-track-place-0
+    100020: anim-cam-switch-display-track-place-1
+    400000: anim-cam-next-switch
+    400002: anim-cam-play-display-placeholder
+    400004: anim-cam-play-switch
+    400006: anim-cam-prev-switch
+    400008: //RootNode
+    400010: anim-cam-next-display
+    400012: anim-cam-play-display
+    400014: anim-cam-prev-display
+    400016: anim-cam-switch
+    400018: anim-cam-switch-display-track-place-0
+    400020: anim-cam-switch-display-track-place-1
+    2100000: transparent-mat
+    2100002: anim-cam-mat
+    2100004: anim-cam-switch-mat
+    2100006: anim-cam-switch-display-track-place-0
+    2100008: anim-cam-switch-display-track-place-1
+    2100010: anim-cam-switch
+    2300000: anim-cam-next-switch
+    2300002: anim-cam-play-display-placeholder
+    2300004: anim-cam-play-switch
+    2300006: anim-cam-prev-switch
+    2300008: anim-cam-next-display
+    2300010: anim-cam-play-display
+    2300012: anim-cam-prev-display
+    2300014: anim-cam-switch
+    2300016: anim-cam-switch-display-track-place-0
+    2300018: anim-cam-switch-display-track-place-1
+    3300000: anim-cam-next-switch
+    3300002: anim-cam-play-display-placeholder
+    3300004: anim-cam-play-switch
+    3300006: anim-cam-prev-switch
+    3300008: anim-cam-next-display
+    3300010: anim-cam-play-display
+    3300012: anim-cam-prev-display
+    3300014: anim-cam-switch
+    3300016: anim-cam-switch-display-track-place-0
+    3300018: anim-cam-switch-display-track-place-1
+    4300000: anim-cam-prev-switch
+    4300002: anim-cam-next-switch
+    4300004: anim-cam-play-switch
+    4300006: anim-cam-play-display-placeholder
+    4300008: anim-cam-switch
+    4300010: anim-cam-prev-display
+    4300012: anim-cam-next-display
+    4300014: anim-cam-play-display
+    4300016: anim-cam-switch-display-track-place-0
+    4300018: anim-cam-switch-display-track-place-1
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: anim-cam-mat
+    second: {fileID: 2100000, guid: 49e357803f02ba041b6c261ff82255fd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: anim-cam-switch
+    second: {fileID: 2100000, guid: 7a2c075726194e349bbafaf0e4704507, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: anim-cam-switch-display-track-place-0
+    second: {fileID: 2100000, guid: af4fc6f39199efa438afd085272511b2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: anim-cam-switch-display-track-place-1
+    second: {fileID: 2100000, guid: 8d7ed55afe4881c41b224027a627ffc5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: anim-cam-switch-mat
+    second: {fileID: 2100000, guid: 0144f1477007ca243802a6d5e58936c7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: transparent-mat
+    second: {fileID: 2100000, guid: 4ca5e383034fd94449b2010ef7af8036, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
