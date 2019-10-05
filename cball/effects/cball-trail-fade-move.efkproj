@@ -13,9 +13,13 @@
           <ScaleEffectType>1</ScaleEffectType>
           <Life>
             <Center>220</Center>
-            <Max>240</Max>
-            <Min>200</Min>
+            <Max>260</Max>
+            <Min>180</Min>
           </Life>
+          <GenerationTime>
+            <Max>11</Max>
+            <Min>1E-05</Min>
+          </GenerationTime>
         </CommonValues>
         <LocationValues>
           <Type>1</Type>
@@ -34,13 +38,27 @@
                 <Min>-0.1</Min>
               </Z>
             </Location>
+            <Velocity>
+              <X>
+                <Max>0.00015</Max>
+                <Min>-0.00015</Min>
+              </X>
+              <Y>
+                <Max>0.00015</Max>
+                <Min>-0.00015</Min>
+              </Y>
+              <Z>
+                <Max>0.00015</Max>
+                <Min>-0.00015</Min>
+              </Z>
+            </Velocity>
           </PVA>
         </LocationValues>
         <RotationValues>
           <Type>1</Type>
         </RotationValues>
         <ScalingValues>
-          <Type>3</Type>
+          <Type>4</Type>
           <SinglePVA>
             <Scale>
               <Center>0.04</Center>
@@ -48,9 +66,23 @@
               <Min>0.02</Min>
             </Scale>
           </SinglePVA>
+          <SingleEasing>
+            <Start>
+              <Center>0.06</Center>
+              <Max>0.09999999</Max>
+              <Min>0.02</Min>
+            </Start>
+            <End>
+              <Center>0.04</Center>
+              <Max>0.06</Max>
+              <Min>0.02</Min>
+            </End>
+            <StartSpeed>30</StartSpeed>
+            <EndSpeed>30</EndSpeed>
+          </SingleEasing>
         </ScalingValues>
         <RendererCommonValues>
-          <ColorTexture>textures/cball-particles-cr.png</ColorTexture>
+          <ColorTexture>../textures/cball-particles-cr.png</ColorTexture>
           <FadeInType>1</FadeInType>
           <FadeIn>
             <Frame>30</Frame>

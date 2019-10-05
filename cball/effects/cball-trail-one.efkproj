@@ -9,13 +9,29 @@
           <RotationEffectType>1</RotationEffectType>
           <ScaleEffectType>1</ScaleEffectType>
           <Life>
-            <Center>240</Center>
+            <Center>220</Center>
             <Max>240</Max>
-            <Min>240</Min>
+            <Min>200</Min>
           </Life>
         </CommonValues>
         <LocationValues>
           <Type>1</Type>
+          <PVA>
+            <Location>
+              <X>
+                <Max>0.1</Max>
+                <Min>-0.1</Min>
+              </X>
+              <Y>
+                <Max>0.1</Max>
+                <Min>-0.1</Min>
+              </Y>
+              <Z>
+                <Max>0.1</Max>
+                <Min>-0.1</Min>
+              </Z>
+            </Location>
+          </PVA>
         </LocationValues>
         <RotationValues>
           <Type>1</Type>
@@ -24,14 +40,14 @@
           <Type>3</Type>
           <SinglePVA>
             <Scale>
-              <Center>0.125</Center>
-              <Max>0.125</Max>
-              <Min>0.125</Min>
+              <Center>0.07999999</Center>
+              <Max>0.09999999</Max>
+              <Min>0.06</Min>
             </Scale>
           </SinglePVA>
         </ScalingValues>
         <RendererCommonValues>
-          <ColorTexture>textures/cball-particles-cr.png</ColorTexture>
+          <ColorTexture>../textures/cball-particles-cr.png</ColorTexture>
           <FadeIn>
             <Frame>30</Frame>
             <StartSpeed>10</StartSpeed>
@@ -43,9 +59,10 @@
         </RendererCommonValues>
         <DrawingValues>
           <Sprite>
+            <ColorAll>1</ColorAll>
             <ColorAll_Fixed>
-              <R>81</R>
-              <G>139</G>
+              <R>172</R>
+              <B>172</B>
             </ColorAll_Fixed>
             <ColorAll_Random>
               <R>

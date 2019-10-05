@@ -32,6 +32,8 @@ ModelImporter:
     100052: cball-settings-efk-switch
     100054: cball-settings-volume-knob
     100056: cball-settings-volume-switch
+    100058: cball-settings-throwing-detection-knob
+    100060: cball-settings-throwing-detection-switch
     400000: ball-cup
     400002: ball-cup-collider-back
     400004: ball-cup-collider-base
@@ -61,6 +63,8 @@ ModelImporter:
     400052: cball-settings-efk-switch
     400054: cball-settings-volume-knob
     400056: cball-settings-volume-switch
+    400058: cball-settings-throwing-detection-knob
+    400060: cball-settings-throwing-detection-switch
     2100000: impact-force-gauge-mat__cball-main_png
     2100002: cball-mat__cball-main_png
     2100004: ball-cup-mat
@@ -98,6 +102,8 @@ ModelImporter:
     2300050: cball-settings-efk-switch
     2300052: cball-settings-volume-knob
     2300054: cball-settings-volume-switch
+    2300056: cball-settings-throwing-detection-knob
+    2300058: cball-settings-throwing-detection-switch
     3300000: ball-cup
     3300002: ball-cup-collider-back
     3300004: ball-cup-collider-base
@@ -126,6 +132,8 @@ ModelImporter:
     3300050: cball-settings-efk-switch
     3300052: cball-settings-volume-knob
     3300054: cball-settings-volume-switch
+    3300056: cball-settings-throwing-detection-knob
+    3300058: cball-settings-throwing-detection-switch
     4300000: impact-force-gauge
     4300002: impact-spin-gauge
     4300004: ball-cup
@@ -154,6 +162,8 @@ ModelImporter:
     4300050: cball-settings-efk-knob
     4300052: cball-settings-volume-switch
     4300054: cball-settings-efk-switch
+    4300056: cball-settings-throwing-detection-switch
+    4300058: cball-settings-throwing-detection-knob
     7400000: Default Take
     9500000: //RootNode
     2186277476908879412: ImportLogs

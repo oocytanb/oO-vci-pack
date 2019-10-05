@@ -1,12 +1,31 @@
-----------------------------------------------------------------
---  Copyright (c) 2019 oO (https://github.com/oocytanb)
---  MIT Licensed
-----------------------------------------------------------------
+--[[
+MIT License
+
+Copyright (c) 2019 oO (https://github.com/oocytanb)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+]]
 
 local CreateLocalSharedProperties = function (lspid, loadid, studioTimeGetter)
     local maxAliveTime = TimeSpan.FromSeconds(5)
     local clientLspid = '84cda5f8-ebd7-442c-9269-5160dac50b9e'
-    local aliveLspid = '58d17509-83b7-486b-be8f-aa74b7d6cc75'
+    local aliveLspid = 'bf033503-9855-4b09-90d3-fa7d71da4351'
     local listenerMapKey = '__CYTANB_LOCAL_SHARED_PROPERTIES_LISTENER_MAP'
     local propertyChangeEventName = 'property_change'
     local expiredEventName = 'expired'
@@ -99,11 +118,12 @@ end
 
 return {
     Load = function (mainEnv, loadid)
-        local cballSettingsLspid = 'e63ae798-cdd4-42c0-a2a0-33655c9514a4'
+        local cballSettingsLspid = '20fa1f9f-ec8a-43ac-b816-7e4390ca5ee5'
         local ballTag = '#cytanb-ball'
         local targetTag = '#cytanb-target'
         local ballVelocityAdjustmentPropertyName = 'ballVelocityAdjustment'
         local ballAngularVelocityAdjustmentPropertyName = 'ballAngularVelocityAdjustment'
+        local ballKinematicDetectionTimePropertyName = 'ballKinematicDetectionTime'
         local ballAltitudeAdjustmentPropertyName = 'ballAltitudeAdjustment'
         local efkLevelPropertyName = 'efkLevel'
         local audioVolumePropertyName = 'audioVolume'
@@ -118,35 +138,47 @@ return {
             --- 仰俯角の調整値の初期設定値。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
             [ballAltitudeAdjustmentPropertyName] = 0,
 
+            --- 投球動作の判定時間。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
+            [ballKinematicDetectionTimePropertyName] = 0,
+
             --- エフェクトレベルの初期設定値。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
             [efkLevelPropertyName] = 0,
 
             --- 音量の初期設定値。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
             [audioVolumePropertyName] = -5,
 
-            --- 投球動作として、リリースポイントからさかのぼって速度計算に反映する時間。([100, 250] ms 程度の範囲)
-            ballKinematicTime = TimeSpan.FromMilliseconds(135),
-
             --- 投球動作とみなす速度の閾値。
             ballKinematicVelocityThreshold = 1.0,
 
             --- 投球動作による速度係数の最小値。
-            ballKinematicMinVelocityFactor = 0.0625,
+            ballKinematicMinVelocityFactor = 0.5,
 
             --- 投球動作による速度係数の最大値。
-            ballKinematicMaxVelocityFactor = 0.875,
+            ballKinematicMaxVelocityFactor = 6.0,
 
             --- 投球動作による角速度係数の最小値。
-            ballKinematicMinAngularVelocityFactor = 0.0625,
+            ballKinematicMinAngularVelocityFactor = 0.015625,
 
             --- 投球動作による角速度係数の最大値。
-            ballKinematicMaxAngularVelocityFactor = 7.5,
+            ballKinematicMaxAngularVelocityFactor = 4.0,
 
             --- 投球動作による仰俯角係数の最小値。
             ballKinematicMinAltitudeFactor = -25,
 
             --- 投球動作による仰俯角係数の最大値。
             ballKinematicMaxAltitudeFactor = 25,
+
+            --- 投球動作の判定時間の閾値。
+            ballKinematicDetectionTimeThreshold = TimeSpan.FromMilliseconds(300),
+
+            --- 投球動作の判定時間の最小値。
+            ballKinematicMinDetectionTime = TimeSpan.FromMilliseconds(5),
+
+            --- 投球動作の判定時間の最大値。
+            ballKinematicMaxDetectionTime = TimeSpan.FromMilliseconds(180),
+
+            --- 投球動作の判定の係数。
+            ballKinematicDetectionFactor = 0.25,
 
             --- 入力タイミングによる速度のスケールの最小値。
             ballInpactMinVelocityScale = 2.0,
@@ -254,10 +286,10 @@ return {
             settingsPanelOffset = Vector3.__new(-0.8, 0.25, 0),
 
             --- 設定パネルの距離の閾値。
-            settingsPanelDistanceThreshold = 3.0,
+            settingsPanelDistanceThreshold = 7.0,
 
             --- 設定パネルの調節スイッチのY座標。
-            settingsPanelAdjustmentSwitchNeutralPositionY = -0.1,
+            settingsPanelAdjustmentSwitchNeutralPositionY = 0,
 
             --- 設定パネルの調節スイッチの目盛り。
             settingsPanelAdjustmentSwitchDivisionScale = 0.01,
@@ -336,6 +368,7 @@ return {
                 {switchName = 'cball-settings-velocity-switch', knobName = 'cball-settings-velocity-knob', propertyName = ballVelocityAdjustmentPropertyName},
                 {switchName = 'cball-settings-angular-velocity-switch', knobName = 'cball-settings-angular-velocity-knob', propertyName = ballAngularVelocityAdjustmentPropertyName},
                 {switchName = 'cball-settings-altitude-switch', knobName = 'cball-settings-altitude-knob', propertyName = ballAltitudeAdjustmentPropertyName},
+                {switchName = 'cball-settings-throwing-detection-switch', knobName = 'cball-settings-throwing-detection-knob', propertyName = ballKinematicDetectionTimePropertyName},
                 {switchName = 'cball-settings-efk-switch', knobName = 'cball-settings-efk-knob', propertyName = efkLevelPropertyName},
                 {switchName = 'cball-settings-volume-switch', knobName = 'cball-settings-volume-knob', propertyName = audioVolumePropertyName}
             },
@@ -348,6 +381,9 @@ return {
 
             --- 仰俯角の調整値のプロパティ名。
             ballAltitudeAdjustmentPropertyName = ballAltitudeAdjustmentPropertyName,
+
+            --- 投球動作の判定時間のプロパティ名。
+            ballKinematicDetectionTimePropertyName = ballKinematicDetectionTimePropertyName,
 
             --- エフェクトレベルのプロパティ名。
             efkLevelPropertyName = efkLevelPropertyName,
@@ -365,7 +401,7 @@ return {
             avatarColliders = {'Head', 'Chest', 'Hips', 'RightArm', 'LeftArm', 'RightHand', 'LeftHand', 'RightThigh', 'LeftThigh', 'RightFoot', 'LeftFoot', 'RightToes', 'LeftToes'},
 
             --- ローカルの共有プロパティ。
-            localSharedProperties = CreateLocalSharedProperties(cballSettingsLspid, loadid, function () return mainEnv.vci.me.Time end),
+            localSharedProperties = CreateLocalSharedProperties(cballSettingsLspid, loadid, function () return mainEnv.vci.me.UnscaledTime end),
 
             --- スローイングのエフェクトを有効にするか。
             enableThrowingEfk = false,
