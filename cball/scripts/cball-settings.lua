@@ -160,7 +160,7 @@ return {
             ballKinematicMinAngularVelocityFactor = 0.015625,
 
             --- 投球動作による角速度係数の最大値。
-            ballKinematicMaxAngularVelocityFactor = 4.0,
+            ballKinematicMaxAngularVelocityFactor = 3.5,
 
             --- 投球動作による仰俯角係数の最小値。
             ballKinematicMinAltitudeFactor = -25,
@@ -283,10 +283,10 @@ return {
             standLightRequestIntervalTime = TimeSpan.FromSeconds(3),
 
             --- 設定パネルを表示するオフセット位置。
-            settingsPanelOffset = Vector3.__new(-0.8, 0.25, 0),
+            settingsPanelOffset = Vector3.__new(-1.5, 0.25, 0),
 
             --- 設定パネルの距離の閾値。
-            settingsPanelDistanceThreshold = 7.0,
+            settingsPanelDistanceThreshold = 6.0,
 
             --- 設定パネルの調節スイッチのY座標。
             settingsPanelAdjustmentSwitchNeutralPositionY = 0,
@@ -301,7 +301,7 @@ return {
             ballTag = ballTag,
 
             --- ボールのオブジェクト名。
-            ballName = 'cball' .. ballTag,
+            ballName = 'cball' .. ballTag .. '#cytanb-color-picker',
 
             --- ボールのエフェクトのコンテナー名。
             ballEfkContainerName = 'ball-efk',
@@ -323,6 +323,12 @@ return {
 
             --- ボールのカップのオブジェクト名。
             ballCupName = 'ball-cup',
+
+            --- カラーインデックスオブジェクトのプレフィックス。
+            colorIndexNamePrefix = 'cytanb-color-index-',
+
+            --- 識別エフェクトの再生周期。
+            discernibleEfkPeriod = TimeSpan.FromSeconds(10),
 
             --- ターゲットのタグ名。
             targetTag = targetTag,

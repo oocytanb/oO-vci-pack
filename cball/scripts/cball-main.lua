@@ -55,11 +55,17 @@ end
 local settings = require('cball-settings').Load(_ENV, tostring(cytanb.RandomUUID()))
 
 local cballNS = 'com.github.oocytanb.oO-vci-pack.cball'
+local statusMessageName = cballNS .. '.status'
+local queryStatusMessageName = cballNS .. '.query-status'
+local discernibleColorChangedMessageName = cballNS .. '.discernible-color-changed'
+local ballStatusChangedMessageName = cballNS .. '.ball-status-changed'
 local respawnBallMessageName = cballNS .. '.respawn-ball'
 local buildStandLightMessageName = cballNS .. '.build-standlight'
 local buildAllStandLightsMessageName = cballNS .. '.build-all-standlights'
 local hitMessageName = cballNS .. '.hit'
 local showSettingsPanelMessageName = cballNS .. '.show-settings-panel'
+
+local colorPaletteItemStatusMessageName = 'cytanb.color-palette.item-status'
 
 --- VCI がロードされたか。
 local vciLoaded = false
@@ -68,7 +74,7 @@ local hiddenPosition
 
 local avatarColliderMap = cytanb.ListToMap(settings.avatarColliders, true)
 
-local ball, ballEfkContainer, ballEfk, ballEfkFade, ballEfkFadeMove, ballEfkOne, ballEfkOneLarge, ballCup, standLights, standLightEfkContainer, standLightHitEfk, standLightDirectHitEfk, impactForceGauge, impactSpinGauge, settingsPanel, closeSwitch, adjustmentSwitches, propertyNameSwitchMap
+local ball, ballEfkContainer, ballEfk, ballEfkFade, ballEfkFadeMove, ballEfkOne, ballEfkOneLarge, ballDiscernibleEfk, ballCup, standLights, standLightEfkContainer, standLightHitEfk, standLightDirectHitEfk, impactForceGauge, impactSpinGauge, settingsPanel, closeSwitch, adjustmentSwitches, propertyNameSwitchMap
 
 --- 設定パネルがつかまれているか。
 local settingsPanelGrabbed = false
@@ -106,8 +112,17 @@ local cupClickCount = 0
 --- カップのクリック時間。
 local cupClickTime = TimeSpan.Zero
 
+--- 識別エフェクトの色。
+local discernibleColor = Color.__new(0.0, 0.8, 0.8, 0.25)
+
+--- 最後に識別エフェクトを再生した時間。
+local lastDiscernibleEfkPlayTime = TimeSpan.Zero
+
 --- ライトを組み立てるリクエストを送った時間。
 local standLightsLastRequestTime = vci.me.Time
+
+--- カラーパレットへの接触カウント
+local colorPaletteCollisionCount = 0
 
 cytanb.SetOutputLogLevelEnabled(true)
 if settings.enableDebugging then
@@ -169,6 +184,50 @@ end
 
 local OfferBallTransform = function (position, rotation, time)
     ballTransformQueue.Offer({position = position, rotation = rotation, time = time or vci.me.Time})
+end
+
+local PlayDiscernibleEfk = function (playNow)
+    local efkLevel = propertyNameSwitchMap[settings.efkLevelPropertyName].GetValue()
+    if efkLevel >= 4 then
+        local now = vci.me.Time
+        local expired = now >= lastDiscernibleEfkPlayTime + settings.discernibleEfkPeriod
+        if expired or playNow then
+            if not expired then
+                ballDiscernibleEfk.Stop()
+            end
+            lastDiscernibleEfkPlayTime = now
+            ballDiscernibleEfk.Play()
+            ballDiscernibleEfk.SetAllColor(discernibleColor)
+        end
+    end
+end
+
+local StopDiscernibleEfk = function ()
+    if lastDiscernibleEfkPlayTime ~= TimeSpan.Zero then
+        ballDiscernibleEfk.Stop()
+        lastDiscernibleEfkPlayTime = TimeSpan.Zero
+    end
+end
+
+local CreateBallStatusParameter = function ()
+    return {
+        name = ball.GetName(),
+        position = cytanb.Vector3ToTable(ball.GetPosition()),
+        rotation = cytanb.QuaternionToTable(ball.GetRotation()),
+        longSide = settings.ballSimLongSide,
+        mass = settings.ballSimMass,
+        grabbed = ballGrabbed,
+        operator = ball.IsMine
+    }
+end
+
+local CreateStatusParameter = function ()
+    return {
+        owner = vci.assets.IsMine,
+        clientID = settings.localSharedProperties.GetClientID(),
+        discernibleColor = discernibleColor,
+        ball = CreateBallStatusParameter()
+    }
 end
 
 local EmitHitBall = function (targetName)
@@ -313,16 +372,13 @@ local HitStandLight = function (light)
         end
 
         local efkLevel = propertyNameSwitchMap[settings.efkLevelPropertyName].GetValue()
-        local nillableEfk
-        if efkLevel >= 0 then
-            -- エフェクトレベル 0 以上で、ライトを倒したときにエフェクトを出す。
-            nillableEfk = ls.directHit and standLightDirectHitEfk or standLightHitEfk
-        else
-            nillableEfk = nil
+        if efkLevel == 0 and ball.IsMine then
+            -- レベル 0 で、ボールの操作権があるときは、レベル 1 のエフェクトを表示する
+            efkLevel = 1
         end
 
-        if cytanb.NillableHasValue(nillableEfk) then
-            local efk = cytanb.NillableValue(nillableEfk)
+        if efkLevel >= 1 then
+            local efk = ls.directHit and standLightDirectHitEfk or standLightHitEfk
             cytanb.LogTrace('play efk: ', efk.EffectName, ',', li.GetName())
             standLightEfkContainer.SetPosition(li.GetPosition())
             efk.Play()
@@ -372,6 +428,7 @@ end
 
 --- ボールをカップへ戻す。
 local RespawnBall = function ()
+    StopDiscernibleEfk()
     ResetGauge()
     ResetBallCup()
 
@@ -587,6 +644,8 @@ local OnLoad = function ()
     ballEfkOne = ballEfkMap[settings.ballEfkOneName]
     ballEfkOneLarge = ballEfkMap[settings.ballEfkOneLargeName]
 
+    ballDiscernibleEfk = vci.assets.GetEffekseerEmitter(settings.ballName)
+
     ballCup = vci.assets.GetSubItem(settings.ballCupName)
 
     standLights = {}
@@ -644,6 +703,39 @@ local OnLoad = function ()
             vciLoaded = false
         else
             cytanb.LogInfo('localSharedProperties: unknown event: ', eventName)
+        end
+    end)
+
+    if vci.assets.IsMine then
+        -- 全 VCI からのクエリーに応答する。
+        cytanb.OnMessage(queryStatusMessageName, function (sender, name, parameterMap)
+            cytanb.LogDebug('onQueryStatus')
+            cytanb.EmitMessage(statusMessageName, CreateStatusParameter())
+        end)
+    end
+
+    cytanb.OnInstanceMessage(statusMessageName, function (sender, name, parameterMap)
+        cytanb.LogDebug('onStatus')
+        if parameterMap.clientID ~= settings.localSharedProperties.GetClientID() then
+            discernibleColor = cytanb.NillableValueOrDefault(parameterMap.discernibleColor, discernibleColor)
+        end
+    end)
+
+    cytanb.OnInstanceMessage(discernibleColorChangedMessageName, function (sender, name, parameterMap)
+        cytanb.LogDebug('onDiscernibleColorChangedMessageName')
+        if parameterMap.clientID ~= settings.localSharedProperties.GetClientID() then
+            discernibleColor = cytanb.NillableValueOrDefault(parameterMap.discernibleColor, discernibleColor)
+        end
+    end)
+
+    cytanb.OnInstanceMessage(ballStatusChangedMessageName, function (sender, name, parameterMap)
+        cytanb.LogDebug('onBallStatusChanged')
+        if not ball.IsMine and parameterMap.clientID ~= settings.localSharedProperties.GetClientID() then
+            -- 他人が操作しているボールの状態が変わった場合は、識別エフェクトの処理を行う
+            local ballStatus = parameterMap.ball
+            if ballStatus.operator and ballStatus.grabbed then
+                StopDiscernibleEfk()
+            end
         end
     end)
 
@@ -743,8 +835,19 @@ local OnLoad = function ()
         end
     end)
 
+    cytanb.OnMessage(colorPaletteItemStatusMessageName, function (sender, name, parameterMap)
+        if ball.IsMine and colorPaletteCollisionCount >= 1 then
+            discernibleColor = cytanb.ColorFromARGB32(parameterMap.argb32)
+            PlayDiscernibleEfk(true)
+
+            cytanb.EmitMessage(discernibleColorChangedMessageName, CreateStatusParameter())
+        end
+    end)
+
     if vci.assets.IsMine then
         cytanb.EmitMessage(showSettingsPanelMessageName)
+    else
+        cytanb.EmitMessage(queryStatusMessageName)
     end
 end
 
@@ -815,11 +918,14 @@ end
 local OnUpdateBall = function (deltaTime, unscaledDeltaTime)
     local ballPos = ball.GetPosition()
     local ballRot = ball.GetRotation()
+    local moving = false
     local respawned = false
 
     if not ballGrabbed and not ballTransformQueue.IsEmpty() then
         local lastTransform = ballTransformQueue.PeekLast()
         local lastPos = lastTransform.position
+        moving = (ballPos - lastPos).sqrMagnitude > 0.0025
+
         -- カップとの距離が離れていたら、ボールが転がっているものとして処理する
         local cupSqrDistance = (ballPos - ballCup.GetPosition()).sqrMagnitude
         if cupSqrDistance > settings.ballActiveThreshold ^ 2 then
@@ -860,19 +966,24 @@ local OnUpdateBall = function (deltaTime, unscaledDeltaTime)
                 end
 
                 local efkLevel = propertyNameSwitchMap[settings.efkLevelPropertyName].GetValue()
-                if efkLevel >= 0 then
+                if efkLevel == 0 and ball.IsMine then
+                    -- レベル 0 で、ボールの操作権があるときは、レベル 1 のエフェクトを表示する
+                    efkLevel = 1
+                end
+
+                if efkLevel >= 1 then
                     local vm = velocity.magnitude
                     if vm >= settings.ballTrailVelocityThreshold then
                         local near = cupSqrDistance <= settings.ballNearDistance ^ 2
                         local vmNodes = math.max(1, math.ceil(vm / (settings.ballSimLongSide * settings.ballTrailInterpolationDistanceFactor * (near and 0.5 or 1.0) / deltaSec)))
-                        local nodes = math.min(vmNodes, settings.ballTrailInterpolationNodesPerFrame + cytanb.Clamp(math.floor((efkLevel + (near and 1 or 0)) * 2), 0, 4))
+                        local nodes = math.min(vmNodes, settings.ballTrailInterpolationNodesPerFrame + cytanb.Clamp(math.floor((efkLevel - 1 + (near and 1 or 0)) * 2), 0, 4))
                         local iNodes = 1.0 / nodes
                         local efk
                         if near then
                             -- 近距離の場合は、エフェクトレベルに合わせる
-                            if efkLevel >= 2 then
+                            if efkLevel >= 3 then
                                 efk = ballEfkFadeMove
-                            elseif efkLevel == 1 then
+                            elseif efkLevel == 2 then
                                 efk = ballEfkFade
                             else
                                 efk = ballEfk
@@ -901,6 +1012,16 @@ local OnUpdateBall = function (deltaTime, unscaledDeltaTime)
                 respawned = true
             end
         end
+    end
+
+    if moving then
+        if colorPaletteCollisionCount <= 0 then
+            -- ボールが動いている時は、識別エフェクトを停止する。
+            StopDiscernibleEfk()
+        end
+    elseif not ballGrabbed then
+        -- ボールが動いていない場合は、識別エフェクトを再生する
+        PlayDiscernibleEfk()
     end
 
     if not respawned then
@@ -1027,6 +1148,8 @@ onGrab = function (target)
         ball.SetAngularVelocity(Vector3.zero)
         ResetGauge()
         ballTransformQueue.Clear()
+        StopDiscernibleEfk()
+        cytanb.EmitMessage(statusMessageName, CreateStatusParameter())
     elseif target == settingsPanel.GetName() then
         settingsPanelGrabbed = true
     elseif string.startsWith(target, settings.standLightPrefix) then
@@ -1132,6 +1255,32 @@ onCollisionEnter = function (item, hit)
             if light and light.item.IsMine and not light.status.grabbed then
                 EmitHitStandLight(light, hit)
             end
+        end
+    end
+end
+
+onTriggerEnter = function (item, hit)
+    if not vciLoaded then
+        return
+    end
+
+    if item == ball.GetName() then
+        if string.startsWith(hit, settings.colorIndexNamePrefix) then
+            colorPaletteCollisionCount = colorPaletteCollisionCount + 1
+            cytanb.TraceLog('onTriggerEnter: colorPaletteCollisionCount = ', colorPaletteCollisionCount, ' hit = ', hit)
+        end
+    end
+end
+
+onTriggerExit = function (item, hit)
+    if not vciLoaded then
+        return
+    end
+
+    if item == ball.GetName() then
+        if string.startsWith(hit, settings.colorIndexNamePrefix) then
+            colorPaletteCollisionCount = colorPaletteCollisionCount - 1
+            cytanb.TraceLog('onTriggerExit: colorPaletteCollisionCount = ', colorPaletteCollisionCount, ' hit = ', hit)
         end
     end
 end

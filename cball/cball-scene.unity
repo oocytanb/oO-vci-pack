@@ -162,7 +162,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 90
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -188,7 +188,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 325395521}
   m_LocalRotation: {x: 0.36230782, y: -0, z: -0, w: 0.9320586}
-  m_LocalPosition: {x: 0, y: 5.9, z: -5.02}
+  m_LocalPosition: {x: 0, y: 1.16, z: -0.56}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -207,7 +207,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100014, guid: f9ea1260e349c6e489c5be5b17860adf, type: 3}
       propertyPath: m_Name
-      value: cball#cytanb-ball
+      value: cball#cytanb-ball#cytanb-color-picker
       objectReference: {fileID: 0}
     - target: {fileID: 100014, guid: f9ea1260e349c6e489c5be5b17860adf, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -499,10 +499,10 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 753107a3c841da84eb4bd95304b50ca6, type: 3}
-    version: 0.7.0
-    description: "- \u30DC\u30FC\u30EB\u3092\u3064\u304B\u3093\u3067\u6295\u3052\u308B\u3060\u3051\u3002\u6C17\u8EFD\u306B\u904A\u3093\u3067\u697D\u3057\u3093\u3067\u304F\u3060\u3055\u3044\u3002\n\r-
-      \u30AB\u30C3\u30D7\u3092\u30B0\u30EA\u30C3\u30D7\u3059\u308B\u3068\u3001\u30DC\u30FC\u30EB\u304C\u623B\u3063\u3066\u304D\u307E\u3059\u3002\r\n-
-      \u5468\u56F2\u306E\u5B89\u5168\u3092\u5341\u5206\u306B\u78BA\u8A8D\u306E\u3046\u3048\u3054\u5229\u7528\u304F\u3060\u3055\u3044\u3002\n[\u30BD\u30FC\u30B9\u30B3\u30FC\u30C9](https://github.com/oocytanb/oO-vci-pack)"
+    version: 0.7.3
+    description: "- \u30DC\u30FC\u30EB\u3092\u3064\u304B\u3093\u3067\u6295\u3052\u308B\u3060\u3051\u3002\u6C17\u8EFD\u306B\u904A\u3093\u3067\u697D\u3057\u3093\u3067\u304F\u3060\u3055\u3044\u3002\n-
+      \u30AB\u30C3\u30D7\u3092\u30B0\u30EA\u30C3\u30D7\u3059\u308B\u3068\u3001\u30DC\u30FC\u30EB\u304C\u623B\u3063\u3066\u304D\u307E\u3059\u3002\n-
+      \u5468\u56F2\u306E\u5B89\u5168\u3092\u5341\u5206\u306B\u78BA\u8A8D\u306E\u3046\u3048\u3054\u5229\u7528\u304F\u3060\u3055\u3044\u3002\n[\u8A73\u7D30](https://github.com/oocytanb/oO-vci-pack)"
     exporterVersion: 0.20
     specVersion: 
     modelDataLicenseType: 8
@@ -1599,6 +1599,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &473979148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473979082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d396bcb8480c24eb784eebe6096a99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectAsset: {fileID: 11400000, guid: 1aea442d350401a488ffdae49b6bb26b, type: 2}
+  playOnStart: 0
+  isLooping: 0
 --- !u!1001 &589104260
 PrefabInstance:
   m_ObjectHideFlags: 0
