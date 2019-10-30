@@ -7,9 +7,9 @@
         <CommonValues>
           <RotationEffectType>0</RotationEffectType>
           <Life>
-            <Center>360</Center>
-            <Max>360</Max>
-            <Min>360</Min>
+            <Center>270</Center>
+            <Max>270</Max>
+            <Min>270</Min>
           </Life>
         </CommonValues>
         <DrawingValues>
@@ -25,9 +25,9 @@
                 <Min>240</Min>
               </Life>
               <GenerationTimeOffset>
-                <Center>90</Center>
-                <Max>90</Max>
-                <Min>90</Min>
+                <Center>15</Center>
+                <Max>15</Max>
+                <Min>15</Min>
               </GenerationTimeOffset>
             </CommonValues>
             <LocationValues>
@@ -131,11 +131,20 @@
                 <Children>
                   <Node>
                     <CommonValues>
+                      <MaxGeneration>
+                        <Infinite>True</Infinite>
+                      </MaxGeneration>
+                      <LocationEffectType>1</LocationEffectType>
                       <Life>
-                        <Center>240</Center>
-                        <Max>240</Max>
-                        <Min>240</Min>
+                        <Center>20</Center>
+                        <Max>20</Max>
+                        <Min>20</Min>
                       </Life>
+                      <GenerationTime>
+                        <Center>0.5</Center>
+                        <Max>0.5</Max>
+                        <Min>0.5</Min>
+                      </GenerationTime>
                     </CommonValues>
                     <ScalingValues>
                       <Type>3</Type>
@@ -147,44 +156,19 @@
                         </Scale>
                       </SinglePVA>
                     </ScalingValues>
-                    <DrawingValues>
-                      <Type>3</Type>
-                    </DrawingValues>
-                    <IsRendered>False</IsRendered>
-                    <Name>ball-ribbon</Name>
-                    <Children>
-                      <Node>
-                        <CommonValues>
-                          <MaxGeneration>
-                            <Infinite>True</Infinite>
-                          </MaxGeneration>
-                          <LocationEffectType>1</LocationEffectType>
-                          <Life>
-                            <Center>20</Center>
-                            <Max>20</Max>
-                            <Min>20</Min>
-                          </Life>
-                          <GenerationTime>
-                            <Center>0.5</Center>
-                            <Max>0.5</Max>
-                            <Min>0.5</Min>
-                          </GenerationTime>
-                        </CommonValues>
-                        <RendererCommonValues>
-                          <ColorTexture>../textures/cball-particles-cr.png</ColorTexture>
-                          <FadeIn>
-                            <Frame>3</Frame>
-                            <StartSpeed>30</StartSpeed>
-                          </FadeIn>
-                          <FadeOut>
-                            <Frame>3</Frame>
-                            <EndSpeed>30</EndSpeed>
-                          </FadeOut>
-                        </RendererCommonValues>
-                        <Name>cr</Name>
-                        <Children />
-                      </Node>
-                    </Children>
+                    <RendererCommonValues>
+                      <ColorTexture>textures/cball-particles-cr.png</ColorTexture>
+                      <FadeIn>
+                        <Frame>3</Frame>
+                        <StartSpeed>30</StartSpeed>
+                      </FadeIn>
+                      <FadeOut>
+                        <Frame>3</Frame>
+                        <EndSpeed>30</EndSpeed>
+                      </FadeOut>
+                    </RendererCommonValues>
+                    <Name>cr</Name>
+                    <Children />
                   </Node>
                 </Children>
               </Node>
@@ -202,6 +186,6 @@
   <ToolVersion>1.43d</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
-  <EndFrame>360</EndFrame>
+  <EndFrame>270</EndFrame>
   <IsLoop>True</IsLoop>
 </EffekseerProject>

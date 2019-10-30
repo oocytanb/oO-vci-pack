@@ -279,9 +279,6 @@ return {
             --- ライトがリスポーンするまでの待ち時間。
             standLightWaitingTime = TimeSpan.FromSeconds(60),
 
-            --- ライトにメッセージを送るインターバル時間。
-            standLightRequestIntervalTime = TimeSpan.FromSeconds(3),
-
             --- 設定パネルを表示するオフセット位置。
             settingsPanelOffset = Vector3.__new(-1.5, 0.25, 0),
 
@@ -296,6 +293,9 @@ return {
 
             --- 設定パネルのグラブによるクリックタイミング。
             settingsPanelGrabClickTiming = TimeSpan.FromMilliseconds(2000),
+
+            --- メッセージのインターバル時間。
+            requestIntervalTime = TimeSpan.FromSeconds(3),
 
             --- ボールのタグ名。
             ballTag = ballTag,
@@ -327,8 +327,11 @@ return {
             --- カラーインデックスオブジェクトのプレフィックス。
             colorIndexNamePrefix = 'cytanb-color-index-',
 
-            --- 識別エフェクトの再生周期。
-            discernibleEfkPeriod = TimeSpan.FromSeconds(10),
+            --- 識別エフェクトの最小再生周期。
+            discernibleEfkMinPeriod = TimeSpan.FromSeconds(4.5),
+
+            --- 識別エフェクトの最大再生周期。
+            discernibleEfkMaxPeriod = TimeSpan.FromSeconds(10),
 
             --- ターゲットのタグ名。
             targetTag = targetTag,

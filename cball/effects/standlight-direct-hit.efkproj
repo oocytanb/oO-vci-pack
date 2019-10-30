@@ -73,7 +73,7 @@
           </SinglePVA>
         </ScalingValues>
         <RendererCommonValues>
-          <ColorTexture>../textures/cball-particles-sq.png</ColorTexture>
+          <ColorTexture>textures/cball-particles-sq.png</ColorTexture>
         </RendererCommonValues>
         <DrawingValues>
           <Sprite>

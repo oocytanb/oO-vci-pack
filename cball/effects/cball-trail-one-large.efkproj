@@ -31,7 +31,7 @@
           </SinglePVA>
         </ScalingValues>
         <RendererCommonValues>
-          <ColorTexture>../textures/cball-particles-cr.png</ColorTexture>
+          <ColorTexture>textures/cball-particles-cr.png</ColorTexture>
           <FadeIn>
             <Frame>30</Frame>
             <StartSpeed>10</StartSpeed>
