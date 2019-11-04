@@ -58,7 +58,6 @@ local cballNS = 'com.github.oocytanb.oO-vci-pack.cball'
 local statusMessageName = cballNS .. '.status'
 local queryStatusMessageName = cballNS .. '.query-status'
 local discernibleColorChangedMessageName = cballNS .. '.discernible-color-changed'
-local ballStatusChangedMessageName = cballNS .. '.ball-status-changed'
 local respawnBallMessageName = cballNS .. '.respawn-ball'
 local buildStandLightMessageName = cballNS .. '.build-standlight'
 local buildAllStandLightsMessageName = cballNS .. '.build-all-standlights'
@@ -74,8 +73,7 @@ local hiddenPosition
 
 local avatarColliderMap = cytanb.ListToMap(settings.avatarColliders, true)
 
-local ball, ballEfkContainer, ballEfk, ballEfkFade, ballEfkFadeMove, ballEfkOne, ballEfkOneLarge, ballCup
-local ballDiscernibleEfkPlayer, ballCupDiscernibleEfkPlayer
+local ball, ballEfkContainer, ballEfk, ballEfkFade, ballEfkFadeMove, ballEfkOne, ballEfkOneLarge, ballCup, ballDiscernibleEfkPlayer
 local standLights, standLightEfkContainer, standLightHitEfk, standLightDirectHitEfk
 local impactForceGauge, impactSpinGauge
 local settingsPanel, closeSwitch, adjustmentSwitches, propertyNameSwitchMap
@@ -245,7 +243,8 @@ end
 local SetDiscernibleColor = function (color)
     cytanb.LogInfo('SetDiscernibleColor: color = ', color)
     ballDiscernibleEfkPlayer.SetColor(color)
-    ballCupDiscernibleEfkPlayer.SetColor(color)
+    vci.assets.SetMaterialColorFromName(settings.ballCoveredLightMat, color)
+    vci.assets.SetMaterialEmissionColorFromName(settings.ballCoveredLightMat, Color.__new(color.r * 1.5, color.g * 1.5, color.b * 1.5, 1.0))
 end
 
 local OfferBallTransform = function (position, rotation, time)
@@ -410,6 +409,7 @@ local HitStandLight = function (light)
             cytanb.LogTrace('play efk: ', efk.EffectName, ',', li.GetName())
             standLightEfkContainer.SetPosition(li.GetPosition())
             efk.Play()
+            efk.SetAllColor(ballDiscernibleEfkPlayer.GetColor())
         end
 
         local volume = cytanb.Clamp(0.0, (propertyNameSwitchMap[settings.audioVolumePropertyName].GetValue() + 5) / 10.0, 1.0)
@@ -679,11 +679,6 @@ local OnLoad = function ()
         settings.discernibleEfkMinPeriod
     )
 
-    ballCupDiscernibleEfkPlayer = CreateDiscernibleEfkPlayer(
-        cytanb.NillableValue(vci.assets.GetEffekseerEmitter(settings.ballCupName)),
-        settings.discernibleEfkMaxPeriod
-    )
-
     standLights = {}
     for i = 1, settings.standLightCount do
         local item = cytanb.NillableValue(vci.assets.GetSubItem(settings.standLightPrefix .. (i - 1)))
@@ -750,18 +745,23 @@ local OnLoad = function ()
         end)
     end
 
-    cytanb.OnInstanceMessage(statusMessageName, function (sender, name, parameterMap)
-        if vci.assets.IsMine and not discernibleColorInitialized and vci.me.UnscaledTime <= discernibleColorCheckedRequestedTime + settings.requestIntervalTime then
-            -- 他のインスタンスの識別色を収集する
-            if parameterMap.discernibleColor and parameterMap.discernibleColor.a > 0.0 then
-                existentDiscernibleColorTable[cytanb.ColorToIndex(parameterMap.discernibleColor)] = true
+    cytanb.OnMessage(statusMessageName, function (sender, name, parameterMap)
+        if parameterMap[cytanb.InstanceIDParameterName] == cytanb.InstanceID() then
+            if parameterMap.clientID ~= settings.localSharedProperties.GetClientID() then
+                -- インスタンスの設置者から状態の変更通知が来たので、ローカルの値を更新する
+                cytanb.LogDebug('onStatus @instance')
+                if parameterMap.discernibleColor then
+                    SetDiscernibleColor(parameterMap.discernibleColor)
+                end
             end
-        end
-
-        if parameterMap.clientID ~= settings.localSharedProperties.GetClientID() then
-            cytanb.LogDebug('onStatus')
-            if parameterMap.discernibleColor then
-                SetDiscernibleColor(parameterMap.discernibleColor)
+        else
+            -- 他のインスタンスの識別色を収集する
+            if vci.assets.IsMine and not discernibleColorInitialized and vci.me.UnscaledTime <= discernibleColorCheckedRequestedTime + settings.requestIntervalTime then
+                if parameterMap.discernibleColor and parameterMap.discernibleColor.a > 0.0 then
+                    local colorIndex = cytanb.ColorToIndex(parameterMap.discernibleColor)
+                    cytanb.LogTrace('onStatus @other: colorIndex = ', colorIndex, ', discernibleColor = ', parameterMap.discernibleColor)
+                    existentDiscernibleColorTable[colorIndex] = true
+                end
             end
         end
     end)
@@ -771,17 +771,6 @@ local OnLoad = function ()
             -- cytanb.LogDebug('onDiscernibleColorChanged: color = ', parameterMap.discernibleColor)
             if parameterMap.discernibleColor then
                 SetDiscernibleColor(parameterMap.discernibleColor)
-            end
-        end
-    end)
-
-    cytanb.OnInstanceMessage(ballStatusChangedMessageName, function (sender, name, parameterMap)
-        if not ball.IsMine and parameterMap.clientID ~= settings.localSharedProperties.GetClientID() then
-            -- 他人が操作しているボールの状態が変わった場合は、識別エフェクトの処理を行う
-            local ballStatus = parameterMap.ball
-            cytanb.LogDebug('onBallStatusChanged: grabbed = ', ballStatus.grabbed)
-            if ballStatus.operator and ballStatus.grabbed then
-                ballDiscernibleEfkPlayer.Stop()
             end
         end
     end)
@@ -900,11 +889,7 @@ local OnLoad = function ()
         if ball.IsMine and colorPaletteCollisionCount >= 1 then
             if ballGrabbed and vci.me.UnscaledTime <= colorPaletteCollisionTime + settings.requestIntervalTime then
                 colorPaletteCollisionCount = colorPaletteCollisionCount - 1
-
                 SetDiscernibleColor(cytanb.ColorFromARGB32(parameterMap.argb32))
-                ballDiscernibleEfkPlayer.Stop()
-                ballDiscernibleEfkPlayer.ContinualPlay()
-
                 cytanb.EmitMessage(discernibleColorChangedMessageName, CreateStatusParameter())
             else
                 colorPaletteCollisionCount = 0
@@ -928,7 +913,7 @@ local OnUpdateDiscernibleEfk = function (deltaTime, unscaledDeltaTime)
         local count = 0
         for si = 0, cytanb.ColorSaturationSamples - 1 do
             count = 0
-            for hi = 0, cytanb.ColorHueSamples - 1 do
+            for hi = 0, cytanb.ColorHueSamples - 2 do
                 local index = hi + si * cytanb.ColorHueSamples
                 if not existentDiscernibleColorTable[index] then
                     lots[count] = index
@@ -959,8 +944,6 @@ local OnUpdateDiscernibleEfk = function (deltaTime, unscaledDeltaTime)
             ballDiscernibleEfkPlayer.ContinualPlay()
         end
     end
-
-    ballCupDiscernibleEfkPlayer.ContinualPlay()
 end
 
 --- ゲージの表示を更新する。
@@ -1250,7 +1233,6 @@ onGrab = function (target)
         ResetGauge()
         ballTransformQueue.Clear()
         ballDiscernibleEfkPlayer.Stop()
-        cytanb.EmitMessage(ballStatusChangedMessageName, CreateStatusParameter())
     elseif target == settingsPanel.GetName() then
         settingsPanelGrabbed = true
     elseif string.startsWith(target, settings.standLightPrefix) then
@@ -1284,7 +1266,6 @@ onUngrab = function (target)
             end
             impactGaugeStartTime = vci.me.Time
         end
-        cytanb.EmitMessage(ballStatusChangedMessageName, CreateStatusParameter())
     elseif string.startsWith(target, settings.standLightPrefix) then
         local light, index = StandLightFromName(target)
         cytanb.LogTrace('ungrab ', target, ', index = ', index, ', light = ', type(light))

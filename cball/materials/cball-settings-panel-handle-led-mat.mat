@@ -99,7 +99,7 @@ Material:
     - _LightColorAttenuation: 0
     - _MToonVersion: 32
     - _Metallic: 0
-    - _Mode: 0
+    - _Mode: 3
     - _OcclusionStrength: 1
     - _OutlineColorMode: 0
     - _OutlineCullMode: 1
@@ -124,8 +124,8 @@ Material:
     - _UvAnimScrollY: -0.002
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.8, g: 0.8, b: 0.8, a: 1}
-    - _EmissionColor: {r: 0.595949, g: 0.98113203, b: 0.5877536, a: 0}
+    - _Color: {r: 0.7991028, g: 0.7991028, b: 0.7991028, a: 1}
+    - _EmissionColor: {r: 0.59607846, g: 0.98039216, b: 0.5882353, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShadeColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}

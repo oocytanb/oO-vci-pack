@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 328b9b635eac5534c842936f1d82b9b5
+guid: fb695e812fa525e45b512992d80a482d
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -7,32 +7,25 @@ ModelImporter:
     100002: //RootNode
     400000: ballstand-light-led
     400002: //RootNode
-    2100000: standlight-cover-mat
-    2100002: standlight-led-mat
-    2100004: covered-light-mat__cball-main_png
-    2100006: covered-light-mat__cball-covered-light_png
-    2100008: cball-cutout-mat__cball-cutout-tex_png
-    2100010: covered-light-mat
+    2100000: covered-light-mat
+    2100002: cball-cutout-mat
     2300000: ballstand-light-led
     2300002: //RootNode
     3300000: ballstand-light-led
     3300002: //RootNode
     4300000: standlight
     4300002: ballstand-light-led
-    7400000: Default Take
-    9500000: //RootNode
-    2186277476908879412: ImportLogs
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: standlight-cover-mat
-    second: {fileID: 2100000, guid: 334fc6f0b424dd34fb81a6b0909c5c5e, type: 2}
+      name: cball-cutout-mat
+    second: {fileID: 2100000, guid: 9d0c5c3c8b1f01741ad7362b18218034, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: standlight-led-mat
-    second: {fileID: 2100000, guid: 7d3316121d50d5943a702e568355fa3e, type: 2}
+      name: covered-light-mat
+    second: {fileID: 2100000, guid: 253e4fcbcea3d7f4eb593b04b78f172b, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -85,7 +78,7 @@ ModelImporter:
     secondaryUVPackMargin: 4
     useFileScale: 1
     previousCalculatedGlobalScale: 1
-    hasPreviousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -112,7 +105,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

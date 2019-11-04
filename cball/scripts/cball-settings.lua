@@ -222,11 +222,11 @@ return {
             --- ボールがアクティブであることを判定する閾値。
             ballActiveThreshold = 0.75 + 0.25,
 
-            --- ボールがリスポーンするまでの待ち時間。
-            ballWaitingTime = TimeSpan.FromSeconds(90),
+            --- ボールがリスポーンするまでの待ち時間。この設定時間を短くすると、自動的にリスポーンするようになる。
+            ballWaitingTime = TimeSpan.FromDays(1),
 
-            --- ボールのプレイエリアの半径。これを超えるとリスポーンする。
-            ballPlayAreaRadius = 100,
+            --- ボールのプレイエリアの半径。これを超えたら軌道計算などを行わない。
+            ballPlayAreaRadius = 300,
 
             --- ボールが近距離にあると判定する距離。
             ballNearDistance = 5,
@@ -323,6 +323,9 @@ return {
 
             --- ボールのカップのオブジェクト名。
             ballCupName = 'ball-cup',
+
+            --- ボールのカップのライトのマテリアル名。
+            ballCoveredLightMat = 'covered-light-mat',
 
             --- カラーインデックスオブジェクトのプレフィックス。
             colorIndexNamePrefix = 'cytanb-color-index-',

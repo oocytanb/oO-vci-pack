@@ -34,6 +34,12 @@ ModelImporter:
     100056: cball-settings-volume-switch
     100058: cball-settings-throwing-detection-knob
     100060: cball-settings-throwing-detection-switch
+    100062: cball-settings-panel-collider-top-right
+    100064: cball-settings-auto-respawn-on
+    100066: cball-settings-auto-respawn-switch
+    100068: cball_cytanb-ball_cytanb-color-picker
+    100070: cup-lamp-cube
+    100072: cball-light
     400000: ball-cup
     400002: ball-cup-collider-back
     400004: ball-cup-collider-base
@@ -65,6 +71,12 @@ ModelImporter:
     400056: cball-settings-volume-switch
     400058: cball-settings-throwing-detection-knob
     400060: cball-settings-throwing-detection-switch
+    400062: cball-settings-panel-collider-top-right
+    400064: cball-settings-auto-respawn-on
+    400066: cball-settings-auto-respawn-switch
+    400068: cball_cytanb-ball_cytanb-color-picker
+    400070: cup-lamp-cube
+    400072: cball-light
     2100000: impact-force-gauge-mat__cball-main_png
     2100002: cball-mat__cball-main_png
     2100004: ball-cup-mat
@@ -74,6 +86,10 @@ ModelImporter:
     2100012: cball-settings-mat__cball-main_png_001
     2100014: cball-settings-mat__cball-main_png
     2100016: cball-settings-panel-handle-led-mat__cball-settings-panel-handle-light_png
+    2100018: covered-light-mat__cball-covered-light_png
+    2100020: covered-light-mat__cball-main_png
+    2100022: cball-cutout-mat__cball-cutout-tex_png
+    2100024: covered-light-mat
     2300000: ball-cup
     2300002: ball-cup-collider-back
     2300004: ball-cup-collider-base
@@ -104,6 +120,12 @@ ModelImporter:
     2300054: cball-settings-volume-switch
     2300056: cball-settings-throwing-detection-knob
     2300058: cball-settings-throwing-detection-switch
+    2300060: cball-settings-panel-collider-top-right
+    2300062: cball-settings-auto-respawn-on
+    2300064: cball-settings-auto-respawn-switch
+    2300066: cball_cytanb-ball_cytanb-color-picker
+    2300068: cup-lamp-cube
+    2300070: cball-light
     3300000: ball-cup
     3300002: ball-cup-collider-back
     3300004: ball-cup-collider-base
@@ -134,6 +156,12 @@ ModelImporter:
     3300054: cball-settings-volume-switch
     3300056: cball-settings-throwing-detection-knob
     3300058: cball-settings-throwing-detection-switch
+    3300060: cball-settings-panel-collider-top-right
+    3300062: cball-settings-auto-respawn-on
+    3300064: cball-settings-auto-respawn-switch
+    3300066: cball_cytanb-ball_cytanb-color-picker
+    3300068: cup-lamp-cube
+    3300070: cball-light
     4300000: impact-force-gauge
     4300002: impact-spin-gauge
     4300004: ball-cup
@@ -164,6 +192,12 @@ ModelImporter:
     4300054: cball-settings-efk-switch
     4300056: cball-settings-throwing-detection-switch
     4300058: cball-settings-throwing-detection-knob
+    4300060: cball-settings-panel-collider-top-right
+    4300062: cball-settings-auto-respawn-switch
+    4300064: cball-settings-auto-respawn-on
+    4300066: cball_cytanb-ball_cytanb-color-picker
+    4300068: cup-lamp-cube
+    4300070: cball-light
     7400000: Default Take
     9500000: //RootNode
     2186277476908879412: ImportLogs

@@ -1,0 +1,284 @@
+fileFormatVersion: 2
+guid: 7426690a4786ed248a71afbf5d91203e
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: ball-cup
+    100002: ball-cup-collider-back
+    100004: ball-cup-collider-base
+    100006: ball-cup-collider-front
+    100008: ball-cup-collider-left
+    100010: ball-cup-collider-right
+    100012: ball-cup-light
+    100014: cball#cytanb-ball
+    100016: cball-settings-altitude-knob
+    100018: cball-settings-altitude-switch
+    100020: cball-settings-angular-velocity-knob
+    100022: cball-settings-angular-velocity-switch
+    100024: cball-settings-close-switch
+    100026: cball-settings-efk-knob
+    100028: cball-settings-efk-switch
+    100030: cball-settings-panel
+    100032: cball-settings-panel-collider-left
+    100034: cball-settings-panel-collider-right
+    100036: cball-settings-panel-collider-top
+    100038: cball-settings-panel-handle-light
+    100040: cball-settings-throwing-detection-knob
+    100042: cball-settings-throwing-detection-switch
+    100044: cball-settings-velocity-knob
+    100046: cball-settings-velocity-switch
+    100048: cball-settings-volume-knob
+    100050: cball-settings-volume-switch
+    100052: impact-force-gauge
+    100054: impact-spin-gauge
+    100056: //RootNode
+    100058: cball#cytanb-ball#cytanb-color-picker
+    100060: cup-lamp-cube
+    100062: cball-light
+    400000: ball-cup
+    400002: ball-cup-collider-back
+    400004: ball-cup-collider-base
+    400006: ball-cup-collider-front
+    400008: ball-cup-collider-left
+    400010: ball-cup-collider-right
+    400012: ball-cup-light
+    400014: cball#cytanb-ball
+    400016: cball-settings-altitude-knob
+    400018: cball-settings-altitude-switch
+    400020: cball-settings-angular-velocity-knob
+    400022: cball-settings-angular-velocity-switch
+    400024: cball-settings-close-switch
+    400026: cball-settings-efk-knob
+    400028: cball-settings-efk-switch
+    400030: cball-settings-panel
+    400032: cball-settings-panel-collider-left
+    400034: cball-settings-panel-collider-right
+    400036: cball-settings-panel-collider-top
+    400038: cball-settings-panel-handle-light
+    400040: cball-settings-throwing-detection-knob
+    400042: cball-settings-throwing-detection-switch
+    400044: cball-settings-velocity-knob
+    400046: cball-settings-velocity-switch
+    400048: cball-settings-volume-knob
+    400050: cball-settings-volume-switch
+    400052: impact-force-gauge
+    400054: impact-spin-gauge
+    400056: //RootNode
+    400058: cball#cytanb-ball#cytanb-color-picker
+    400060: cup-lamp-cube
+    400062: cball-light
+    2100000: transparent-mat
+    2100002: cball-mat
+    2100004: cball-settings-panel-handle-led-mat
+    2100006: impact-force-gauge-mat
+    2100008: covered-light-mat
+    2100010: ball-cup-light-mat
+    2100012: cball-cutout-mat
+    2300000: ball-cup
+    2300002: ball-cup-collider-back
+    2300004: ball-cup-collider-base
+    2300006: ball-cup-collider-front
+    2300008: ball-cup-collider-left
+    2300010: ball-cup-collider-right
+    2300012: ball-cup-light
+    2300014: cball#cytanb-ball
+    2300016: cball-settings-altitude-knob
+    2300018: cball-settings-altitude-switch
+    2300020: cball-settings-angular-velocity-knob
+    2300022: cball-settings-angular-velocity-switch
+    2300024: cball-settings-close-switch
+    2300026: cball-settings-efk-knob
+    2300028: cball-settings-efk-switch
+    2300030: cball-settings-panel
+    2300032: cball-settings-panel-collider-left
+    2300034: cball-settings-panel-collider-right
+    2300036: cball-settings-panel-collider-top
+    2300038: cball-settings-panel-handle-light
+    2300040: cball-settings-throwing-detection-knob
+    2300042: cball-settings-throwing-detection-switch
+    2300044: cball-settings-velocity-knob
+    2300046: cball-settings-velocity-switch
+    2300048: cball-settings-volume-knob
+    2300050: cball-settings-volume-switch
+    2300052: impact-force-gauge
+    2300054: impact-spin-gauge
+    2300056: cball#cytanb-ball#cytanb-color-picker
+    2300058: cup-lamp-cube
+    2300060: cball-light
+    3300000: ball-cup
+    3300002: ball-cup-collider-back
+    3300004: ball-cup-collider-base
+    3300006: ball-cup-collider-front
+    3300008: ball-cup-collider-left
+    3300010: ball-cup-collider-right
+    3300012: ball-cup-light
+    3300014: cball#cytanb-ball
+    3300016: cball-settings-altitude-knob
+    3300018: cball-settings-altitude-switch
+    3300020: cball-settings-angular-velocity-knob
+    3300022: cball-settings-angular-velocity-switch
+    3300024: cball-settings-close-switch
+    3300026: cball-settings-efk-knob
+    3300028: cball-settings-efk-switch
+    3300030: cball-settings-panel
+    3300032: cball-settings-panel-collider-left
+    3300034: cball-settings-panel-collider-right
+    3300036: cball-settings-panel-collider-top
+    3300038: cball-settings-panel-handle-light
+    3300040: cball-settings-throwing-detection-knob
+    3300042: cball-settings-throwing-detection-switch
+    3300044: cball-settings-velocity-knob
+    3300046: cball-settings-velocity-switch
+    3300048: cball-settings-volume-knob
+    3300050: cball-settings-volume-switch
+    3300052: impact-force-gauge
+    3300054: impact-spin-gauge
+    3300056: cball#cytanb-ball#cytanb-color-picker
+    3300058: cup-lamp-cube
+    3300060: cball-light
+    4300000: cball-settings-angular-velocity-switch
+    4300002: cball-settings-close-switch
+    4300004: cball-settings-panel
+    4300006: cball-settings-panel-collider-left
+    4300008: cball-settings-panel-collider-right
+    4300010: cball-settings-panel-collider-top
+    4300012: cball-settings-panel-handle-light
+    4300014: cball-settings-volume-knob
+    4300016: cball-settings-velocity-knob
+    4300018: cball-settings-throwing-detection-knob
+    4300020: cball-settings-altitude-knob
+    4300022: cball-settings-angular-velocity-knob
+    4300024: cball-settings-efk-knob
+    4300026: impact-force-gauge
+    4300028: impact-spin-gauge
+    4300030: ball-cup
+    4300032: ball-cup-collider-back
+    4300034: ball-cup-collider-front
+    4300036: ball-cup-collider-right
+    4300038: ball-cup-collider-left
+    4300040: ball-cup-collider-base
+    4300042: ball-cup-light
+    4300044: cball#cytanb-ball
+    4300046: cball#cytanb-ball#cytanb-color-picker
+    4300048: cup-lamp-cube
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ball-cup-light-mat
+    second: {fileID: 2100000, guid: 75431ccdab719194fba08bfac22ee995, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cball-cutout-mat
+    second: {fileID: 2100000, guid: 9d0c5c3c8b1f01741ad7362b18218034, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cball-mat
+    second: {fileID: 2100000, guid: 04a998764ecd65841844a168b566234b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cball-settings-panel-handle-led-mat
+    second: {fileID: 2100000, guid: 50822fef95d93b74eb989878c6af86c1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: covered-light-mat
+    second: {fileID: 2100000, guid: 253e4fcbcea3d7f4eb593b04b78f172b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: impact-force-gauge-mat
+    second: {fileID: 2100000, guid: 1aad4dfab8efa0f4baeab4d142a4f292, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: transparent-mat
+    second: {fileID: 2100000, guid: b817c6e4abdbf0044a6c72f5b86e46d6, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
