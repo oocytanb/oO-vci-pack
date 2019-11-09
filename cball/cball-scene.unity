@@ -665,7 +665,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100002, guid: fb695e812fa525e45b512992d80a482d, type: 3}
       propertyPath: m_Name
-      value: oO-standlight#cytanb-target#1
+      value: oO-standlight#cytanb-target#cytanb-color-picker#1
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: fb695e812fa525e45b512992d80a482d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -746,9 +746,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.05464102
-  m_Height: 0.56000006
+  m_Height: 0.575
   m_Direction: 1
-  m_Center: {x: 0.0000000037252903, y: 0.2800001, z: -0.0000000018626451}
+  m_Center: {x: 0.0000000037252903, y: 0.28750005, z: -0.0000000018626451}
 --- !u!54 &1114497657
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -965,7 +965,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100002, guid: fb695e812fa525e45b512992d80a482d, type: 3}
       propertyPath: m_Name
-      value: oO-standlight#cytanb-target#0
+      value: oO-standlight#cytanb-target#cytanb-color-picker#0
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: fb695e812fa525e45b512992d80a482d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1046,9 +1046,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.05464102
-  m_Height: 0.56000006
+  m_Height: 0.575
   m_Direction: 1
-  m_Center: {x: 0.0000000037252903, y: 0.2800001, z: -0.0000000018626451}
+  m_Center: {x: 0.0000000037252903, y: 0.28750005, z: -0.0000000018626451}
 --- !u!54 &1644842088
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1196,7 +1196,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100002, guid: fb695e812fa525e45b512992d80a482d, type: 3}
       propertyPath: m_Name
-      value: oO-standlight#cytanb-target#2
+      value: oO-standlight#cytanb-target#cytanb-color-picker#2
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: fb695e812fa525e45b512992d80a482d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1277,9 +1277,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.05464102
-  m_Height: 0.56000006
+  m_Height: 0.575
   m_Direction: 1
-  m_Center: {x: 0.0000000037252903, y: 0.2800001, z: -0.0000000018626451}
+  m_Center: {x: 0.0000000037252903, y: 0.28750005, z: -0.0000000018626451}
 --- !u!54 &1721512566
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1443,7 +1443,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 753107a3c841da84eb4bd95304b50ca6, type: 3}
-    version: 0.7.10
+    version: 0.7.13
     description: "- \u30DC\u30FC\u30EB\u3092\u3064\u304B\u3093\u3067\u6295\u3052\u308B\u3060\u3051\u3002\u6C17\u8EFD\u306B\u904A\u3093\u3067\u697D\u3057\u3093\u3067\u304F\u3060\u3055\u3044\u3002\n-
       \u30AB\u30C3\u30D7\u3092\u30B0\u30EA\u30C3\u30D7\u3059\u308B\u3068\u3001\u30DC\u30FC\u30EB\u304C\u623B\u3063\u3066\u304D\u307E\u3059\u3002\n-
       \u5468\u56F2\u306E\u5B89\u5168\u3092\u5341\u5206\u306B\u78BA\u8A8D\u306E\u3046\u3048\u3054\u5229\u7528\u304F\u3060\u3055\u3044\u3002\n[\u8A73\u7D30](https://github.com/oocytanb/oO-vci-pack)"

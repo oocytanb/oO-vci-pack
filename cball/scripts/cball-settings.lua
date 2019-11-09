@@ -265,7 +265,7 @@ return {
             standLightMinHitMagnitude = 0.5,
 
             --- ライトの最大ヒットマグニチュード。
-            standLightMaxHitMagnitude = 1.5,
+            standLightMaxHitMagnitude = 4.0,
 
             --- ライトのY方向の最小ヒットマグニチュード。
             standLightMinHitMagnitudeY = 0.5,
@@ -273,8 +273,17 @@ return {
             --- ライトのY方向の最大ヒットマグニチュード。
             standLightMaxHitMagnitudeY = 0.75,
 
-            --- ライトにヒットしたときの力の係数。
-            standLightHitForceFactor = 2.0,
+            --- ライトにヒットしたときの力の最大係数。
+            standLightMinHitForceFactor = 2.0,
+
+            --- ライトにヒットしたときの力の最小係数。
+            standLightMaxHitForceFactor = 60.0,
+
+            --- ライトを放したときに倒れていた場合に、立て直す最小時間。
+            standLightMinRebuildTime = TimeSpan.FromSeconds(2),
+
+            --- ライトを放したときに倒れていた場合に、立て直す最大時間。
+            standLightMaxRebuildTime = TimeSpan.FromSeconds(5),
 
             --- ライトがリスポーンするまでの待ち時間。
             standLightWaitingTime = TimeSpan.FromSeconds(60),
@@ -340,7 +349,7 @@ return {
             targetTag = targetTag,
 
             --- ライトのオブジェクト名の接頭辞。
-            standLightPrefix = 'oO-standlight' .. targetTag .. '#',
+            standLightPrefix = 'oO-standlight' .. targetTag .. '#cytanb-color-picker' .. '#',
 
             --- ライトのオブジェクト数。
             standLightCount = 3,
