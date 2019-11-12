@@ -106,12 +106,25 @@ local ballCupStatus = {
 }
 
 local standLightInitialStatus = {
-    needBuilding = false,
+    --- ビルドが必要であることを示すフラグ。
+    buildFlag = false,
+
+    --- ライトがアクティブであるか。
     active = true,
+
+    --- ライトがインアクティブになったときの時間。
     inactiveTime = TimeSpan.Zero,
+
+    --- ライトをインアクティブにできるようになった時間。操作権の違うボールがヒットしたときに、セットされる。
     readyInactiveTime = TimeSpan.Zero,
+
+    --- ヒットメッセージを処理したときの時間。短時間で複数回ヒット処理をしてしまうのを避けるために利用される。
     hitMessageTime = TimeSpan.Zero,
+
+    --- ヒットの起点となったボールのクライアント ID。ライト同士が玉突き状態で倒れた時に、起点の ID を識別できるようにする。
     hitSourceID = '',
+
+    --- ボールが直接ライトにヒットしたか。
     directHit = false
 }
 
@@ -396,9 +409,8 @@ local BuildStandLight = function (light)
     local li = light.item
     local ls = light.status
 
-    cytanb.Extend(cytanb.Extend(ls, standLightInitialStatus), {
-        inactiveTime = vci.me.Time
-    })
+    cytanb.Extend(ls, standLightInitialStatus)
+    ls.inactiveTime = vci.me.Time
 
     if li.IsMine and not ls.grabbed then
         li.SetRotation(Quaternion.identity)
@@ -778,10 +790,9 @@ local OnLoad = function ()
                     local light = standLights[i]
                     local ls = light.status
                     if lightParameter.respawnPosition then
-                        cytanb.Extend(cytanb.Extend(ls, standLightInitialStatus), {
-                            respawnPosition = lightParameter.respawnPosition,
-                            respawnTime = vci.me.Time
-                        })
+                        cytanb.Extend(ls, standLightInitialStatus)
+                        ls.respawnPosition = lightParameter.respawnPosition
+                        ls.respawnTime = vci.me.Time
                     end
                 end
             end
@@ -1184,13 +1195,13 @@ local OnUpdateStandLight = function (deltaTime, unscaledDeltaTime)
                     HitStandLight(light)
                 end
             elseif li.IsMine then
-                if not ls.needBuilding then
+                if not ls.buildFlag then
                     -- リスポーンしてから一定時間内に倒れたか、倒れてから時間経過した場合は、復活させる。
-                    ls.needBuilding = (now >= ls.respawnTime + settings.standLightMinRebuildTime and now <= ls.respawnTime + settings.standLightMaxRebuildTime) or
+                    ls.buildFlag = (now >= ls.respawnTime + settings.standLightMinRebuildTime and now <= ls.respawnTime + settings.standLightMaxRebuildTime) or
                                         (now > ls.inactiveTime + settings.standLightWaitingTime)
                 end
 
-                if ls.needBuilding then
+                if ls.buildFlag then
                     needBuilding = true
                     targets[i] = {}
                 end
@@ -1329,10 +1340,9 @@ onUngrab = function (target)
             local li = light.item
             local ls = light.status
 
-            cytanb.Extend(cytanb.Extend(ls, standLightInitialStatus), {
-                respawnTime = vci.me.Time,
-                grabbed = false
-            })
+            cytanb.Extend(ls, standLightInitialStatus)
+            ls.respawnTime = vci.me.Time
+            ls.grabbed = false
 
             if li.IsMine then
                 -- リスポーン位置を送信する

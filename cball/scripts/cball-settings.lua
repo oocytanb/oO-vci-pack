@@ -253,7 +253,7 @@ return {
             impactGaugeDisplayTime = TimeSpan.FromSeconds(2),
 
             --- ライトの長辺のシミュレーション値。
-            standLightSimLongSide = 0.56,
+            standLightSimLongSide = 0.575,
 
             --- ライトの質量のシミュレーション値。
             standLightSimMass = 1.0,
