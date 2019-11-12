@@ -47,11 +47,11 @@ local color = ColorFromARGB32(vci.studio.shared.Get('com.github.oocytanb.cytanb-
 ## カラーパレットのメッセージ `vci.message` の詳細 (**実験的機能 - 仕様変更される可能性があります**)
 
 ### メッセージの一般形式
-- メッセージ内容: パラメーターマップ (テーブル) を JSON エンコードした文字列です。
+- メッセージ内容: パラメーターマップ (テーブル) を文字列にシリアライズしたものです。
 
-- ただし、MoonSharpの `json.parse` は、負の数値が含まれているとエラーとなるため (https://github.com/xanathar/moonsharp/issues/163)、その場合はパラメーター名に '#__CYTANB_NEGATIVE_NUMBER' タグを付加し、負の数値を文字列に変換します。
+- パラメーターのシリアライズ / デシリアライズは、[cytanb.lua](https://github.com/oocytanb/cytanb-vci-lua/tree/master/src) の `cytanb.EmitMessage` / `cytanb.OnMessage` によって透過的に行われます。
 
-- パラメーターのシリアライズ / デシリアライズは、`cytanb.EmitMessage` / `cytanb.OnMessage` によって透過的に行われます。
+- `cytanb.lua` ライブラリーを利用する時は、`cytanb_min.lua` の内容を、メインスクリプトの先頭付近にコピーするとよいでしょう。
 
 ### カラーパレットが送出するメッセージ
 - 概要: カラーパレットの状態 (インスタンス ID、オブジェクトのトランスフォーム、選択色) を通知します。
@@ -61,22 +61,17 @@ local color = ColorFromARGB32(vci.studio.shared.Get('com.github.oocytanb.cytanb-
 
 - パラメーター:
     - __CYTANB_INSTANCE_ID: カラーパレットのインスタンス ID 文字列。
-    - version: メッセージのバージョン数値。
-    - positionX, positionY, positionZ: オブジェクトの座標値。
-    - rotationX, rotationY, rotationZ, rotationW: オブジェクトの回転値。
-    - scaleX, scaleY, scaleZ: オブジェクトのスケール値。
-    - argb32: パレットで選択した色の ARGB 32 bit 値。
+    - version: メッセージのバージョン。
+    - color: パレットで選択した色。
+    - position: カラーパレットオブジェクトの座標値。
+    - rotation: カラーパレットオブジェクトの回転値。
 
 - サンプルコード:
     ```
     cytanb.OnMessage('cytanb.color-palette.item-status', function (sender, name, parameterMap)
-        -- vci.message から色情報を取得する。
-        -- 複数のパレットを区別しない場合は、色情報だけを処理するとよい。
-        local color = cytanb.ColorFromARGB32(parameterMap['argb32'])
-
-        -- カラーパレットのインスタンス ID や、位置によって、複数のパレットを区別する事も出来る。
-        local instanceID = parameterMap['__CYTANB_INSTANCE_ID']
-        local position = Vector3.__new(parameterMap['positionX'], parameterMap['positionY'], parameterMap['positionZ'])
+        -- `parameterMap.color` にパレットで選択した色情報が渡されます。
+        -- ログ出力して確認します。
+        print(tostring(parameterMap.color))
     end)
     ```
 
@@ -91,11 +86,11 @@ local color = ColorFromARGB32(vci.studio.shared.Get('com.github.oocytanb.cytanb-
 
 - サンプルコード:
     ```
-    cytanb.EmitMessage('cytanb.color-palette.query-status', {version = 0x10000})
+    cytanb.EmitMessage('cytanb.color-palette.query-status', {version = 0x10001})
     ```
 
 ## カラーパレットを使用する VCI のサンプル
 
-- [colored-chalk-and-panels](../colored-chalk-and-panels/README.md)
+- [oO-bariumkuchen](../oO-bariumkuchen/)
 
-- [oO-bariumkuchen](../oO-bariumkuchen/README.md)
+- [colored-chalk-and-panels](../colored-chalk-and-panels/)

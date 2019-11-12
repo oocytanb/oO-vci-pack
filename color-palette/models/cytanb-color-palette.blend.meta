@@ -58,6 +58,7 @@ ModelImporter:
     2100012: brightness-switch-mat__color-palette-tex_png
     2100014: picker-switch-mat__color-palette-tex_png
     2100016: advanced-switch-mat__color-palette-tex_png
+    2100018: color-switch-mat
     2100024: palette-base__color-palette-tex_png
     2300000: color-index-0
     2300002: color-index-1
@@ -131,43 +132,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: advanced-switch-mat__color-palette-tex_png
-    second: {fileID: 2100000, guid: 2c94980e52271f24da6e78bbb7d5caea, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: brightness-switch-mat__color-palette-tex_png
-    second: {fileID: 2100000, guid: 18aff4083889b1846994ebb2bcb2bdc3, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
       name: color-index-mat
     second: {fileID: 2100000, guid: 5284c21d42f34434c815f17dd41eaeb4, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: color-palette-mat__color-palette-tex_png
-    second: {fileID: 2100000, guid: 0008257edf95e784084d546ec3253b97, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: current-color-mat
-    second: {fileID: 2100000, guid: 66746d91456ee41409f945f10d7c03d3, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: opacity-switch-mat__color-palette-tex_png
-    second: {fileID: 2100000, guid: bfced6411a3b6d841ad9bc5ee0609913, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: palette-base__color-palette-tex_png
-    second: {fileID: 2100000, guid: fac96ee6047401f4ba1c6fd334d7ab27, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: picker-switch-mat__color-palette-tex_png
-    second: {fileID: 2100000, guid: c3f8b1c2e6e5209438320a19ab5db6a7, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -201,6 +167,7 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -225,6 +192,9 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
   importAnimation: 1
   copyAvatar: 0
   humanDescription:

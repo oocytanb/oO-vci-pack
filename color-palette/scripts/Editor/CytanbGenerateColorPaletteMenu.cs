@@ -21,7 +21,7 @@ namespace cytanb
         const float COLOR_INDEX_POSITION_INTERVAL = 0.1f;
         const string COLOR_INDEX_PREFAB_NAME = "cytanb-color-index";
         const string COLOR_INDEX_OBJECT_PREFIX = COLOR_INDEX_PREFAB_NAME + "-";
-        const string COLOR_PALETTE_BASE_NAME = "palette-base";
+        const string COLOR_PALETTE_BASE_NAME = "palette-base#cytanb-color-palette";
 
         [MenuItem(MENU_ITEM_KEY, true)]
         static bool ValidatGenerateColorPaletteMenu()

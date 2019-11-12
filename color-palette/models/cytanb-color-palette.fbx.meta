@@ -1,0 +1,196 @@
+fileFormatVersion: 2
+guid: 4daec92ddb2a76843b9fd18bdd6feeaf
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: advanced-switch
+    100002: advanced-switch-panel
+    100004: brightness-switch
+    100006: brightness-switch-panel
+    100008: current-color
+    100010: //RootNode
+    100012: opacity-switch
+    100014: opacity-switch-panel
+    100016: palette-base
+    100018: palette-colors
+    100020: picker-switch
+    100022: picker-switch-panel
+    400000: advanced-switch
+    400002: advanced-switch-panel
+    400004: brightness-switch
+    400006: brightness-switch-panel
+    400008: current-color
+    400010: //RootNode
+    400012: opacity-switch
+    400014: opacity-switch-panel
+    400016: palette-base
+    400018: palette-colors
+    400020: picker-switch
+    400022: picker-switch-panel
+    2100000: color-switch-mat
+    2100002: palette-base
+    2100004: advanced-switch-mat
+    2100006: brightness-switch-mat
+    2100008: current-color-mat
+    2100010: opacity-switch-mat
+    2100012: color-palette-mat
+    2100014: picker-switch-mat
+    2300000: advanced-switch
+    2300002: advanced-switch-panel
+    2300004: brightness-switch
+    2300006: brightness-switch-panel
+    2300008: current-color
+    2300010: opacity-switch
+    2300012: opacity-switch-panel
+    2300014: palette-base
+    2300016: palette-colors
+    2300018: picker-switch
+    2300020: picker-switch-panel
+    3300000: advanced-switch
+    3300002: advanced-switch-panel
+    3300004: brightness-switch
+    3300006: brightness-switch-panel
+    3300008: current-color
+    3300010: opacity-switch
+    3300012: opacity-switch-panel
+    3300014: palette-base
+    3300016: palette-colors
+    3300018: picker-switch
+    3300020: picker-switch-panel
+    4300000: advanced-switch
+    4300002: opacity-switch
+    4300004: picker-switch
+    4300006: palette-base
+    4300008: advanced-switch-panel
+    4300010: brightness-switch-panel
+    4300012: current-color
+    4300014: opacity-switch-panel
+    4300016: palette-colors
+    4300018: picker-switch-panel
+    4300020: brightness-switch
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: advanced-switch-mat
+    second: {fileID: 2100000, guid: be7736e55d5415249aa9638e7a8b19e8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: brightness-switch-mat
+    second: {fileID: 2100000, guid: 80e8cb06206982543a1fde5284ce178d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: color-palette-mat
+    second: {fileID: 2100000, guid: 573092a34a5bd3f43b581ae57010db17, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: color-switch-mat
+    second: {fileID: 2100000, guid: a1d67aecaf4c23e4ebb9c39a8bc7c26d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: current-color-mat
+    second: {fileID: 2100000, guid: 28a2385034edfcf449a4482cde85a93d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: opacity-switch-mat
+    second: {fileID: 2100000, guid: 4c1b7c0183b823941a7b02a56b306413, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: palette-base
+    second: {fileID: 2100000, guid: c3b61e6a7b2e20042a0a9354e55ddc45, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: picker-switch-mat
+    second: {fileID: 2100000, guid: 906c5b25754137a429185e624fad73de, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
