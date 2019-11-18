@@ -1,0 +1,1 @@
+return { textContent = 'Hello, World!' }
