@@ -1,0 +1,179 @@
+fileFormatVersion: 2
+guid: a5ed381a57e171d4c88852218207406c
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: back
+    100002: cgoal
+    100004: deffender-0
+    100006: deffender-1
+    100008: deffender-2
+    100010: deffender-head-0
+    100012: deffender-head-1
+    100014: deffender-head-2
+    100016: left
+    100018: //RootNode
+    100020: right
+    100022: top
+    100024: defender-foot-0
+    100026: defender-foot-1
+    100028: defender-foot-2
+    100030: deffender-body-0
+    100032: deffender-body-1
+    100034: deffender-body-2
+    400000: back
+    400002: cgoal
+    400004: deffender-0
+    400006: deffender-1
+    400008: deffender-2
+    400010: deffender-head-0
+    400012: deffender-head-1
+    400014: deffender-head-2
+    400016: left
+    400018: //RootNode
+    400020: right
+    400022: top
+    400024: defender-foot-0
+    400026: defender-foot-1
+    400028: defender-foot-2
+    400030: deffender-body-0
+    400032: deffender-body-1
+    400034: deffender-body-2
+    2100000: defender-mat
+    2100002: cgoal-mat
+    2300000: back
+    2300002: deffender-0
+    2300004: deffender-1
+    2300006: deffender-2
+    2300008: deffender-head-0
+    2300010: deffender-head-1
+    2300012: deffender-head-2
+    2300014: left
+    2300016: right
+    2300018: top
+    2300020: defender-foot-0
+    2300022: defender-foot-1
+    2300024: defender-foot-2
+    2300026: deffender-body-0
+    2300028: deffender-body-1
+    2300030: deffender-body-2
+    3300000: back
+    3300002: deffender-0
+    3300004: deffender-1
+    3300006: deffender-2
+    3300008: deffender-head-0
+    3300010: deffender-head-1
+    3300012: deffender-head-2
+    3300014: left
+    3300016: right
+    3300018: top
+    3300020: defender-foot-0
+    3300022: defender-foot-1
+    3300024: defender-foot-2
+    3300026: deffender-body-0
+    3300028: deffender-body-1
+    3300030: deffender-body-2
+    4300000: deffender-2
+    4300002: deffender-head-2
+    4300004: deffender-1
+    4300006: deffender-head-1
+    4300008: deffender-0
+    4300010: deffender-head-0
+    4300012: left
+    4300014: right
+    4300016: top
+    4300018: back
+    4300020: defender-foot-2
+    4300022: defender-foot-1
+    4300024: defender-foot-0
+    4300026: deffender-body-2
+    4300028: deffender-body-1
+    4300030: deffender-body-0
+    7400000: Default Take
+    9500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
