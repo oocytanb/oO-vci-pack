@@ -1,0 +1,212 @@
+fileFormatVersion: 2
+guid: 7ce5e9c49f0e6d849bf240e6e25c6a3e
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: inside-frame-bottom
+    100004: inside-frame-left
+    100006: inside-frame-right
+    100008: inside-frame-top
+    100010: nine-panel-base
+    100012: outside-frame-bottom
+    100014: outside-frame-left
+    100016: outside-frame-right
+    100018: outside-frame-top
+    100020: panel_cytanb-target_1
+    100022: panel_cytanb-target_2
+    100024: panel_cytanb-target_3
+    100026: panel_cytanb-target_4
+    100028: panel_cytanb-target_5
+    100030: panel_cytanb-target_6
+    100032: panel_cytanb-target_7
+    100034: panel_cytanb-target_8
+    100036: panel_cytanb-target_9
+    100038: reset-switch
+    100040: panel-pos-1
+    100042: panel-pos-2
+    100044: panel-pos-3
+    100046: panel-pos-4
+    100048: panel-pos-5
+    100050: panel-pos-6
+    100052: panel-pos-7
+    100054: panel-pos-8
+    100056: panel-pos-9
+    400000: //RootNode
+    400002: inside-frame-bottom
+    400004: inside-frame-left
+    400006: inside-frame-right
+    400008: inside-frame-top
+    400010: nine-panel-base
+    400012: outside-frame-bottom
+    400014: outside-frame-left
+    400016: outside-frame-right
+    400018: outside-frame-top
+    400020: panel_cytanb-target_1
+    400022: panel_cytanb-target_2
+    400024: panel_cytanb-target_3
+    400026: panel_cytanb-target_4
+    400028: panel_cytanb-target_5
+    400030: panel_cytanb-target_6
+    400032: panel_cytanb-target_7
+    400034: panel_cytanb-target_8
+    400036: panel_cytanb-target_9
+    400038: reset-switch
+    400040: panel-pos-1
+    400042: panel-pos-2
+    400044: panel-pos-3
+    400046: panel-pos-4
+    400048: panel-pos-5
+    400050: panel-pos-6
+    400052: panel-pos-7
+    400054: panel-pos-8
+    400056: panel-pos-9
+    2100000: Material
+    2100002: reset-switch-mat
+    2100004: panel-mat
+    2100006: frame-mat
+    2300000: //RootNode
+    2300002: inside-frame-bottom
+    2300004: inside-frame-left
+    2300006: inside-frame-right
+    2300008: inside-frame-top
+    2300010: outside-frame-bottom
+    2300012: outside-frame-left
+    2300014: outside-frame-right
+    2300016: outside-frame-top
+    2300018: panel_cytanb-target_1
+    2300020: panel_cytanb-target_2
+    2300022: panel_cytanb-target_3
+    2300024: panel_cytanb-target_4
+    2300026: panel_cytanb-target_5
+    2300028: panel_cytanb-target_6
+    2300030: panel_cytanb-target_7
+    2300032: panel_cytanb-target_8
+    2300034: panel_cytanb-target_9
+    2300036: reset-switch
+    3300000: //RootNode
+    3300002: inside-frame-bottom
+    3300004: inside-frame-left
+    3300006: inside-frame-right
+    3300008: inside-frame-top
+    3300010: outside-frame-bottom
+    3300012: outside-frame-left
+    3300014: outside-frame-right
+    3300016: outside-frame-top
+    3300018: panel_cytanb-target_1
+    3300020: panel_cytanb-target_2
+    3300022: panel_cytanb-target_3
+    3300024: panel_cytanb-target_4
+    3300026: panel_cytanb-target_5
+    3300028: panel_cytanb-target_6
+    3300030: panel_cytanb-target_7
+    3300032: panel_cytanb-target_8
+    3300034: panel_cytanb-target_9
+    3300036: reset-switch
+    4300000: Cube
+    4300002: reset-switch
+    4300004: panel_cytanb-target_9
+    4300006: panel_cytanb-target_3
+    4300008: panel_cytanb-target_6
+    4300010: panel_cytanb-target_5
+    4300012: panel_cytanb-target_2
+    4300014: panel_cytanb-target_8
+    4300016: panel_cytanb-target_7
+    4300018: panel_cytanb-target_1
+    4300020: panel_cytanb-target_4
+    4300022: inside-frame-left
+    4300024: inside-frame-bottom
+    4300026: inside-frame-top
+    4300028: outside-frame-left
+    4300030: outside-frame-right
+    4300032: outside-frame-bottom
+    4300034: outside-frame-top
+    4300036: inside-frame-right
+    7400000: Default Take
+    9500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

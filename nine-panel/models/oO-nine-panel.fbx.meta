@@ -1,0 +1,221 @@
+fileFormatVersion: 2
+guid: 10e11e593a7fad845a1353f839610a90
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: inside-frame-bottom
+    100002: inside-frame-left
+    100004: inside-frame-right
+    100006: inside-frame-top
+    100008: nine-panel-base
+    100010: //RootNode
+    100012: outside-frame-bottom
+    100014: outside-frame-left
+    100016: outside-frame-right
+    100018: outside-frame-top
+    100020: panel#cytanb-target#1
+    100022: panel#cytanb-target#2
+    100024: panel#cytanb-target#3
+    100026: panel#cytanb-target#4
+    100028: panel#cytanb-target#5
+    100030: panel#cytanb-target#6
+    100032: panel#cytanb-target#7
+    100034: panel#cytanb-target#8
+    100036: panel#cytanb-target#9
+    100038: reset-switch
+    100040: panel-pos-1
+    100042: panel-pos-2
+    100044: panel-pos-3
+    100046: panel-pos-4
+    100048: panel-pos-5
+    100050: panel-pos-6
+    100052: panel-pos-7
+    100054: panel-pos-8
+    100056: panel-pos-9
+    400000: inside-frame-bottom
+    400002: inside-frame-left
+    400004: inside-frame-right
+    400006: inside-frame-top
+    400008: nine-panel-base
+    400010: //RootNode
+    400012: outside-frame-bottom
+    400014: outside-frame-left
+    400016: outside-frame-right
+    400018: outside-frame-top
+    400020: panel#cytanb-target#1
+    400022: panel#cytanb-target#2
+    400024: panel#cytanb-target#3
+    400026: panel#cytanb-target#4
+    400028: panel#cytanb-target#5
+    400030: panel#cytanb-target#6
+    400032: panel#cytanb-target#7
+    400034: panel#cytanb-target#8
+    400036: panel#cytanb-target#9
+    400038: reset-switch
+    400040: panel-pos-1
+    400042: panel-pos-2
+    400044: panel-pos-3
+    400046: panel-pos-4
+    400048: panel-pos-5
+    400050: panel-pos-6
+    400052: panel-pos-7
+    400054: panel-pos-8
+    400056: panel-pos-9
+    2100000: reset-switch-mat
+    2100002: panel-mat
+    2100004: frame-mat
+    2300000: inside-frame-bottom
+    2300002: inside-frame-left
+    2300004: inside-frame-right
+    2300006: inside-frame-top
+    2300008: outside-frame-bottom
+    2300010: outside-frame-left
+    2300012: outside-frame-right
+    2300014: outside-frame-top
+    2300016: panel#cytanb-target#1
+    2300018: panel#cytanb-target#2
+    2300020: panel#cytanb-target#3
+    2300022: panel#cytanb-target#4
+    2300024: panel#cytanb-target#5
+    2300026: panel#cytanb-target#6
+    2300028: panel#cytanb-target#7
+    2300030: panel#cytanb-target#8
+    2300032: panel#cytanb-target#9
+    2300034: reset-switch
+    3300000: inside-frame-bottom
+    3300002: inside-frame-left
+    3300004: inside-frame-right
+    3300006: inside-frame-top
+    3300008: outside-frame-bottom
+    3300010: outside-frame-left
+    3300012: outside-frame-right
+    3300014: outside-frame-top
+    3300016: panel#cytanb-target#1
+    3300018: panel#cytanb-target#2
+    3300020: panel#cytanb-target#3
+    3300022: panel#cytanb-target#4
+    3300024: panel#cytanb-target#5
+    3300026: panel#cytanb-target#6
+    3300028: panel#cytanb-target#7
+    3300030: panel#cytanb-target#8
+    3300032: panel#cytanb-target#9
+    3300034: reset-switch
+    4300000: reset-switch
+    4300002: panel#cytanb-target#9
+    4300004: panel#cytanb-target#3
+    4300006: panel#cytanb-target#6
+    4300008: panel#cytanb-target#5
+    4300010: panel#cytanb-target#2
+    4300012: panel#cytanb-target#8
+    4300014: panel#cytanb-target#7
+    4300016: panel#cytanb-target#1
+    4300018: inside-frame-left
+    4300020: inside-frame-bottom
+    4300022: inside-frame-top
+    4300024: outside-frame-left
+    4300026: outside-frame-right
+    4300028: outside-frame-bottom
+    4300030: outside-frame-top
+    4300032: inside-frame-right
+    4300034: panel#cytanb-target#4
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: frame-mat
+    second: {fileID: 2100000, guid: 42495c8f94e68ac43b757f9e178208a7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: panel-mat
+    second: {fileID: 2100000, guid: 421cb7a7fbb7fcc4c916c5c7fee96fc1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: reset-switch-mat
+    second: {fileID: 2100000, guid: 2c438c5710fb06b4b8b3c16f5c115e3a, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
