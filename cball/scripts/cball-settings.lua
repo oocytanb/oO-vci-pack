@@ -123,8 +123,9 @@ return {
         local targetTag = '#cytanb-target'
         local ballVelocityAdjustmentPropertyName = 'ballVelocityAdjustment'
         local ballAngularVelocityAdjustmentPropertyName = 'ballAngularVelocityAdjustment'
-        local ballKinematicDetectionTimePropertyName = 'ballKinematicDetectionTime'
         local ballAltitudeAdjustmentPropertyName = 'ballAltitudeAdjustment'
+        local ballKinematicDetectionTimePropertyName = 'ballKinematicDetectionTime'
+        local ballGravityAdjustmentPropertyName = 'ballGravityAdjustment'
         local efkLevelPropertyName = 'efkLevel'
         local audioVolumePropertyName = 'audioVolume'
 
@@ -141,6 +142,9 @@ return {
             --- 投球動作の判定時間。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
             [ballKinematicDetectionTimePropertyName] = 0,
 
+            --- 重力の調整値の初期設定値。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
+            [ballGravityAdjustmentPropertyName] = 0,
+
             --- エフェクトレベルの初期設定値。カスタマイズする場合は、この値を変更する。([-5, 5] の範囲)
             [efkLevelPropertyName] = 0,
 
@@ -150,22 +154,22 @@ return {
             --- 投球動作とみなす速度の閾値。
             ballKinematicVelocityThreshold = 1.0,
 
-            --- 投球動作による速度係数の最小値。
+            --- 投球時の速度係数の最小値。
             ballKinematicMinVelocityFactor = 0.5,
 
-            --- 投球動作による速度係数の最大値。
+            --- 投球時の速度係数の最大値。
             ballKinematicMaxVelocityFactor = 6.0,
 
-            --- 投球動作による角速度係数の最小値。
+            --- 投球時の角速度係数の最小値。
             ballKinematicMinAngularVelocityFactor = 0.015625,
 
-            --- 投球動作による角速度係数の最大値。
+            --- 投球時の角速度係数の最大値。
             ballKinematicMaxAngularVelocityFactor = 3.5,
 
-            --- 投球動作による仰俯角係数の最小値。
+            --- 投球時の仰俯角係数の最小値。
             ballKinematicMinAltitudeFactor = -25,
 
-            --- 投球動作による仰俯角係数の最大値。
+            --- 投球時の仰俯角係数の最大値。
             ballKinematicMaxAltitudeFactor = 25,
 
             --- 投球動作の判定時間の閾値。
@@ -198,6 +202,12 @@ return {
             --- 入力タイミングによる仰俯角のスケールの最大値。
             ballInpactMaxAltitudeScale = 75.0,
 
+            --- 重力係数の最小値。
+            ballMinGravityFactor = -9.5,
+
+            --- 重力係数の最大値。
+            ballMaxGravityFactor = 9.5,
+
             --- ボールの長辺のシミュレーション値。
             ballSimLongSide = 0.217,
 
@@ -226,7 +236,7 @@ return {
             ballWaitingTime = TimeSpan.FromDays(1),
 
             --- ボールのプレイエリアの半径。これを超えたら軌道計算などを行わない。
-            ballPlayAreaRadius = 300,
+            ballPlayAreaRadius = 500,
 
             --- ボールが近距離にあると判定する距離。
             ballNearDistance = 5,
@@ -292,7 +302,7 @@ return {
             settingsPanelOffset = Vector3.__new(-1.5, 0.25, 0),
 
             --- 設定パネルの距離の閾値。
-            settingsPanelDistanceThreshold = 6.0,
+            settingsPanelDistanceThreshold = 5.0,
 
             --- 設定パネルの調節スイッチのY座標。
             settingsPanelAdjustmentSwitchNeutralPositionY = 0,
@@ -390,6 +400,7 @@ return {
                 {switchName = 'cball-settings-angular-velocity-switch', knobName = 'cball-settings-angular-velocity-knob', propertyName = ballAngularVelocityAdjustmentPropertyName},
                 {switchName = 'cball-settings-altitude-switch', knobName = 'cball-settings-altitude-knob', propertyName = ballAltitudeAdjustmentPropertyName},
                 {switchName = 'cball-settings-throwing-detection-switch', knobName = 'cball-settings-throwing-detection-knob', propertyName = ballKinematicDetectionTimePropertyName},
+                {switchName = 'cball-settings-gravity-switch', knobName = 'cball-settings-gravity-knob', propertyName = ballGravityAdjustmentPropertyName},
                 {switchName = 'cball-settings-efk-switch', knobName = 'cball-settings-efk-knob', propertyName = efkLevelPropertyName},
                 {switchName = 'cball-settings-volume-switch', knobName = 'cball-settings-volume-knob', propertyName = audioVolumePropertyName}
             },
@@ -405,6 +416,9 @@ return {
 
             --- 投球動作の判定時間のプロパティ名。
             ballKinematicDetectionTimePropertyName = ballKinematicDetectionTimePropertyName,
+
+            --- 重力の調整値のプロパティ名。
+            ballGravityAdjustmentPropertyName = ballGravityAdjustmentPropertyName,
 
             --- エフェクトレベルのプロパティ名。
             efkLevelPropertyName = efkLevelPropertyName,

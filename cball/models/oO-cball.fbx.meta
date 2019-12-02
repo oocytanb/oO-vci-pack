@@ -35,6 +35,8 @@ ModelImporter:
     100058: cball#cytanb-ball#cytanb-color-picker
     100060: cup-lamp-cube
     100062: cball-light
+    100064: cball-settings-gravity-knob
+    100066: cball-settings-gravity-switch
     400000: ball-cup
     400002: ball-cup-collider-back
     400004: ball-cup-collider-base
@@ -67,6 +69,8 @@ ModelImporter:
     400058: cball#cytanb-ball#cytanb-color-picker
     400060: cup-lamp-cube
     400062: cball-light
+    400064: cball-settings-gravity-knob
+    400066: cball-settings-gravity-switch
     2100000: transparent-mat
     2100002: cball-mat
     2100004: cball-settings-panel-handle-led-mat
@@ -105,6 +109,8 @@ ModelImporter:
     2300056: cball#cytanb-ball#cytanb-color-picker
     2300058: cup-lamp-cube
     2300060: cball-light
+    2300062: cball-settings-gravity-knob
+    2300064: cball-settings-gravity-switch
     3300000: ball-cup
     3300002: ball-cup-collider-back
     3300004: ball-cup-collider-base
@@ -136,6 +142,8 @@ ModelImporter:
     3300056: cball#cytanb-ball#cytanb-color-picker
     3300058: cup-lamp-cube
     3300060: cball-light
+    3300062: cball-settings-gravity-knob
+    3300064: cball-settings-gravity-switch
     4300000: cball-settings-angular-velocity-switch
     4300002: cball-settings-close-switch
     4300004: cball-settings-panel
@@ -161,6 +169,8 @@ ModelImporter:
     4300044: cball#cytanb-ball
     4300046: cball#cytanb-ball#cytanb-color-picker
     4300048: cup-lamp-cube
+    4300050: cball-settings-gravity-switch
+    4300052: cball-settings-gravity-knob
   externalObjects:
   - first:
       type: UnityEngine:Material

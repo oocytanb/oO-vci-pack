@@ -40,6 +40,8 @@ ModelImporter:
     100068: cball_cytanb-ball_cytanb-color-picker
     100070: cup-lamp-cube
     100072: cball-light
+    100074: cball-settings-gravity-knob
+    100076: cball-settings-gravity-switch
     400000: ball-cup
     400002: ball-cup-collider-back
     400004: ball-cup-collider-base
@@ -77,6 +79,8 @@ ModelImporter:
     400068: cball_cytanb-ball_cytanb-color-picker
     400070: cup-lamp-cube
     400072: cball-light
+    400074: cball-settings-gravity-knob
+    400076: cball-settings-gravity-switch
     2100000: impact-force-gauge-mat__cball-main_png
     2100002: cball-mat__cball-main_png
     2100004: ball-cup-mat
@@ -126,6 +130,8 @@ ModelImporter:
     2300066: cball_cytanb-ball_cytanb-color-picker
     2300068: cup-lamp-cube
     2300070: cball-light
+    2300072: cball-settings-gravity-knob
+    2300074: cball-settings-gravity-switch
     3300000: ball-cup
     3300002: ball-cup-collider-back
     3300004: ball-cup-collider-base
@@ -162,6 +168,8 @@ ModelImporter:
     3300066: cball_cytanb-ball_cytanb-color-picker
     3300068: cup-lamp-cube
     3300070: cball-light
+    3300072: cball-settings-gravity-knob
+    3300074: cball-settings-gravity-switch
     4300000: impact-force-gauge
     4300002: impact-spin-gauge
     4300004: ball-cup
@@ -198,6 +206,8 @@ ModelImporter:
     4300066: cball_cytanb-ball_cytanb-color-picker
     4300068: cup-lamp-cube
     4300070: cball-light
+    4300072: cball-settings-gravity-switch
+    4300074: cball-settings-gravity-knob
     7400000: Default Take
     9500000: //RootNode
     2186277476908879412: ImportLogs
@@ -215,11 +225,6 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: cball-mat__cball-main_png
-    second: {fileID: 2100000, guid: 3ac4117746e41c54796cfb38bd0ea610, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
       name: cball-settings-mat__cball-main_png
     second: {fileID: 2100000, guid: 3972e82f09e83f24d972b7bb5ca26653, type: 2}
   - first:
@@ -227,21 +232,6 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: cball-settings-mat__cball-main_png_001
     second: {fileID: 2100000, guid: 3ebbd35f5eb3e5b4b8cd710c04ba115c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: cball-settings-panel-handle-led-mat__cball-settings-panel-handle-light_png
-    second: {fileID: 2100000, guid: 26ce882de39bcaf449c11d8be6f27659, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: impact-force-gauge-mat__cball-main_png
-    second: {fileID: 2100000, guid: 30d081942b0b4a742ac3b96097596700, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: transparent-mat
-    second: {fileID: 2100000, guid: 79f3bb3901b6b694a8e63f0d3fa9b4e9, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
