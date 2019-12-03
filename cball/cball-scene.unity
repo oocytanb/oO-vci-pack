@@ -764,7 +764,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!1 &1254254881 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100002, guid: 7426690a4786ed248a71afbf5d91203e,
@@ -1111,7 +1111,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!1 &1679079218 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100004, guid: 7426690a4786ed248a71afbf5d91203e,
@@ -1342,7 +1342,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!1001 &1901838027
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1967,7 +1967,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!1 &1901838040 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100066, guid: 7426690a4786ed248a71afbf5d91203e,

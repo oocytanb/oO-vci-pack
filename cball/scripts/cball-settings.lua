@@ -161,10 +161,10 @@ return {
             ballKinematicMaxVelocityFactor = 6.0,
 
             --- 投球時の角速度係数の最小値。
-            ballKinematicMinAngularVelocityFactor = 0.015625,
+            ballKinematicMinAngularVelocityFactor = 0.0078125,
 
             --- 投球時の角速度係数の最大値。
-            ballKinematicMaxAngularVelocityFactor = 3.5,
+            ballKinematicMaxAngularVelocityFactor = 2.0625,
 
             --- 投球時の仰俯角係数の最小値。
             ballKinematicMinAltitudeFactor = -25,
@@ -191,10 +191,10 @@ return {
             ballInpactMaxVelocityScale = 22.0,
 
             --- 入力タイミングによる角速度のスケールの最小値。
-            ballInpactMinAngularVelocityScale = 2.0,
+            ballInpactMinAngularVelocityScale = 0.125,
 
             --- 入力タイミングによる角速度のスケールの最大値。
-            ballInpactMaxAngularVelocityScale = 22.0,
+            ballInpactMaxAngularVelocityScale = 11,
 
             --- 入力タイミングによる仰俯角のスケールの最小値。
             ballInpactMinAltitudeScale = -75.0,
@@ -217,8 +217,8 @@ return {
             --- ボールの回転抵抗のシミュレーション値。
             ballSimAngularDrag = 0.1,
 
-            --- ボールの回転のシミレーション係数。
-            ballSimAngularFactor = 0.0012,
+            --- ボールの回転のシミュレーション係数。
+            ballSimAngularFactor = 0.125,
 
             --- 体のコライダーとの接触を避けるための、オフセット係数。
             ballForwardOffsetFactor = 0.1,
@@ -275,7 +275,7 @@ return {
             standLightMinHitMagnitude = 0.5,
 
             --- ライトの最大ヒットマグニチュード。
-            standLightMaxHitMagnitude = 4.0,
+            standLightMaxHitMagnitude = 3.0,
 
             --- ライトのY方向の最小ヒットマグニチュード。
             standLightMinHitMagnitudeY = 0.5,
@@ -283,11 +283,8 @@ return {
             --- ライトのY方向の最大ヒットマグニチュード。
             standLightMaxHitMagnitudeY = 0.75,
 
-            --- ライトにヒットしたときの力の最大係数。
-            standLightMinHitForceFactor = 2.0,
-
-            --- ライトにヒットしたときの力の最小係数。
-            standLightMaxHitForceFactor = 60.0,
+            --- ライトにヒットしたときに、最大質量係数。
+            standLightMaxHitMassFactor = 3.0,
 
             --- ライトを放したときに倒れていた場合に、立て直す最小時間。
             standLightMinRebuildTime = TimeSpan.FromSeconds(2),

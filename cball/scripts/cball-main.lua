@@ -912,30 +912,29 @@ local OnLoad = function ()
                 cytanb.LogTrace('ready inactive: ', li.GetName(), ', directHit = ', ls.directHit)
                 ls.readyInactiveTime = now
 
-                if li.IsMine and not ls.grabbed and parameterMap.clientID ~= settings.localSharedProperties.GetClientID() then
+                if li.IsMine and not ls.grabbed and parameterMap.hitSourceID ~= settings.localSharedProperties.GetClientID() then
                     -- ライトの操作権があり、メッセージのクライアントIDが自身のIDと異なる場合は、ソースの操作権が別ユーザーであるため、自力で倒れる
-                    local hitForce
+                    local hitVelocity
                     local sourceVelocity = source.velocity or Vector3.zero
                     local horzSqrMagnitude = sourceVelocity.x ^ 2 + sourceVelocity.y ^ 2
                     cytanb.LogTrace(' horzSqrMagnitude = ', horzSqrMagnitude, ', source.velocity = ', source.velocity)
                     if horzSqrMagnitude > 0.0025 then
                         local horzMagnitude = math.sqrt(horzSqrMagnitude)
                         local im = cytanb.Clamp(horzMagnitude, settings.standLightMinHitMagnitude, settings.standLightMaxHitMagnitude) / horzMagnitude
-                        hitForce = Vector3.__new(sourceVelocity.x * im, cytanb.Clamp(sourceVelocity.y, settings.standLightMinHitMagnitudeY, settings.standLightMaxHitMagnitudeY), sourceVelocity.z * im)
-                        cytanb.LogTrace(li.GetName(), ' self-hit: source force = ', hitForce)
+                        hitVelocity = Vector3.__new(sourceVelocity.x * im, cytanb.Clamp(sourceVelocity.y, settings.standLightMinHitMagnitudeY, settings.standLightMaxHitMagnitudeY), sourceVelocity.z * im)
+                        cytanb.LogTrace(li.GetName(), ' self-hit: source, hit velocity = ', hitVelocity)
                     else
                         local rx = math.random()
                         local dx = (rx * 2 >= 1 and 1 or -1) * (rx * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
                         local rz = math.random()
                         local dz = (rz * 2 >= 1 and 1 or -1) * (rz * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
                         local dy = math.random() * (settings.standLightMaxHitMagnitudeY - settings.standLightMinHitMagnitudeY) + settings.standLightMinHitMagnitudeY
-                        hitForce = Vector3.__new(dx, dy, dz)
-                        cytanb.LogTrace(li.GetName(), ' self-hit: random force = ', hitForce)
+                        hitVelocity = Vector3.__new(dx, dy, dz)
+                        cytanb.LogTrace(li.GetName(), ' self-hit: random, hit velocity = ', hitVelocity)
                     end
 
-                    local sourceMass = source.mass > 0 and source.mass or 1.0
-                    local massFactor = cytanb.Clamp(sourceMass * (1.0 + sourceMass / (sourceMass + settings.standLightSimMass)), settings.standLightMinHitForceFactor, settings.standLightMaxHitForceFactor)
-                    li.AddForce(hitForce * massFactor)
+                    local sourceMass = source.mass > 0 and math.min(settings.standLightSimMass * settings.standLightMaxHitMassFactor, source.mass) or settings.standLightSimMass
+                    li.AddForce(hitVelocity * (sourceMass / fixedTimestep.TotalSeconds))
                 end
             else
                 HitStandLight(light)
@@ -1115,8 +1114,8 @@ local OnUpdateBall = function (deltaTime, unscaledDeltaTime)
                     local velocityMagnitude = horzVelocity.magnitude
                     if velocityMagnitude > 0.0025 and angularVelocitySqrMagnitude ~= 0 then
                         -- 水平方向の力を計算する
-                        local vcr = Vector3.__new(0, ballStatus.simAngularVelocity.y, 0)
-                        local vo = Vector3.Cross(vcr * (settings.ballSimAngularFactor * settings.ballSimMass / deltaSec), horzVelocity / velocityMagnitude)
+                        local rf = settings.ballSimAngularFactor * settings.ballSimMass * ballStatus.simAngularVelocity.y * deltaSec / fixedTimestep.TotalSeconds
+                        local vo = Vector3.Cross(Vector3.__new(0, rf, 0), horzVelocity / velocityMagnitude)
                         local vca = Vector3.__new(vo.x, 0, vo.z)
                         ball.AddForce(vca)
                         -- cytanb.LogTrace('vca: ', vca, ', vo: ', vo, ', velocity: ', velocity)
@@ -1131,7 +1130,7 @@ local OnUpdateBall = function (deltaTime, unscaledDeltaTime)
                         local forceY = settings.ballSimMass * vy / deltaSec / fixedTimestep.TotalSeconds
                         cytanb.LogDebug('leap ball: position = ', ballPos, ', vy = ', vy, ', forceY = ', forceY)
                         ball.SetPosition(Vector3.__new(ballPos.x, leapY, ballPos.z))
-                        ball.AddForce(Vector3.__new(0.0, forceY, 0.0))
+                        ball.AddForce(Vector3.__new(0, forceY, 0))
                     elseif ballPos.y > settings.ballSimLongSide and math.abs(ballStatus.gravityFactor) > Vector3.kEpsilon then
                         -- 重力処理
                         local forceY = settings.ballSimMass * ballStatus.gravityFactor * deltaSec / fixedTimestep.TotalSeconds
