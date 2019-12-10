@@ -226,11 +226,14 @@ return {
             --- 体のコライダーとの接触を避けるための、オフセットの最大値。
             ballMaxForwardOffset = 0.5,
 
+            --- ボールのリスポーン時間。
+            ballRespawnCoolTime = TimeSpan.FromSeconds(0.75),
+
             --- ボールのリスポーン位置のオフセット。
             ballRespawnOffsetY = 0.75,
 
-            --- ボールがアクティブであることを判定する閾値。
-            ballActiveThreshold = 0.75 + 0.25,
+            --- ボールがアクティブであることを判定する距離の閾値。
+            ballActiveDistanceThreshold = 0.25,
 
             --- ボールがリスポーンするまでの待ち時間。この設定時間を短くすると、自動的にリスポーンするようになる。
             ballWaitingTime = TimeSpan.FromDays(1),
