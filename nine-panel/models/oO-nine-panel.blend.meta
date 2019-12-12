@@ -32,6 +32,76 @@ ModelImporter:
     100052: panel-pos-7
     100054: panel-pos-8
     100056: panel-pos-9
+    100058: frame-tilt
+    100060: frame-tilt_001
+    100062: inside-frame-bottom_001
+    100064: inside-frame-left_001
+    100066: inside-frame-right_001
+    100068: inside-frame-top_001
+    100070: nine-panel-base_001
+    100072: outside-frame-bottom_001
+    100074: outside-frame-left_001
+    100076: outside-frame-right_001
+    100078: outside-frame-top_001
+    100080: panel-pos-1_001
+    100082: panel-pos-2_001
+    100084: panel-pos-3_001
+    100086: panel-pos-4_001
+    100088: panel-pos-5_001
+    100090: panel-pos-6_001
+    100092: panel-pos-7_001
+    100094: panel-pos-8_001
+    100096: panel-pos-9_001
+    100098: panel_cytanb-target_1_001
+    100100: panel_cytanb-target_2_001
+    100102: panel_cytanb-target_3_001
+    100104: panel_cytanb-target_4_001
+    100106: panel_cytanb-target_5_001
+    100108: panel_cytanb-target_6_001
+    100110: panel_cytanb-target_7_001
+    100112: panel_cytanb-target_8_001
+    100114: panel_cytanb-target_9_001
+    100116: reset-switch_001
+    100118: ta_mergedObject
+    100120: frame-tilt-axis
+    100122: frame-tilt-plane
+    100124: panel-collider_cytanb-target_1
+    100126: panel-collider_cytanb-target_2
+    100128: panel-collider_cytanb-target_3
+    100130: panel-collider_cytanb-target_4
+    100132: panel-collider_cytanb-target_5
+    100134: panel-collider_cytanb-target_6
+    100136: panel-collider_cytanb-target_7
+    100138: panel-collider_cytanb-target_8
+    100140: panel-collider_cytanb-target_9
+    100142: panel-pos_1
+    100144: panel-pos_2
+    100146: panel-pos_3
+    100148: panel-pos_4
+    100150: panel-pos_5
+    100152: panel-pos_6
+    100154: panel-pos_7
+    100156: panel-pos_8
+    100158: panel-pos_9
+    100160: panel-mesh_1
+    100162: panel-mesh_2
+    100164: panel-mesh_3
+    100166: panel-mesh_4
+    100168: panel-mesh_5
+    100170: panel-mesh_6
+    100172: panel-mesh_7
+    100174: panel-mesh_8
+    100176: panel-mesh_9
+    100178: inside-frame-bottom_cytanb-ignore
+    100180: inside-frame-left_cytanb-ignore
+    100182: inside-frame-right_cytanb-ignore
+    100184: inside-frame-top_cytanb-ignore
+    100186: nine-panel-base_cytanb-ignore
+    100188: outside-frame-bottom_cytanb-ignore
+    100190: outside-frame-left_cytanb-ignore
+    100192: outside-frame-right_cytanb-ignore
+    100194: outside-frame-top_cytanb-ignore
+    100196: bktatlas_mergedObject
     400000: //RootNode
     400002: inside-frame-bottom
     400004: inside-frame-left
@@ -61,10 +131,89 @@ ModelImporter:
     400052: panel-pos-7
     400054: panel-pos-8
     400056: panel-pos-9
+    400058: frame-tilt
+    400060: frame-tilt_001
+    400062: inside-frame-bottom_001
+    400064: inside-frame-left_001
+    400066: inside-frame-right_001
+    400068: inside-frame-top_001
+    400070: nine-panel-base_001
+    400072: outside-frame-bottom_001
+    400074: outside-frame-left_001
+    400076: outside-frame-right_001
+    400078: outside-frame-top_001
+    400080: panel-pos-1_001
+    400082: panel-pos-2_001
+    400084: panel-pos-3_001
+    400086: panel-pos-4_001
+    400088: panel-pos-5_001
+    400090: panel-pos-6_001
+    400092: panel-pos-7_001
+    400094: panel-pos-8_001
+    400096: panel-pos-9_001
+    400098: panel_cytanb-target_1_001
+    400100: panel_cytanb-target_2_001
+    400102: panel_cytanb-target_3_001
+    400104: panel_cytanb-target_4_001
+    400106: panel_cytanb-target_5_001
+    400108: panel_cytanb-target_6_001
+    400110: panel_cytanb-target_7_001
+    400112: panel_cytanb-target_8_001
+    400114: panel_cytanb-target_9_001
+    400116: reset-switch_001
+    400118: ta_mergedObject
+    400120: frame-tilt-axis
+    400122: frame-tilt-plane
+    400124: panel-collider_cytanb-target_1
+    400126: panel-collider_cytanb-target_2
+    400128: panel-collider_cytanb-target_3
+    400130: panel-collider_cytanb-target_4
+    400132: panel-collider_cytanb-target_5
+    400134: panel-collider_cytanb-target_6
+    400136: panel-collider_cytanb-target_7
+    400138: panel-collider_cytanb-target_8
+    400140: panel-collider_cytanb-target_9
+    400142: panel-pos_1
+    400144: panel-pos_2
+    400146: panel-pos_3
+    400148: panel-pos_4
+    400150: panel-pos_5
+    400152: panel-pos_6
+    400154: panel-pos_7
+    400156: panel-pos_8
+    400158: panel-pos_9
+    400160: panel-mesh_1
+    400162: panel-mesh_2
+    400164: panel-mesh_3
+    400166: panel-mesh_4
+    400168: panel-mesh_5
+    400170: panel-mesh_6
+    400172: panel-mesh_7
+    400174: panel-mesh_8
+    400176: panel-mesh_9
+    400178: inside-frame-bottom_cytanb-ignore
+    400180: inside-frame-left_cytanb-ignore
+    400182: inside-frame-right_cytanb-ignore
+    400184: inside-frame-top_cytanb-ignore
+    400186: nine-panel-base_cytanb-ignore
+    400188: outside-frame-bottom_cytanb-ignore
+    400190: outside-frame-left_cytanb-ignore
+    400192: outside-frame-right_cytanb-ignore
+    400194: outside-frame-top_cytanb-ignore
+    400196: bktatlas_mergedObject
     2100000: Material
     2100002: reset-switch-mat
     2100004: panel-mat
     2100006: frame-mat
+    2100008: panel-mat__nine-panel-tex_png
+    2100010: panel-mat__ta
+    2100012: frame-mat__ta
+    2100014: reset-switch-mat_001
+    2100016: nine-panel-mat__nine-panel-tex_png
+    2100018: nine-panel-mat
+    2100020: unnamed
+    2100022: nine-panel-mat__bktatlas
+    2100024: transparent-mat
     2300000: //RootNode
     2300002: inside-frame-bottom
     2300004: inside-frame-left
@@ -84,6 +233,53 @@ ModelImporter:
     2300032: panel_cytanb-target_8
     2300034: panel_cytanb-target_9
     2300036: reset-switch
+    2300038: inside-frame-bottom_001
+    2300040: inside-frame-left_001
+    2300042: inside-frame-right_001
+    2300044: inside-frame-top_001
+    2300046: outside-frame-bottom_001
+    2300048: outside-frame-left_001
+    2300050: outside-frame-right_001
+    2300052: outside-frame-top_001
+    2300054: panel_cytanb-target_1_001
+    2300056: panel_cytanb-target_2_001
+    2300058: panel_cytanb-target_3_001
+    2300060: panel_cytanb-target_4_001
+    2300062: panel_cytanb-target_5_001
+    2300064: panel_cytanb-target_6_001
+    2300066: panel_cytanb-target_7_001
+    2300068: panel_cytanb-target_8_001
+    2300070: panel_cytanb-target_9_001
+    2300072: reset-switch_001
+    2300074: ta_mergedObject
+    2300076: frame-tilt-plane
+    2300078: panel-collider_cytanb-target_1
+    2300080: panel-collider_cytanb-target_2
+    2300082: panel-collider_cytanb-target_3
+    2300084: panel-collider_cytanb-target_4
+    2300086: panel-collider_cytanb-target_5
+    2300088: panel-collider_cytanb-target_6
+    2300090: panel-collider_cytanb-target_7
+    2300092: panel-collider_cytanb-target_8
+    2300094: panel-collider_cytanb-target_9
+    2300096: panel-mesh_1
+    2300098: panel-mesh_2
+    2300100: panel-mesh_3
+    2300102: panel-mesh_4
+    2300104: panel-mesh_5
+    2300106: panel-mesh_6
+    2300108: panel-mesh_7
+    2300110: panel-mesh_8
+    2300112: panel-mesh_9
+    2300114: inside-frame-bottom_cytanb-ignore
+    2300116: inside-frame-left_cytanb-ignore
+    2300118: inside-frame-right_cytanb-ignore
+    2300120: inside-frame-top_cytanb-ignore
+    2300122: outside-frame-bottom_cytanb-ignore
+    2300124: outside-frame-left_cytanb-ignore
+    2300126: outside-frame-right_cytanb-ignore
+    2300128: outside-frame-top_cytanb-ignore
+    2300130: bktatlas_mergedObject
     3300000: //RootNode
     3300002: inside-frame-bottom
     3300004: inside-frame-left
@@ -103,6 +299,53 @@ ModelImporter:
     3300032: panel_cytanb-target_8
     3300034: panel_cytanb-target_9
     3300036: reset-switch
+    3300038: inside-frame-bottom_001
+    3300040: inside-frame-left_001
+    3300042: inside-frame-right_001
+    3300044: inside-frame-top_001
+    3300046: outside-frame-bottom_001
+    3300048: outside-frame-left_001
+    3300050: outside-frame-right_001
+    3300052: outside-frame-top_001
+    3300054: panel_cytanb-target_1_001
+    3300056: panel_cytanb-target_2_001
+    3300058: panel_cytanb-target_3_001
+    3300060: panel_cytanb-target_4_001
+    3300062: panel_cytanb-target_5_001
+    3300064: panel_cytanb-target_6_001
+    3300066: panel_cytanb-target_7_001
+    3300068: panel_cytanb-target_8_001
+    3300070: panel_cytanb-target_9_001
+    3300072: reset-switch_001
+    3300074: ta_mergedObject
+    3300076: frame-tilt-plane
+    3300078: panel-collider_cytanb-target_1
+    3300080: panel-collider_cytanb-target_2
+    3300082: panel-collider_cytanb-target_3
+    3300084: panel-collider_cytanb-target_4
+    3300086: panel-collider_cytanb-target_5
+    3300088: panel-collider_cytanb-target_6
+    3300090: panel-collider_cytanb-target_7
+    3300092: panel-collider_cytanb-target_8
+    3300094: panel-collider_cytanb-target_9
+    3300096: panel-mesh_1
+    3300098: panel-mesh_2
+    3300100: panel-mesh_3
+    3300102: panel-mesh_4
+    3300104: panel-mesh_5
+    3300106: panel-mesh_6
+    3300108: panel-mesh_7
+    3300110: panel-mesh_8
+    3300112: panel-mesh_9
+    3300114: inside-frame-bottom_cytanb-ignore
+    3300116: inside-frame-left_cytanb-ignore
+    3300118: inside-frame-right_cytanb-ignore
+    3300120: inside-frame-top_cytanb-ignore
+    3300122: outside-frame-bottom_cytanb-ignore
+    3300124: outside-frame-left_cytanb-ignore
+    3300126: outside-frame-right_cytanb-ignore
+    3300128: outside-frame-top_cytanb-ignore
+    3300130: bktatlas_mergedObject
     4300000: Cube
     4300002: reset-switch
     4300004: panel_cytanb-target_9
@@ -122,8 +365,56 @@ ModelImporter:
     4300032: outside-frame-bottom
     4300034: outside-frame-top
     4300036: inside-frame-right
+    4300038: ta_mergedObject
+    4300040: panel_cytanb-target_3_001
+    4300042: panel_cytanb-target_6_001
+    4300044: panel_cytanb-target_9_001
+    4300046: panel_cytanb-target_8_001
+    4300048: panel_cytanb-target_5_001
+    4300050: panel_cytanb-target_2_001
+    4300052: panel_cytanb-target_1_001
+    4300054: panel_cytanb-target_4_001
+    4300056: panel_cytanb-target_7_001
+    4300058: reset-switch_001
+    4300060: inside-frame-bottom_001
+    4300062: inside-frame-left_001
+    4300064: inside-frame-right_001
+    4300066: inside-frame-top_001
+    4300068: outside-frame-bottom_001
+    4300070: outside-frame-left_001
+    4300072: outside-frame-right_001
+    4300074: outside-frame-top_001
+    4300076: frame-tilt-plane
+    4300078: panel-collider_cytanb-target_7
+    4300080: panel-collider_cytanb-target_9
+    4300082: panel-collider_cytanb-target_8
+    4300084: panel-collider_cytanb-target_5
+    4300086: panel-collider_cytanb-target_6
+    4300088: panel-collider_cytanb-target_4
+    4300090: panel-collider_cytanb-target_1
+    4300092: panel-collider_cytanb-target_3
+    4300094: panel-collider_cytanb-target_2
+    4300096: panel-mesh_1
+    4300098: panel-mesh_2
+    4300100: panel-mesh_3
+    4300102: panel-mesh_4
+    4300104: panel-mesh_5
+    4300106: panel-mesh_6
+    4300108: panel-mesh_7
+    4300110: panel-mesh_8
+    4300112: panel-mesh_9
+    4300114: inside-frame-left_cytanb-ignore
+    4300116: inside-frame-right_cytanb-ignore
+    4300118: inside-frame-top_cytanb-ignore
+    4300120: outside-frame-bottom_cytanb-ignore
+    4300122: outside-frame-left_cytanb-ignore
+    4300124: outside-frame-right_cytanb-ignore
+    4300126: outside-frame-top_cytanb-ignore
+    4300128: inside-frame-bottom_cytanb-ignore
+    4300130: bktatlas_mergedObject
     7400000: Default Take
     9500000: //RootNode
+    2186277476908879412: ImportLogs
   externalObjects: {}
   materials:
     importMaterials: 1

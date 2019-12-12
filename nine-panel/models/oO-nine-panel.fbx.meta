@@ -32,6 +32,45 @@ ModelImporter:
     100052: panel-pos-7
     100054: panel-pos-8
     100056: panel-pos-9
+    100058: frame-tilt
+    100060: frame-tilt-axis
+    100062: frame-tilt-plane
+    100064: panel-collider#cytanb-target#1
+    100066: panel-collider#cytanb-target#2
+    100068: panel-collider#cytanb-target#3
+    100070: panel-collider#cytanb-target#4
+    100072: panel-collider#cytanb-target#5
+    100074: panel-collider#cytanb-target#6
+    100076: panel-collider#cytanb-target#7
+    100078: panel-collider#cytanb-target#8
+    100080: panel-collider#cytanb-target#9
+    100082: panel-mesh#1
+    100084: panel-mesh#2
+    100086: panel-mesh#3
+    100088: panel-mesh#4
+    100090: panel-mesh#5
+    100092: panel-mesh#6
+    100094: panel-mesh#7
+    100096: panel-mesh#8
+    100098: panel-mesh#9
+    100100: panel-pos#1
+    100102: panel-pos#2
+    100104: panel-pos#3
+    100106: panel-pos#4
+    100108: panel-pos#5
+    100110: panel-pos#6
+    100112: panel-pos#7
+    100114: panel-pos#8
+    100116: panel-pos#9
+    100118: inside-frame-bottom#cytanb-ignore
+    100120: inside-frame-left#cytanb-ignore
+    100122: inside-frame-right#cytanb-ignore
+    100124: inside-frame-top#cytanb-ignore
+    100126: nine-panel-base#cytanb-ignore
+    100128: outside-frame-bottom#cytanb-ignore
+    100130: outside-frame-left#cytanb-ignore
+    100132: outside-frame-right#cytanb-ignore
+    100134: outside-frame-top#cytanb-ignore
     400000: inside-frame-bottom
     400002: inside-frame-left
     400004: inside-frame-right
@@ -61,9 +100,51 @@ ModelImporter:
     400052: panel-pos-7
     400054: panel-pos-8
     400056: panel-pos-9
+    400058: frame-tilt
+    400060: frame-tilt-axis
+    400062: frame-tilt-plane
+    400064: panel-collider#cytanb-target#1
+    400066: panel-collider#cytanb-target#2
+    400068: panel-collider#cytanb-target#3
+    400070: panel-collider#cytanb-target#4
+    400072: panel-collider#cytanb-target#5
+    400074: panel-collider#cytanb-target#6
+    400076: panel-collider#cytanb-target#7
+    400078: panel-collider#cytanb-target#8
+    400080: panel-collider#cytanb-target#9
+    400082: panel-mesh#1
+    400084: panel-mesh#2
+    400086: panel-mesh#3
+    400088: panel-mesh#4
+    400090: panel-mesh#5
+    400092: panel-mesh#6
+    400094: panel-mesh#7
+    400096: panel-mesh#8
+    400098: panel-mesh#9
+    400100: panel-pos#1
+    400102: panel-pos#2
+    400104: panel-pos#3
+    400106: panel-pos#4
+    400108: panel-pos#5
+    400110: panel-pos#6
+    400112: panel-pos#7
+    400114: panel-pos#8
+    400116: panel-pos#9
+    400118: inside-frame-bottom#cytanb-ignore
+    400120: inside-frame-left#cytanb-ignore
+    400122: inside-frame-right#cytanb-ignore
+    400124: inside-frame-top#cytanb-ignore
+    400126: nine-panel-base#cytanb-ignore
+    400128: outside-frame-bottom#cytanb-ignore
+    400130: outside-frame-left#cytanb-ignore
+    400132: outside-frame-right#cytanb-ignore
+    400134: outside-frame-top#cytanb-ignore
     2100000: reset-switch-mat
     2100002: panel-mat
     2100004: frame-mat
+    2100006: nine-panel-mat
+    2100008: No Name
+    2100010: transparent-mat
     2300000: inside-frame-bottom
     2300002: inside-frame-left
     2300004: inside-frame-right
@@ -82,6 +163,33 @@ ModelImporter:
     2300030: panel#cytanb-target#8
     2300032: panel#cytanb-target#9
     2300034: reset-switch
+    2300036: frame-tilt-plane
+    2300038: panel-collider#cytanb-target#1
+    2300040: panel-collider#cytanb-target#2
+    2300042: panel-collider#cytanb-target#3
+    2300044: panel-collider#cytanb-target#4
+    2300046: panel-collider#cytanb-target#5
+    2300048: panel-collider#cytanb-target#6
+    2300050: panel-collider#cytanb-target#7
+    2300052: panel-collider#cytanb-target#8
+    2300054: panel-collider#cytanb-target#9
+    2300056: panel-mesh#1
+    2300058: panel-mesh#2
+    2300060: panel-mesh#3
+    2300062: panel-mesh#4
+    2300064: panel-mesh#5
+    2300066: panel-mesh#6
+    2300068: panel-mesh#7
+    2300070: panel-mesh#8
+    2300072: panel-mesh#9
+    2300074: inside-frame-bottom#cytanb-ignore
+    2300076: inside-frame-left#cytanb-ignore
+    2300078: inside-frame-right#cytanb-ignore
+    2300080: inside-frame-top#cytanb-ignore
+    2300082: outside-frame-bottom#cytanb-ignore
+    2300084: outside-frame-left#cytanb-ignore
+    2300086: outside-frame-right#cytanb-ignore
+    2300088: outside-frame-top#cytanb-ignore
     3300000: inside-frame-bottom
     3300002: inside-frame-left
     3300004: inside-frame-right
@@ -100,6 +208,33 @@ ModelImporter:
     3300030: panel#cytanb-target#8
     3300032: panel#cytanb-target#9
     3300034: reset-switch
+    3300036: frame-tilt-plane
+    3300038: panel-collider#cytanb-target#1
+    3300040: panel-collider#cytanb-target#2
+    3300042: panel-collider#cytanb-target#3
+    3300044: panel-collider#cytanb-target#4
+    3300046: panel-collider#cytanb-target#5
+    3300048: panel-collider#cytanb-target#6
+    3300050: panel-collider#cytanb-target#7
+    3300052: panel-collider#cytanb-target#8
+    3300054: panel-collider#cytanb-target#9
+    3300056: panel-mesh#1
+    3300058: panel-mesh#2
+    3300060: panel-mesh#3
+    3300062: panel-mesh#4
+    3300064: panel-mesh#5
+    3300066: panel-mesh#6
+    3300068: panel-mesh#7
+    3300070: panel-mesh#8
+    3300072: panel-mesh#9
+    3300074: inside-frame-bottom#cytanb-ignore
+    3300076: inside-frame-left#cytanb-ignore
+    3300078: inside-frame-right#cytanb-ignore
+    3300080: inside-frame-top#cytanb-ignore
+    3300082: outside-frame-bottom#cytanb-ignore
+    3300084: outside-frame-left#cytanb-ignore
+    3300086: outside-frame-right#cytanb-ignore
+    3300088: outside-frame-top#cytanb-ignore
     4300000: reset-switch
     4300002: panel#cytanb-target#9
     4300004: panel#cytanb-target#3
@@ -118,12 +253,36 @@ ModelImporter:
     4300030: outside-frame-top
     4300032: inside-frame-right
     4300034: panel#cytanb-target#4
+    4300036: frame-tilt-plane
+    4300038: panel-collider#cytanb-target#7
+    4300040: panel-mesh#1
+    4300042: panel-mesh#2
+    4300044: panel-mesh#3
+    4300046: panel-mesh#4
+    4300048: panel-mesh#5
+    4300050: panel-mesh#6
+    4300052: panel-mesh#7
+    4300054: panel-mesh#8
+    4300056: panel-mesh#9
+    4300058: inside-frame-left#cytanb-ignore
+    4300060: inside-frame-right#cytanb-ignore
+    4300062: inside-frame-top#cytanb-ignore
+    4300064: outside-frame-bottom#cytanb-ignore
+    4300066: outside-frame-left#cytanb-ignore
+    4300068: outside-frame-right#cytanb-ignore
+    4300070: outside-frame-top#cytanb-ignore
+    4300072: inside-frame-bottom#cytanb-ignore
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: frame-mat
     second: {fileID: 2100000, guid: 42495c8f94e68ac43b757f9e178208a7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: nine-panel-mat
+    second: {fileID: 2100000, guid: 519e10fb84e6a89459fb54c8a1dec6f6, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -134,6 +293,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: reset-switch-mat
     second: {fileID: 2100000, guid: 2c438c5710fb06b4b8b3c16f5c115e3a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: transparent-mat
+    second: {fileID: 2100000, guid: 20d5c6fdf79d82642ae76de77fc03f26, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
