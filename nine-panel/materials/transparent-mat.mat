@@ -77,5 +77,5 @@ Material:
     - _VColBlendMode: 0
     - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 0.22659309, g: 0.30091846, b: 0.7169812, a: 0.27450982}
+    - _Color: {r: 0.90588236, g: 0.90588236, b: 0.90588236, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}

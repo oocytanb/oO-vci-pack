@@ -71,6 +71,21 @@ ModelImporter:
     100130: outside-frame-left#cytanb-ignore
     100132: outside-frame-right#cytanb-ignore
     100134: outside-frame-top#cytanb-ignore
+    100136: panel-controller
+    100138: volume-knob
+    100140: volume-knob-pos
+    100142: volume-switch
+    100144: empty-volume-knob-pos
+    100146: reset-knob-pos
+    100148: reset-switch-mesh
+    100150: panel-controller-frame-bottom
+    100152: panel-controller-frame-left
+    100154: panel-controller-frame-right
+    100156: panel-controller-frame-top
+    100158: bktatlas_mergedObject
+    100160: tilt-knob
+    100162: tilt-knob-pos
+    100164: tilt-switch
     400000: inside-frame-bottom
     400002: inside-frame-left
     400004: inside-frame-right
@@ -139,12 +154,28 @@ ModelImporter:
     400130: outside-frame-left#cytanb-ignore
     400132: outside-frame-right#cytanb-ignore
     400134: outside-frame-top#cytanb-ignore
+    400136: panel-controller
+    400138: volume-knob
+    400140: volume-knob-pos
+    400142: volume-switch
+    400144: empty-volume-knob-pos
+    400146: reset-knob-pos
+    400148: reset-switch-mesh
+    400150: panel-controller-frame-bottom
+    400152: panel-controller-frame-left
+    400154: panel-controller-frame-right
+    400156: panel-controller-frame-top
+    400158: bktatlas_mergedObject
+    400160: tilt-knob
+    400162: tilt-knob-pos
+    400164: tilt-switch
     2100000: reset-switch-mat
     2100002: panel-mat
     2100004: frame-mat
     2100006: nine-panel-mat
     2100008: No Name
     2100010: transparent-mat
+    2100012: Material
     2300000: inside-frame-bottom
     2300002: inside-frame-left
     2300004: inside-frame-right
@@ -190,6 +221,18 @@ ModelImporter:
     2300084: outside-frame-left#cytanb-ignore
     2300086: outside-frame-right#cytanb-ignore
     2300088: outside-frame-top#cytanb-ignore
+    2300090: panel-controller
+    2300092: volume-knob
+    2300094: volume-switch
+    2300096: volume-knob-pos
+    2300098: reset-switch-mesh
+    2300100: panel-controller-frame-bottom
+    2300102: panel-controller-frame-left
+    2300104: panel-controller-frame-right
+    2300106: panel-controller-frame-top
+    2300108: bktatlas_mergedObject
+    2300110: tilt-knob
+    2300112: tilt-switch
     3300000: inside-frame-bottom
     3300002: inside-frame-left
     3300004: inside-frame-right
@@ -235,6 +278,18 @@ ModelImporter:
     3300084: outside-frame-left#cytanb-ignore
     3300086: outside-frame-right#cytanb-ignore
     3300088: outside-frame-top#cytanb-ignore
+    3300090: panel-controller
+    3300092: volume-knob
+    3300094: volume-switch
+    3300096: volume-knob-pos
+    3300098: reset-switch-mesh
+    3300100: panel-controller-frame-bottom
+    3300102: panel-controller-frame-left
+    3300104: panel-controller-frame-right
+    3300106: panel-controller-frame-top
+    3300108: bktatlas_mergedObject
+    3300110: tilt-knob
+    3300112: tilt-switch
     4300000: reset-switch
     4300002: panel#cytanb-target#9
     4300004: panel#cytanb-target#3
@@ -272,7 +327,24 @@ ModelImporter:
     4300068: outside-frame-right#cytanb-ignore
     4300070: outside-frame-top#cytanb-ignore
     4300072: inside-frame-bottom#cytanb-ignore
+    4300074: volume-switch
+    4300076: panel-controller
+    4300078: volume-knob
+    4300080: volume-knob-pos
+    4300082: reset-switch-mesh
+    4300084: panel-controller-frame-right
+    4300086: panel-controller-frame-left
+    4300088: panel-controller-frame-bottom
+    4300090: panel-controller-frame-top
+    4300092: bktatlas_mergedObject
+    4300094: tilt-switch
+    4300096: tilt-knob
   externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material
+    second: {fileID: 2100000, guid: 12d8cef8713d2b44185778e984ae3e7a, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
