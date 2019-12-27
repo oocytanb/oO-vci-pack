@@ -8,15 +8,16 @@ CreateSlideSwitch=function(cT)local cU=a.NillableValue(cT.colliderItem)local cV=
 
 local settings = (function ()
     local cballSettingsLspid = 'ae00bdfc-98ec-4fbf-84a6-1a52823cfe69'
+    local ignoreTag = '#cytanb-ignore'
 
     return {
         enableDebugging = false,
         lsp = cytanb.CreateLocalSharedProperties(cballSettingsLspid, tostring(cytanb.RandomUUID())),
         throwableTag = '#cytanb-throwable',
         ballTag = '#cytanb-ball',
-        ignoreTag = '#cytanb-ignore',
+        ignoreTag = ignoreTag,
         panelCount = 9,
-        panelBaseName = 'nine-panel-base#cytanb-ignore',
+        panelBaseName = 'nine-panel-base' .. ignoreTag,
         panelControllerName = 'panel-controller',
         panelTiltName = 'frame-tilt',
         initialPanelTiltAngle = -90,
@@ -43,6 +44,7 @@ local settings = (function ()
         avatarColliders = {'Head', 'Chest', 'Hips', 'RightArm', 'LeftArm', 'RightHand', 'LeftHand', 'RightThigh', 'LeftThigh', 'RightFoot', 'LeftFoot', 'RightToes', 'LeftToes'},
         envColliders = {'HandPointMarker', 'NameBoard(Clone)', 'RailButton', 'Controller (right)', 'Controller (left)', 'TransparentPlane'},
         limitHitSource = false,
+        grabClickTiming = TimeSpan.FromMilliseconds(1000),
         minRequestIntervalTime = TimeSpan.FromMilliseconds(200),
         maxRequestIntervalTime = TimeSpan.FromMilliseconds(3000),
         panelMendIntervalTime = TimeSpan.FromSeconds(2),
@@ -64,22 +66,28 @@ local hiddenPosition
 local ignoredColliderMap
 local panelBase, panelTilt, panelMap
 local panelController, panelControllerGlue
+local slideSwitchMap, audioVolumeSwitch, tiltSwitch
 local resetSwitch
-local slideSwitchMap
 
 local breakEfkContainer, breakEfk
 
--- パネルのフレームがつかまれているか
+--- パネルのフレームがつかまれているか
 local panelBaseGrabbed = false
 
--- パネルの傾きが変更されていることを示すフラグ
+--- パネルの傾きが変更されていることを示すフラグ
 local panelBaseTiltChanged = false
 
--- 最後にパネルの傾きを送った時間
-local lastPanelBaseTiltSendTime = TimeSpan.MinValue
+--- 最後にパネルの傾きを送った時間
+local lastPanelBaseTiltSendTime = TimeSpan.Zero
 
--- 最後にパネルを直した時間。
+--- 最後にパネルを直した時間。
 local lastPanelMendedTime = TimeSpan.Zero
+
+--- リセットスイッチのクリック数。
+local resetSwitchClickCount = 0
+
+--- リセットスイッチのクリック時間。
+local resetSwitchClickTime = TimeSpan.Zero
 
 -- すべてのパネルがヒットしてゲームが終了した時間。
 local gameCompletedTime = TimeSpan.Zero
@@ -102,7 +110,7 @@ end
 
 local CreatePanelBaseStatusParameter = function ()
     return {
-        tiltAngle = slideSwitchMap[settings.tiltSwitchName].GetValue()
+        tiltAngle = tiltSwitch.GetValue()
     }
 end
 
@@ -125,7 +133,7 @@ local ShowPanelMesh = function (panel, show)
 end
 
 local BreakPanel = function (panel)
-    if panelBaseGrabbed or not panel.active then
+    if not panel.active then
         return false
     end
 
@@ -134,12 +142,10 @@ local BreakPanel = function (panel)
     panel.active = false
     panel.inactiveTime = vci.me.UnscaledTime
 
-    local posItem = panel.posItem
-    breakEfkContainer.SetPosition(posItem.GetPosition())
-    breakEfkContainer.SetRotation(posItem.GetRotation())
+    cytanb.AlignSubItemOrigin(panel.posItem, breakEfkContainer)
     breakEfk.Play()
 
-    local audioVolume = slideSwitchMap[settings.audioVolumeSwitchName].GetValue()
+    local audioVolume = audioVolumeSwitch.GetValue()
     if audioVolume > 0 then
         vci.assets.audio.Play(settings.breakPanelAudioName, audioVolume / settings.audioVolumeMaxValue, false)
     end
@@ -148,7 +154,7 @@ local BreakPanel = function (panel)
 
     local item = panel.item
     if item.IsMine then
-        item.SetPosition(hiddenPosition + posItem.GetLocalPosition())
+        item.SetPosition(hiddenPosition + panel.posItem.GetLocalPosition())
         item.SetRotation(Quaternion.identity)
         item.SetVelocity(Vector3.zero)
         item.SetAngularVelocity(Vector3.zero)
@@ -162,11 +168,9 @@ local MendPanel = function (panel)
         return
     end
 
-    local posItem = panel.posItem
     local item = panel.item
-
     if item.IsMine then
-        cytanb.AlignSubItemOrigin(posItem, item, true)
+        cytanb.AlignSubItemOrigin(panel.posItem, item, true)
     end
 end
 
@@ -271,7 +275,8 @@ local OnLoad = function ()
     panelControllerGlue = cytanb.CreateSubItemGlue()
 
     slideSwitchMap = {}
-    local volumeSwitch = cytanb.CreateSlideSwitch({
+
+    audioVolumeSwitch = cytanb.CreateSlideSwitch({
         colliderItem = cytanb.NillableValue(vci.assets.GetSubItem(settings.audioVolumeSwitchName)),
         knobItem = cytanb.NillableValue(vci.assets.GetSubItem(settings.audioVolumeKnobName)),
         baseItem = cytanb.NillableValue(vci.assets.GetSubItem(settings.audioVolumeKnobPos)),
@@ -281,12 +286,12 @@ local OnLoad = function ()
         lsp = settings.lsp,
         propertyName = settings.audioVolumePropertyName
     })
-    volumeSwitch.AddListener(function (source, value)
+    audioVolumeSwitch.AddListener(function (source, value)
         cytanb.LogTrace('switch[', source.GetColliderItem().GetName(), '] value changed: ', value)
     end)
-    slideSwitchMap[settings.audioVolumeSwitchName] = volumeSwitch
+    slideSwitchMap[settings.audioVolumeSwitchName] = audioVolumeSwitch
 
-    local tiltSwitch = cytanb.CreateSlideSwitch({
+    tiltSwitch = cytanb.CreateSlideSwitch({
         colliderItem = cytanb.NillableValue(vci.assets.GetSubItem(settings.tiltSwitchName)),
         knobItem = cytanb.NillableValue(vci.assets.GetSubItem(settings.tiltKnobName)),
         baseItem = cytanb.NillableValue(vci.assets.GetSubItem(settings.tiltKnobPos)),
@@ -299,7 +304,6 @@ local OnLoad = function ()
         SetPanelBaseTilt(value)
         panelBaseTiltChanged = true
     end)
-
     slideSwitchMap[settings.tiltSwitchName] = tiltSwitch
 
     resetSwitch = cytanb.NillableValue(vci.assets.GetSubItem(settings.resetSwitchName))
@@ -310,8 +314,7 @@ local OnLoad = function ()
 
     settings.lsp.AddListener(function (source, key, value, oldValue)
         if key == cytanb.LOCAL_SHARED_PROPERTY_EXPIRED_KEY then
-            cytanb.LogInfo('lsp: expired')
-            -- 期限切れとなったので、アンロード処理をする
+            -- cytanb.LogInfo('lsp: expired')
             vciLoaded = false
         end
     end)
@@ -320,7 +323,7 @@ local OnLoad = function ()
         cytanb.LogTrace('OnChangePanelBase')
         cytanb.NillableIfHasValue(parameterMap.panelBase, function (base)
             cytanb.NillableIfHasValue(base.tiltAngle, function (tiltAngle)
-                slideSwitchMap[settings.tiltSwitchName].SetValue(tiltAngle)
+                tiltSwitch.SetValue(tiltAngle)
             end)
         end)
     end
@@ -347,7 +350,7 @@ local OnLoad = function ()
     end)
 
     ResetAll()
-    SetPanelBaseTilt(slideSwitchMap[settings.tiltSwitchName].GetValue())
+    SetPanelBaseTilt(tiltSwitch.GetValue())
 
     if vci.assets.IsMine then
         cytanb.OnInstanceMessage(queryStatusMessageName, function (sender, name, parameterMap)
@@ -399,6 +402,7 @@ local OnUpdate = function (deltaTime, unscaledDeltaTime)
     if panelBase.IsMine then
         local now = vci.me.UnscaledTime
         if not panelBaseGrabbed then
+            -- 傾きの変更を、インターバルを設けてメッセージで通知する
             if panelBaseTiltChanged and now >= lastPanelBaseTiltSendTime + settings.minRequestIntervalTime then
                 panelBaseTiltChanged = false
                 lastPanelBaseTiltSendTime = now
@@ -411,6 +415,7 @@ local OnUpdate = function (deltaTime, unscaledDeltaTime)
                 end
             end
 
+            -- パネルの位置関係を、インターバルを設けて直す
             if now >= lastPanelMendedTime + settings.panelMendIntervalTime then
                 MendAllPanels()
             end
@@ -483,6 +488,13 @@ onGrab = function (target)
 
     if target == panelBase.GetName() then
         panelBaseGrabbed = true
+    elseif target == resetSwitch.GetName() then
+        resetSwitchClickCount, resetSwitchClickTime = cytanb.DetectClicks(resetSwitchClickCount, resetSwitchClickTime, settings.grabClickTiming)
+        if resetSwitchClickCount == 3 then
+            -- リセットスイッチを3回グラブする操作で、リセットを行う。
+            -- (ユーザーは、スライドスイッチをグラブすると操作できるので、同じ入力キーで操作できるものと期待するため)
+            EmitResetMessage('@onGrab 3 times')
+        end
     else
         cytanb.NillableIfHasValue(slideSwitchMap[target], function (switch)
             switch.DoGrab()
@@ -533,7 +545,7 @@ onTriggerEnter = function (item, hit)
 
     -- cytanb.LogTrace('onTriggerEnter: item = ', item, ', hit = ', hit)
 
-    if not panelBaseGrabbed and IsHitSource(hit) then
+    if panelBase.IsMine and not panelBaseGrabbed and IsHitSource(hit) then
         cytanb.NillableIfHasValue(panelMap[item], function (panel)
             cytanb.LogTrace('onTriggerEnter: panel = ', item, ', hit = ', hit)
             lastPanelMendedTime = vci.me.UnscaledTime
