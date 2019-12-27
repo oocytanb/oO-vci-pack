@@ -42,6 +42,15 @@ ModelImporter:
     100072: cball-light
     100074: cball-settings-gravity-knob
     100076: cball-settings-gravity-switch
+    100078: cball-settings-altitude-knob-pos
+    100080: cball-settings-angular-velocity-knob-pos
+    100082: cball-settings-efk-knob-pos
+    100084: cball-settings-gravity-knob-pos
+    100086: cball-settings-throwing-detection-knob-pos
+    100088: cball-settings-velocity-knob-pos
+    100090: cball-settings-volume-knob-pos
+    100092: cball
+    100094: cball-settings-close-knob-pos
     400000: ball-cup
     400002: ball-cup-collider-back
     400004: ball-cup-collider-base
@@ -81,6 +90,15 @@ ModelImporter:
     400072: cball-light
     400074: cball-settings-gravity-knob
     400076: cball-settings-gravity-switch
+    400078: cball-settings-altitude-knob-pos
+    400080: cball-settings-angular-velocity-knob-pos
+    400082: cball-settings-efk-knob-pos
+    400084: cball-settings-gravity-knob-pos
+    400086: cball-settings-throwing-detection-knob-pos
+    400088: cball-settings-velocity-knob-pos
+    400090: cball-settings-volume-knob-pos
+    400092: cball
+    400094: cball-settings-close-knob-pos
     2100000: impact-force-gauge-mat__cball-main_png
     2100002: cball-mat__cball-main_png
     2100004: ball-cup-mat
@@ -132,6 +150,7 @@ ModelImporter:
     2300070: cball-light
     2300072: cball-settings-gravity-knob
     2300074: cball-settings-gravity-switch
+    2300076: cball
     3300000: ball-cup
     3300002: ball-cup-collider-back
     3300004: ball-cup-collider-base
@@ -170,6 +189,7 @@ ModelImporter:
     3300070: cball-light
     3300072: cball-settings-gravity-knob
     3300074: cball-settings-gravity-switch
+    3300076: cball
     4300000: impact-force-gauge
     4300002: impact-spin-gauge
     4300004: ball-cup
@@ -208,6 +228,7 @@ ModelImporter:
     4300070: cball-light
     4300072: cball-settings-gravity-switch
     4300074: cball-settings-gravity-knob
+    4300076: cball
     7400000: Default Take
     9500000: //RootNode
     2186277476908879412: ImportLogs

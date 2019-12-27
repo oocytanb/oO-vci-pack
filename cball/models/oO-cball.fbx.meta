@@ -37,6 +37,16 @@ ModelImporter:
     100062: cball-light
     100064: cball-settings-gravity-knob
     100066: cball-settings-gravity-switch
+    100068: cball-settings-altitude-knob-pos
+    100070: cball-settings-angular-velocity-knob-pos
+    100072: cball-settings-efk-knob-pos
+    100074: cball-settings-gravity-knob-pos
+    100076: cball-settings-panel-collider-bottom
+    100078: cball-settings-throwing-detection-knob-pos
+    100080: cball-settings-velocity-knob-pos
+    100082: cball-settings-volume-knob-pos
+    100084: cball
+    100086: cball-settings-close-knob-pos
     400000: ball-cup
     400002: ball-cup-collider-back
     400004: ball-cup-collider-base
@@ -71,6 +81,16 @@ ModelImporter:
     400062: cball-light
     400064: cball-settings-gravity-knob
     400066: cball-settings-gravity-switch
+    400068: cball-settings-altitude-knob-pos
+    400070: cball-settings-angular-velocity-knob-pos
+    400072: cball-settings-efk-knob-pos
+    400074: cball-settings-gravity-knob-pos
+    400076: cball-settings-panel-collider-bottom
+    400078: cball-settings-throwing-detection-knob-pos
+    400080: cball-settings-velocity-knob-pos
+    400082: cball-settings-volume-knob-pos
+    400084: cball
+    400086: cball-settings-close-knob-pos
     2100000: transparent-mat
     2100002: cball-mat
     2100004: cball-settings-panel-handle-led-mat
@@ -111,6 +131,8 @@ ModelImporter:
     2300060: cball-light
     2300062: cball-settings-gravity-knob
     2300064: cball-settings-gravity-switch
+    2300066: cball-settings-panel-collider-bottom
+    2300068: cball
     3300000: ball-cup
     3300002: ball-cup-collider-back
     3300004: ball-cup-collider-base
@@ -144,6 +166,8 @@ ModelImporter:
     3300060: cball-light
     3300062: cball-settings-gravity-knob
     3300064: cball-settings-gravity-switch
+    3300066: cball-settings-panel-collider-bottom
+    3300068: cball
     4300000: cball-settings-angular-velocity-switch
     4300002: cball-settings-close-switch
     4300004: cball-settings-panel
@@ -171,6 +195,8 @@ ModelImporter:
     4300048: cup-lamp-cube
     4300050: cball-settings-gravity-switch
     4300052: cball-settings-gravity-knob
+    4300054: cball-settings-panel-collider-bottom
+    4300056: cball
   externalObjects:
   - first:
       type: UnityEngine:Material
