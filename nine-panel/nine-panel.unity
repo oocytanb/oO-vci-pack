@@ -223,6 +223,10 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 400146, guid: 10e11e593a7fad845a1353f839610a90, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 400148, guid: 10e11e593a7fad845a1353f839610a90, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -339,10 +343,6 @@ PrefabInstance:
       propertyPath: m_Materials.Array.size
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 400146, guid: 10e11e593a7fad845a1353f839610a90, type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10e11e593a7fad845a1353f839610a90, type: 3}
 --- !u!1 &290695245 stripped
@@ -369,7 +369,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 1ba3248c8ec5ada44914b19a9703b183, type: 3}
-    version: 0.3.6
+    version: 0.3.7
     description: "- \u7684\u5F53\u3066\u7528\u306E\u30D1\u30CD\u30EB\u3067\u3059\u3002\n-
       \u30DC\u30FC\u30EB\u306A\u3069\u3092\u5F53\u3066\u3066\u904A\u3073\u307E\u3059\u3002\n-
       \ \u30EA\u30BB\u30C3\u30C8\u30DC\u30BF\u30F3\u304B\u30D5\u30EC\u30FC\u30E0\u3092\u30B0\u30EA\u30C3\u30D7\u3059\u308B\u3068\u3001\u30D1\u30CD\u30EB\u306E\u4F4D\u7F6E\u3092\u30EA\u30BB\u30C3\u30C8\u3057\u307E\u3059\u3002\n-
@@ -428,6 +428,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!1 &290695250 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100134, guid: 10e11e593a7fad845a1353f839610a90,
@@ -649,6 +650,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!1 &290695273 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100074, guid: 10e11e593a7fad845a1353f839610a90,
@@ -717,6 +719,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!54 &290695281
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -749,6 +752,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!54 &290695283
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -781,6 +785,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!54 &290695285
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -813,6 +818,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!54 &290695287
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -845,6 +851,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!54 &290695289
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -877,6 +884,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!54 &290695291
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -909,6 +917,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!54 &290695293
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -941,6 +950,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!54 &290695295
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -973,6 +983,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &290695297
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1243,6 +1254,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!1 &290695312 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100136, guid: 10e11e593a7fad845a1353f839610a90,
@@ -1287,6 +1299,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!1 &290695316 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100156, guid: 10e11e593a7fad845a1353f839610a90,
@@ -1379,6 +1392,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &290695325
 BoxCollider:
   m_ObjectHideFlags: 0
