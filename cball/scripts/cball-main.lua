@@ -90,7 +90,13 @@ local ballCupStatus = {
     clickCount = 0,
 
     --- カップのクリック時間。
-    clickTime = TimeSpan.Zero
+    clickTime = TimeSpan.Zero,
+
+    --- カップのグラブによるクリック数。
+    grabClickCount = 0,
+
+    --- カップのグラブによるクリック時間。
+    grabClickTime = TimeSpan.Zero
 }
 
 local standLightInitialStatus = {
@@ -176,6 +182,10 @@ end
 
 local CalcGravityFactor = function ()
     return - CalcAdjustmentValue(gravitySwitch, false)
+end
+
+local CalcAudioVolume = function ()
+    return cytanb.Clamp(audioVolumeSwitch.GetValue() / audioVolumeSwitch.GetMaxValue(), 0.0, 1.0)
 end
 
 local CreateDiscernibleEfkPlayer = function (efk, periodTime)
@@ -403,7 +413,7 @@ local HitStandLight = function (light)
             efk.SetAllColor(ballDiscernibleEfkPlayer.GetColor())
         end
 
-        local volume = cytanb.Clamp(audioVolumeSwitch.GetValue() / audioVolumeSwitch.GetMaxValue(), 0.0, 1.0)
+        local volume = CalcAudioVolume()
         if volume > 0 then
             local clipName
             if ls.directHit then
@@ -488,6 +498,17 @@ local DrawThrowingTrail = function ()
         local pos = element.position
         ballEfkContainer.SetPosition(pos)
         ballEfkOneLarge.Play()
+    end
+end
+
+local PlayThrowingAudio = function (velocityMagnitude)
+    local volume = CalcAudioVolume()
+    local min = settings.ballKinematicVelocityThreshold
+    if volume > 0 and velocityMagnitude > min then
+        local max = settings.ballMaxThrowingAudioVelocity
+        local mvol = volume * (cytanb.Clamp(velocityMagnitude, min, max) - min) / (max - min)
+        -- cytanb.LogTrace('play throwing audio: mvol = ', mvol)
+        vci.assets.audio.PlayOneShot(settings.ballThrowingAudioName, mvol)
     end
 end
 
@@ -596,7 +617,7 @@ local ThrowBallByKinematic = function ()
 
         local angularVelocity = CalcAngularVelocity(angularVelocityDirection.normalized, CalcAdjustmentValue(angularVelocitySwitch, false) * totalAngle, totalSec)
 
-        cytanb.LogTrace('Throw ball by kinematic: velocity: ', velocity, ', velocity.magnitude: ', velocity.magnitude, ', angularVelocity: ', angularVelocity, ', angularVelocity.magnitude: ', angularVelocity.magnitude, ', fixedTimestep: ', fixedTimestep.TotalSeconds)
+        cytanb.LogTrace('Throw ball by kinematic: velocity: ', velocity, ', velocityMagnitude: ', velocityMagnitude, ', angularVelocity: ', angularVelocity, ', angularVelocity.magnitude: ', angularVelocity.magnitude, ', fixedTimestep: ', fixedTimestep.TotalSeconds)
         ballStatus.simAngularVelocity = angularVelocity
         ball.SetVelocity(velocity)
         ball.SetAngularVelocity(angularVelocity)
@@ -604,6 +625,8 @@ local ThrowBallByKinematic = function ()
         -- 体のコライダーに接触しないように、オフセットを足す
         ballPos = ball.GetPosition() + forwardOffset
         ball.SetPosition(ballPos)
+
+        PlayThrowingAudio(velocityMagnitude)
     else
         ballStatus.simAngularVelocity = Vector3.zero
     end
@@ -622,12 +645,12 @@ local ThrowBallByInputTiming = function ()
     ballStatus.gravityFactor = CalcGravityFactor()
 
     local forward = impactForceGauge.GetForward()
-    local forwardScale = CalcAdjustmentValue(velocitySwitch, true) * impactStatus.forceGaugeRatio
-    local forwardOffset = forward * math.min(forwardScale * settings.ballForwardOffsetFactor, settings.ballMaxForwardOffset)
-    local velocity = ApplyAltitudeAngle(forward * forwardScale, CalcAdjustmentValue(altitudeSwitch, true))
+    local velocityMagnitude = CalcAdjustmentValue(velocitySwitch, true) * impactStatus.forceGaugeRatio
+    local forwardOffset = forward * math.min(velocityMagnitude * settings.ballForwardOffsetFactor, settings.ballMaxForwardOffset)
+    local velocity = ApplyAltitudeAngle(forward * velocityMagnitude, CalcAdjustmentValue(altitudeSwitch, true))
 
     ballStatus.simAngularVelocity = Vector3.up * (CalcAdjustmentValue(angularVelocitySwitch, true) * math.pi * impactStatus.spinGaugeRatio)
-    cytanb.LogTrace('velocity: ', velocity, ', velociyt.magnitude: ', velocity.magnitude, ', angularVelocity: ', ballStatus.simAngularVelocity, ', angularVelocity.magnitude: ', ballStatus.simAngularVelocity.magnitude)
+    cytanb.LogTrace('velocity: ', velocity, ', velociytMagnitude: ', velocityMagnitude, ', angularVelocity: ', ballStatus.simAngularVelocity, ', angularVelocity.magnitude: ', ballStatus.simAngularVelocity.magnitude)
 
     ball.SetVelocity(velocity)
     ball.SetAngularVelocity(ballStatus.simAngularVelocity)
@@ -635,6 +658,8 @@ local ThrowBallByInputTiming = function ()
     -- 体のコライダーに接触しないように、オフセットを足す
     local ballPos = ball.GetPosition() + forwardOffset
     ball.SetPosition(ballPos)
+
+    PlayThrowingAudio(velocityMagnitude)
 
     ballStatus.transformQueue.Clear()
     OfferBallTransform(ballPos, ball.GetRotation())
@@ -1274,6 +1299,10 @@ onGrab = function (target)
     if target == ballCup.GetName() then
         ballCupStatus.grabbed = true
         ballStatus.gravityFactor = CalcGravityFactor()
+        ballCupStatus.grabClickCount, ballCupStatus.grabClickTime = cytanb.DetectClicks(ballCupStatus.grabClickCount, ballCupStatus.grabClickTime)
+        if ballCupStatus.grabClickCount == 2 then
+            cytanb.EmitMessage(respawnBallMessageName)
+        end
     elseif target == ball.GetName() then
         ballStatus.grabbed = true
         ball.SetVelocity(Vector3.zero)

@@ -154,8 +154,8 @@ return {
             --- ボールがアクティブであることを判定する距離の閾値。
             ballActiveDistanceThreshold = 0.25,
 
-            --- ボールがリスポーンするまでの待ち時間。この設定時間を短くすると、自動的にリスポーンするようになる。
-            ballWaitingTime = TimeSpan.FromDays(1),
+            --- ボールがリスポーンするまでの待ち時間。
+            ballWaitingTime = TimeSpan.FromMinutes(30),
 
             --- ボールのプレイエリアの半径。これを超えたら軌道計算などを行わない。
             ballPlayAreaRadius = 500,
@@ -174,6 +174,9 @@ return {
 
             --- ボールの軌跡の毎フレームの補間ノード数の基準値。
             ballTrailInterpolationNodesPerFrame = 5,
+
+            --- 投球音の最大速度。
+            ballMaxThrowingAudioVelocity = 15.0,
 
             --- ゲージの毎秒の変化率。
             impactGaugeRatioPerSec = 1,
@@ -252,6 +255,9 @@ return {
 
             --- ボールのエフェクト名(生成数1,大)。
             ballEfkOneLargeName = 'cball-trail-one-large',
+
+            --- ボールの投球音のクリップ名。
+            ballThrowingAudioName = 'throwing-wind-se',
 
             --- ボールのカップのオブジェクト名。
             ballCupName = 'ball-cup',
