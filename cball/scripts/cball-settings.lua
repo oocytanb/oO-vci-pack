@@ -118,6 +118,9 @@ return {
                 }
             end),
 
+            --- 力を加える時の、最大タイムレート。
+            maxForceTimeRate = 16.0,
+
             --- 投球動作とみなす速度の閾値。
             ballKinematicVelocityThreshold = 1.0,
 
