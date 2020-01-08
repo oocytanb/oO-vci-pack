@@ -229,6 +229,9 @@ return {
             --- 設定パネルの距離の閾値。
             settingsPanelDistanceThreshold = 5.0,
 
+            --- 設定パネルの角度の閾値。
+            settingsPanelAngleThreshold = 70,
+
             --- メッセージのインターバル時間。
             requestIntervalTime = TimeSpan.FromSeconds(3),
 

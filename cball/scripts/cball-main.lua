@@ -924,12 +924,17 @@ local OnLoad = function ()
         end
 
         local cupPosition = ballCup.GetPosition()
-        if Vector3.Distance(cupPosition, settingsPanel.GetPosition()) > settings.settingsPanelDistanceThreshold then
+        local dp = cupPosition - settingsPanel.GetPosition()
+        if dp.magnitude > settings.settingsPanelDistanceThreshold then
             -- 設定パネルが離れていた場合は、近づけて表示する。
             local position = cupPosition + settings.settingsPanelOffset
             cytanb.LogTrace('ShowSettingsPanel: posotion = ', position)
             settingsPanel.SetPosition(position)
             settingsPanel.SetRotation(Quaternion.LookRotation(Vector3.__new(- settings.settingsPanelOffset.x, 0, - settings.settingsPanelOffset.z)))
+        elseif Vector3.Angle(settingsPanel.GetForward(), dp) > settings.settingsPanelAngleThreshold then
+            -- 設定パネルが近い位置にあり、角度に開きがある場合は、回転させる。
+            cytanb.LogTrace('ShowSettingsPanel: rotate')
+            settingsPanel.SetRotation(Quaternion.LookRotation(Vector3.__new(dp.x, 0, dp.z)))
         end
     end)
 
