@@ -77,7 +77,7 @@ return {
                     knobName = 'cball-settings-gravity-knob',
                     propertyName = 'ballGravityAdjustment',
                     minScaleValue = -9.5,
-                    maxScaleValue = 9.5,
+                    maxScaleValue = 9.5
                 },
                 -- エフェクトレベル
                 {
@@ -180,6 +180,9 @@ return {
 
             --- 投球音の最大速度。
             ballMaxThrowingAudioVelocity = 15.0,
+
+            --- 入力モードの遷移時間。
+            impactModeTransitionTime = TimeSpan.FromMilliseconds(500),
 
             --- ゲージの毎秒の変化率。
             impactGaugeRatioPerSec = 1,
