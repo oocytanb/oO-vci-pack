@@ -798,24 +798,28 @@ local OnLoad = function ()
         end
     end
 
-    if vci.assets.IsMine then
-        -- 全 VCI からのクエリーに応答する。
-        cytanb.OnMessage(queryStatusMessageName, function (sender, name, parameterMap)
-            cytanb.LogDebug('onQueryStatus')
+    -- 全 VCI からのクエリーに応答する。
+    -- マスターが交代したときのことを考慮して、全ユーザーが OnMessage で登録する。
+    cytanb.OnMessage(queryStatusMessageName, function (sender, name, parameterMap)
+        if not vci.assets.IsMine then
+            -- マスターでなければリターンする。
+            return
+        end
 
-            local standLightsParameter = {}
-            for i = 1, settings.standLightCount do
-                standLightsParameter[i] = CreateStandLightStatusParameter(standLights[i])
-            end
+        cytanb.LogDebug('onQueryStatus')
 
-            cytanb.EmitMessage(statusMessageName, {
-                clientID = cytanb.ClientID(),
-                discernibleColor = cytanb.ColorToTable(ballDiscernibleEfkPlayer.GetColor()),
-                ball = CreateBallStatusParameter(),
-                standLights = standLightsParameter
-            })
-        end)
-    end
+        local standLightsParameter = {}
+        for i = 1, settings.standLightCount do
+            standLightsParameter[i] = CreateStandLightStatusParameter(standLights[i])
+        end
+
+        cytanb.EmitMessage(statusMessageName, {
+            clientID = cytanb.ClientID(),
+            discernibleColor = cytanb.ColorToTable(ballDiscernibleEfkPlayer.GetColor()),
+            ball = CreateBallStatusParameter(),
+            standLights = standLightsParameter
+        })
+    end)
 
     cytanb.OnMessage(statusMessageName, function (sender, name, parameterMap)
         if parameterMap[cytanb.InstanceIDParameterName] == cytanb.InstanceID() then
