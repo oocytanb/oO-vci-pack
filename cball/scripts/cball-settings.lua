@@ -3,10 +3,14 @@
 
 return {
     Load = function (mainEnv, cytanb)
+        local loadid = tostring(cytanb.RandomUUID())
         local cballSettingsLspid = 'ae00bdfc-98ec-4fbf-84a6-1a52823cfe69'
-        local throwableTag = '#cytanb-throwable'
-        local ballTag = '#cytanb-ball'
-        local targetTag = '#cytanb-target'
+        local statsLspid = '00eb227b-db40-4e45-8e51-b694d18b2a15'
+
+        local throwableTag = 'cytanb-throwable'
+        local ballTag = 'cytanb-ball'
+        local targetTag = 'cytanb-target'
+        local colorPickerTag = 'cytanb-color-picker'
 
         local velocitySwitchName = 'cball-settings-velocity-switch'
         local angularVelocitySwitchName = 'cball-settings-angular-velocity-switch'
@@ -117,6 +121,9 @@ return {
                     tickVector = Vector3.__new(0.0, 0.01, 0.0)
                 }
             end),
+
+            --- 重力加速度の規定値
+            defaultGravity = 9.81,
 
             --- 力を加える時の、最大タイムレート。
             maxForceTimeRate = 16.0,
@@ -235,6 +242,9 @@ return {
             --- 設定パネルの角度の閾値。
             settingsPanelAngleThreshold = 70,
 
+            --- リセット操作の時間。
+            resetOperationTime = TimeSpan.FromMilliseconds(1000),
+
             --- メッセージのインターバル時間。
             requestIntervalTime = TimeSpan.FromSeconds(3),
 
@@ -245,7 +255,7 @@ return {
             ballTag = ballTag,
 
             --- ボールのオブジェクト名。
-            ballName = 'cball' .. throwableTag .. ballTag .. '#cytanb-color-picker',
+            ballName = 'cball#' .. throwableTag .. '#' .. ballTag .. '#' .. colorPickerTag,
 
             --- ボールのエフェクトのコンテナー名。
             ballEfkContainerName = 'ball-efk',
@@ -274,6 +284,9 @@ return {
             --- ボールのカップのライトのマテリアル名。
             ballCoveredLightMat = 'covered-light-mat',
 
+            --- カラーピッカーのタグ名。
+            colorPickerTag = colorPickerTag,
+
             --- カラーインデックスオブジェクトのプレフィックス。
             colorIndexNamePrefix = 'cytanb-color-index-',
 
@@ -287,7 +300,7 @@ return {
             targetTag = targetTag,
 
             --- ライトのオブジェクト名の接頭辞。
-            standLightPrefix = 'oO-standlight' .. targetTag .. '#cytanb-color-picker' .. '#',
+            standLightPrefix = 'oO-standlight#' .. targetTag .. '#' .. colorPickerTag .. '#',
 
             --- ライトのオブジェクト数。
             standLightCount = 3,
@@ -325,17 +338,20 @@ return {
             --- 設定パネルの閉じるスイッチの基準オブジェクト名。
             closeSwitchBaseName = 'cball-settings-close-knob-pos',
 
-            --- スコアのヒット数のプロパティ名。
-            scoreHitCountPropertyName = 'scoreHitCount',
-
-            --- スコアのダイレクトヒット数のプロパティ名。
-            scoreDirectHitCountPropertyName = 'scoreDirectHitCount',
-
             --- アバターのコライダー名リスト。
             avatarColliders = {'Head', 'Chest', 'Hips', 'RightArm', 'LeftArm', 'RightHand', 'LeftHand', 'RightThigh', 'LeftThigh', 'RightFoot', 'LeftFoot', 'RightToes', 'LeftToes'},
 
             --- ローカルの共有プロパティ。
-            lsp = cytanb.CreateLocalSharedProperties(cballSettingsLspid, tostring(cytanb.RandomUUID())),
+            lsp = cytanb.CreateLocalSharedProperties(cballSettingsLspid, loadid),
+
+            --- 統計の共有プロパティ。
+            statsLsp = cytanb.CreateLocalSharedProperties(statsLspid, loadid),
+
+            --- 投球回数のプロパティ名。
+            statsThrowingCountPropertyName = 'throwing.count',
+
+            --- ターゲットへのヒット数のプロパティ名のプレフィックス。
+            statsHitCountPropertyNamePrefix = 'hit.',
 
             --- スローイングのエフェクトを有効にするか。
             enableThrowingEfk = false,
