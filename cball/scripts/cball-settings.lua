@@ -123,7 +123,7 @@ return {
             end),
 
             --- 重力加速度の規定値
-            defaultGravity = 9.81,
+            defaultGravity = -9.81,
 
             --- 力を加える時の、最大タイムレート。
             maxForceTimeRate = 16.0,
