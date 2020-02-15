@@ -1,26 +1,5 @@
---[[
-MIT License
-
-Copyright (c) 2019 oO (https://github.com/oocytanb)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-]]
+-- SPDX-License-Identifier: MIT
+-- Copyright (c) 2019 oO (https://github.com/oocytanb)
 
 --- テクスチャーなどの設定。構成に合わせて、適宜変更する。
 local conf = {
@@ -37,6 +16,7 @@ local conf = {
     offsetV = 2048 / 4096
 }
 
+--- 指定したサイズのくじを作成する。
 local CreateLots = function (size)
     local lotsSize = math.floor(size)
     if lotsSize <= 0 then
@@ -49,6 +29,7 @@ local CreateLots = function (size)
     local lastLot = -1
 
     return {
+        --- `0` から `size - 1` のランダムな番号を返す。くじが空になるまで、同じ番号は出ない。空になったら、自動的にくじをシャッフルする。
         Draw = function ()
             if remainSize <= 0 then
                 -- 空になったので作り直す
@@ -72,49 +53,82 @@ local CreateLots = function (size)
                 end
 
                 remainSize = lotsSize
-
-                -- print('shuffle lots')
-                -- for i = 0, remainSize - 1 do
-                --     print('  lots[' .. i .. '] = ' .. lotsMap[i])
-                -- end
             end
 
             lastLot = lotsMap[remainSize - 1]
             remainSize = remainSize - 1
             return lastLot
+        end,
+
+        --- くじのサイズを取得する。
+        GetSize = function ()
+            return lotsSize
+        end,
+
+        --- くじの残りのサイズを取得する。
+        GetRemainSize = function ()
+            return remainSize
         end
     }
 end
 
 local vciLoaded = false
 local initialUpdateSkipped = false
+local longPressTime = TimeSpan.FromSeconds(1)
+local gripPressed = false
+local gripStartTime = TimeSpan.Zero
 local lots = CreateLots(conf.patternCount)
+local lastImageIndex = 0
 
-local ChangeImagePattern = function (index)
+local ChangeImagePattern = function (index, sync)
     print('ChangeImagePattern: index = ' .. index)
     local vi = math.floor(index / conf.horizontalPatternCount)
     local ui = index - vi * conf.horizontalPatternCount
     local offset = Vector2.__new(conf.offsetU * ui, conf.offsetV * vi)
-    vci.assets.SetMaterialTextureOffsetFromIndex(0, offset)
+    if sync then
+        vci.assets._ALL_SetMaterialTextureOffsetFromIndex(0, offset)
+    else
+        vci.assets.SetMaterialTextureOffsetFromIndex(0, offset)
+    end
 end
 
-function updateAll ()
+updateAll = function ()
     if not initialUpdateSkipped then
         initialUpdateSkipped = true
         return
     end
 
-    if not vciLoaded then
+    if vciLoaded then
+        if gripPressed and vci.me.UnscaledTime - longPressTime > gripStartTime then
+            -- グリップ長押しで、ほかのユーザーに同じ画像を表示する
+            gripStartTime = TimeSpan.MaxValue
+            ChangeImagePattern(lastImageIndex, true)
+        end
+    else
         -- ロード完了
         vciLoaded = true
-        math.randomseed(os.time()-os.clock()*10000)
-        ChangeImagePattern(lots.Draw())
+        lastImageIndex = lots.Draw()
+        ChangeImagePattern(lastImageIndex)
     end
 end
 
-function onUse (use)
+onUse = function (use)
     if not vciLoaded then
         return
     end
-    ChangeImagePattern(lots.Draw())
+
+    gripPressed = true
+    gripStartTime = vci.me.UnscaledTime
+
+    lastImageIndex = lots.Draw()
+    ChangeImagePattern(lastImageIndex)
+-- print('remain size: ' .. lots.GetRemainSize())
+end
+
+onUnuse = function (use)
+    if not vciLoaded then
+        return
+    end
+
+    gripPressed = false
 end
