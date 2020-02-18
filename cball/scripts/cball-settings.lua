@@ -70,9 +70,9 @@ return {
                     baseName = 'cball-settings-throwing-detection-knob-pos',
                     knobName = 'cball-settings-throwing-detection-knob',
                     propertyName = 'ballKinematicDetectionTime',
-                    -- 単位は秒
-                    minScaleValue = 0.005,
-                    maxScaleValue = 0.18
+                    -- 単位は秒。この値に ` ballKinematicDetectionTimeExponent` をべき乗した値が使われる。
+                    minScaleValue = 0.035,
+                    maxScaleValue = 0.525
                 },
                 -- 重力
                 {
@@ -132,7 +132,16 @@ return {
             ballKinematicVelocityThreshold = 1.0,
 
             --- 投球動作の判定時間の閾値。
-            ballKinematicDetectionTimeThreshold = TimeSpan.FromMilliseconds(300),
+            ballKinematicDetectionTimeThreshold = TimeSpan.FromMilliseconds(600),
+
+            --- 投球動作の判定時間のべき指数。
+            ballKinematicDetectionTimeExponent = 1.585,
+
+            --- 投球動作の判定の重みづけのベース値。
+            ballKinematicDetectionWeightBase = 0.0001,
+
+            --- 投球動作の判定の重みづけのベース値。
+            ballKinematicDetectionDirWeightBase = 0.01,
 
             --- 投球動作の判定の係数。
             ballKinematicDetectionFactor = 0.25,

@@ -3,8 +3,8 @@
 ---@type cytanb @See `cytanb_annotations.lua`
 local cytanb=(function()local b='__CYTANB_INSTANCE_ID'local c;local d;local e;local f;local g=false;local h;local i;local j;local a;local k=function(l,m)for n=1,4 do local o=l[n]-m[n]if o~=0 then return o end end;return 0 end;local p;p={__eq=function(l,m)return l[1]==m[1]and l[2]==m[2]and l[3]==m[3]and l[4]==m[4]end,__lt=function(l,m)return k(l,m)<0 end,__le=function(l,m)return k(l,m)<=0 end,__tostring=function(q)local r=q[2]or 0;local s=q[3]or 0;return string.format('%08x-%04x-%04x-%04x-%04x%08x',bit32.band(q[1]or 0,0xFFFFFFFF),bit32.band(bit32.rshift(r,16),0xFFFF),bit32.band(r,0xFFFF),bit32.band(bit32.rshift(s,16),0xFFFF),bit32.band(s,0xFFFF),bit32.band(q[4]or 0,0xFFFFFFFF))end,__concat=function(l,m)local t=getmetatable(l)local u=t==p or type(t)=='table'and t.__concat==p.__concat;local v=getmetatable(m)local w=v==p or type(v)=='table'and v.__concat==p.__concat;if not u and not w then error('UUID: attempt to concatenate illegal values',2)end;return(u and p.__tostring(l)or l)..(w and p.__tostring(m)or m)end}local x='__CYTANB_CONST_VARIABLES'local y=function(table,z)local A=getmetatable(table)if A then local B=rawget(A,x)if B then local C=rawget(B,z)if type(C)=='function'then return C(table,z)else return C end end end;return nil end;local D=function(table,z,E)local A=getmetatable(table)if A then local B=rawget(A,x)if B then if rawget(B,z)~=nil then error('Cannot assign to read only field "'..z..'"',2)end end end;rawset(table,z,E)end;local F=function(G,H)local I=G[a.TypeParameterName]if a.NillableHasValue(I)and a.NillableValue(I)~=H then return false,false end;return a.NillableIfHasValueOrElse(c[H],function(J)local K=J.compositionFieldNames;local L=J.compositionFieldLength;local M=false;for N,E in pairs(G)do if K[N]then L=L-1;if L<=0 and M then break end elseif N~=a.TypeParameterName then M=true;if L<=0 then break end end end;return L<=0,M end,function()return false,false end)end;local O=function(P)return string.gsub(string.gsub(P,a.EscapeSequenceTag,a.EscapeSequenceTag..a.EscapeSequenceTag),'/',a.SolidusTag)end;local Q=function(P,R)local S=string.len(P)local T=string.len(a.EscapeSequenceTag)if T>S then return P end;local U=''local n=1;while n<S do local V,W=string.find(P,a.EscapeSequenceTag,n,true)if not V then if n==1 then U=P else U=U..string.sub(P,n)end;break end;if V>n then U=U..string.sub(P,n,V-1)end;local X=false;for Y,Z in ipairs(d)do local _,a0=string.find(P,Z.pattern,V)if _ then U=U..(R and R(Z.tag)or Z.replacement)n=a0+1;X=true;break end end;if not X then U=U..a.EscapeSequenceTag;n=W+1 end end;return U end;local a1;a1=function(a2,a3)if type(a2)~='table'then return a2 end;if not a3 then a3={}end;if a3[a2]then error('circular reference')end;a3[a2]=true;local a4={}for N,E in pairs(a2)do local a5=type(N)local a6;if a5=='string'then a6=O(N)elseif a5=='number'then a6=tostring(N)..a.ArrayNumberTag else a6=N end;local a7=type(E)if a7=='string'then a4[a6]=O(E)elseif a7=='number'and E<0 then a4[tostring(a6)..a.NegativeNumberTag]=tostring(E)else a4[a6]=a1(E,a3)end end;a3[a2]=nil;return a4 end;local a8;a8=function(a4,a9)if type(a4)~='table'then return a4 end;local a2={}for N,E in pairs(a4)do local a6;local aa=false;if type(N)=='string'then local ab=false;a6=Q(N,function(ac)if ac==a.NegativeNumberTag then aa=true elseif ac==a.ArrayNumberTag then ab=true end;return nil end)if ab then a6=tonumber(a6)or a6 end else a6=N;aa=false end;if aa and type(E)=='string'then a2[a6]=tonumber(E)elseif type(E)=='string'then a2[a6]=Q(E,function(ac)return e[ac]end)else a2[a6]=a8(E,a9)end end;if not a9 then a.NillableIfHasValue(a2[a.TypeParameterName],function(ad)a.NillableIfHasValue(c[ad],function(J)local ae,M=J.fromTableFunc(a2)if not M then a.NillableIfHasValue(ae,function(q)a2=q end)end end)end)end;return a2 end;a={InstanceID=function()if i==''then i=vci.state.Get(b)or''end;return i end,NillableHasValue=function(af)return af~=nil end,NillableValue=function(af)if af==nil then error('nillable: value is nil',2)end;return af end,NillableValueOrDefault=function(af,ag)if af==nil then if ag==nil then error('nillable: defaultValue is nil',2)end;return ag else return af end end,NillableIfHasValue=function(af,ah)if af==nil then return nil else return ah(af)end end,NillableIfHasValueOrElse=function(af,ah,ai)if af==nil then return ai()else return ah(af)end end,SetConst=function(aj,ak,q)if type(aj)~='table'then error('Cannot set const to non-table target',2)end;local al=getmetatable(aj)local A=al or{}local am=rawget(A,x)if rawget(aj,ak)~=nil then error('Non-const field "'..ak..'" already exists',2)end;if not am then am={}rawset(A,x,am)A.__index=y;A.__newindex=D end;rawset(am,ak,q)if not al then setmetatable(aj,A)end;return aj end,SetConstEach=function(aj,an)for N,E in pairs(an)do a.SetConst(aj,N,E)end;return aj end,Extend=function(aj,ao,ap,aq,a3)if aj==ao or type(aj)~='table'or type(ao)~='table'then return aj end;if ap then if not a3 then a3={}end;if a3[ao]then error('circular reference')end;a3[ao]=true end;for N,E in pairs(ao)do if ap and type(E)=='table'then local ar=aj[N]aj[N]=a.Extend(type(ar)=='table'and ar or{},E,ap,aq,a3)else aj[N]=E end end;if not aq then local as=getmetatable(ao)if type(as)=='table'then if ap then local at=getmetatable(aj)setmetatable(aj,a.Extend(type(at)=='table'and at or{},as,true))else setmetatable(aj,as)end end end;if ap then a3[ao]=nil end;return aj end,Vars=function(E,au,av,a3)local aw;if au then aw=au~='__NOLF'else au='  'aw=true end;if not av then av=''end;if not a3 then a3={}end;local ax=type(E)if ax=='table'then a3[E]=a3[E]and a3[E]+1 or 1;local ay=aw and av..au or''local P='('..tostring(E)..') {'local az=true;for z,aA in pairs(E)do if az then az=false else P=P..(aw and','or', ')end;if aw then P=P..'\n'..ay end;if type(aA)=='table'and a3[aA]and a3[aA]>0 then P=P..z..' = ('..tostring(aA)..')'else P=P..z..' = '..a.Vars(aA,au,ay,a3)end end;if not az and aw then P=P..'\n'..av end;P=P..'}'a3[E]=a3[E]-1;if a3[E]<=0 then a3[E]=nil end;return P elseif ax=='function'or ax=='thread'or ax=='userdata'then return'('..ax..')'elseif ax=='string'then return'('..ax..') '..string.format('%q',E)else return'('..ax..') '..tostring(E)end end,GetLogLevel=function()return f end,SetLogLevel=function(aB)f=aB end,IsOutputLogLevelEnabled=function()return g end,SetOutputLogLevelEnabled=function(aC)g=not not aC end,Log=function(aB,...)if aB<=f then local aD=g and(h[aB]or'LOG LEVEL '..tostring(aB))..' | 'or''local aE=table.pack(...)if aE.n==1 then local E=aE[1]if E~=nil then local P=type(E)=='table'and a.Vars(E)or tostring(E)print(g and aD..P or P)else print(aD)end else local P=aD;for n=1,aE.n do local E=aE[n]if E~=nil then P=P..(type(E)=='table'and a.Vars(E)or tostring(E))end end;print(P)end end end,LogFatal=function(...)a.Log(a.LogLevelFatal,...)end,LogError=function(...)a.Log(a.LogLevelError,...)end,LogWarn=function(...)a.Log(a.LogLevelWarn,...)end,LogInfo=function(...)a.Log(a.LogLevelInfo,...)end,LogDebug=function(...)a.Log(a.LogLevelDebug,...)end,LogTrace=function(...)a.Log(a.LogLevelTrace,...)end,FatalLog=function(...)a.LogFatal(...)end,ErrorLog=function(...)a.LogError(...)end,WarnLog=function(...)a.LogWarn(...)end,InfoLog=function(...)a.LogInfo(...)end,DebugLog=function(...)a.LogDebug(...)end,TraceLog=function(...)a.LogTrace(...)end,ListToMap=function(aF,aG)local aH={}if aG==nil then for N,E in pairs(aF)do aH[E]=E end elseif type(aG)=='function'then for N,E in pairs(aF)do local aI,aJ=aG(E)aH[aI]=aJ end else for N,E in pairs(aF)do aH[E]=aG end end;return aH end,Round=function(aK,aL)if aL then local aM=10^aL;return math.floor(aK*aM+0.5)/aM else return math.floor(aK+0.5)end end,Clamp=function(q,aN,aO)return math.max(aN,math.min(q,aO))end,Lerp=function(aP,aQ,ax)if ax<=0.0 then return aP elseif ax>=1.0 then return aQ else return aP+(aQ-aP)*ax end end,LerpUnclamped=function(aP,aQ,ax)if ax==0.0 then return aP elseif ax==1.0 then return aQ else return aP+(aQ-aP)*ax end end,PingPong=function(ax,aR)if aR==0 then return 0,1 end;local aS=math.floor(ax/aR)local aT=ax-aS*aR;if aS<0 then if(aS+1)%2==0 then return aR-aT,-1 else return aT,1 end else if aS%2==0 then return aT,1 else return aR-aT,-1 end end end,VectorApproximatelyEquals=function(aU,aV)return(aU-aV).sqrMagnitude<1E-10 end,QuaternionApproximatelyEquals=function(aU,aV)local aW=Quaternion.Dot(aU,aV)return aW<1.0+1E-06 and aW>1.0-1E-06 end,
 QuaternionToAngleAxis=function(aX)local aS=aX.normalized;local aY=math.acos(aS.w)local aZ=math.sin(aY)local a_=math.deg(aY*2.0)local b0;if math.abs(aZ)<=Quaternion.kEpsilon then b0=Vector3.right else local b1=1.0/aZ;b0=Vector3.__new(aS.x*b1,aS.y*b1,aS.z*b1)end;return a_,b0 end,QuaternionTwist=function(aX,b2)if b2.sqrMagnitude<Vector3.kEpsilonNormalSqrt then return Quaternion.identity end;local b3=Vector3.__new(aX.x,aX.y,aX.z)if b3.sqrMagnitude>=Vector3.kEpsilonNormalSqrt then local b4=Vector3.Project(b3,b2)if b4.sqrMagnitude>=Vector3.kEpsilonNormalSqrt then local b5=Quaternion.__new(b4.x,b4.y,b4.z,aX.w)b5.Normalize()return b5 else return Quaternion.AngleAxis(0,b2)end else local b6=a.QuaternionToAngleAxis(aX)return Quaternion.AngleAxis(b6,b2)end end,ApplyQuaternionToVector3=function(aX,b7)local b8=aX.w*b7.x+aX.y*b7.z-aX.z*b7.y;local b9=aX.w*b7.y-aX.x*b7.z+aX.z*b7.x;local ba=aX.w*b7.z+aX.x*b7.y-aX.y*b7.x;local bb=-aX.x*b7.x-aX.y*b7.y-aX.z*b7.z;return Vector3.__new(bb*-aX.x+b8*aX.w+b9*-aX.z-ba*-aX.y,bb*-aX.y-b8*-aX.z+b9*aX.w+ba*-aX.x,bb*-aX.z+b8*-aX.y-b9*-aX.x+ba*aX.w)end,RotateAround=function(bc,bd,be,bf)return be+bf*(bc-be),bf*bd end,Random32=function()return bit32.band(math.random(-2147483648,2147483646),0xFFFFFFFF)end,RandomUUID=function()return a.UUIDFromNumbers(a.Random32(),bit32.bor(0x4000,bit32.band(a.Random32(),0xFFFF0FFF)),bit32.bor(0x80000000,bit32.band(a.Random32(),0x3FFFFFFF)),a.Random32())end,UUIDString=function(bg)return p.__tostring(bg)end,UUIDFromNumbers=function(...)local bh=...local ax=type(bh)local bi,bj,bk,bl;if ax=='table'then bi=bh[1]bj=bh[2]bk=bh[3]bl=bh[4]else bi,bj,bk,bl=...end;local bg={bit32.band(bi or 0,0xFFFFFFFF),bit32.band(bj or 0,0xFFFFFFFF),bit32.band(bk or 0,0xFFFFFFFF),bit32.band(bl or 0,0xFFFFFFFF)}setmetatable(bg,p)return bg end,UUIDFromString=function(P)local S=string.len(P)if S~=32 and S~=36 then return nil end;local bm='[0-9a-f-A-F]+'local bn='^('..bm..')$'local bo='^-('..bm..')$'local bp,bq,br,bs;if S==32 then local bg=a.UUIDFromNumbers(0,0,0,0)local bt=1;for n,bu in ipairs({8,16,24,32})do bp,bq,br=string.find(string.sub(P,bt,bu),bn)if not bp then return nil end;bg[n]=tonumber(br,16)bt=bu+1 end;return bg else bp,bq,br=string.find(string.sub(P,1,8),bn)if not bp then return nil end;local bi=tonumber(br,16)bp,bq,br=string.find(string.sub(P,9,13),bo)if not bp then return nil end;bp,bq,bs=string.find(string.sub(P,14,18),bo)if not bp then return nil end;local bj=tonumber(br..bs,16)bp,bq,br=string.find(string.sub(P,19,23),bo)if not bp then return nil end;bp,bq,bs=string.find(string.sub(P,24,28),bo)if not bp then return nil end;local bk=tonumber(br..bs,16)bp,bq,br=string.find(string.sub(P,29,36),bn)if not bp then return nil end;local bl=tonumber(br,16)return a.UUIDFromNumbers(bi,bj,bk,bl)end end,ParseUUID=function(P)return a.UUIDFromString(P)end,CreateCircularQueue=function(bv)if type(bv)~='number'or bv<1 then error('CreateCircularQueue: Invalid argument: capacity = '..tostring(bv),2)end;local self;local bw=math.floor(bv)local U={}local bx=0;local by=0;local bz=0;self={Size=function()return bz end,Clear=function()bx=0;by=0;bz=0 end,IsEmpty=function()return bz==0 end,Offer=function(bA)U[bx+1]=bA;bx=(bx+1)%bw;if bz<bw then bz=bz+1 else by=(by+1)%bw end;return true end,OfferFirst=function(bA)by=(bw+by-1)%bw;U[by+1]=bA;if bz<bw then bz=bz+1 else bx=(bw+bx-1)%bw end;return true end,Poll=function()if bz==0 then return nil else local bA=U[by+1]by=(by+1)%bw;bz=bz-1;return bA end end,PollLast=function()if bz==0 then return nil else bx=(bw+bx-1)%bw;local bA=U[bx+1]bz=bz-1;return bA end end,Peek=function()if bz==0 then return nil else return U[by+1]end end,PeekLast=function()if bz==0 then return nil else return U[(bw+bx-1)%bw+1]end end,Get=function(bB)if bB<1 or bB>bz then a.LogError('CreateCircularQueue.Get: index is outside the range: '..bB)return nil end;return U[(by+bB-1)%bw+1]end,IsFull=function()return bz>=bw end,MaxSize=function()return bw end}return self end,DetectClicks=function(bC,bD,bE)local bF=bC or 0;local bG=bE or TimeSpan.FromMilliseconds(500)local bH=vci.me.Time;local bI=bD and bH>bD+bG and 1 or bF+1;return bI,bH end,ColorRGBToHSV=function(bJ)local aT=math.max(0.0,math.min(bJ.r,1.0))local bK=math.max(0.0,math.min(bJ.g,1.0))local aQ=math.max(0.0,math.min(bJ.b,1.0))local aO=math.max(aT,bK,aQ)local aN=math.min(aT,bK,aQ)local bL=aO-aN;local C;if bL==0.0 then C=0.0 elseif aO==aT then C=(bK-aQ)/bL/6.0 elseif aO==bK then C=(2.0+(aQ-aT)/bL)/6.0 else C=(4.0+(aT-bK)/bL)/6.0 end;if C<0.0 then C=C+1.0 end;local bM=aO==0.0 and bL or bL/aO;local E=aO;return C,bM,E end,ColorFromARGB32=function(bN)local bO=type(bN)=='number'and bN or 0xFF000000;return Color.__new(bit32.band(bit32.rshift(bO,16),0xFF)/0xFF,bit32.band(bit32.rshift(bO,8),0xFF)/0xFF,bit32.band(bO,0xFF)/0xFF,bit32.band(bit32.rshift(bO,24),0xFF)/0xFF)end,ColorToARGB32=function(bJ)return bit32.bor(bit32.lshift(bit32.band(a.Round(0xFF*bJ.a),0xFF),24),bit32.lshift(bit32.band(a.Round(0xFF*bJ.r),0xFF),16),bit32.lshift(bit32.band(a.Round(0xFF*bJ.g),0xFF),8),bit32.band(a.Round(0xFF*bJ.b),0xFF))end,ColorFromIndex=function(bP,bQ,bR,bS,bT)local bU=math.max(math.floor(bQ or a.ColorHueSamples),1)local bV=bT and bU or bU-1;local bW=math.max(math.floor(bR or a.ColorSaturationSamples),1)local bX=math.max(math.floor(bS or a.ColorBrightnessSamples),1)local bB=a.Clamp(math.floor(bP or 0),0,bU*bW*bX-1)local bY=bB%bU;local bZ=math.floor(bB/bU)local b1=bZ%bW;local b_=math.floor(bZ/bW)if bT or bY~=bV then local C=bY/bV;local bM=(bW-b1)/bW;local E=(bX-b_)/bX;return Color.HSVToRGB(C,bM,E)else local E=(bX-b_)/bX*b1/(bW-1)return Color.HSVToRGB(0.0,0.0,E)end end,ColorToIndex=function(bJ,bQ,bR,bS,bT)local bU=math.max(math.floor(bQ or a.ColorHueSamples),1)local bV=bT and bU or bU-1;local bW=math.max(math.floor(bR or a.ColorSaturationSamples),1)local bX=math.max(math.floor(bS or a.ColorBrightnessSamples),1)local C,bM,E=a.ColorRGBToHSV(bJ)local b1=a.Round(bW*(1.0-bM))if bT or b1<bW then local c0=a.Round(bV*C)if c0>=bV then c0=0 end;if b1>=bW then b1=bW-1 end;local b_=math.min(bX-1,a.Round(bX*(1.0-E)))return c0+bU*(b1+bW*b_)else local c1=a.Round((bW-1)*E)if c1==0 then local c2=a.Round(bX*(1.0-E))if c2>=bX then return bU-1 else return bU*(1+a.Round(E*(bW-1)/(bX-c2)*bX)+bW*c2)-1 end else return bU*(1+c1+bW*a.Round(bX*(1.0-E*(bW-1)/c1)))-1 end end end,ColorToTable=function(bJ)return{[a.TypeParameterName]=a.ColorTypeName,r=bJ.r,g=bJ.g,b=bJ.b,a=bJ.a}end,ColorFromTable=function(G)local aQ,M=F(G,a.ColorTypeName)return aQ and Color.__new(G.r,G.g,G.b,G.a)or nil,M end,Vector2ToTable=function(q)return{[a.TypeParameterName]=a.Vector2TypeName,x=q.x,y=q.y}end,Vector2FromTable=function(G)local aQ,M=F(G,a.Vector2TypeName)return aQ and Vector2.__new(G.x,G.y)or nil,M end,Vector3ToTable=function(q)return{[a.TypeParameterName]=a.Vector3TypeName,x=q.x,y=q.y,z=q.z}end,Vector3FromTable=function(G)local aQ,M=F(G,a.Vector3TypeName)return aQ and Vector3.__new(G.x,G.y,G.z)or nil,M end,Vector4ToTable=function(q)return{[a.TypeParameterName]=a.Vector4TypeName,x=q.x,y=q.y,z=q.z,w=q.w}end,Vector4FromTable=function(G)local aQ,M=F(G,a.Vector4TypeName)return aQ and Vector4.__new(G.x,G.y,G.z,G.w)or nil,M end,QuaternionToTable=function(q)return{[a.TypeParameterName]=a.QuaternionTypeName,x=q.x,y=q.y,z=q.z,w=q.w}end,QuaternionFromTable=function(G)local aQ,M=F(G,a.QuaternionTypeName)return aQ and Quaternion.__new(G.x,G.y,G.z,G.w)or nil,M end,TableToSerializable=function(a2)return a1(a2)end,TableFromSerializable=function(a4,a9)return a8(a4,a9)end,TableToSerialiable=function(a2)return a1(a2)end,TableFromSerialiable=function(a4,a9)return a8(a4,a9)end,EmitMessage=function(ak,c3)local a4=a.NillableIfHasValueOrElse(c3,function(a2)if type(a2)~='table'then error('EmitMessage: Invalid argument: table expected',3)end;return a.TableToSerializable(a2)end,function()return{}end)a4[a.InstanceIDParameterName]=a.InstanceID()vci.message.Emit(ak,json.serialize(a4))end,OnMessage=function(ak,ah)local c4=function(c5,c6,c7)local c8=nil;if c5.type~='comment'and type(c7)=='string'then local c9,a4=pcall(json.parse,c7)if c9 and type(a4)=='table'then c8=a.TableFromSerializable(a4)end end;local c3=c8 and c8 or{[a.MessageValueParameterName]=c7}ah(c5,c6,c3)end;vci.message.On(ak,c4)return{Off=function()if c4 then c4=nil end end}end,OnInstanceMessage=function(ak,ah)local c4=function(c5,c6,c3)local ca=a.InstanceID()if ca~=''and ca==c3[a.InstanceIDParameterName]then ah(c5,c6,c3)end end;return a.OnMessage(ak,c4)end,
-GetEffekseerEmitterMap=function(ak)local cb=vci.assets.GetEffekseerEmitters(ak)if not cb then return nil end;local aH={}for n,cc in pairs(cb)do aH[cc.EffectName]=cc end;return aH end,ClientID=function()return j end,ParseTagString=function(P)local cd=string.find(P,'#',1,true)if not cd then return{},P end;local ce={}local cf=string.sub(P,1,cd-1)cd=cd+1;local S=string.len(P)local cg='^[A-Za-z0-9_%-.()!~*\'%%]+'while cd<=S do local ch,ci=string.find(P,cg,cd)if ch then local cj=string.sub(P,ch,ci)local ck=cj;cd=ci+1;if cd<=S and string.sub(P,cd,cd)=='='then cd=cd+1;local cl,cm=string.find(P,cg,cd)if cl then ck=string.sub(P,cl,cm)cd=cm+1 else ck=''end end;ce[cj]=ck end;cd=string.find(P,'#',cd,true)if not cd then break end;cd=cd+1 end;return ce,cf end,CalculateSIPrefix=(function()local cn=9;local co={'y','z','a','f','p','n','u','m','','k','M','G','T','P','E','Z','Y'}local cp=#co;return function(aK)local cq=aK==0 and 0 or a.Clamp(math.floor(math.log(math.abs(aK),1000)),1-cn,cp-cn)return cq==0 and aK or aK/1000^cq,co[cn+cq],cq*3 end end)(),CreateLocalSharedProperties=function(cr,cs)local ct=TimeSpan.FromSeconds(5)local cu='33657f0e-7c44-4ee7-acd9-92dd8b8d807a'local cv='__CYTANB_LOCAL_SHARED_PROPERTIES_LISTENER_MAP'if type(cr)~='string'or string.len(cr)<=0 or type(cs)~='string'or string.len(cs)<=0 then error('LocalSharedProperties: Invalid arguments',2)end;local cw=_G[cu]if not cw then cw={}_G[cu]=cw end;cw[cs]=vci.me.UnscaledTime;local cx=_G[cr]if not cx then cx={[cv]={}}_G[cr]=cx end;local cy=cx[cv]local self;self={GetLspID=function()return cr end,GetLoadID=function()return cs end,GetProperty=function(z,ag)local q=cx[z]if q==nil then return ag else return q end end,SetProperty=function(z,q)if z==cv then error('LocalSharedProperties: Invalid argument: key = ',z,2)end;local bH=vci.me.UnscaledTime;local cz=cx[z]cx[z]=q;for cA,ca in pairs(cy)do local ax=cw[ca]if ax and ax+ct>=bH then cA(self,z,q,cz)else cA(self,a.LOCAL_SHARED_PROPERTY_EXPIRED_KEY,true,false)cy[cA]=nil;cw[ca]=nil end end end,Clear=function()for z,q in pairs(cx)do if z~=cv then self.SetProperty(z,nil)end end end,Each=function(ah)for z,q in pairs(cx)do if z~=cv and ah(q,z,self)==false then return false end end end,AddListener=function(cA)cy[cA]=cs end,RemoveListener=function(cA)cy[cA]=nil end,UpdateAlive=function()cw[cs]=vci.me.UnscaledTime end}return self end,EstimateFixedTimestep=function(cB)local cC=1.0;local cD=1000.0;local cE=TimeSpan.FromSeconds(0.02)local cF=0xFFFF;local cG=a.CreateCircularQueue(64)local cH=TimeSpan.FromSeconds(5)local cI=TimeSpan.FromSeconds(30)local cJ=false;local cK=vci.me.Time;local cL=a.Random32()local cM=Vector3.__new(bit32.bor(0x400,bit32.band(cL,0x1FFF)),bit32.bor(0x400,bit32.band(bit32.rshift(cL,16),0x1FFF)),0.0)cB.SetPosition(cM)cB.SetRotation(Quaternion.identity)cB.SetVelocity(Vector3.zero)cB.SetAngularVelocity(Vector3.zero)cB.AddForce(Vector3.__new(0.0,0.0,cC*cD))local self={Timestep=function()return cE end,Precision=function()return cF end,IsFinished=function()return cJ end,Update=function()if cJ then return cE end;local cN=vci.me.Time-cK;local cO=cN.TotalSeconds;if cO<=Vector3.kEpsilon then return cE end;local cP=cB.GetPosition().z-cM.z;local cQ=cP/cO;local cR=cQ/cD;if cR<=Vector3.kEpsilon then return cE end;cG.Offer(cR)local cS=cG.Size()if cS>=2 and cN>=cH then local cT=0.0;for n=1,cS do cT=cT+cG.Get(n)end;local cU=cT/cS;local cV=0.0;for n=1,cS do cV=cV+(cG.Get(n)-cU)^2 end;local cW=cV/cS;if cW<cF then cF=cW;cE=TimeSpan.FromSeconds(cU)end;if cN>cI then cJ=true;cB.SetPosition(cM)cB.SetRotation(Quaternion.identity)cB.SetVelocity(Vector3.zero)cB.SetAngularVelocity(Vector3.zero)end else cE=TimeSpan.FromSeconds(cR)end;return cE end}return self end,AlignSubItemOrigin=function(cX,cY,cZ)local c_=cX.GetRotation()if not a.QuaternionApproximatelyEquals(cY.GetRotation(),c_)then cY.SetRotation(c_)end;local d0=cX.GetPosition()if not a.VectorApproximatelyEquals(cY.GetPosition(),d0)then cY.SetPosition(d0)end;if cZ then cY.SetVelocity(Vector3.zero)cY.SetAngularVelocity(Vector3.zero)end end,CreateSubItemGlue=function()local d1={}local self;self={Contains=function(d2,d3)return a.NillableIfHasValueOrElse(d1[d2],function(an)return a.NillableHasValue(an[d3])end,function()return false end)end,Add=function(d2,d4,cZ)if not d2 or not d4 then local d5='SubItemGlue.Add: Invalid arguments '..(not d2 and', parent = '..tostring(d2)or'')..(not d4 and', children = '..tostring(d4)or'')error(d5,2)end;local an=a.NillableIfHasValueOrElse(d1[d2],function(d6)return d6 end,function()local d6={}d1[d2]=d6;return d6 end)if type(d4)=='table'then for z,aA in pairs(d4)do an[aA]={velocityReset=not not cZ}end else an[d4]={velocityReset=not not cZ}end end,Remove=function(d2,d3)return a.NillableIfHasValueOrElse(d1[d2],function(an)if a.NillableHasValue(an[d3])then an[d3]=nil;return true else return false end end,function()return false end)end,RemoveParent=function(d2)if a.NillableHasValue(d1[d2])then d1[d2]=nil;return true else return false end end,RemoveAll=function()d1={}return true end,Each=function(ah,d7)return a.NillableIfHasValueOrElse(d7,function(d2)return a.NillableIfHasValue(d1[d2],function(an)for d3,d8 in pairs(an)do if ah(d3,d2,self)==false then return false end end end)end,function()for d2,an in pairs(d1)do if self.Each(ah,d2)==false then return false end end end)end,Update=function(d9)for d2,an in pairs(d1)do local da=d2.GetPosition()local db=d2.GetRotation()for d3,d8 in pairs(an)do if d9 or d3.IsMine then if not a.QuaternionApproximatelyEquals(d3.GetRotation(),db)then d3.SetRotation(db)end;if not a.VectorApproximatelyEquals(d3.GetPosition(),da)then d3.SetPosition(da)end;if d8.velocityReset then d3.SetVelocity(Vector3.zero)d3.SetAngularVelocity(Vector3.zero)end end end end end}return self end,
-CreateSlideSwitch=function(dc)local dd=a.NillableValue(dc.colliderItem)local de=a.NillableValue(dc.baseItem)local df=a.NillableValue(dc.knobItem)local dg=a.NillableValueOrDefault(dc.minValue,0)local dh=a.NillableValueOrDefault(dc.maxValue,10)if dg>=dh then error('SlideSwitch: Invalid argument: minValue >= maxValue',2)end;local di=(dg+dh)*0.5;local dj=function(aA)local dk,dl=a.PingPong(aA-dg,dh-dg)return dk+dg,dl end;local q=dj(a.NillableValueOrDefault(dc.value,0))local dm=a.NillableIfHasValueOrElse(dc.tickFrequency,function(dn)if dn<=0 then error('SlideSwitch: Invalid argument: tickFrequency <= 0',3)end;return math.min(dn,dh-dg)end,function()return(dh-dg)/10.0 end)local dp=a.NillableIfHasValueOrElse(dc.tickVector,function(b0)return Vector3.__new(b0.x,b0.y,b0.z)end,function()return Vector3.__new(0.01,0.0,0.0)end)local dq=dp.magnitude;if dq<Vector3.kEpsilon then error('SlideSwitch: Invalid argument: tickVector is too small',2)end;local dr=a.NillableValueOrDefault(dc.snapToTick,true)local ds=TimeSpan.FromMilliseconds(1000)local dt=TimeSpan.FromMilliseconds(50)local du,dv;local cy={}local self;local dw=false;local dx=0;local dy=false;local dz=TimeSpan.Zero;local dA=TimeSpan.Zero;local dB=function()local dC=dj(du())if dC~=q then q=dC;for cA,E in pairs(cy)do cA(self,q)end end;df.SetLocalPosition((dC-di)/dm*dp)end;local dD=function()local dE=du()local dF,dG=dj(dE)local dH=dE+dm;local dI,dJ=dj(dH)assert(dI)local dC;if dG==dJ or dF==dh or dF==dg then dC=dH else dC=dG>=0 and dh or dg end;dA=vci.me.UnscaledTime;if dC==dh or dC==dg then dz=dA end;dv(dC)end;a.NillableIfHasValueOrElse(dc.lsp,function(dK)if not a.NillableHasValue(dc.propertyName)then error('SlideSwitch: Invalid argument: propertyName is nil',3)end;local dL=a.NillableValue(dc.propertyName)du=function()return dK.GetProperty(dL,q)end;dv=function(aA)dK.SetProperty(dL,aA)end;dK.AddListener(function(ao,z,dM,dN)if z==dL then dB()end end)end,function()local dM=q;du=function()return dM end;dv=function(aA)dM=aA;dB()end end)self={GetColliderItem=function()return dd end,GetBaseItem=function()return de end,GetKnobItem=function()return df end,GetMinValue=function()return dg end,GetMaxValue=function()return dh end,GetValue=function()return q end,SetValue=function(aA)dv(dj(aA))end,GetTickFrequency=function()return dm end,IsSnapToTick=function()return dr end,AddListener=function(cA)cy[cA]=cA end,RemoveListener=function(cA)cy[cA]=nil end,DoUse=function()if not dw then dy=true;dz=vci.me.UnscaledTime;dD()end end,DoUnuse=function()dy=false end,DoGrab=function()if not dy then dw=true;dx=(q-di)/dm end end,DoUngrab=function()dw=false end,Update=function()if dw then local dO=dd.GetPosition()-de.GetPosition()local dP=df.GetRotation()*dp;local dQ=Vector3.Project(dO,dP)local dR=(Vector3.Dot(dP,dQ)>=0 and 1 or-1)*dQ.magnitude/dq+dx;local dS=(dr and a.Round(dR)or dR)*dm+di;local dC=a.Clamp(dS,dg,dh)if dC~=q then dv(dC)end elseif dy then local dT=vci.me.UnscaledTime;if dT>=dz+ds and dT>=dA+dt then dD()end elseif dd.IsMine then a.AlignSubItemOrigin(de,dd)end end}dB()return self end,CreateSubItemConnector=function()local dU=function(dV,cY,dW)dV.item=cY;dV.position=cY.GetPosition()dV.rotation=cY.GetRotation()dV.initialPosition=dV.position;dV.initialRotation=dV.rotation;dV.propagation=not not dW;return dV end;local dX=function(dY)for cY,dV in pairs(dY)do dU(dV,cY,dV.propagation)end end;local dZ=function(d_,bf,dV,e0,e1)local dO=d_-dV.initialPosition;local e2=bf*Quaternion.Inverse(dV.initialRotation)dV.position=d_;dV.rotation=bf;for cY,e3 in pairs(e0)do if cY~=dV.item and(not e1 or e1(e3))then e3.position,e3.rotation=a.RotateAround(e3.initialPosition+dO,e3.initialRotation,d_,e2)cY.SetPosition(e3.position)cY.SetRotation(e3.rotation)end end end;local e4={}local e5=true;local e6=false;local self;self={IsEnabled=function()return e5 end,SetEnabled=function(aC)e5=aC;if aC then dX(e4)e6=false end end,Contains=function(e7)return a.NillableHasValue(e4[e7])end,Add=function(e8,e9)if not e8 then error('SubItemConnector.Add: Invalid argument: subItems = '..tostring(e8),2)end;local ea=type(e8)=='table'and e8 or{e8}dX(e4)e6=false;for N,cY in pairs(ea)do e4[cY]=dU({},cY,not e9)end end,Remove=function(e7)local aQ=a.NillableHasValue(e4[e7])e4[e7]=nil;return aQ end,RemoveAll=function()e4={}return true end,Each=function(ah)for cY,dV in pairs(e4)do if ah(cY,self)==false then return false end end end,GetItems=function()local ea={}for cY,dV in pairs(e4)do table.insert(ea,cY)end;return ea end,Update=function()if not e5 then return end;local eb=false;for cY,dV in pairs(e4)do local cd=cY.GetPosition()local ec=cY.GetRotation()if not a.VectorApproximatelyEquals(cd,dV.position)or not a.QuaternionApproximatelyEquals(ec,dV.rotation)then if dV.propagation then if cY.IsMine then dZ(cd,ec,e4[cY],e4,function(e3)if e3.item.IsMine then return true else e6=true;return false end end)eb=true;break else e6=true end else e6=true end end end;if not eb and e6 then dX(e4)e6=false end end}return self end,GetSubItemTransform=function(e7)local d_=e7.GetPosition()local bf=e7.GetRotation()local ed=e7.GetLocalScale()return{positionX=d_.x,positionY=d_.y,positionZ=d_.z,rotationX=bf.x,rotationY=bf.y,rotationZ=bf.z,rotationW=bf.w,scaleX=ed.x,scaleY=ed.y,scaleZ=ed.z}end,RestoreCytanbTransform=function(ee)local cd=ee.positionX and ee.positionY and ee.positionZ and Vector3.__new(ee.positionX,ee.positionY,ee.positionZ)or nil;local ec=ee.rotationX and ee.rotationY and ee.rotationZ and ee.rotationW and Quaternion.__new(ee.rotationX,ee.rotationY,ee.rotationZ,ee.rotationW)or nil;local ed=ee.scaleX and ee.scaleY and ee.scaleZ and Vector3.__new(ee.scaleX,ee.scaleY,ee.scaleZ)or nil;return cd,ec,ed end}a.SetConstEach(a,{LogLevelOff=0,LogLevelFatal=100,LogLevelError=200,LogLevelWarn=300,LogLevelInfo=400,LogLevelDebug=500,LogLevelTrace=600,LogLevelAll=0x7FFFFFFF,ColorHueSamples=10,ColorSaturationSamples=4,ColorBrightnessSamples=5,EscapeSequenceTag='#__CYTANB',SolidusTag='#__CYTANB_SOLIDUS',NegativeNumberTag='#__CYTANB_NEGATIVE_NUMBER',ArrayNumberTag='#__CYTANB_ARRAY_NUMBER',InstanceIDParameterName='__CYTANB_INSTANCE_ID',MessageValueParameterName='__CYTANB_MESSAGE_VALUE',TypeParameterName='__CYTANB_TYPE',ColorTypeName='Color',Vector2TypeName='Vector2',Vector3TypeName='Vector3',Vector4TypeName='Vector4',QuaternionTypeName='Quaternion',LOCAL_SHARED_PROPERTY_EXPIRED_KEY='__CYTANB_LOCAL_SHARED_PROPERTY_EXPIRED'})a.SetConstEach(a,{ColorMapSize=a.ColorHueSamples*a.ColorSaturationSamples*a.ColorBrightnessSamples,FatalLogLevel=a.LogLevelFatal,ErrorLogLevel=a.LogLevelError,WarnLogLevel=a.LogLevelWarn,InfoLogLevel=a.LogLevelInfo,DebugLogLevel=a.LogLevelDebug,TraceLogLevel=a.LogLevelTrace})c={[a.ColorTypeName]={compositionFieldNames=a.ListToMap({'r','g','b','a'}),compositionFieldLength=4,toTableFunc=a.ColorToTable,fromTableFunc=a.ColorFromTable},[a.Vector2TypeName]={compositionFieldNames=a.ListToMap({'x','y'}),compositionFieldLength=2,toTableFunc=a.Vector2ToTable,fromTableFunc=a.Vector2FromTable},[a.Vector3TypeName]={compositionFieldNames=a.ListToMap({'x','y','z'}),compositionFieldLength=3,toTableFunc=a.Vector3ToTable,fromTableFunc=a.Vector3FromTable},[a.Vector4TypeName]={compositionFieldNames=a.ListToMap({'x','y','z','w'}),compositionFieldLength=4,toTableFunc=a.Vector4ToTable,fromTableFunc=a.Vector4FromTable},[a.QuaternionTypeName]={compositionFieldNames=a.ListToMap({'x','y','z','w'}),compositionFieldLength=4,toTableFunc=a.QuaternionToTable,fromTableFunc=a.QuaternionFromTable}}d={{tag=a.NegativeNumberTag,pattern='^'..a.NegativeNumberTag,replacement=''},{tag=a.ArrayNumberTag,pattern='^'..a.ArrayNumberTag,replacement=''},{tag=a.SolidusTag,pattern='^'..a.SolidusTag,replacement='/'},{tag=a.EscapeSequenceTag,pattern='^'..a.EscapeSequenceTag..a.EscapeSequenceTag,replacement=a.EscapeSequenceTag}}e=a.ListToMap({a.NegativeNumberTag,a.ArrayNumberTag})f=a.LogLevelInfo;h={[a.LogLevelFatal]='FATAL',[a.LogLevelError]='ERROR',[a.LogLevelWarn]='WARN',[a.LogLevelInfo]='INFO',[a.LogLevelDebug]='DEBUG',[a.LogLevelTrace]='TRACE'}package.loaded['cytanb']=a;i,j=(function()local cr='eff3a188-bfc7-4b0e-93cb-90fd1adc508c'local cx=_G[cr]if not cx then cx={}_G[cr]=cx end;local ef=cx.randomSeedValue;if not ef then ef=os.time()-os.clock()*10000;cx.randomSeedValue=ef;math.randomseed(ef)end;local eg=cx.clientID;if type(eg)~='string'then eg=tostring(a.RandomUUID())cx.clientID=eg end;local eh=vci.state.Get(b)or''if eh==''and vci.assets.IsMine then eh=tostring(a.RandomUUID())vci.state.Set(b,eh)end;return eh,eg end)()return a end)()
+GetEffekseerEmitterMap=function(ak)local cb=vci.assets.GetEffekseerEmitters(ak)if not cb then return nil end;local aH={}for n,cc in pairs(cb)do aH[cc.EffectName]=cc end;return aH end,ClientID=function()return j end,ParseTagString=function(P)local cd=string.find(P,'#',1,true)if not cd then return{},P end;local ce={}local cf=string.sub(P,1,cd-1)cd=cd+1;local S=string.len(P)local cg='^[A-Za-z0-9_%-.()!~*\'%%]+'while cd<=S do local ch,ci=string.find(P,cg,cd)if ch then local cj=string.sub(P,ch,ci)local ck=cj;cd=ci+1;if cd<=S and string.sub(P,cd,cd)=='='then cd=cd+1;local cl,cm=string.find(P,cg,cd)if cl then ck=string.sub(P,cl,cm)cd=cm+1 else ck=''end end;ce[cj]=ck end;cd=string.find(P,'#',cd,true)if not cd then break end;cd=cd+1 end;return ce,cf end,CalculateSIPrefix=(function()local cn=9;local co={'y','z','a','f','p','n','u','m','','k','M','G','T','P','E','Z','Y'}local cp=#co;return function(aK)local cq=aK==0 and 0 or a.Clamp(math.floor(math.log(math.abs(aK),1000)),1-cn,cp-cn)return cq==0 and aK or aK/1000^cq,co[cn+cq],cq*3 end end)(),CreateLocalSharedProperties=function(cr,cs)local ct=TimeSpan.FromSeconds(5)local cu='33657f0e-7c44-4ee7-acd9-92dd8b8d807a'local cv='__CYTANB_LOCAL_SHARED_PROPERTIES_LISTENER_MAP'if type(cr)~='string'or string.len(cr)<=0 or type(cs)~='string'or string.len(cs)<=0 then error('LocalSharedProperties: Invalid arguments',2)end;local cw=_G[cu]if not cw then cw={}_G[cu]=cw end;cw[cs]=vci.me.UnscaledTime;local cx=_G[cr]if not cx then cx={[cv]={}}_G[cr]=cx end;local cy=cx[cv]local self;self={GetLspID=function()return cr end,GetLoadID=function()return cs end,GetProperty=function(z,ag)local q=cx[z]if q==nil then return ag else return q end end,SetProperty=function(z,q)if z==cv then error('LocalSharedProperties: Invalid argument: key = ',z,2)end;local bH=vci.me.UnscaledTime;local cz=cx[z]cx[z]=q;for cA,ca in pairs(cy)do local ax=cw[ca]if ax and ax+ct>=bH then cA(self,z,q,cz)else cA(self,a.LOCAL_SHARED_PROPERTY_EXPIRED_KEY,true,false)cy[cA]=nil;cw[ca]=nil end end end,Clear=function()for z,q in pairs(cx)do if z~=cv then self.SetProperty(z,nil)end end end,Each=function(ah)for z,q in pairs(cx)do if z~=cv and ah(q,z,self)==false then return false end end end,AddListener=function(cA)cy[cA]=cs end,RemoveListener=function(cA)cy[cA]=nil end,UpdateAlive=function()cw[cs]=vci.me.UnscaledTime end}return self end,EstimateFixedTimestep=function(cB)local cC=1.0;local cD=1000.0;local cE=TimeSpan.FromSeconds(0.02)local cF=0xFFFF;local cG=a.CreateCircularQueue(64)local cH=TimeSpan.FromSeconds(5)local cI=TimeSpan.FromSeconds(30)local cJ=false;local cK=vci.me.Time;local cL=a.Random32()local cM=Vector3.__new(bit32.bor(0x400,bit32.band(cL,0x1FFF)),bit32.bor(0x400,bit32.band(bit32.rshift(cL,16),0x1FFF)),0.0)cB.SetPosition(cM)cB.SetRotation(Quaternion.identity)cB.SetVelocity(Vector3.zero)cB.SetAngularVelocity(Vector3.zero)cB.AddForce(Vector3.__new(0.0,0.0,cC*cD))local self={Timestep=function()return cE end,Precision=function()return cF end,IsFinished=function()return cJ end,Update=function()if cJ then return cE end;local cN=vci.me.Time-cK;local cO=cN.TotalSeconds;if cO<=Vector3.kEpsilon then return cE end;local cP=cB.GetPosition().z-cM.z;local cQ=cP/cO;local cR=cQ/cD;if cR<=Vector3.kEpsilon then return cE end;cG.Offer(cR)local cS=cG.Size()if cS>=2 and cN>=cH then local cT=0.0;for n=1,cS do cT=cT+cG.Get(n)end;local cU=cT/cS;local cV=0.0;for n=1,cS do cV=cV+(cG.Get(n)-cU)^2 end;local cW=cV/cS;if cW<cF then cF=cW;cE=TimeSpan.FromSeconds(cU)end;if cN>cI then cJ=true;cB.SetPosition(cM)cB.SetRotation(Quaternion.identity)cB.SetVelocity(Vector3.zero)cB.SetAngularVelocity(Vector3.zero)end else cE=TimeSpan.FromSeconds(cR)end;return cE end}return self end,AlignSubItemOrigin=function(cX,cY,cZ)local c_=cX.GetRotation()if not a.QuaternionApproximatelyEquals(cY.GetRotation(),c_)then cY.SetRotation(c_)end;local d0=cX.GetPosition()if not a.VectorApproximatelyEquals(cY.GetPosition(),d0)then cY.SetPosition(d0)end;if cZ then cY.SetVelocity(Vector3.zero)cY.SetAngularVelocity(Vector3.zero)end end,CreateSubItemGlue=function()local d1={}local self;self={Contains=function(d2,d3)return a.NillableIfHasValueOrElse(d1[d2],function(an)return a.NillableHasValue(an[d3])end,function()return false end)end,Add=function(d2,d4,cZ)if not d2 or not d4 then local d5='SubItemGlue.Add: Invalid arguments '..(not d2 and', parent = '..tostring(d2)or'')..(not d4 and', children = '..tostring(d4)or'')error(d5,2)end;local an=a.NillableIfHasValueOrElse(d1[d2],function(d6)return d6 end,function()local d6={}d1[d2]=d6;return d6 end)if type(d4)=='table'then for z,aA in pairs(d4)do an[aA]={velocityReset=not not cZ}end else an[d4]={velocityReset=not not cZ}end end,Remove=function(d2,d3)return a.NillableIfHasValueOrElse(d1[d2],function(an)if a.NillableHasValue(an[d3])then an[d3]=nil;return true else return false end end,function()return false end)end,RemoveParent=function(d2)if a.NillableHasValue(d1[d2])then d1[d2]=nil;return true else return false end end,RemoveAll=function()d1={}return true end,Each=function(ah,d7)return a.NillableIfHasValueOrElse(d7,function(d2)return a.NillableIfHasValue(d1[d2],function(an)for d3,d8 in pairs(an)do if ah(d3,d2,self)==false then return false end end end)end,function()for d2,an in pairs(d1)do if self.Each(ah,d2)==false then return false end end end)end,Update=function(d9)for d2,an in pairs(d1)do local da=d2.GetPosition()local db=d2.GetRotation()for d3,d8 in pairs(an)do if d9 or d3.IsMine then if not a.QuaternionApproximatelyEquals(d3.GetRotation(),db)then d3.SetRotation(db)end;if not a.VectorApproximatelyEquals(d3.GetPosition(),da)then d3.SetPosition(da)end;if d8.velocityReset then d3.SetVelocity(Vector3.zero)d3.SetAngularVelocity(Vector3.zero)end end end end end}return self end,CreateUpdateRoutine=function(dc,dd)return coroutine.wrap(function()local de=TimeSpan.FromSeconds(30)local df=vci.me.UnscaledTime;local dg=df;local bD=vci.me.Time;local dh=true;while true do local ca=a.InstanceID()if ca~=''then break end;local di=vci.me.UnscaledTime;if di-de>df then a.LogError('TIMEOUT: Could not receive Instance ID.')return-1 end;dg=di;bD=vci.me.Time;dh=false;coroutine.yield(100)end;if dh then dg=vci.me.UnscaledTime;bD=vci.me.Time;coroutine.yield(100)end;a.NillableIfHasValue(dd,function(dj)dj()end)while true do local bH=vci.me.Time;local dk=bH-bD;local di=vci.me.UnscaledTime;local dl=di-dg;dc(dk,dl)bD=bH;dg=di;coroutine.yield(100)end end)end,
+CreateSlideSwitch=function(dm)local dn=a.NillableValue(dm.colliderItem)local dp=a.NillableValue(dm.baseItem)local dq=a.NillableValue(dm.knobItem)local dr=a.NillableValueOrDefault(dm.minValue,0)local ds=a.NillableValueOrDefault(dm.maxValue,10)if dr>=ds then error('SlideSwitch: Invalid argument: minValue >= maxValue',2)end;local dt=(dr+ds)*0.5;local du=function(aA)local dv,dw=a.PingPong(aA-dr,ds-dr)return dv+dr,dw end;local q=du(a.NillableValueOrDefault(dm.value,0))local dx=a.NillableIfHasValueOrElse(dm.tickFrequency,function(dy)if dy<=0 then error('SlideSwitch: Invalid argument: tickFrequency <= 0',3)end;return math.min(dy,ds-dr)end,function()return(ds-dr)/10.0 end)local dz=a.NillableIfHasValueOrElse(dm.tickVector,function(b0)return Vector3.__new(b0.x,b0.y,b0.z)end,function()return Vector3.__new(0.01,0.0,0.0)end)local dA=dz.magnitude;if dA<Vector3.kEpsilon then error('SlideSwitch: Invalid argument: tickVector is too small',2)end;local dB=a.NillableValueOrDefault(dm.snapToTick,true)local dC=TimeSpan.FromMilliseconds(1000)local dD=TimeSpan.FromMilliseconds(50)local dE,dF;local cy={}local self;local dG=false;local dH=0;local dI=false;local dJ=TimeSpan.Zero;local dK=TimeSpan.Zero;local dL=function()local dM=du(dE())if dM~=q then q=dM;for cA,E in pairs(cy)do cA(self,q)end end;dq.SetLocalPosition((dM-dt)/dx*dz)end;local dN=function()local dO=dE()local dP,dQ=du(dO)local dR=dO+dx;local dS,dT=du(dR)assert(dS)local dM;if dQ==dT or dP==ds or dP==dr then dM=dR else dM=dQ>=0 and ds or dr end;dK=vci.me.UnscaledTime;if dM==ds or dM==dr then dJ=dK end;dF(dM)end;a.NillableIfHasValueOrElse(dm.lsp,function(dU)if not a.NillableHasValue(dm.propertyName)then error('SlideSwitch: Invalid argument: propertyName is nil',3)end;local dV=a.NillableValue(dm.propertyName)dE=function()return dU.GetProperty(dV,q)end;dF=function(aA)dU.SetProperty(dV,aA)end;dU.AddListener(function(ao,z,dW,dX)if z==dV then dL()end end)end,function()local dW=q;dE=function()return dW end;dF=function(aA)dW=aA;dL()end end)self={GetColliderItem=function()return dn end,GetBaseItem=function()return dp end,GetKnobItem=function()return dq end,GetMinValue=function()return dr end,GetMaxValue=function()return ds end,GetValue=function()return q end,SetValue=function(aA)dF(du(aA))end,GetTickFrequency=function()return dx end,IsSnapToTick=function()return dB end,AddListener=function(cA)cy[cA]=cA end,RemoveListener=function(cA)cy[cA]=nil end,DoUse=function()if not dG then dI=true;dJ=vci.me.UnscaledTime;dN()end end,DoUnuse=function()dI=false end,DoGrab=function()if not dI then dG=true;dH=(q-dt)/dx end end,DoUngrab=function()dG=false end,Update=function()if dG then local dY=dn.GetPosition()-dp.GetPosition()local dZ=dq.GetRotation()*dz;local d_=Vector3.Project(dY,dZ)local e0=(Vector3.Dot(dZ,d_)>=0 and 1 or-1)*d_.magnitude/dA+dH;local e1=(dB and a.Round(e0)or e0)*dx+dt;local dM=a.Clamp(e1,dr,ds)if dM~=q then dF(dM)end elseif dI then local e2=vci.me.UnscaledTime;if e2>=dJ+dC and e2>=dK+dD then dN()end elseif dn.IsMine then a.AlignSubItemOrigin(dp,dn)end end}dL()return self end,CreateSubItemConnector=function()local e3=function(e4,cY,e5)e4.item=cY;e4.position=cY.GetPosition()e4.rotation=cY.GetRotation()e4.initialPosition=e4.position;e4.initialRotation=e4.rotation;e4.propagation=not not e5;return e4 end;local e6=function(e7)for cY,e4 in pairs(e7)do e3(e4,cY,e4.propagation)end end;local e8=function(e9,bf,e4,ea,eb)local dY=e9-e4.initialPosition;local ec=bf*Quaternion.Inverse(e4.initialRotation)e4.position=e9;e4.rotation=bf;for cY,ed in pairs(ea)do if cY~=e4.item and(not eb or eb(ed))then ed.position,ed.rotation=a.RotateAround(ed.initialPosition+dY,ed.initialRotation,e9,ec)cY.SetPosition(ed.position)cY.SetRotation(ed.rotation)end end end;local ee={}local ef=true;local eg=false;local self;self={IsEnabled=function()return ef end,SetEnabled=function(aC)ef=aC;if aC then e6(ee)eg=false end end,Contains=function(eh)return a.NillableHasValue(ee[eh])end,Add=function(ei,ej)if not ei then error('SubItemConnector.Add: Invalid argument: subItems = '..tostring(ei),2)end;local ek=type(ei)=='table'and ei or{ei}e6(ee)eg=false;for N,cY in pairs(ek)do ee[cY]=e3({},cY,not ej)end end,Remove=function(eh)local aQ=a.NillableHasValue(ee[eh])ee[eh]=nil;return aQ end,RemoveAll=function()ee={}return true end,Each=function(ah)for cY,e4 in pairs(ee)do if ah(cY,self)==false then return false end end end,GetItems=function()local ek={}for cY,e4 in pairs(ee)do table.insert(ek,cY)end;return ek end,Update=function()if not ef then return end;local el=false;for cY,e4 in pairs(ee)do local cd=cY.GetPosition()local em=cY.GetRotation()if not a.VectorApproximatelyEquals(cd,e4.position)or not a.QuaternionApproximatelyEquals(em,e4.rotation)then if e4.propagation then if cY.IsMine then e8(cd,em,ee[cY],ee,function(ed)if ed.item.IsMine then return true else eg=true;return false end end)el=true;break else eg=true end else eg=true end end end;if not el and eg then e6(ee)eg=false end end}return self end,GetSubItemTransform=function(eh)local e9=eh.GetPosition()local bf=eh.GetRotation()local en=eh.GetLocalScale()return{positionX=e9.x,positionY=e9.y,positionZ=e9.z,rotationX=bf.x,rotationY=bf.y,rotationZ=bf.z,rotationW=bf.w,scaleX=en.x,scaleY=en.y,scaleZ=en.z}end,RestoreCytanbTransform=function(eo)local cd=eo.positionX and eo.positionY and eo.positionZ and Vector3.__new(eo.positionX,eo.positionY,eo.positionZ)or nil;local em=eo.rotationX and eo.rotationY and eo.rotationZ and eo.rotationW and Quaternion.__new(eo.rotationX,eo.rotationY,eo.rotationZ,eo.rotationW)or nil;local en=eo.scaleX and eo.scaleY and eo.scaleZ and Vector3.__new(eo.scaleX,eo.scaleY,eo.scaleZ)or nil;return cd,em,en end}a.SetConstEach(a,{LogLevelOff=0,LogLevelFatal=100,LogLevelError=200,LogLevelWarn=300,LogLevelInfo=400,LogLevelDebug=500,LogLevelTrace=600,LogLevelAll=0x7FFFFFFF,ColorHueSamples=10,ColorSaturationSamples=4,ColorBrightnessSamples=5,EscapeSequenceTag='#__CYTANB',SolidusTag='#__CYTANB_SOLIDUS',NegativeNumberTag='#__CYTANB_NEGATIVE_NUMBER',ArrayNumberTag='#__CYTANB_ARRAY_NUMBER',InstanceIDParameterName='__CYTANB_INSTANCE_ID',MessageValueParameterName='__CYTANB_MESSAGE_VALUE',TypeParameterName='__CYTANB_TYPE',ColorTypeName='Color',Vector2TypeName='Vector2',Vector3TypeName='Vector3',Vector4TypeName='Vector4',QuaternionTypeName='Quaternion',LOCAL_SHARED_PROPERTY_EXPIRED_KEY='__CYTANB_LOCAL_SHARED_PROPERTY_EXPIRED'})a.SetConstEach(a,{ColorMapSize=a.ColorHueSamples*a.ColorSaturationSamples*a.ColorBrightnessSamples,FatalLogLevel=a.LogLevelFatal,ErrorLogLevel=a.LogLevelError,WarnLogLevel=a.LogLevelWarn,InfoLogLevel=a.LogLevelInfo,DebugLogLevel=a.LogLevelDebug,TraceLogLevel=a.LogLevelTrace})c={[a.ColorTypeName]={compositionFieldNames=a.ListToMap({'r','g','b','a'}),compositionFieldLength=4,toTableFunc=a.ColorToTable,fromTableFunc=a.ColorFromTable},[a.Vector2TypeName]={compositionFieldNames=a.ListToMap({'x','y'}),compositionFieldLength=2,toTableFunc=a.Vector2ToTable,fromTableFunc=a.Vector2FromTable},[a.Vector3TypeName]={compositionFieldNames=a.ListToMap({'x','y','z'}),compositionFieldLength=3,toTableFunc=a.Vector3ToTable,fromTableFunc=a.Vector3FromTable},[a.Vector4TypeName]={compositionFieldNames=a.ListToMap({'x','y','z','w'}),compositionFieldLength=4,toTableFunc=a.Vector4ToTable,fromTableFunc=a.Vector4FromTable},[a.QuaternionTypeName]={compositionFieldNames=a.ListToMap({'x','y','z','w'}),compositionFieldLength=4,toTableFunc=a.QuaternionToTable,fromTableFunc=a.QuaternionFromTable}}d={{tag=a.NegativeNumberTag,pattern='^'..a.NegativeNumberTag,replacement=''},{tag=a.ArrayNumberTag,pattern='^'..a.ArrayNumberTag,replacement=''},{tag=a.SolidusTag,pattern='^'..a.SolidusTag,replacement='/'},{tag=a.EscapeSequenceTag,pattern='^'..a.EscapeSequenceTag..a.EscapeSequenceTag,replacement=a.EscapeSequenceTag}}e=a.ListToMap({a.NegativeNumberTag,a.ArrayNumberTag})f=a.LogLevelInfo;h={[a.LogLevelFatal]='FATAL',[a.LogLevelError]='ERROR',[a.LogLevelWarn]='WARN',[a.LogLevelInfo]='INFO',[a.LogLevelDebug]='DEBUG',[a.LogLevelTrace]='TRACE'}package.loaded['cytanb']=a;i,j=(function()local cr='eff3a188-bfc7-4b0e-93cb-90fd1adc508c'local cx=_G[cr]if not cx then cx={}_G[cr]=cx end;local ep=cx.randomSeedValue;if not ep then ep=os.time()-os.clock()*10000;cx.randomSeedValue=ep;math.randomseed(ep)end;local eq=cx.clientID;if type(eq)~='string'then eq=tostring(a.RandomUUID())cx.clientID=eq end;local er=vci.state.Get(b)or''if er==''and vci.assets.IsMine then er=tostring(a.RandomUUID())vci.state.Set(b,er)end;return er,eq end)()return a end)()
 
 local IsHorizontalAttitude = function (rotation, up, angleAccuracy)
     local angle, axis = cytanb.QuaternionToAngleAxis(rotation)
@@ -206,7 +206,7 @@ local ResetStats = function ()
     settings.statsLsp.Clear()
 end
 
-local OutputStats = function ()
+local StatsToString = function ()
     local indent = '  '
     local propBuf = ''
     local hitBuf = ''
@@ -240,7 +240,7 @@ local OutputStats = function ()
     end
     buf = buf .. '\n' .. indent .. 'predictedFlyingDistance: ' .. predictedFlyingDistanceString
 
-    print(buf)
+    return buf
 end
 
 local TreatStatsCache = function ()
@@ -261,7 +261,7 @@ local TreatStatsCache = function ()
 
     statsCache.throwingCache = 0
 
-    OutputStats()
+    print(StatsToString())
 end
 
 local CalcDirectionAngle = function (angle360)
@@ -278,6 +278,10 @@ local CalcAdjustmentValue = function (switch, impactMode)
     local min = impactMode and parameters.minImpactScaleValue or parameters.minScaleValue
     local max = impactMode and parameters.maxImpactScaleValue or parameters.maxScaleValue
     return min + (max - min) * (switch.GetValue() - parameters.minValue) / (parameters.maxValue - parameters.minValue)
+end
+
+local CalcDetectionSeconds = function ()
+    return CalcAdjustmentValue(throwingDetectionSwitch, false) ^ settings.ballKinematicDetectionTimeExponent
 end
 
 local CalcGravityFactor = function ()
@@ -645,11 +649,14 @@ local ThrowBallByKinematic = function ()
 
     ballStatus.gravityFactor = CalcGravityFactor()
 
-    local detectionSec = CalcAdjustmentValue(throwingDetectionSwitch, false)
+    local detectionSec = CalcDetectionSeconds()
     local headTransform = ballStatus.transformQueue.PollLast()
     local headTime = headTransform.time
     local ballPos = headTransform.position
     local ballRot = headTransform.rotation
+
+    local releaseVector = Vector3.zero
+    local releaseVectorChecked = false
 
     local velocityDirection = Vector3.zero
     local totalVelocityMagnitude = 0
@@ -657,7 +664,7 @@ local ThrowBallByKinematic = function ()
     local angularVelocityDirection = Vector3.zero
     local totalAngle = 0
 
-    local totalSec = 0
+    local totalWeightSec = 0
 
     local st = headTime
     local sp = ballPos
@@ -681,22 +688,40 @@ local ThrowBallByKinematic = function ()
 
         local deltaSec = (st - element.time).TotalSeconds
         if deltaSec > Vector3.kEpsilon then
-            local directionWeight = math.max(0.0, 1.0 - settings.ballKinematicDetectionFactor * (headTime - st).TotalSeconds / detectionSec)
-            -- cytanb.LogTrace('directionWeight = ', directionWeight)
-
             local dp = sp - element.position
-            totalVelocityMagnitude = totalVelocityMagnitude + dp.magnitude
-            velocityDirection = velocityDirection + dp * (directionWeight / deltaSec)
+            local dpMagnitude = dp.magnitude
+            if releaseVectorChecked then
+                if Vector3.Dot(releaseVector, dp) < 0 then
+                    -- リリース時のベクトルから、90 度を超えた開きがある場合は、終了する
+                    cytanb.LogTrace('skip: out of angle range [', (headTime - element.time).TotalSeconds, ' sec]')
+                    break
+                end
+            else
+                if dpMagnitude <= Vector3.kEpsilon then
+                    -- リリース時が静止状態であったとみなして、終了する
+                    break
+                end
+                releaseVectorChecked = true
+                releaseVector = dp
+            end
+
+            local dhSec = (headTime - st).TotalSeconds
+            local weight = settings.ballKinematicDetectionWeightBase ^ dhSec
+            local dirWeight = settings.ballKinematicDetectionDirWeightBase ^ dhSec
+            -- cytanb.LogTrace('ballKinematicDetection: dhSec = ', dhSec, ', weight = ', weight, ', dirWeight = ', dirWeight)
+
+            totalVelocityMagnitude = (totalVelocityMagnitude + dpMagnitude * weight)
+            velocityDirection = (velocityDirection + dp * dirWeight)
 
             local dr = sr * Quaternion.Inverse(element.rotation)
             local da, axis = cytanb.QuaternionToAngleAxis(dr)
             if (da ~= 0 and da ~= 360) or axis ~= Vector3.right then
                 local angle = CalcDirectionAngle(da)
-                totalAngle = totalAngle + angle
-                angularVelocityDirection = angularVelocityDirection + CalcAngularVelocity(axis, angle * directionWeight, deltaSec)
+                totalAngle = (totalAngle + angle * weight)
+                angularVelocityDirection = (angularVelocityDirection + CalcAngularVelocity(axis, angle * dirWeight, 1))
             end
 
-            totalSec = (headTime - element.time).TotalSeconds
+            totalWeightSec = totalWeightSec + deltaSec * weight
         end
 
         -- cytanb.LogTrace('velocityDirection: ', velocityDirection, ', angularVelocityDirection: ', angularVelocityDirection)
@@ -706,7 +731,7 @@ local ThrowBallByKinematic = function ()
     end
     ballStatus.transformQueue.Clear()
 
-    local kinematicVelocityMagnitude = totalSec > Vector3.kEpsilon and totalVelocityMagnitude / totalSec or 0
+    local kinematicVelocityMagnitude = totalWeightSec > Vector3.kEpsilon and totalVelocityMagnitude / totalWeightSec or 0
     -- cytanb.LogTrace('kinematicVelocityMagnitude: ', kinematicVelocityMagnitude)
 
     if kinematicVelocityMagnitude > settings.ballKinematicVelocityThreshold then
@@ -714,7 +739,7 @@ local ThrowBallByKinematic = function ()
         local velocity = ApplyAltitudeAngle(velocityDirection.normalized, CalcAdjustmentValue(altitudeSwitch, false)) * velocityMagnitude
         local forwardOffset = velocity * (math.min(velocityMagnitude * settings.ballForwardOffsetFactor, settings.ballMaxForwardOffset) / velocityMagnitude)
 
-        local angularVelocity = CalcAngularVelocity(angularVelocityDirection.normalized, CalcAdjustmentValue(angularVelocitySwitch, false) * totalAngle, totalSec)
+        local angularVelocity = CalcAngularVelocity(angularVelocityDirection.normalized, CalcAdjustmentValue(angularVelocitySwitch, false) * totalAngle, totalWeightSec)
 
         ballStatus.simAngularVelocity = angularVelocity
         cytanb.LogTrace('Throw ball by kinematic: velocity: ', velocity, ', velocityMagnitude: ', velocityMagnitude, ', angularVelocity: ', angularVelocity, ', angularVelocity.magnitude: ', angularVelocity.magnitude, ', fixedTimestep: ', fixedTimestep.TotalSeconds)
@@ -781,674 +806,628 @@ local ThrowBallByInputTiming = function ()
     OfferBallTransform(ballPos, ball.GetRotation())
 end
 
-local OnLoad = function ()
-    cytanb.LogTrace('OnLoad')
-    settings.lsp.UpdateAlive()
-    settings.statsLsp.UpdateAlive()
-    vciLoaded = true
-
-    local uuid = cytanb.UUIDFromString(cytanb.InstanceID())
-    hiddenPosition = Vector3.__new(uuid[1] / 0x100000, 0x1000, uuid[2] / 0x100000)
-    cytanb.LogTrace('hiddenPosition: ', hiddenPosition)
-
-    timestepEstimater = cytanb.EstimateFixedTimestep(cytanb.NillableValue(vci.assets.GetSubItem('timestep-estimater')))
-    fixedTimestep = timestepEstimater.Timestep()
-
-    ball = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballName))
-
-    ballEfkContainer = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballEfkContainerName))
-
-    local ballEfkMap = cytanb.GetEffekseerEmitterMap(settings.ballEfkContainerName)
-    ballEfk = cytanb.NillableValue(ballEfkMap[settings.ballEfkName])
-    ballEfkFade = cytanb.NillableValue(ballEfkMap[settings.ballEfkFadeName])
-    ballEfkFadeMove = cytanb.NillableValue(ballEfkMap[settings.ballEfkFadeMoveName])
-    ballEfkOne = cytanb.NillableValue(ballEfkMap[settings.ballEfkOneName])
-    ballEfkOneLarge = cytanb.NillableValue(ballEfkMap[settings.ballEfkOneLargeName])
-
-    ballDiscernibleEfkPlayer = CreateDiscernibleEfkPlayer(
-        cytanb.NillableValue(vci.assets.GetEffekseerEmitter(settings.ballName)),
-        settings.discernibleEfkMinPeriod
-    )
-
-    ballCup = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballCupName))
-
-    currentColorPicker = {
-        item = ball,
-        status = ballStatus
-    }
-
-    colorPickers = {
-        [currentColorPicker.item.GetName()] = currentColorPicker
-    }
-
-    standLights = {}
-    for i = 1, settings.standLightCount do
-        local item = cytanb.NillableValue(vci.assets.GetSubItem(settings.standLightPrefix .. (i - 1)))
-        local entry = {
-            item = item,
-            status = cytanb.Extend(cytanb.Extend({}, standLightInitialStatus), {
-                respawnPosition = item.GetPosition(),
-                respawnTime = vci.me.Time,
-                grabbed = false,
-            })
-        }
-        standLights[i] = entry
-        colorPickers[item.GetName()] = entry
-    end
-
-    standLightEfkContainer = cytanb.NillableValue(vci.assets.GetSubItem(settings.standLightEfkContainerName))
-
-    local standLightEfkMap = cytanb.GetEffekseerEmitterMap(settings.standLightEfkContainerName)
-    standLightHitEfk = cytanb.NillableValue(standLightEfkMap[settings.standLightHitEfkName])
-    standLightDirectHitEfk = cytanb.NillableValue(standLightEfkMap[settings.standLightDirectHitEfkName])
-
-    impactForceGauge = cytanb.NillableValue(vci.assets.GetSubItem(settings.impactForceGaugeName))
-    impactForceGauge.SetPosition(hiddenPosition)
-
-    impactSpinGauge = cytanb.NillableValue(vci.assets.GetSubItem(settings.impactSpinGaugeName))
-    impactSpinGauge.SetPosition(hiddenPosition)
-
-    settingsPanel = cytanb.NillableValue(vci.assets.GetSubItem(settings.settingsPanelName))
-    settingsPanelGlue = cytanb.CreateSubItemGlue()
-
-    closeSwitch = cytanb.NillableValue(vci.assets.GetSubItem(settings.closeSwitchName))
-    settingsPanelGlue.Add(cytanb.NillableValue(vci.assets.GetSubItem(settings.closeSwitchBaseName)), closeSwitch)
-
-    slideSwitchMap = {}
-    for k, parameters in pairs(settings.switchParameters) do
-        local switch = cytanb.CreateSlideSwitch(
-            cytanb.Extend({
-                colliderItem = cytanb.NillableValue(vci.assets.GetSubItem(parameters.colliderName)),
-                baseItem = cytanb.NillableValue(vci.assets.GetSubItem(parameters.baseName)),
-                knobItem = cytanb.NillableValue(vci.assets.GetSubItem(parameters.knobName)),
-                lsp = settings.lsp
-            }, parameters, false, true)
-        )
-
-        if settings.enableDebugging then
-            switch.AddListener(function (source, value)
-                cytanb.LogTrace('switch[', source.GetColliderItem().GetName(), '] value changed: ', value)
-            end)
-        end
-
-        slideSwitchMap[parameters.colliderName] = switch
-    end
-
-    velocitySwitch = cytanb.NillableValue(slideSwitchMap[settings.velocitySwitchName])
-    angularVelocitySwitch = cytanb.NillableValue(slideSwitchMap[settings.angularVelocitySwitchName])
-    altitudeSwitch = cytanb.NillableValue(slideSwitchMap[settings.altitudeSwitchName])
-    throwingDetectionSwitch = cytanb.NillableValue(slideSwitchMap[settings.throwingDetectionSwitchName])
-    gravitySwitch = cytanb.NillableValue(slideSwitchMap[settings.gravitySwitchName])
-    efkLevelSwitch = cytanb.NillableValue(slideSwitchMap[settings.efkLevelSwitchName])
-    audioVolumeSwitch = cytanb.NillableValue(slideSwitchMap[settings.audioVolumeSwitchName])
-
-    ballStatus.gravityFactor = CalcGravityFactor()
-
-    settings.statsLsp.AddListener(function (source, key, value, oldValue)
-        if key == cytanb.LOCAL_SHARED_PROPERTY_EXPIRED_KEY then
-            -- cytanb.LogTrace('statsLsp: expired')
-            vciLoaded = false
-        end
-    end)
-
-    local updateStatus = function (parameterMap)
-        if parameterMap.discernibleColor then
-            SetDiscernibleColor(parameterMap.discernibleColor)
-        end
-
-        if parameterMap.standLights then
-            for i, lightParameter in pairs(parameterMap.standLights) do
-                if standLights[i] then
-                    local light = standLights[i]
-                    local ls = light.status
-                    if lightParameter.respawnPosition then
-                        cytanb.Extend(ls, standLightInitialStatus)
-                        ls.respawnPosition = lightParameter.respawnPosition
-                        ls.respawnTime = vci.me.Time
+updateAll = (function ()
+    --- 識別エフェクトの処理をする。
+    local OnUpdateDiscernibleEfk = function (deltaTime, unscaledDeltaTime)
+        if vci.assets.IsMine and not discernibleColorStatus.initialized and vci.me.UnscaledTime > discernibleColorStatus.checkRequestedTime + settings.requestIntervalTime then
+            -- 他のインスタンスの識別色と重複しないように、色を選択する
+            local lots = {}
+            local count = 0
+            for si = 0, cytanb.ColorSaturationSamples - 1 do
+                count = 0
+                for hi = 0, cytanb.ColorHueSamples - 2 do
+                    local index = hi + si * cytanb.ColorHueSamples
+                    if not discernibleColorStatus.existentIndexTable[index] then
+                        lots[count] = index
+                        count = count + 1
                     end
                 end
+                if count >= 1 then
+                    break
+                end
+            end
+
+            local colorIndex = count == 0 and math.random(0, cytanb.ColorHueSamples - 1) or lots[math.random(0, count - 1)]
+            cytanb.LogDebug('discernibleColor initialized: colorIndex = ', colorIndex)
+            SetDiscernibleColor(cytanb.ColorFromIndex(colorIndex))
+
+            discernibleColorStatus.checkRequestedTime = TimeSpan.Zero
+            discernibleColorStatus.initialized = true
+
+            cytanb.EmitMessage(statusChangedMessageName, CreateDiscernibleColorParameter())
+        end
+
+        if not ballStatus.grabbed then
+            if not ballStatus.transformQueue.IsEmpty() and (ball.GetPosition() - ballStatus.transformQueue.PeekLast().position).sqrMagnitude > 0.0001 then
+                -- ボールが動いている時は、識別エフェクトを停止する。
+                ballDiscernibleEfkPlayer.Stop()
+            else
+                -- ボールが動いていない場合は、識別エフェクトを再生する
+                ballDiscernibleEfkPlayer.ContinualPlay()
             end
         end
     end
 
-    -- 全 VCI からのクエリーに応答する。
-    -- マスターが交代したときのことを考慮して、全ユーザーが OnMessage で登録する。
-    cytanb.OnMessage(queryStatusMessageName, function (sender, name, parameterMap)
-        if not vci.assets.IsMine then
-            -- マスターでなければリターンする。
-            return
-        end
-
-        cytanb.LogDebug('onQueryStatus')
-
-        local standLightsParameter = {}
-        for i = 1, settings.standLightCount do
-            standLightsParameter[i] = CreateStandLightStatusParameter(standLights[i])
-        end
-
-        cytanb.EmitMessage(statusMessageName, {
-            clientID = cytanb.ClientID(),
-            discernibleColor = cytanb.ColorToTable(ballDiscernibleEfkPlayer.GetColor()),
-            ball = CreateBallStatusParameter(),
-            standLights = standLightsParameter
-        })
-    end)
-
-    cytanb.OnMessage(statusMessageName, function (sender, name, parameterMap)
-        if parameterMap[cytanb.InstanceIDParameterName] == cytanb.InstanceID() then
-            if parameterMap.clientID ~= cytanb.ClientID() then
-                -- インスタンスの設置者から状態通知が来たので、ローカルの値を更新する
-                cytanb.LogDebug('onStatus @instance')
-                updateStatus(parameterMap)
-            end
-        else
-            -- 他のインスタンスの識別色を収集する
-            if vci.assets.IsMine and not discernibleColorStatus.initialized and vci.me.UnscaledTime <= discernibleColorStatus.checkRequestedTime + settings.requestIntervalTime then
-                if parameterMap.discernibleColor and parameterMap.discernibleColor.a > 0.0 then
-                    local colorIndex = cytanb.ColorToIndex(parameterMap.discernibleColor)
-                    cytanb.LogDebug('onStatus @other: colorIndex = ', colorIndex, ', discernibleColor = ', parameterMap.discernibleColor)
-                    discernibleColorStatus.existentIndexTable[colorIndex] = true
-                end
-            end
-        end
-    end)
-
-    cytanb.OnInstanceMessage(statusChangedMessageName, function (sender, name, parameterMap)
-        if parameterMap.clientID ~= cytanb.ClientID() then
-            cytanb.LogDebug('onStatusChanged')
-            updateStatus(parameterMap)
-        end
-    end)
-
-    cytanb.OnInstanceMessage(respawnBallMessageName, function (sender, name, parameterMap)
-        RespawnBall()
-    end)
-
-    -- ライトを組み立てる。
-    cytanb.OnInstanceMessage(buildStandLightMessageName, function (sender, name, parameterMap)
-        cytanb.LogDebug('onBuildStandLight')
-
-        local targets = parameterMap.targets
-        if targets then
-            for i, options in pairs(targets) do
-                cytanb.NillableIfHasValue(standLights[i], function (light)
-                    BuildStandLight(light)
-                end)
-            end
-        end
-    end)
-
-    -- 全てのライトを組み立てる。別 VCI から送られてくるケースも考慮する。
-    cytanb.OnMessage(buildAllStandLightsMessageName, function (sender, name, parameterMap)
-        for i = 1, settings.standLightCount do
-            BuildStandLight(standLights[i])
-        end
-    end)
-
-    -- ターゲットにヒットした。別 VCI から送られてくるケースも考慮する。
-    cytanb.OnMessage(hitMessageName, function (sender, name, parameterMap)
-        local source = parameterMap.source
-        if not source.position then
-            return
-        end
-
-        local nillableLight, index = StandLightFromName(parameterMap.target.name)
-        cytanb.NillableIfHasValue(nillableLight, function (light)
-            local li = light.item
-            local ls = light.status
+    --- ゲージの表示を更新する。
+    local OnUpdateImpactGauge = function (deltaTime, unscaledDeltaTime)
+        if impactStatus.phase < 1 then
             local now = vci.me.Time
-            if IsContactWithTarget(source.position, source.longSide or 0.5, li.GetPosition(), settings.standLightSimLongSide) and now > ls.hitMessageTime + settings.requestIntervalTime then
-                -- 自 VCI のターゲットにヒットした
-                cytanb.LogTrace('onHitMessage: standLights[', index, ']')
-                ls.hitMessageTime = now
-                ls.hitSourceID = source.hitSourceID
-                ls.directHit = parameterMap.directHit
+            if ballStatus.grabbed and ballStatus.gripPressed and now - settings.impactModeTransitionTime > ballStatus.gripStartTime and not IsInThrowingMotion() then
+                -- 連続して呼び出されないようにしておく
+                ballStatus.gripStartTime = TimeSpan.MaxValue
 
-                if ls.active then
-                    -- ライトが倒れていないので、レディ状態をセットする
-                    cytanb.LogTrace('ready inactive: ', li.GetName(), ', directHit = ', ls.directHit)
-                    ls.readyInactiveTime = now
+                -- グリップ長押し状態で、運動による投球動作を行っていない場合は、タイミング入力に移行する。
+                cytanb.LogTrace('Start impact mode')
+                impactStatus.phase = 1
+                impactStatus.gaugeStartTime = now
+            else
+                -- タイミング入力状態ではないためリターンする。
+                return
+            end
+        end
 
-                    if li.IsMine and not ls.grabbed and parameterMap.hitSourceID ~= cytanb.ClientID() then
-                        -- ライトの操作権があり、メッセージのクライアントIDが自身のIDと異なる場合は、ソースの操作権が別ユーザーであるため、自力で倒れる
-                        local hitVelocity
-                        local sourceVelocity = source.velocity or Vector3.zero
-                        local horzSqrMagnitude = sourceVelocity.x ^ 2 + sourceVelocity.y ^ 2
-                        cytanb.LogTrace(' horzSqrMagnitude = ', horzSqrMagnitude, ', source.velocity = ', source.velocity)
-                        if horzSqrMagnitude > 0.0025 then
-                            local horzMagnitude = math.sqrt(horzSqrMagnitude)
-                            local im = cytanb.Clamp(horzMagnitude, settings.standLightMinHitMagnitude, settings.standLightMaxHitMagnitude) / horzMagnitude
-                            hitVelocity = Vector3.__new(sourceVelocity.x * im, cytanb.Clamp(sourceVelocity.y, settings.standLightMinHitMagnitudeY, settings.standLightMaxHitMagnitudeY), sourceVelocity.z * im)
-                            cytanb.LogTrace(li.GetName(), ' self-hit: source, hit velocity = ', hitVelocity)
-                        else
-                            local rx = math.random()
-                            local dx = (rx * 2 >= 1 and 1 or -1) * (rx * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
-                            local rz = math.random()
-                            local dz = (rz * 2 >= 1 and 1 or -1) * (rz * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
-                            local dy = math.random() * (settings.standLightMaxHitMagnitudeY - settings.standLightMinHitMagnitudeY) + settings.standLightMinHitMagnitudeY
-                            hitVelocity = Vector3.__new(dx, dy, dz)
-                            cytanb.LogTrace(li.GetName(), ' self-hit: random, hit velocity = ', hitVelocity)
-                        end
+        if ballStatus.grabbed then
+            local ballPos = ball.GetPosition()
+            impactForceGauge.SetPosition(ballPos)
+            if impactStatus.phase >= 2 then
+                impactSpinGauge.SetPosition(ballPos)
+            end
 
-                        local sourceMass = source.mass > 0 and math.min(settings.standLightSimMass * settings.standLightMaxHitMassFactor, source.mass) or settings.standLightSimMass
-                        li.AddForce(hitVelocity * (sourceMass / fixedTimestep.TotalSeconds))
-                    end
+            if impactStatus.phase == 1 then
+                -- 方向の入力フェーズ
+                local ratio = settings.impactGaugeRatioPerSec * deltaTime.TotalSeconds
+                local angle = 180 * ratio
+                local rotD = Quaternion.AngleAxis(angle, Vector3.up)
+                -- cytanb.LogTrace('ratio: ', ratio, ', angle: ', angle, ', rotD : ', rotD)
+                impactForceGauge.SetRotation(impactForceGauge.GetRotation() * rotD)
+            elseif impactStatus.phase == 2 then
+                -- スピンの入力フェーズ
+                local ratio = cytanb.PingPong(settings.impactGaugeRatioPerSec * (vci.me.Time - impactStatus.gaugeStartTime).TotalSeconds + 0.5, 1) - 0.5
+                local angle = 180 * ratio
+                local rotD = Quaternion.AngleAxis(angle, Vector3.up)
+                -- cytanb.LogTrace('ratio: ', ratio, ', angle: ', angle, ', rotD : ', rotD)
+                impactSpinGauge.SetRotation(impactForceGauge.GetRotation() * rotD)
+
+                -- 境界付近の値を調整する
+                local absRatio = math.abs(ratio)
+                if absRatio <= 0.05 then
+                    impactStatus.spinGaugeRatio = 0
+                elseif absRatio >= 0.45 then
+                    impactStatus.spinGaugeRatio = ratio < 0 and -0.5 or 0.5
                 else
-                    HitStandLight(light)
+                    impactStatus.spinGaugeRatio = ratio
+                end
+            elseif impactStatus.phase == 3 then
+                -- 威力の入力フェーズ
+                local ratio = cytanb.PingPong(settings.impactGaugeRatioPerSec * (vci.me.Time - impactStatus.gaugeStartTime).TotalSeconds, 1)
+                local offsetY = settings.impactGaugeMaxUV * ratio
+                -- cytanb.LogTrace('ratio: ', ratio, ', offsetY: ', offsetY)
+                vci.assets.SetMaterialTextureOffsetFromName(settings.impactForceGaugeMat, Vector2.__new(0, offsetY))
+
+                -- 境界付近の値を調整する
+                if ratio <= 0.05 then
+                    impactStatus.forceGaugeRatio = 0
+                elseif ratio >= 0.95 then
+                    impactStatus.forceGaugeRatio = 1
+                else
+                    impactStatus.forceGaugeRatio = ratio
                 end
             end
-        end)
-    end)
-
-    -- 設定パネルを表示する
-    cytanb.OnInstanceMessage(showSettingsPanelMessageName, function (sender, name, parameterMap)
-        if not settingsPanel.IsMine then
-            return
-        end
-
-        local cupPosition = ballCup.GetPosition()
-        local dp = cupPosition - settingsPanel.GetPosition()
-        if dp.magnitude > settings.settingsPanelDistanceThreshold then
-            -- 設定パネルが離れていた場合は、近づけて表示する。
-            local position = cupPosition + settings.settingsPanelOffset
-            cytanb.LogTrace('ShowSettingsPanel: posotion = ', position)
-            settingsPanel.SetPosition(position)
-            settingsPanel.SetRotation(Quaternion.LookRotation(Vector3.__new(- settings.settingsPanelOffset.x, 0, - settings.settingsPanelOffset.z)))
-        elseif Vector3.Angle(settingsPanel.GetForward(), dp) > settings.settingsPanelAngleThreshold then
-            -- 設定パネルが近い位置にあり、角度に開きがある場合は、回転させる。
-            cytanb.LogTrace('ShowSettingsPanel: rotate')
-            settingsPanel.SetRotation(Quaternion.LookRotation(Vector3.__new(dp.x, 0, dp.z)))
-        end
-    end)
-
-    cytanb.OnMessage(colorPaletteItemStatusMessageName, function (sender, name, parameterMap)
-        if currentColorPicker.item.IsMine and discernibleColorStatus.paletteCollisionCount >= 1 then
-            if currentColorPicker.status.grabbed and vci.me.UnscaledTime <= discernibleColorStatus.paletteCollisionTime + settings.requestIntervalTime then
-                discernibleColorStatus.paletteCollisionCount = discernibleColorStatus.paletteCollisionCount - 1
-                SetDiscernibleColor(cytanb.ColorFromARGB32(parameterMap.argb32))
-                cytanb.EmitMessage(statusChangedMessageName, CreateDiscernibleColorParameter())
-            else
-                discernibleColorStatus.paletteCollisionCount = 0
-            end
-        end
-    end)
-
-    if vci.assets.IsMine then
-        cytanb.EmitMessage(showSettingsPanelMessageName)
-
-        discernibleColorStatus.checkRequestedTime = vci.me.UnscaledTime
-    end
-    cytanb.EmitMessage(queryStatusMessageName)
-end
-
---- 識別エフェクトの処理をする。
-local OnUpdateDiscernibleEfk = function (deltaTime, unscaledDeltaTime)
-    if vci.assets.IsMine and not discernibleColorStatus.initialized and vci.me.UnscaledTime > discernibleColorStatus.checkRequestedTime + settings.requestIntervalTime then
-        -- 他のインスタンスの識別色と重複しないように、色を選択する
-        local lots = {}
-        local count = 0
-        for si = 0, cytanb.ColorSaturationSamples - 1 do
-            count = 0
-            for hi = 0, cytanb.ColorHueSamples - 2 do
-                local index = hi + si * cytanb.ColorHueSamples
-                if not discernibleColorStatus.existentIndexTable[index] then
-                    lots[count] = index
-                    count = count + 1
-                end
-            end
-            if count >= 1 then
-                break
-            end
-        end
-
-        local colorIndex = count == 0 and math.random(0, cytanb.ColorHueSamples - 1) or lots[math.random(0, count - 1)]
-        cytanb.LogDebug('discernibleColor initialized: colorIndex = ', colorIndex)
-        SetDiscernibleColor(cytanb.ColorFromIndex(colorIndex))
-
-        discernibleColorStatus.checkRequestedTime = TimeSpan.Zero
-        discernibleColorStatus.initialized = true
-
-        cytanb.EmitMessage(statusChangedMessageName, CreateDiscernibleColorParameter())
-    end
-
-    if not ballStatus.grabbed then
-        if not ballStatus.transformQueue.IsEmpty() and (ball.GetPosition() - ballStatus.transformQueue.PeekLast().position).sqrMagnitude > 0.0001 then
-            -- ボールが動いている時は、識別エフェクトを停止する。
-            ballDiscernibleEfkPlayer.Stop()
         else
-            -- ボールが動いていない場合は、識別エフェクトを再生する
-            ballDiscernibleEfkPlayer.ContinualPlay()
-        end
-    end
-end
-
---- ゲージの表示を更新する。
-local OnUpdateImpactGauge = function (deltaTime, unscaledDeltaTime)
-    if impactStatus.phase < 1 then
-        local now = vci.me.Time
-        if ballStatus.grabbed and ballStatus.gripPressed and now - settings.impactModeTransitionTime > ballStatus.gripStartTime and not IsInThrowingMotion() then
-            -- 連続して呼び出されないようにしておく
-            ballStatus.gripStartTime = TimeSpan.MaxValue
-
-            -- グリップ長押し状態で、運動による投球動作を行っていない場合は、タイミング入力に移行する。
-            cytanb.LogTrace('Start impact mode')
-            impactStatus.phase = 1
-            impactStatus.gaugeStartTime = now
-        else
-            -- タイミング入力状態ではないためリターンする。
-            return
+            if vci.me.Time > impactStatus.gaugeStartTime + settings.impactGaugeDisplayTime then
+                -- ゲージの表示時間を終えた
+                impactStatus.phase = 0
+                impactForceGauge.SetPosition(hiddenPosition)
+                impactSpinGauge.SetPosition(hiddenPosition)
+            end
         end
     end
 
-    if ballStatus.grabbed then
+    --- ボールの更新処理をする。カーブさせるための計算をする。
+    local OnUpdateBall = function (deltaTime, unscaledDeltaTime)
         local ballPos = ball.GetPosition()
-        impactForceGauge.SetPosition(ballPos)
-        if impactStatus.phase >= 2 then
-            impactSpinGauge.SetPosition(ballPos)
-        end
+        local ballRot = ball.GetRotation()
+        local respawned = false
 
-        if impactStatus.phase == 1 then
-            -- 方向の入力フェーズ
-            local ratio = settings.impactGaugeRatioPerSec * deltaTime.TotalSeconds
-            local angle = 180 * ratio
-            local rotD = Quaternion.AngleAxis(angle, Vector3.up)
-            -- cytanb.LogTrace('ratio: ', ratio, ', angle: ', angle, ', rotD : ', rotD)
-            impactForceGauge.SetRotation(impactForceGauge.GetRotation() * rotD)
-        elseif impactStatus.phase == 2 then
-            -- スピンの入力フェーズ
-            local ratio = cytanb.PingPong(settings.impactGaugeRatioPerSec * (vci.me.Time - impactStatus.gaugeStartTime).TotalSeconds + 0.5, 1) - 0.5
-            local angle = 180 * ratio
-            local rotD = Quaternion.AngleAxis(angle, Vector3.up)
-            -- cytanb.LogTrace('ratio: ', ratio, ', angle: ', angle, ', rotD : ', rotD)
-            impactSpinGauge.SetRotation(impactForceGauge.GetRotation() * rotD)
+        if not ballStatus.grabbed and not ballStatus.transformQueue.IsEmpty() then
+            local now = vci.me.Time
+            local lastTransform = ballStatus.transformQueue.PeekLast()
+            local lastPos = lastTransform.position
 
-            -- 境界付近の値を調整する
-            local absRatio = math.abs(ratio)
-            if absRatio <= 0.05 then
-                impactStatus.spinGaugeRatio = 0
-            elseif absRatio >= 0.45 then
-                impactStatus.spinGaugeRatio = ratio < 0 and -0.5 or 0.5
-            else
-                impactStatus.spinGaugeRatio = ratio
-            end
-        elseif impactStatus.phase == 3 then
-            -- 威力の入力フェーズ
-            local ratio = cytanb.PingPong(settings.impactGaugeRatioPerSec * (vci.me.Time - impactStatus.gaugeStartTime).TotalSeconds, 1)
-            local offsetY = settings.impactGaugeMaxUV * ratio
-            -- cytanb.LogTrace('ratio: ', ratio, ', offsetY: ', offsetY)
-            vci.assets.SetMaterialTextureOffsetFromName(settings.impactForceGaugeMat, Vector2.__new(0, offsetY))
+            -- カップとの距離が離れていたら、ボールが転がっているものとして処理する
+            local cupSqrDistance = (ballPos - ballCup.GetPosition()).sqrMagnitude
+            if now > ballStatus.respawnTime + settings.ballRespawnCoolTime and cupSqrDistance > settings.ballActiveDistanceThreshold ^ 2 then
+                if now <= impactStatus.gaugeStartTime + settings.ballWaitingTime and cupSqrDistance <= settings.ballPlayAreaRadius ^ 2 then
+                    -- ボールの前回位置と現在位置から速度を計算する
+                    local deltaSec = deltaTime.TotalSeconds
+                    local velocity = (ballPos - lastPos) / deltaSec
 
-            -- 境界付近の値を調整する
-            if ratio <= 0.05 then
-                impactStatus.forceGaugeRatio = 0
-            elseif ratio >= 0.95 then
-                impactStatus.forceGaugeRatio = 1
-            else
-                impactStatus.forceGaugeRatio = ratio
-            end
-        end
-    else
-        if vci.me.Time > impactStatus.gaugeStartTime + settings.impactGaugeDisplayTime then
-            -- ゲージの表示時間を終えた
-            impactStatus.phase = 0
-            impactForceGauge.SetPosition(hiddenPosition)
-            impactSpinGauge.SetPosition(hiddenPosition)
-        end
-    end
-end
-
---- ボールの更新処理をする。カーブさせるための計算をする。
-local OnUpdateBall = function (deltaTime, unscaledDeltaTime)
-    local ballPos = ball.GetPosition()
-    local ballRot = ball.GetRotation()
-    local respawned = false
-
-    if not ballStatus.grabbed and not ballStatus.transformQueue.IsEmpty() then
-        local now = vci.me.Time
-        local lastTransform = ballStatus.transformQueue.PeekLast()
-        local lastPos = lastTransform.position
-
-        -- カップとの距離が離れていたら、ボールが転がっているものとして処理する
-        local cupSqrDistance = (ballPos - ballCup.GetPosition()).sqrMagnitude
-        if now > ballStatus.respawnTime + settings.ballRespawnCoolTime and cupSqrDistance > settings.ballActiveDistanceThreshold ^ 2 then
-            if now <= impactStatus.gaugeStartTime + settings.ballWaitingTime and cupSqrDistance <= settings.ballPlayAreaRadius ^ 2 then
-                -- ボールの前回位置と現在位置から速度を計算する
-                local deltaSec = deltaTime.TotalSeconds
-                local velocity = (ballPos - lastPos) / deltaSec
-
-                if ball.IsMine then
-                    -- 角速度を計算する
-                    ballStatus.simAngularVelocity = ballStatus.simAngularVelocity * (1.0 - math.min(1.0, settings.ballSimAngularDrag * deltaSec))
-                    local angularVelocitySqrMagnitude = ballStatus.simAngularVelocity.sqrMagnitude
-                    if angularVelocitySqrMagnitude <= 0.0025 then
-                        ballStatus.simAngularVelocity = Vector3.zero
-                        angularVelocitySqrMagnitude = 0
-                    end
-
-                    -- スピンを適用する処理
-                    local horzVelocity = Vector3.__new(velocity.x, 0, velocity.z)
-                    local velocityMagnitude = horzVelocity.magnitude
-                    if velocityMagnitude > 0.0025 and angularVelocitySqrMagnitude ~= 0 then
-                        -- 水平方向の力を計算する
-                        local rf = settings.ballSimAngularFactor * settings.ballSimMass * ballStatus.simAngularVelocity.y * math.min(settings.maxForceTimeRate, deltaSec / fixedTimestep.TotalSeconds)
-                        local vo = Vector3.Cross(Vector3.__new(0, rf, 0), horzVelocity / velocityMagnitude)
-                        local vca = Vector3.__new(vo.x, 0, vo.z)
-                        ball.AddForce(vca)
-                        -- cytanb.LogTrace('vca: ', vca, ', vo: ', vo, ', velocity: ', velocity)
-                    end
-
-                    if ballPos.y < 0 and ballPos.y < lastPos.y then
-                        -- 床抜けの対策。
-                        local leapY = 0.125
-                        local minY = 0.25 - ballPos.y
-                        local dy = lastPos.y - ballPos.y
-                        local vy = dy + math.min(minY - leapY, dy * 0.5)
-                        local forceY = settings.ballSimMass * vy / deltaSec / fixedTimestep.TotalSeconds
-                        cytanb.LogDebug('leap ball: position = ', ballPos, ', vy = ', vy, ', forceY = ', forceY)
-                        ball.SetPosition(Vector3.__new(ballPos.x, leapY, ballPos.z))
-                        ball.AddForce(Vector3.__new(0, forceY, 0))
-                    elseif ballPos.y > settings.ballSimLongSide and math.abs(ballStatus.gravityFactor) > Vector3.kEpsilon then
-                        -- 重力処理
-                        local fixedSec = fixedTimestep.TotalSeconds
-                        local timeRate = deltaSec / fixedSec
-                        local accY
-                        if ballStatus.gravityFactor > 0.0 and timeRate > 1.0 and velocity.y <= 0.0 then
-                            -- 上向きに力を加える場合は、下向きに落下するはずが、フレームレートの減少による浮き上がりをなるべく抑える
-                            accY = math.min(ballStatus.gravityFactor - velocity.y / fixedSec, ballStatus.gravityFactor * timeRate)
-                        else
-                            accY = ballStatus.gravityFactor * math.min(settings.maxForceTimeRate, timeRate)
+                    if ball.IsMine then
+                        -- 角速度を計算する
+                        ballStatus.simAngularVelocity = ballStatus.simAngularVelocity * (1.0 - math.min(1.0, settings.ballSimAngularDrag * deltaSec))
+                        local angularVelocitySqrMagnitude = ballStatus.simAngularVelocity.sqrMagnitude
+                        if angularVelocitySqrMagnitude <= 0.0025 then
+                            ballStatus.simAngularVelocity = Vector3.zero
+                            angularVelocitySqrMagnitude = 0
                         end
-                        ball.AddForce(Vector3.__new(0, settings.ballSimMass * accY, 0))
-                    end
-                end
 
-                local efkLevel = efkLevelSwitch.GetValue()
-                if efkLevel == 5 and ball.IsMine then
-                    -- レベル 5 で、ボールの操作権があるときは、レベル 6 のエフェクトを表示する
-                    efkLevel = 6
-                end
+                        -- スピンを適用する処理
+                        local horzVelocity = Vector3.__new(velocity.x, 0, velocity.z)
+                        local velocityMagnitude = horzVelocity.magnitude
+                        if velocityMagnitude > 0.0025 and angularVelocitySqrMagnitude ~= 0 then
+                            -- 水平方向の力を計算する
+                            local rf = settings.ballSimAngularFactor * settings.ballSimMass * ballStatus.simAngularVelocity.y * math.min(settings.maxForceTimeRate, deltaSec / fixedTimestep.TotalSeconds)
+                            local vo = Vector3.Cross(Vector3.__new(0, rf, 0), horzVelocity / velocityMagnitude)
+                            local vca = Vector3.__new(vo.x, 0, vo.z)
+                            ball.AddForce(vca)
+                            -- cytanb.LogTrace('vca: ', vca, ', vo: ', vo, ', velocity: ', velocity)
+                        end
 
-                if efkLevel >= 8 or (efkLevel >= 6 and not ballStatus.grabbed) then
-                    local vm = velocity.magnitude
-                    if vm >= settings.ballTrailVelocityThreshold then
-                        local near = cupSqrDistance <= settings.ballNearDistance ^ 2
-                        local vmNodes = math.max(1, math.ceil(vm / (settings.ballSimLongSide * settings.ballTrailInterpolationDistanceFactor * (near and 0.5 or 1.0) / deltaSec)))
-                        local nodes = math.min(vmNodes, settings.ballTrailInterpolationNodesPerFrame + cytanb.Clamp(math.floor((efkLevel - 6 + (near and 1 or 0)) * 2), 0, 4))
-                        local iNodes = 1.0 / nodes
-                        local efk
-                        if near then
-                            -- 近距離の場合は、エフェクトレベルに合わせる
-                            if efkLevel >= 8 then
-                                efk = ballEfkFadeMove
-                            elseif efkLevel == 7 then
-                                efk = ballEfkFade
+                        if ballPos.y < -0.25 and ballPos.y < lastPos.y then
+                            -- 床抜けの対策。
+                            local leapY = 0.125
+                            local minY = 0.25 - ballPos.y
+                            local dy = lastPos.y - ballPos.y
+                            local vy = dy * 0.5 + math.min(minY - leapY, dy * 0.25)
+                            local forceY = settings.ballSimMass * vy / deltaSec / fixedTimestep.TotalSeconds
+                            cytanb.LogDebug('leap ball: position = ', ballPos, ', vy = ', vy, ', forceY = ', forceY)
+                            ball.SetPosition(Vector3.__new(ballPos.x, leapY, ballPos.z))
+                            ball.AddForce(Vector3.__new(0, forceY, 0))
+                        elseif ballPos.y > settings.ballSimLongSide and math.abs(ballStatus.gravityFactor) > Vector3.kEpsilon then
+                            -- 重力処理
+                            local fixedSec = fixedTimestep.TotalSeconds
+                            local timeRate = deltaSec / fixedSec
+                            local accY
+                            if ballStatus.gravityFactor > 0.0 and timeRate > 1.0 and velocity.y <= 0.0 then
+                                -- 上向きに力を加える場合は、下向きに落下するはずが、フレームレートの減少による浮き上がりをなるべく抑える
+                                accY = math.min(ballStatus.gravityFactor - velocity.y / fixedSec, ballStatus.gravityFactor * timeRate)
                             else
+                                accY = ballStatus.gravityFactor * math.min(settings.maxForceTimeRate, timeRate)
+                            end
+                            ball.AddForce(Vector3.__new(0, settings.ballSimMass * accY, 0))
+                        end
+                    end
+
+                    local efkLevel = efkLevelSwitch.GetValue()
+                    if efkLevel == 5 and ball.IsMine then
+                        -- レベル 5 で、ボールの操作権があるときは、レベル 6 のエフェクトを表示する
+                        efkLevel = 6
+                    end
+
+                    if efkLevel >= 8 or (efkLevel >= 6 and not ballStatus.grabbed) then
+                        local vm = velocity.magnitude
+                        if vm >= settings.ballTrailVelocityThreshold then
+                            local near = cupSqrDistance <= settings.ballNearDistance ^ 2
+                            local vmNodes = math.max(1, math.ceil(vm / (settings.ballSimLongSide * settings.ballTrailInterpolationDistanceFactor * (near and 0.5 or 1.0) / deltaSec)))
+                            local nodes = math.min(vmNodes, settings.ballTrailInterpolationNodesPerFrame + cytanb.Clamp(math.floor((efkLevel - 6 + (near and 1 or 0)) * 2), 0, 4))
+                            local iNodes = 1.0 / nodes
+                            local efk
+                            if near then
+                                -- 近距離の場合は、エフェクトレベルに合わせる
+                                if efkLevel >= 8 then
+                                    efk = ballEfkFadeMove
+                                elseif efkLevel == 7 then
+                                    efk = ballEfkFade
+                                else
+                                    efk = ballEfk
+                                end
+                            elseif cupSqrDistance >= settings.ballFarDistance ^ 2 then
+                                -- 遠距離の場合は、簡易エフェクト
+                                efk = ballEfkOne
+                            else
+                                -- それ以外の場合は、通常エフェクト
                                 efk = ballEfk
                             end
-                        elseif cupSqrDistance >= settings.ballFarDistance ^ 2 then
-                            -- 遠距離の場合は、簡易エフェクト
-                            efk = ballEfkOne
-                        else
-                            -- それ以外の場合は、通常エフェクト
-                            efk = ballEfk
-                        end
 
-                        -- cytanb.LogTrace('ballEfk: nodes = ', nodes, ', vmNodes = ', vmNodes, ', near = ', near, ', efkName = ', efk.EffectName)
-                        for i = 1, nodes do
-                            local trailPos = Vector3.Lerp(lastPos, ballPos, i * iNodes)
-                            -- cytanb.LogTrace('  ballEfk lerp: velocity.sqrMagnitude = ', vm, ', lerp nodes = ', nodes, ', trailPos = ', trailPos)
-                            ballEfkContainer.SetPosition(trailPos)
-                            efk.Play()
+                            -- cytanb.LogTrace('ballEfk: nodes = ', nodes, ', vmNodes = ', vmNodes, ', near = ', near, ', efkName = ', efk.EffectName)
+                            for i = 1, nodes do
+                                local trailPos = Vector3.Lerp(lastPos, ballPos, i * iNodes)
+                                -- cytanb.LogTrace('  ballEfk lerp: velocity.sqrMagnitude = ', vm, ', lerp nodes = ', nodes, ', trailPos = ', trailPos)
+                                ballEfkContainer.SetPosition(trailPos)
+                                efk.Play()
+                            end
+                        end
+                    end
+                elseif ball.IsMine and not ballCupStatus.grabbed then
+                    -- タイムアウトしたかエリア外に出たボールをカップへ戻す。
+                    cytanb.LogTrace('elapsed: ' , (now - impactStatus.gaugeStartTime).TotalSeconds, ', sqrDistance: ', cupSqrDistance)
+                    RespawnBall()
+                    respawned = true
+                end
+            end
+        end
+
+        if not respawned then
+            OfferBallTransform(ballPos, ballRot)
+        end
+    end
+
+    --- ライトが倒れた判定、復活処理を行う。
+    local OnUpdateStandLight = function (deltaTime, unscaledDeltaTime)
+        local needBuilding = false
+        local targets = {}
+        for i = 1, settings.standLightCount do
+            local light = standLights[i]
+            local li = light.item
+            local ls = light.status
+            local horizontalAttitude = IsHorizontalAttitude(li.GetRotation(), Vector3.up, settings.standLightHorizontalAttitudeThreshold)
+            if horizontalAttitude then
+                if not ls.active then
+                    -- 復活した
+                    cytanb.LogTrace('change standLights[', i, '] state to active')
+                    ls.active = true
+                end
+            else
+                local now = vci.me.Time
+                if ls.active then
+                    -- 倒れたことを検知した
+                    cytanb.TraceLog('change standLights[', i, '] state to inactive')
+                    ls.active = false
+                    ls.inactiveTime = now
+                    if now <= ls.readyInactiveTime + settings.requestIntervalTime then
+                        cytanb.TraceLog('  call HitStandLight: light = ', li.GetName(), ', directHit = ', ls.directHit, ' @OnUpdateStandLight')
+                        HitStandLight(light)
+                    end
+                elseif li.IsMine then
+                    if not ls.buildFlag then
+                        -- リスポーンしてから一定時間内に倒れたか、倒れてから時間経過した場合は、復活させる。
+                        ls.buildFlag = (now >= ls.respawnTime + settings.standLightMinRebuildTime and now <= ls.respawnTime + settings.standLightMaxRebuildTime) or
+                                            (now > ls.inactiveTime + settings.standLightWaitingTime)
+                    end
+
+                    if ls.buildFlag then
+                        needBuilding = true
+                        targets[i] = {}
+                    end
+                end
+            end
+        end
+
+        local unow = vci.me.UnscaledTime
+        if unow > standLightsLastRequestTime + settings.requestIntervalTime then
+            standLightsLastRequestTime = unow
+            if needBuilding then
+                cytanb.LogTrace('request buildStandLight')
+                cytanb.EmitMessage(buildStandLightMessageName, {targets = targets})
+            end
+        end
+    end
+
+    local UpdateCw = cytanb.CreateUpdateRoutine(
+        function (deltaTime, unscaledDeltaTime)
+            settings.lsp.UpdateAlive()
+            settings.statsLsp.UpdateAlive()
+            settingsPanelGlue.Update()
+
+            for name, switch in pairs(slideSwitchMap) do
+                switch.Update()
+            end
+
+            if deltaTime <= TimeSpan.Zero then
+                return
+            end
+
+            fixedTimestep = timestepEstimater.Update()
+
+            if settingsPanelStatus.gripPressed and vci.me.Time - settings.resetOperationTime > settingsPanelStatus.gripStartTime then
+                -- 連続して呼び出されないようにしておく
+                settingsPanelStatus.gripStartTime = TimeSpan.MaxValue
+
+                -- 設定パネルのグリップ長押しで、統計情報をリセットする
+                ResetStats()
+            end
+            TreatStatsCache()
+
+            OnUpdateDiscernibleEfk(deltaTime, unscaledDeltaTime)
+            OnUpdateImpactGauge(deltaTime, unscaledDeltaTime)
+            OnUpdateBall(deltaTime, unscaledDeltaTime)
+            OnUpdateStandLight(deltaTime, unscaledDeltaTime)
+        end,
+
+        function ()
+            cytanb.LogTrace('OnLoad')
+            settings.lsp.UpdateAlive()
+            settings.statsLsp.UpdateAlive()
+            vciLoaded = true
+
+            local uuid = cytanb.UUIDFromString(cytanb.InstanceID())
+            hiddenPosition = Vector3.__new(uuid[1] / 0x100000, 0x1000, uuid[2] / 0x100000)
+            cytanb.LogTrace('hiddenPosition: ', hiddenPosition)
+
+            timestepEstimater = cytanb.EstimateFixedTimestep(cytanb.NillableValue(vci.assets.GetSubItem('timestep-estimater')))
+            fixedTimestep = timestepEstimater.Timestep()
+
+            ball = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballName))
+
+            ballEfkContainer = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballEfkContainerName))
+
+            local ballEfkMap = cytanb.GetEffekseerEmitterMap(settings.ballEfkContainerName)
+            ballEfk = cytanb.NillableValue(ballEfkMap[settings.ballEfkName])
+            ballEfkFade = cytanb.NillableValue(ballEfkMap[settings.ballEfkFadeName])
+            ballEfkFadeMove = cytanb.NillableValue(ballEfkMap[settings.ballEfkFadeMoveName])
+            ballEfkOne = cytanb.NillableValue(ballEfkMap[settings.ballEfkOneName])
+            ballEfkOneLarge = cytanb.NillableValue(ballEfkMap[settings.ballEfkOneLargeName])
+
+            ballDiscernibleEfkPlayer = CreateDiscernibleEfkPlayer(
+                cytanb.NillableValue(vci.assets.GetEffekseerEmitter(settings.ballName)),
+                settings.discernibleEfkMinPeriod
+            )
+
+            ballCup = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballCupName))
+
+            currentColorPicker = {
+                item = ball,
+                status = ballStatus
+            }
+
+            colorPickers = {
+                [currentColorPicker.item.GetName()] = currentColorPicker
+            }
+
+            standLights = {}
+            for i = 1, settings.standLightCount do
+                local item = cytanb.NillableValue(vci.assets.GetSubItem(settings.standLightPrefix .. (i - 1)))
+                local entry = {
+                    item = item,
+                    status = cytanb.Extend(cytanb.Extend({}, standLightInitialStatus), {
+                        respawnPosition = item.GetPosition(),
+                        respawnTime = vci.me.Time,
+                        grabbed = false,
+                    })
+                }
+                standLights[i] = entry
+                colorPickers[item.GetName()] = entry
+            end
+
+            standLightEfkContainer = cytanb.NillableValue(vci.assets.GetSubItem(settings.standLightEfkContainerName))
+
+            local standLightEfkMap = cytanb.GetEffekseerEmitterMap(settings.standLightEfkContainerName)
+            standLightHitEfk = cytanb.NillableValue(standLightEfkMap[settings.standLightHitEfkName])
+            standLightDirectHitEfk = cytanb.NillableValue(standLightEfkMap[settings.standLightDirectHitEfkName])
+
+            impactForceGauge = cytanb.NillableValue(vci.assets.GetSubItem(settings.impactForceGaugeName))
+            impactForceGauge.SetPosition(hiddenPosition)
+
+            impactSpinGauge = cytanb.NillableValue(vci.assets.GetSubItem(settings.impactSpinGaugeName))
+            impactSpinGauge.SetPosition(hiddenPosition)
+
+            settingsPanel = cytanb.NillableValue(vci.assets.GetSubItem(settings.settingsPanelName))
+            settingsPanelGlue = cytanb.CreateSubItemGlue()
+
+            closeSwitch = cytanb.NillableValue(vci.assets.GetSubItem(settings.closeSwitchName))
+            settingsPanelGlue.Add(cytanb.NillableValue(vci.assets.GetSubItem(settings.closeSwitchBaseName)), closeSwitch)
+
+            slideSwitchMap = {}
+            for k, parameters in pairs(settings.switchParameters) do
+                local switch = cytanb.CreateSlideSwitch(
+                    cytanb.Extend({
+                        colliderItem = cytanb.NillableValue(vci.assets.GetSubItem(parameters.colliderName)),
+                        baseItem = cytanb.NillableValue(vci.assets.GetSubItem(parameters.baseName)),
+                        knobItem = cytanb.NillableValue(vci.assets.GetSubItem(parameters.knobName)),
+                        lsp = settings.lsp
+                    }, parameters, false, true)
+                )
+
+                if settings.enableDebugging then
+                    switch.AddListener(function (source, value)
+                        cytanb.LogTrace('switch[', source.GetColliderItem().GetName(), '] value changed: ', value)
+                    end)
+                end
+
+                slideSwitchMap[parameters.colliderName] = switch
+            end
+
+            velocitySwitch = cytanb.NillableValue(slideSwitchMap[settings.velocitySwitchName])
+            angularVelocitySwitch = cytanb.NillableValue(slideSwitchMap[settings.angularVelocitySwitchName])
+            altitudeSwitch = cytanb.NillableValue(slideSwitchMap[settings.altitudeSwitchName])
+            throwingDetectionSwitch = cytanb.NillableValue(slideSwitchMap[settings.throwingDetectionSwitchName])
+            gravitySwitch = cytanb.NillableValue(slideSwitchMap[settings.gravitySwitchName])
+            efkLevelSwitch = cytanb.NillableValue(slideSwitchMap[settings.efkLevelSwitchName])
+            audioVolumeSwitch = cytanb.NillableValue(slideSwitchMap[settings.audioVolumeSwitchName])
+
+            ballStatus.gravityFactor = CalcGravityFactor()
+
+            settings.statsLsp.AddListener(function (source, key, value, oldValue)
+                if key == cytanb.LOCAL_SHARED_PROPERTY_EXPIRED_KEY then
+                    -- cytanb.LogTrace('statsLsp: expired')
+                    vciLoaded = false
+                end
+            end)
+
+            local updateStatus = function (parameterMap)
+                if parameterMap.discernibleColor then
+                    SetDiscernibleColor(parameterMap.discernibleColor)
+                end
+
+                if parameterMap.standLights then
+                    for i, lightParameter in pairs(parameterMap.standLights) do
+                        if standLights[i] then
+                            local light = standLights[i]
+                            local ls = light.status
+                            if lightParameter.respawnPosition then
+                                cytanb.Extend(ls, standLightInitialStatus)
+                                ls.respawnPosition = lightParameter.respawnPosition
+                                ls.respawnTime = vci.me.Time
+                            end
                         end
                     end
                 end
-            elseif ball.IsMine and not ballCupStatus.grabbed then
-                -- タイムアウトしたかエリア外に出たボールをカップへ戻す。
-                cytanb.LogTrace('elapsed: ' , (now - impactStatus.gaugeStartTime).TotalSeconds, ', sqrDistance: ', cupSqrDistance)
+            end
+
+            -- 全 VCI からのクエリーに応答する。
+            -- マスターが交代したときのことを考慮して、全ユーザーが OnMessage で登録する。
+            cytanb.OnMessage(queryStatusMessageName, function (sender, name, parameterMap)
+                if not vci.assets.IsMine then
+                    -- マスターでなければリターンする。
+                    return
+                end
+
+                cytanb.LogDebug('onQueryStatus')
+
+                local standLightsParameter = {}
+                for i = 1, settings.standLightCount do
+                    standLightsParameter[i] = CreateStandLightStatusParameter(standLights[i])
+                end
+
+                cytanb.EmitMessage(statusMessageName, {
+                    clientID = cytanb.ClientID(),
+                    discernibleColor = cytanb.ColorToTable(ballDiscernibleEfkPlayer.GetColor()),
+                    ball = CreateBallStatusParameter(),
+                    standLights = standLightsParameter
+                })
+            end)
+
+            cytanb.OnMessage(statusMessageName, function (sender, name, parameterMap)
+                if parameterMap[cytanb.InstanceIDParameterName] == cytanb.InstanceID() then
+                    if parameterMap.clientID ~= cytanb.ClientID() then
+                        -- インスタンスの設置者から状態通知が来たので、ローカルの値を更新する
+                        cytanb.LogDebug('onStatus @instance')
+                        updateStatus(parameterMap)
+                    end
+                else
+                    -- 他のインスタンスの識別色を収集する
+                    if vci.assets.IsMine and not discernibleColorStatus.initialized and vci.me.UnscaledTime <= discernibleColorStatus.checkRequestedTime + settings.requestIntervalTime then
+                        if parameterMap.discernibleColor and parameterMap.discernibleColor.a > 0.0 then
+                            local colorIndex = cytanb.ColorToIndex(parameterMap.discernibleColor)
+                            cytanb.LogDebug('onStatus @other: colorIndex = ', colorIndex, ', discernibleColor = ', parameterMap.discernibleColor)
+                            discernibleColorStatus.existentIndexTable[colorIndex] = true
+                        end
+                    end
+                end
+            end)
+
+            cytanb.OnInstanceMessage(statusChangedMessageName, function (sender, name, parameterMap)
+                if parameterMap.clientID ~= cytanb.ClientID() then
+                    cytanb.LogDebug('onStatusChanged')
+                    updateStatus(parameterMap)
+                end
+            end)
+
+            cytanb.OnInstanceMessage(respawnBallMessageName, function (sender, name, parameterMap)
                 RespawnBall()
-                respawned = true
-            end
-        end
-    end
+            end)
 
-    if not respawned then
-        OfferBallTransform(ballPos, ballRot)
-    end
-end
+            -- ライトを組み立てる。
+            cytanb.OnInstanceMessage(buildStandLightMessageName, function (sender, name, parameterMap)
+                cytanb.LogDebug('onBuildStandLight')
 
---- ライトが倒れた判定、復活処理を行う。
-local OnUpdateStandLight = function (deltaTime, unscaledDeltaTime)
-    local needBuilding = false
-    local targets = {}
-    for i = 1, settings.standLightCount do
-        local light = standLights[i]
-        local li = light.item
-        local ls = light.status
-        local horizontalAttitude = IsHorizontalAttitude(li.GetRotation(), Vector3.up, settings.standLightHorizontalAttitudeThreshold)
-        if horizontalAttitude then
-            if not ls.active then
-                -- 復活した
-                cytanb.LogTrace('change standLights[', i, '] state to active')
-                ls.active = true
-            end
-        else
-            local now = vci.me.Time
-            if ls.active then
-                -- 倒れたことを検知した
-                cytanb.TraceLog('change standLights[', i, '] state to inactive')
-                ls.active = false
-                ls.inactiveTime = now
-                if now <= ls.readyInactiveTime + settings.requestIntervalTime then
-                    cytanb.TraceLog('  call HitStandLight: light = ', li.GetName(), ', directHit = ', ls.directHit, ' @OnUpdateStandLight')
-                    HitStandLight(light)
+                local targets = parameterMap.targets
+                if targets then
+                    for i, options in pairs(targets) do
+                        cytanb.NillableIfHasValue(standLights[i], function (light)
+                            BuildStandLight(light)
+                        end)
+                    end
                 end
-            elseif li.IsMine then
-                if not ls.buildFlag then
-                    -- リスポーンしてから一定時間内に倒れたか、倒れてから時間経過した場合は、復活させる。
-                    ls.buildFlag = (now >= ls.respawnTime + settings.standLightMinRebuildTime and now <= ls.respawnTime + settings.standLightMaxRebuildTime) or
-                                        (now > ls.inactiveTime + settings.standLightWaitingTime)
+            end)
+
+            -- 全てのライトを組み立てる。別 VCI から送られてくるケースも考慮する。
+            cytanb.OnMessage(buildAllStandLightsMessageName, function (sender, name, parameterMap)
+                for i = 1, settings.standLightCount do
+                    BuildStandLight(standLights[i])
+                end
+            end)
+
+            -- ターゲットにヒットした。別 VCI から送られてくるケースも考慮する。
+            cytanb.OnMessage(hitMessageName, function (sender, name, parameterMap)
+                local source = parameterMap.source
+                if not source.position then
+                    return
                 end
 
-                if ls.buildFlag then
-                    needBuilding = true
-                    targets[i] = {}
+                local nillableLight, index = StandLightFromName(parameterMap.target.name)
+                cytanb.NillableIfHasValue(nillableLight, function (light)
+                    local li = light.item
+                    local ls = light.status
+                    local now = vci.me.Time
+                    if IsContactWithTarget(source.position, source.longSide or 0.5, li.GetPosition(), settings.standLightSimLongSide) and now > ls.hitMessageTime + settings.requestIntervalTime then
+                        -- 自 VCI のターゲットにヒットした
+                        cytanb.LogTrace('onHitMessage: standLights[', index, ']')
+                        ls.hitMessageTime = now
+                        ls.hitSourceID = source.hitSourceID
+                        ls.directHit = parameterMap.directHit
+
+                        if ls.active then
+                            -- ライトが倒れていないので、レディ状態をセットする
+                            cytanb.LogTrace('ready inactive: ', li.GetName(), ', directHit = ', ls.directHit)
+                            ls.readyInactiveTime = now
+
+                            if li.IsMine and not ls.grabbed and parameterMap.hitSourceID ~= cytanb.ClientID() then
+                                -- ライトの操作権があり、メッセージのクライアントIDが自身のIDと異なる場合は、ソースの操作権が別ユーザーであるため、自力で倒れる
+                                local hitVelocity
+                                local sourceVelocity = source.velocity or Vector3.zero
+                                local horzSqrMagnitude = sourceVelocity.x ^ 2 + sourceVelocity.y ^ 2
+                                cytanb.LogTrace(' horzSqrMagnitude = ', horzSqrMagnitude, ', source.velocity = ', source.velocity)
+                                if horzSqrMagnitude > 0.0025 then
+                                    local horzMagnitude = math.sqrt(horzSqrMagnitude)
+                                    local im = cytanb.Clamp(horzMagnitude, settings.standLightMinHitMagnitude, settings.standLightMaxHitMagnitude) / horzMagnitude
+                                    hitVelocity = Vector3.__new(sourceVelocity.x * im, cytanb.Clamp(sourceVelocity.y, settings.standLightMinHitMagnitudeY, settings.standLightMaxHitMagnitudeY), sourceVelocity.z * im)
+                                    cytanb.LogTrace(li.GetName(), ' self-hit: source, hit velocity = ', hitVelocity)
+                                else
+                                    local rx = math.random()
+                                    local dx = (rx * 2 >= 1 and 1 or -1) * (rx * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
+                                    local rz = math.random()
+                                    local dz = (rz * 2 >= 1 and 1 or -1) * (rz * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
+                                    local dy = math.random() * (settings.standLightMaxHitMagnitudeY - settings.standLightMinHitMagnitudeY) + settings.standLightMinHitMagnitudeY
+                                    hitVelocity = Vector3.__new(dx, dy, dz)
+                                    cytanb.LogTrace(li.GetName(), ' self-hit: random, hit velocity = ', hitVelocity)
+                                end
+
+                                local sourceMass = source.mass > 0 and math.min(settings.standLightSimMass * settings.standLightMaxHitMassFactor, source.mass) or settings.standLightSimMass
+                                li.AddForce(hitVelocity * (sourceMass / fixedTimestep.TotalSeconds))
+                            end
+                        else
+                            HitStandLight(light)
+                        end
+                    end
+                end)
+            end)
+
+            -- 設定パネルを表示する
+            cytanb.OnInstanceMessage(showSettingsPanelMessageName, function (sender, name, parameterMap)
+                if not settingsPanel.IsMine then
+                    return
                 end
+
+                local cupPosition = ballCup.GetPosition()
+                local dp = cupPosition - settingsPanel.GetPosition()
+                if dp.magnitude > settings.settingsPanelDistanceThreshold then
+                    -- 設定パネルが離れていた場合は、近づけて表示する。
+                    local position = cupPosition + settings.settingsPanelOffset
+                    cytanb.LogTrace('ShowSettingsPanel: posotion = ', position)
+                    settingsPanel.SetPosition(position)
+                    settingsPanel.SetRotation(Quaternion.LookRotation(Vector3.__new(- settings.settingsPanelOffset.x, 0, - settings.settingsPanelOffset.z)))
+                elseif Vector3.Angle(settingsPanel.GetForward(), dp) > settings.settingsPanelAngleThreshold then
+                    -- 設定パネルが近い位置にあり、角度に開きがある場合は、回転させる。
+                    cytanb.LogTrace('ShowSettingsPanel: rotate')
+                    settingsPanel.SetRotation(Quaternion.LookRotation(Vector3.__new(dp.x, 0, dp.z)))
+                end
+            end)
+
+            cytanb.OnMessage(colorPaletteItemStatusMessageName, function (sender, name, parameterMap)
+                if currentColorPicker.item.IsMine and discernibleColorStatus.paletteCollisionCount >= 1 then
+                    if currentColorPicker.status.grabbed and vci.me.UnscaledTime <= discernibleColorStatus.paletteCollisionTime + settings.requestIntervalTime then
+                        discernibleColorStatus.paletteCollisionCount = discernibleColorStatus.paletteCollisionCount - 1
+                        SetDiscernibleColor(cytanb.ColorFromARGB32(parameterMap.argb32))
+                        cytanb.EmitMessage(statusChangedMessageName, CreateDiscernibleColorParameter())
+                    else
+                        discernibleColorStatus.paletteCollisionCount = 0
+                    end
+                end
+            end)
+
+            if vci.assets.IsMine then
+                cytanb.EmitMessage(showSettingsPanelMessageName)
+                discernibleColorStatus.checkRequestedTime = vci.me.UnscaledTime
             end
+            cytanb.EmitMessage(queryStatusMessageName)
         end
+    )
+
+    return function ()
+        UpdateCw()
     end
-
-    local unow = vci.me.UnscaledTime
-    if unow > standLightsLastRequestTime + settings.requestIntervalTime then
-        standLightsLastRequestTime = unow
-        if needBuilding then
-            cytanb.LogTrace('request buildStandLight')
-            cytanb.EmitMessage(buildStandLightMessageName, {targets = targets})
-        end
-    end
-end
-
-
-local OnUpdate = function (deltaTime, unscaledDeltaTime)
-    settings.lsp.UpdateAlive()
-    settings.statsLsp.UpdateAlive()
-    settingsPanelGlue.Update()
-
-    for name, switch in pairs(slideSwitchMap) do
-        switch.Update()
-    end
-
-    if deltaTime <= TimeSpan.Zero then
-        return
-    end
-
-    fixedTimestep = timestepEstimater.Update()
-
-    if settingsPanelStatus.gripPressed and vci.me.Time - settings.resetOperationTime > settingsPanelStatus.gripStartTime then
-        -- 連続して呼び出されないようにしておく
-        settingsPanelStatus.gripStartTime = TimeSpan.MaxValue
-
-        -- 設定パネルのグリップ長押しで、統計情報をリセットする
-        ResetStats()
-    end
-    TreatStatsCache()
-
-    OnUpdateDiscernibleEfk(deltaTime, unscaledDeltaTime)
-    OnUpdateImpactGauge(deltaTime, unscaledDeltaTime)
-    OnUpdateBall(deltaTime, unscaledDeltaTime)
-    OnUpdateStandLight(deltaTime, unscaledDeltaTime)
-end
-
-local UpdateCw = coroutine.wrap(function ()
-    -- InstanceID を取得できるまで待つ。
-    local MaxWaitTime = TimeSpan.FromSeconds(30)
-    local unscaledStartTime = vci.me.UnscaledTime
-    local unscaledLastTime = unscaledStartTime
-    local lastTime = vci.me.Time
-    local needWaiting = true
-    while true do
-        local id = cytanb.InstanceID()
-        if id ~= '' then
-            break
-        end
-
-        local unscaledNow = vci.me.UnscaledTime
-        if unscaledNow > unscaledStartTime + MaxWaitTime then
-            cytanb.LogError('TIMEOUT: Could not receive Instance ID.')
-            return -1
-        end
-
-        unscaledLastTime = unscaledNow
-        lastTime = vci.me.Time
-        needWaiting = false
-        coroutine.yield(100)
-    end
-
-    if needWaiting then
-        -- VCI アイテムを出して 1 フレーム目の update 後に、onUngrab が発生するのを待つ。
-        unscaledLastTime = vci.me.UnscaledTime
-        lastTime = vci.me.Time
-        coroutine.yield(100)
-    end
-
-    -- ロード完了。
-    OnLoad()
-
-    while true do
-        local now = vci.me.Time
-        local delta = now - lastTime
-        local unscaledNow = vci.me.UnscaledTime
-        local unscaledDelta = unscaledNow - unscaledLastTime
-        OnUpdate(delta, unscaledDelta)
-        lastTime = now
-        unscaledLastTime = unscaledNow
-        coroutine.yield(100)
-    end
-    -- return 0
-end)
-
-updateAll = function ()
-    UpdateCw()
-end
+end)()
 
 onGrab = function (target)
     if not vciLoaded then
