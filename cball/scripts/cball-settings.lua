@@ -7,6 +7,7 @@ return {
         local cballSettingsLspid = 'ae00bdfc-98ec-4fbf-84a6-1a52823cfe69'
         local statsLspid = '00eb227b-db40-4e45-8e51-b694d18b2a15'
 
+        local standLightBaseName = 'oO-standlight'
         local throwableTag = 'cytanb-throwable'
         local ballTag = 'cytanb-ball'
         local targetTag = 'cytanb-target'
@@ -308,8 +309,11 @@ return {
             --- ターゲットのタグ名。
             targetTag = targetTag,
 
+            --- ライトのオブジェクト名のベース名。
+            standLightBaseName = standLightBaseName,
+
             --- ライトのオブジェクト名の接頭辞。
-            standLightPrefix = 'oO-standlight#' .. targetTag .. '#' .. colorPickerTag .. '#',
+            standLightPrefix = standLightBaseName .. '#' .. colorPickerTag .. '#' .. targetTag .. '=',
 
             --- ライトのオブジェクト数。
             standLightCount = 3,

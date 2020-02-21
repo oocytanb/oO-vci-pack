@@ -469,18 +469,6 @@ local EmitHitStandLight = function (light, targetName)
     })
 end
 
-local StandLightFromName = function (name)
-    local indexStr = string.sub(name, #settings.standLightPrefix + 1)
-    local num = tonumber(indexStr)
-    local index = num and math.floor(num) + 1 or -1
-    if index >= 1 then
-        local light = index <= settings.standLightCount and standLights[index] or nil
-        return light, index
-    else
-        return nil, index
-    end
-end
-
 local BuildStandLight = function (light)
     local li = light.item
     local ls = light.status
@@ -522,11 +510,7 @@ local HitStandLight = function (light)
             if ls.directHit then
                 clipName = settings.standLightDirectHitAudioName
             else
-                local l, i = StandLightFromName(li.GetName())
-                clipName = settings.standLightHitAudioPrefix .. (i - 1)
-                if light ~= l then
-                    cytanb.LogWarn('eq-test failed')
-                end
+                clipName = settings.standLightHitAudioPrefix .. light.index
             end
             cytanb.LogTrace('play audio: ', clipName, ', volume = ', volume)
             vci.assets.audio.PlayOneShot(clipName, volume)
@@ -1046,26 +1030,25 @@ updateAll = (function ()
     local OnUpdateStandLight = function (deltaTime, unscaledDeltaTime)
         local needBuilding = false
         local targets = {}
-        for i = 1, settings.standLightCount do
-            local light = standLights[i]
+        for lightName, light in pairs(standLights) do
             local li = light.item
             local ls = light.status
             local horizontalAttitude = IsHorizontalAttitude(li.GetRotation(), Vector3.up, settings.standLightHorizontalAttitudeThreshold)
             if horizontalAttitude then
                 if not ls.active then
                     -- 復活した
-                    cytanb.LogTrace('change standLights[', i, '] state to active')
+                    cytanb.LogTrace('change [', lightName, '] state to active')
                     ls.active = true
                 end
             else
                 local now = vci.me.Time
                 if ls.active then
                     -- 倒れたことを検知した
-                    cytanb.TraceLog('change standLights[', i, '] state to inactive')
+                    cytanb.TraceLog('change [', lightName, '] state to inactive')
                     ls.active = false
                     ls.inactiveTime = now
                     if now <= ls.readyInactiveTime + settings.requestIntervalTime then
-                        cytanb.TraceLog('  call HitStandLight: light = ', li.GetName(), ', directHit = ', ls.directHit, ' @OnUpdateStandLight')
+                        cytanb.TraceLog('  call HitStandLight: ', lightName, ', directHit = ', ls.directHit, ' @OnUpdateStandLight')
                         HitStandLight(light)
                     end
                 elseif li.IsMine then
@@ -1077,7 +1060,7 @@ updateAll = (function ()
 
                     if ls.buildFlag then
                         needBuilding = true
-                        targets[i] = {}
+                        targets[light.index] = { name = lightName }
                     end
                 end
             end
@@ -1134,12 +1117,12 @@ updateAll = (function ()
             hiddenPosition = Vector3.__new(uuid[1] / 0x100000, 0x1000, uuid[2] / 0x100000)
             cytanb.LogTrace('hiddenPosition: ', hiddenPosition)
 
-            timestepEstimater = cytanb.EstimateFixedTimestep(cytanb.NillableValue(vci.assets.GetSubItem('timestep-estimater')))
+            timestepEstimater = cytanb.EstimateFixedTimestep(cytanb.NillableValue(vci.assets.GetTransform('timestep-estimater')))
             fixedTimestep = timestepEstimater.Timestep()
 
             ball = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballName))
 
-            ballEfkContainer = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballEfkContainerName))
+            ballEfkContainer = cytanb.NillableValue(vci.assets.GetTransform(settings.ballEfkContainerName))
 
             local ballEfkMap = cytanb.GetEffekseerEmitterMap(settings.ballEfkContainerName)
             ballEfk = cytanb.NillableValue(ballEfkMap[settings.ballEfkName])
@@ -1166,44 +1149,47 @@ updateAll = (function ()
 
             standLights = {}
             for i = 1, settings.standLightCount do
-                local item = cytanb.NillableValue(vci.assets.GetSubItem(settings.standLightPrefix .. (i - 1)))
+                local index = i - 1
+                local name = settings.standLightPrefix .. index
+                local item = cytanb.NillableValue(vci.assets.GetSubItem(name))
                 local entry = {
                     item = item,
+                    index = index,
                     status = cytanb.Extend(cytanb.Extend({}, standLightInitialStatus), {
                         respawnPosition = item.GetPosition(),
                         respawnTime = vci.me.Time,
                         grabbed = false,
                     })
                 }
-                standLights[i] = entry
-                colorPickers[item.GetName()] = entry
+                standLights[name] = entry
+                colorPickers[name] = entry
             end
 
-            standLightEfkContainer = cytanb.NillableValue(vci.assets.GetSubItem(settings.standLightEfkContainerName))
+            standLightEfkContainer = cytanb.NillableValue(vci.assets.GetTransform(settings.standLightEfkContainerName))
 
             local standLightEfkMap = cytanb.GetEffekseerEmitterMap(settings.standLightEfkContainerName)
             standLightHitEfk = cytanb.NillableValue(standLightEfkMap[settings.standLightHitEfkName])
             standLightDirectHitEfk = cytanb.NillableValue(standLightEfkMap[settings.standLightDirectHitEfkName])
 
-            impactForceGauge = cytanb.NillableValue(vci.assets.GetSubItem(settings.impactForceGaugeName))
+            impactForceGauge = cytanb.NillableValue(vci.assets.GetTransform(settings.impactForceGaugeName))
             impactForceGauge.SetPosition(hiddenPosition)
 
-            impactSpinGauge = cytanb.NillableValue(vci.assets.GetSubItem(settings.impactSpinGaugeName))
+            impactSpinGauge = cytanb.NillableValue(vci.assets.GetTransform(settings.impactSpinGaugeName))
             impactSpinGauge.SetPosition(hiddenPosition)
 
             settingsPanel = cytanb.NillableValue(vci.assets.GetSubItem(settings.settingsPanelName))
             settingsPanelGlue = cytanb.CreateSubItemGlue()
 
             closeSwitch = cytanb.NillableValue(vci.assets.GetSubItem(settings.closeSwitchName))
-            settingsPanelGlue.Add(cytanb.NillableValue(vci.assets.GetSubItem(settings.closeSwitchBaseName)), closeSwitch)
+            settingsPanelGlue.Add(cytanb.NillableValue(vci.assets.GetTransform(settings.closeSwitchBaseName)), closeSwitch)
 
             slideSwitchMap = {}
             for k, parameters in pairs(settings.switchParameters) do
                 local switch = cytanb.CreateSlideSwitch(
                     cytanb.Extend({
                         colliderItem = cytanb.NillableValue(vci.assets.GetSubItem(parameters.colliderName)),
-                        baseItem = cytanb.NillableValue(vci.assets.GetSubItem(parameters.baseName)),
-                        knobItem = cytanb.NillableValue(vci.assets.GetSubItem(parameters.knobName)),
+                        baseItem = cytanb.NillableValue(vci.assets.GetTransform(parameters.baseName)),
+                        knobItem = cytanb.NillableValue(vci.assets.GetTransform(parameters.knobName)),
                         lsp = settings.lsp
                     }, parameters, false, true)
                 )
@@ -1241,15 +1227,14 @@ updateAll = (function ()
 
                 if parameterMap.standLights then
                     for i, lightParameter in pairs(parameterMap.standLights) do
-                        if standLights[i] then
-                            local light = standLights[i]
+                        cytanb.NillableIfHasValue(standLights[lightParameter.name], function (light)
                             local ls = light.status
                             if lightParameter.respawnPosition then
                                 cytanb.Extend(ls, standLightInitialStatus)
                                 ls.respawnPosition = lightParameter.respawnPosition
                                 ls.respawnTime = vci.me.Time
                             end
-                        end
+                        end)
                     end
                 end
             end
@@ -1265,8 +1250,8 @@ updateAll = (function ()
                 cytanb.LogDebug('onQueryStatus')
 
                 local standLightsParameter = {}
-                for i = 1, settings.standLightCount do
-                    standLightsParameter[i] = CreateStandLightStatusParameter(standLights[i])
+                for lightName, light in pairs(standLights) do
+                    standLightsParameter[light.index] = CreateStandLightStatusParameter(light)
                 end
 
                 cytanb.EmitMessage(statusMessageName, {
@@ -1313,8 +1298,8 @@ updateAll = (function ()
 
                 local targets = parameterMap.targets
                 if targets then
-                    for i, options in pairs(targets) do
-                        cytanb.NillableIfHasValue(standLights[i], function (light)
+                    for i, lightParameter in pairs(targets) do
+                        cytanb.NillableIfHasValue(standLights[lightParameter.name], function (light)
                             BuildStandLight(light)
                         end)
                     end
@@ -1323,8 +1308,8 @@ updateAll = (function ()
 
             -- 全てのライトを組み立てる。別 VCI から送られてくるケースも考慮する。
             cytanb.OnMessage(buildAllStandLightsMessageName, function (sender, name, parameterMap)
-                for i = 1, settings.standLightCount do
-                    BuildStandLight(standLights[i])
+                for lightName, light in pairs(standLights) do
+                    BuildStandLight(light)
                 end
             end)
 
@@ -1335,14 +1320,13 @@ updateAll = (function ()
                     return
                 end
 
-                local nillableLight, index = StandLightFromName(parameterMap.target.name)
-                cytanb.NillableIfHasValue(nillableLight, function (light)
+                cytanb.NillableIfHasValue(standLights[parameterMap.target.name], function (light)
                     local li = light.item
                     local ls = light.status
                     local now = vci.me.Time
                     if IsContactWithTarget(source.position, source.longSide or 0.5, li.GetPosition(), settings.standLightSimLongSide) and now > ls.hitMessageTime + settings.requestIntervalTime then
                         -- 自 VCI のターゲットにヒットした
-                        cytanb.LogTrace('onHitMessage: standLights[', index, ']')
+                        cytanb.LogTrace('onHitMessage: ', li.GetName())
                         ls.hitMessageTime = now
                         ls.hitSourceID = source.hitSourceID
                         ls.directHit = parameterMap.directHit
@@ -1454,11 +1438,11 @@ onGrab = function (target)
         ballDiscernibleEfkPlayer.Stop()
     elseif target == settingsPanel.GetName() then
         settingsPanelStatus.grabbed = true
-    elseif string.startsWith(target, settings.standLightPrefix) then
-        cytanb.NillableIfHasValue((StandLightFromName(target)), function (light)
+    else
+        cytanb.NillableIfHasValue(standLights[target], function (light)
             light.status.grabbed = true
         end)
-    else
+
         cytanb.NillableIfHasValue(slideSwitchMap[target], function (switch)
             switch.DoGrab()
         end)
@@ -1486,10 +1470,11 @@ onUngrab = function (target)
             end
             impactStatus.gaugeStartTime = vci.me.Time
         end
-    elseif string.startsWith(target, settings.standLightPrefix) then
-        local nillableLight, index = StandLightFromName(target)
-        cytanb.NillableIfHasValue(nillableLight, function (light)
-            cytanb.LogTrace('ungrab ', target, ', index = ', index)
+    elseif target == settingsPanel.GetName() then
+        settingsPanelStatus.grabbed = false
+    else
+        cytanb.NillableIfHasValue(standLights[target], function (light)
+            cytanb.LogTrace('ungrab ', target)
             local li = light.item
             local ls = light.status
 
@@ -1503,20 +1488,19 @@ onUngrab = function (target)
                 local ry = settings.standLightSimLongSide * 0.5 + math.random(settings.standLightSimLongSide * 1.5)
                 ls.respawnPosition = pos.y >= ry and pos or Vector3.__new(pos.x, ry, pos.z)
 
-                cytanb.LogTrace('emit StatusChanged: ', li.GetName(), ': index = ', index, ', respawnPosition = ', ls.respawnPosition)
+                cytanb.LogTrace('emit StatusChanged: ', li.GetName(), ': respawnPosition = ', ls.respawnPosition)
                 cytanb.EmitMessage(statusChangedMessageName, {
                     clientID = cytanb.ClientID(),
                     standLights = {
-                        [index] = {
+                        [light.index] = {
+                            name = li.GetName(),
                             respawnPosition = cytanb.Vector3ToTable(ls.respawnPosition)
                         }
                     }
                 })
             end
         end)
-    elseif target == settingsPanel.GetName() then
-        settingsPanelStatus.grabbed = false
-    else
+
         cytanb.NillableIfHasValue(slideSwitchMap[target], function (switch)
             switch.DoUngrab()
         end)
@@ -1595,7 +1579,7 @@ local OnCollisionOrTriggerEnter = function (item, hit, collision)
             end
         end
     else
-        cytanb.NillableIfHasValue((StandLightFromName(item)), function (light)
+        cytanb.NillableIfHasValue(standLights[item], function (light)
             if light.item.IsMine and not light.status.grabbed then
                 if cytanb.NillableHasValue(cytanb.ParseTagString(hit)[settings.targetTag]) then
                     EmitHitStandLight(light, hit)

@@ -2,7 +2,7 @@
 
 - ボールをつかんで投げるだけ。気軽に遊んで楽しんでください。
 - カップをグリップすると、ボールが戻ってきます。
-- **周囲の安全を十分に確認のうえご利用ください。**
+- **安全に注意を払ってご利用ください。**
 
 ## 紹介動画
 [![oO-cball 紹介動画](https://img.youtube.com/vi/R6Cl1bQAUqQ/0.jpg)](https://www.youtube.com/watch?v=R6Cl1bQAUqQ)
