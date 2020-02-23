@@ -264,6 +264,14 @@ local TreatStatsCache = function ()
     print(StatsToString())
 end
 
+local IncrementStatsHitCount = function (targetName)
+    local propertyName = settings.statsHitCountPropertyNamePrefix .. targetName
+    settings.statsLsp.SetProperty(
+        propertyName,
+        settings.statsLsp.GetProperty(propertyName, 0) + 1
+    )
+end
+
 local CalcDirectionAngle = function (angle360)
     local angle = angle360 % 360
     return (angle <= 180 and angle or angle - 360)
@@ -420,12 +428,11 @@ local EmitHitBall = function (targetName, hitBaseName)
         directHit = ballStatus.boundCount == 0
     })
 
-    -- update stats
-    local propertyName = settings.statsHitCountPropertyNamePrefix .. hitBaseName
-    settings.statsLsp.SetProperty(
-        propertyName,
-        settings.statsLsp.GetProperty(propertyName, 0) + 1
-    )
+    -- ライト以外のターゲットに当たったら、ヒットカウントを更新する。
+    -- ライトは自前で倒れた処理をしているので、そちらでカウントする。
+    if not cytanb.NillableHasValue(standLights[targetName]) then
+        IncrementStatsHitCount(hitBaseName == '' and targetName or hitBaseName)
+    end
 end
 
 local EmitHitStandLight = function (light, targetName)
@@ -490,6 +497,10 @@ local HitStandLight = function (light)
     local now = vci.me.Time
     -- ライトが倒れた直後ならヒットしたものとして判定する
     if not ls.active and now <= ls.inactiveTime + settings.requestIntervalTime then
+        if ls.hitSourceID == cytanb.ClientID() then
+            IncrementStatsHitCount(settings.standLightBaseName)
+        end
+
         local efkLevel = efkLevelSwitch.GetValue()
         if efkLevel == 5 and ball.IsMine then
             -- レベル 5 で、ボールの操作権があるときは、レベル 6 のエフェクトを表示する
