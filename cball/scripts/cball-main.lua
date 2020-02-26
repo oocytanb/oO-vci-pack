@@ -636,6 +636,10 @@ local ThrowBallByKinematic = function ()
     -- 物理運動の正しさではなく、簡単に投げられて楽しめるものを目指して、計算を行う。
     -- 理由は、機器、投げ方、操作の慣れなどは、人それぞれ違うので、なるべく多くの人に楽しんでほしいから。
 
+    if impactStatus.phase ~= 0 then
+        ResetGauge()
+    end
+
     DrawThrowingTrail()
 
     if not ball.IsMine or ballStatus.transformQueue.Size() < 2 then
@@ -1472,10 +1476,12 @@ onUngrab = function (target)
         if ballStatus.grabbed then
             ballStatus.grabbed = false
             if ball.IsMine then
-                if impactStatus.phase == 0 then
-                    ThrowBallByKinematic()
-                else
+                if impactStatus.phase == 3 then
+                    -- タイミング入力の最終フェーズのときに、ボールを離した場合は、タイミング入力による投球を行う。
                     ThrowBallByInputTiming()
+                else
+                    -- それ以外の場合は、腕を振って投球する。タイミング入力の途中のフェーズで手を離した場合は、キャンセルしたとみなす。
+                    ThrowBallByKinematic()
                 end
                 ballStatus.boundCount = 0
             end
