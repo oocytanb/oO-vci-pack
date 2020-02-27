@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:df510a224f260874c12830c6cfd0eaf940f4033de7dd3752cb3400a9f3d34d78
-size 141
+# Color definition for Tinkercad Obj File 2015
+
+newmtl color_16768282
+Ka 0 0 0 
+Kd 1 0.8666666666666667 0.10196078431372549
+d 1.0
+illum 0.0
+
