@@ -107,8 +107,8 @@
               <UV>1</UV>
               <UVFixed>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -191,11 +191,11 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
-                  <X>64</X>
+                  <X>128</X>
                 </Start>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -278,11 +278,11 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
-                  <X>128</X>
+                  <X>256</X>
                 </Start>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -365,11 +365,11 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
-                  <X>192</X>
+                  <X>384</X>
                 </Start>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -452,11 +452,11 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
-                  <Y>64</Y>
+                  <Y>128</Y>
                 </Start>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -539,12 +539,12 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Start>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -627,12 +627,12 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
-                  <X>128</X>
-                  <Y>64</Y>
+                  <X>256</X>
+                  <Y>128</Y>
                 </Start>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -715,12 +715,12 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
-                  <X>192</X>
-                  <Y>64</Y>
+                  <X>384</X>
+                  <Y>128</Y>
                 </Start>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -803,11 +803,11 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
-                  <Y>128</Y>
+                  <Y>256</Y>
                 </Start>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -890,12 +890,12 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
-                  <X>64</X>
-                  <Y>128</Y>
+                  <X>128</X>
+                  <Y>256</Y>
                 </Start>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -978,12 +978,12 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
-                  <X>128</X>
-                  <Y>128</Y>
+                  <X>256</X>
+                  <Y>256</Y>
                 </Start>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -1066,12 +1066,12 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
-                  <X>192</X>
-                  <Y>128</Y>
+                  <X>384</X>
+                  <Y>256</Y>
                 </Start>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -1154,11 +1154,11 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
-                  <Y>192</Y>
+                  <Y>384</Y>
                 </Start>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -1241,12 +1241,12 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
-                  <X>64</X>
-                  <Y>192</Y>
+                  <X>128</X>
+                  <Y>384</Y>
                 </Start>
                 <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <X>128</X>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -1329,100 +1329,12 @@
               <UV>1</UV>
               <UVFixed>
                 <Start>
+                  <X>256</X>
+                  <Y>384</Y>
+                </Start>
+                <Size>
                   <X>128</X>
-                  <Y>192</Y>
-                </Start>
-                <Size>
-                  <X>64</X>
-                  <Y>64</Y>
-                </Size>
-              </UVFixed>
-            </RendererCommonValues>
-            <DrawingValues>
-              <Sprite>
-                <Billboard>3</Billboard>
-              </Sprite>
-            </DrawingValues>
-            <Name>glass-piece</Name>
-            <Children />
-          </Node>
-          <Node>
-            <CommonValues>
-              <LocationEffectType>1</LocationEffectType>
-              <RotationEffectType>1</RotationEffectType>
-              <ScaleEffectType>1</ScaleEffectType>
-              <Life>
-                <Center>60</Center>
-                <Min>20</Min>
-              </Life>
-            </CommonValues>
-            <LocationValues>
-              <Type>1</Type>
-              <PVA>
-                <Location>
-                  <X>
-                    <Center>0.75</Center>
-                    <Max>0.85</Max>
-                    <Min>0.65</Min>
-                  </X>
-                  <Y>
-                    <Center>-0.75</Center>
-                    <Max>-0.65</Max>
-                    <Min>-0.85</Min>
-                  </Y>
-                  <Z>
-                    <Max>0.2</Max>
-                    <Min>-0.2</Min>
-                  </Z>
-                </Location>
-                <Velocity>
-                  <X>
-                    <Max>0.05</Max>
-                    <Min>-0.05</Min>
-                  </X>
-                  <Y>
-                    <Max>0.05</Max>
-                    <Min>-0.05</Min>
-                  </Y>
-                  <Z>
-                    <Max>0.05</Max>
-                    <Min>-0.05</Min>
-                  </Z>
-                </Velocity>
-              </PVA>
-            </LocationValues>
-            <RotationValues>
-              <Type>1</Type>
-              <PVA>
-                <Rotation>
-                  <Z>
-                    <Max>360</Max>
-                    <Min>-360</Min>
-                  </Z>
-                </Rotation>
-                <Velocity>
-                  <Z>
-                    <Max>4</Max>
-                    <Min>-4</Min>
-                  </Z>
-                </Velocity>
-              </PVA>
-            </RotationValues>
-            <RendererCommonValues>
-              <ColorTexture>textures/glass-pieces.png</ColorTexture>
-              <FadeOutType>1</FadeOutType>
-              <FadeOut>
-                <Frame>25</Frame>
-              </FadeOut>
-              <UV>1</UV>
-              <UVFixed>
-                <Start>
-                  <X>192</X>
-                  <Y>192</Y>
-                </Start>
-                <Size>
-                  <X>64</X>
-                  <Y>64</Y>
+                  <Y>128</Y>
                 </Size>
               </UVFixed>
             </RendererCommonValues>
@@ -1436,9 +1348,129 @@
           </Node>
         </Children>
       </Node>
+      <Node>
+        <CommonValues>
+          <LocationEffectType>1</LocationEffectType>
+          <RotationEffectType>1</RotationEffectType>
+          <ScaleEffectType>1</ScaleEffectType>
+          <Life>
+            <Center>120</Center>
+            <Max>120</Max>
+            <Min>120</Min>
+          </Life>
+          <GenerationTime>
+            <Center>0.001</Center>
+            <Max>0.001</Max>
+            <Min>0.001</Min>
+          </GenerationTime>
+        </CommonValues>
+        <ScalingValues>
+          <Fixed>
+            <Scale>
+              <X>0.15</X>
+              <Y>0.15</Y>
+              <Z>0.15</Z>
+            </Scale>
+          </Fixed>
+        </ScalingValues>
+        <DrawingValues>
+          <Type>0</Type>
+        </DrawingValues>
+        <Name>glass-scatter-o</Name>
+        <Children>
+          <Node>
+            <CommonValues>
+              <LocationEffectType>1</LocationEffectType>
+              <RotationEffectType>1</RotationEffectType>
+              <ScaleEffectType>1</ScaleEffectType>
+              <Life>
+                <Center>60</Center>
+                <Min>20</Min>
+              </Life>
+            </CommonValues>
+            <LocationValues>
+              <Type>1</Type>
+              <PVA>
+                <Location>
+                  <X>
+                    <Center>0.75</Center>
+                    <Max>0.85</Max>
+                    <Min>0.65</Min>
+                  </X>
+                  <Y>
+                    <Center>-0.75</Center>
+                    <Max>-0.65</Max>
+                    <Min>-0.85</Min>
+                  </Y>
+                  <Z>
+                    <Max>0.2</Max>
+                    <Min>-0.2</Min>
+                  </Z>
+                </Location>
+                <Velocity>
+                  <X>
+                    <Max>0.05</Max>
+                    <Min>-0.05</Min>
+                  </X>
+                  <Y>
+                    <Max>0.05</Max>
+                    <Min>-0.05</Min>
+                  </Y>
+                  <Z>
+                    <Max>0.05</Max>
+                    <Min>-0.05</Min>
+                  </Z>
+                </Velocity>
+              </PVA>
+            </LocationValues>
+            <RotationValues>
+              <Type>1</Type>
+              <PVA>
+                <Rotation>
+                  <Z>
+                    <Max>360</Max>
+                    <Min>-360</Min>
+                  </Z>
+                </Rotation>
+                <Velocity>
+                  <Z>
+                    <Max>4</Max>
+                    <Min>-4</Min>
+                  </Z>
+                </Velocity>
+              </PVA>
+            </RotationValues>
+            <RendererCommonValues>
+              <ColorTexture>textures/glass-pieces.png</ColorTexture>
+              <FadeOutType>1</FadeOutType>
+              <FadeOut>
+                <Frame>25</Frame>
+              </FadeOut>
+              <UV>1</UV>
+              <UVFixed>
+                <Start>
+                  <X>384</X>
+                  <Y>384</Y>
+                </Start>
+                <Size>
+                  <X>128</X>
+                  <Y>128</Y>
+                </Size>
+              </UVFixed>
+            </RendererCommonValues>
+            <DrawingValues>
+              <Sprite>
+                <Billboard>3</Billboard>
+              </Sprite>
+            </DrawingValues>
+            <Name>glass-piece-o</Name>
+            <Children />
+          </Node>
+        </Children>
+      </Node>
     </Children>
   </Root>
-  <ToolVersion>1.43d</ToolVersion>
+  <ToolVersion>1.43f</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
   <EndFrame>120</EndFrame>

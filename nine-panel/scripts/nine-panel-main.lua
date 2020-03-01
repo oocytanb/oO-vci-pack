@@ -19,6 +19,7 @@ local settings = (function ()
         panelCount = 9,
         panelBaseName = 'nine-panel-base#' .. ignoreTag,
         panelControllerName = 'panel-controller',
+        panelOperatorLampName = 'panel-operator-lamp',
         panelTiltName = 'frame-tilt',
         initialPanelTiltAngle = -90,
         panelPosPrefix = 'panel-pos#',
@@ -68,19 +69,22 @@ local hiddenPosition
 
 local ignoredColliderMap
 local panelBase, panelTilt, panelMap
-local panelController, panelControllerGlue
+local panelController, panelOperatorLamp, panelControllerGlue
 local slideSwitchMap, audioVolumeSwitch, tiltSwitch
 local resetSwitch
 
 local breakEfkContainer, breakEfk
 
---- パネルのフレームがつかまれているか
+--- パネルのフレームがつかまれているか。
 local panelBaseGrabbed = false
 
---- パネルの傾きが変更されていることを示すフラグ
+--- パネルの傾きが変更されていることを示すフラグ。
 local panelBaseTiltChanged = false
 
---- 最後にパネルの傾きを送った時間
+--- パネルのオペレーターランプの状態。
+local panelOperatorLampStatus = false
+
+--- 最後にパネルの傾きを送った時間。
 local lastPanelBaseTiltSendTime = TimeSpan.Zero
 
 --- 最後にパネルを直した時間。
@@ -299,6 +303,7 @@ local OnLoad = function ()
     end
 
     panelController = cytanb.NillableValue(vci.assets.GetSubItem(settings.panelControllerName))
+    panelOperatorLamp = cytanb.NillableValue(vci.assets.GetTransform(settings.panelOperatorLampName))
     panelControllerGlue = cytanb.CreateSubItemGlue()
 
     slideSwitchMap = {}
@@ -483,6 +488,12 @@ local OnUpdate = function (deltaTime, unscaledDeltaTime)
             cytanb.LogTrace('AutoReset: emit resetAll')
             EmitResetMessage('AutoReset @OnUpdate')
         end
+    end
+
+    if panelOperatorLampStatus ~= panelBase.IsMine then
+        -- ランプの状態を変更する
+        panelOperatorLampStatus = not panelOperatorLampStatus
+        panelOperatorLamp.SetLocalPosition(panelOperatorLampStatus and Vector3.zero or hiddenPosition)
     end
 end
 
