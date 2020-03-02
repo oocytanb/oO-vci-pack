@@ -558,10 +558,10 @@ onGrab = function (target)
         panelBaseGrabbed = true
     elseif target == resetSwitch.GetName() then
         resetSwitchClickCount, resetSwitchClickTime = cytanb.DetectClicks(resetSwitchClickCount, resetSwitchClickTime, settings.grabClickTiming)
-        if resetSwitchClickCount == 3 then
-            -- リセットスイッチを3回グラブする操作で、リセットを行う。
+        if resetSwitchClickCount == 2 then
+            -- リセットスイッチを 2 回グラブする操作で、リセットを行う。
             -- (ユーザーは、スライドスイッチをグラブすると操作できるので、同じ入力キーで操作できるものと期待するため)
-            EmitResetMessage('@onGrab 3 times')
+            EmitResetMessage('@onGrab 2 times')
         end
     else
         cytanb.NillableIfHasValue(slideSwitchMap[target], function (switch)
