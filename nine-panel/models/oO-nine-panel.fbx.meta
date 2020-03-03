@@ -87,6 +87,8 @@ ModelImporter:
     100162: tilt-knob-pos
     100164: tilt-switch
     100166: panel-operator-lamp
+    100168: panel-controller-operator-lamp
+    100170: panel-frame-operator-lamp
     400000: inside-frame-bottom
     400002: inside-frame-left
     400004: inside-frame-right
@@ -171,6 +173,8 @@ ModelImporter:
     400162: tilt-knob-pos
     400164: tilt-switch
     400166: panel-operator-lamp
+    400168: panel-controller-operator-lamp
+    400170: panel-frame-operator-lamp
     2100000: reset-switch-mat
     2100002: panel-mat
     2100004: frame-mat
@@ -236,6 +240,8 @@ ModelImporter:
     2300110: tilt-knob
     2300112: tilt-switch
     2300114: panel-operator-lamp
+    2300116: panel-controller-operator-lamp
+    2300118: panel-frame-operator-lamp
     3300000: inside-frame-bottom
     3300002: inside-frame-left
     3300004: inside-frame-right
@@ -294,6 +300,8 @@ ModelImporter:
     3300110: tilt-knob
     3300112: tilt-switch
     3300114: panel-operator-lamp
+    3300116: panel-controller-operator-lamp
+    3300118: panel-frame-operator-lamp
     4300000: reset-switch
     4300002: panel#cytanb-target#9
     4300004: panel#cytanb-target#3
@@ -345,6 +353,8 @@ ModelImporter:
     4300096: tilt-knob
     4300098: panel-collider#cytanb-target=1
     4300100: panel-operator-lamp
+    4300102: panel-controller-operator-lamp
+    4300104: panel-frame-operator-lamp
   externalObjects:
   - first:
       type: UnityEngine:Material

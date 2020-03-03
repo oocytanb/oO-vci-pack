@@ -19,7 +19,8 @@ local settings = (function ()
         panelCount = 9,
         panelBaseName = 'nine-panel-base#' .. ignoreTag,
         panelControllerName = 'panel-controller',
-        panelOperatorLampName = 'panel-operator-lamp',
+        panelControllerOperatorLampName = 'panel-controller-operator-lamp',
+        panelFrameOperatorLampName = 'panel-frame-operator-lamp',
         panelTiltName = 'frame-tilt',
         initialPanelTiltAngle = -90,
         panelPosPrefix = 'panel-pos#',
@@ -68,8 +69,8 @@ local vciLoaded = false
 local hiddenPosition
 
 local ignoredColliderMap
-local panelBase, panelTilt, panelMap
-local panelController, panelOperatorLamp, panelControllerGlue
+local panelBase, panelTilt, panelFrameOperatorLamp, panelMap
+local panelController, panelControllerOperatorLamp, panelControllerGlue
 local slideSwitchMap, audioVolumeSwitch, tiltSwitch
 local resetSwitch
 
@@ -303,7 +304,8 @@ local OnLoad = function ()
     end
 
     panelController = cytanb.NillableValue(vci.assets.GetSubItem(settings.panelControllerName))
-    panelOperatorLamp = cytanb.NillableValue(vci.assets.GetTransform(settings.panelOperatorLampName))
+    panelControllerOperatorLamp = cytanb.NillableValue(vci.assets.GetTransform(settings.panelControllerOperatorLampName))
+    panelFrameOperatorLamp = cytanb.NillableValue(vci.assets.GetTransform(settings.panelFrameOperatorLampName))
     panelControllerGlue = cytanb.CreateSubItemGlue()
 
     slideSwitchMap = {}
@@ -493,7 +495,8 @@ local OnUpdate = function (deltaTime, unscaledDeltaTime)
     if panelOperatorLampStatus ~= panelBase.IsMine then
         -- ランプの状態を変更する
         panelOperatorLampStatus = not panelOperatorLampStatus
-        panelOperatorLamp.SetLocalPosition(panelOperatorLampStatus and Vector3.zero or hiddenPosition)
+        panelControllerOperatorLamp.SetLocalPosition(panelOperatorLampStatus and Vector3.zero or hiddenPosition)
+        panelFrameOperatorLamp.SetLocalPosition(panelOperatorLampStatus and Vector3.zero or hiddenPosition)
     end
 end
 
