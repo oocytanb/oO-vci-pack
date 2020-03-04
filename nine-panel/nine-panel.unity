@@ -1020,7 +1020,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.49799997, y: 0.49799997, z: 0.398}
+  m_Size: {x: 0.48, y: 0.48, z: 0.398}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &290695298
 BoxCollider:
@@ -1033,7 +1033,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.49799997, y: 0.49799997, z: 0.398}
+  m_Size: {x: 0.48, y: 0.48, z: 0.398}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &290695299
 BoxCollider:
@@ -1046,7 +1046,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.49799997, y: 0.49799997, z: 0.398}
+  m_Size: {x: 0.48, y: 0.48, z: 0.398}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &290695300
 BoxCollider:
@@ -1059,7 +1059,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.49799997, y: 0.49799997, z: 0.398}
+  m_Size: {x: 0.48, y: 0.48, z: 0.398}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &290695301
 BoxCollider:
@@ -1072,7 +1072,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.49799997, y: 0.49799997, z: 0.398}
+  m_Size: {x: 0.48, y: 0.48, z: 0.398}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &290695302
 BoxCollider:
@@ -1085,7 +1085,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.49799997, y: 0.49799997, z: 0.398}
+  m_Size: {x: 0.48, y: 0.48, z: 0.398}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &290695303
 BoxCollider:
@@ -1098,7 +1098,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.49799997, y: 0.49799997, z: 0.398}
+  m_Size: {x: 0.48, y: 0.48, z: 0.398}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &290695304
 BoxCollider:
@@ -1111,7 +1111,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.49799997, y: 0.49799997, z: 0.398}
+  m_Size: {x: 0.48, y: 0.48, z: 0.398}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &290695305
 BoxCollider:
@@ -1124,7 +1124,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.49799997, y: 0.49799997, z: 0.398}
+  m_Size: {x: 0.48, y: 0.48, z: 0.398}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &290695306 stripped
 Transform:

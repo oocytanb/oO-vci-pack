@@ -23,10 +23,16 @@
 
 ## テクスチャー
 
-- テクスチャーファイルを編集すると、オリジナルの絵柄のパネルを作ることができます。
+- テクスチャーファイルを編集することで、オリジナルの絵柄のパネルを作ることができます。
 
 - **第三者の著作物などを使用する場合は、そのライセンスをご確認ください。**
 
 - [テクスチャーファイル](textures/nine-panel-tex.png)
 
 - [UV 展開図](textures/nine-panel-uv.png)
+
+## Download
+
+- [Unity package](https://www.dropbox.com/s/7fzd8td0nxfzxhb/oO-nine-panel-latest.unitypackage?dl=0)
+
+- [Unity 2018.4](https://unity3d.com/) および [VCI](https://github.com/virtual-cast/VCI) が必要になります。
