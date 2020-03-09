@@ -16,7 +16,7 @@ return {
         local velocitySwitchName = 'cball-settings-velocity-switch'
         local angularVelocitySwitchName = 'cball-settings-angular-velocity-switch'
         local altitudeSwitchName = 'cball-settings-altitude-switch'
-        local throwingDetectionSwitchName = 'cball-settings-throwing-detection-switch'
+        local throwingAdjustmentSwitchName = 'cball-settings-throwing-detection-switch'
         local gravitySwitchName = 'cball-settings-gravity-switch'
         local efkLevelSwitchName = 'cball-settings-efk-switch'
         local audioVolumeSwitchName = 'cball-settings-volume-switch'
@@ -25,7 +25,7 @@ return {
             velocitySwitchName = velocitySwitchName,
             angularVelocitySwitchName = angularVelocitySwitchName,
             altitudeSwitchName = altitudeSwitchName,
-            throwingDetectionSwitchName = throwingDetectionSwitchName,
+            throwingAdjustmentSwitchName = throwingAdjustmentSwitchName,
             gravitySwitchName = gravitySwitchName,
             efkLevelSwitchName = efkLevelSwitchName,
             audioVolumeSwitchName = audioVolumeSwitchName,
@@ -65,15 +65,14 @@ return {
                     minImpactScaleValue = -75,
                     maxImpactScaleValue = 75
                 },
-                -- 投球動作の判定時間
+                -- 投球補正
                 {
-                    colliderName = throwingDetectionSwitchName,
+                    colliderName = throwingAdjustmentSwitchName,
                     baseName = 'cball-settings-throwing-detection-knob-pos',
                     knobName = 'cball-settings-throwing-detection-knob',
                     propertyName = 'ballKinematicDetectionTime',
-                    -- 単位は秒。この値に ` ballKinematicDetectionTimeExponent` をべき乗した値が使われる。
                     minScaleValue = 0.035,
-                    maxScaleValue = 0.525
+                    maxScaleValue = 0.525,
                 },
                 -- 重力
                 {
@@ -130,22 +129,28 @@ return {
             maxForceTimeRate = 16.0,
 
             --- 投球動作とみなす速度の閾値。
-            ballKinematicVelocityThreshold = 1.0,
+            ballThrowingVelocityThreshold = 1.0,
 
-            --- 投球動作の判定時間の閾値。
-            ballKinematicDetectionTimeThreshold = TimeSpan.FromMilliseconds(600),
+            --- 投球補正を行う時間の閾値。
+            ballThrowingAdjustmentTimeThreshold = TimeSpan.FromMilliseconds(600),
 
-            --- 投球動作の判定時間のべき指数。
-            ballKinematicDetectionTimeExponent = 1.585,
+            --- 投球補正を行う時間のべき指数。
+            ballThrowingAdjustmentTimeExponent = 1.585,
 
-            --- 投球動作の判定の重みづけのベース値。
-            ballKinematicDetectionWeightBase = 0.0001,
+            --- 投球補正のフレームタイム係数1。
+            ballThrowingAdjustmentFrameTimeFactor1 = 45,
 
-            --- 投球動作の判定の重みづけのベース値。
-            ballKinematicDetectionDirWeightBase = 0.01,
+            --- 投球補正のフレームタイム係数2。
+            ballThrowingAdjustmentFrameTimeFactor2 = 0.5,
 
-            --- 投球動作の判定の係数。
-            ballKinematicDetectionFactor = 0.25,
+            --- 投球補正の重みづけのベース値。
+            ballThrowingAdjustmentWeightBase = 0.0001,
+
+            --- 投球補正の方向の重みづけのベース値。
+            ballThrowingAdjustmentDirWeightBase = 0.01,
+
+            --- 投球補正の係数。
+            ballThrowingAdjustmentFactor = 0.25,
 
             --- ボールの長辺のシミュレーション値。
             ballSimLongSide = 0.217,

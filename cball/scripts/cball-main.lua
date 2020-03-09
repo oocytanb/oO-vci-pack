@@ -42,6 +42,7 @@ local respawnBallMessageName = cballNS .. '.respawn-ball'
 local buildStandLightMessageName = cballNS .. '.build-standlight'
 local buildAllStandLightsMessageName = cballNS .. '.build-all-standlights'
 local hitMessageName = cballNS .. '.hit'
+local throwingStatsMessageName = cballNS .. 'throwing-stats'
 local showSettingsPanelMessageName = cballNS .. '.show-settings-panel'
 
 local colorPaletteItemStatusMessageName = 'cytanb.color-palette.item-status'
@@ -61,7 +62,7 @@ local standLights, standLightEfkContainer, standLightHitEfk, standLightDirectHit
 local colorPickers, currentColorPicker
 local impactForceGauge, impactSpinGauge
 local settingsPanel, settingsPanelGlue, closeSwitch
-local slideSwitchMap, velocitySwitch, angularVelocitySwitch, altitudeSwitch, throwingDetectionSwitch, gravitySwitch, efkLevelSwitch, audioVolumeSwitch
+local slideSwitchMap, velocitySwitch, angularVelocitySwitch, altitudeSwitch, throwingAdjustmentSwitch, gravitySwitch, efkLevelSwitch, audioVolumeSwitch
 
 local ballStatus = {
     --- ボールがつかまれているか。
@@ -188,6 +189,9 @@ local statsCache = {
     --- 最後に投球を行ったときの位置。
     throwingPosition = Vector3.zero,
 
+    --- 最後に投球を行ったときのフレームタイム。
+    throwingFrameSeconds = 0,
+
     --- 重力加速度。
     gravity = settings.defaultGravity,
 }
@@ -206,41 +210,39 @@ local ResetStats = function ()
     settings.statsLsp.Clear()
 end
 
-local StatsToString = function ()
+local StatsToString = function (stats)
     local indent = '  '
-    local propBuf = ''
-    local hitBuf = ''
-    settings.statsLsp.Each(function (value, key, lsp)
-        if string.startsWith(key, settings.statsHitCountPropertyNamePrefix) then
-            hitBuf = (hitBuf == '' and '' or hitBuf .. ', ') .. key .. ': ' .. tostring(value)
-        else
-            propBuf = propBuf .. indent .. key .. ': ' .. tostring(value) .. '\n'
-        end
-    end)
 
-    local buf = ((hitBuf ~= '') and indent .. 'hitList: [' .. hitBuf .. ']\n' or '') .. propBuf
-
-    buf = buf .. indent .. 'velocity: ' .. cytanb.Round(statsCache.throwingVelocity.magnitude * 3.6, 2) .. ' [km/h], Vector3' .. tostring(statsCache.throwingVelocity)
-
-    buf = buf .. '\n' .. indent .. 'angularVelocity: magnitude(' .. cytanb.Round(statsCache.throwingAngularVelocity.magnitude, 2) .. '), Vector3' .. tostring(statsCache.throwingAngularVelocity)
+    -- 設定値
+    local settingsString = ''
+    for name, val in pairs(stats.settingsValues) do
+        settingsString = (settingsString == '' and '' or settingsString .. ', ') .. name .. ': ' .. tostring(val)
+    end
+    settingsString = settingsString .. '}'
 
     -- 直線距離での、予測飛距離を計算する。
     -- カーブを考慮しないことや、フレームレートの影響による AddForce の変動、その他の要因により、実測とは異なる。
     local predictedFlyingDistanceString
-    if statsCache.throwingPosition.y > 0 and statsCache.gravity < 0 then
-        local g = - statsCache.gravity
-        local h = statsCache.throwingPosition.y
-        local vx0 = math.sqrt(statsCache.throwingVelocity.x ^ 2 + statsCache.throwingVelocity.z ^ 2)
-        local vy0 = statsCache.throwingVelocity.y
+    if stats.throwingPosition.y > 0 and stats.gravity < 0 then
+        local g = - stats.gravity
+        local h = stats.throwingPosition.y
+        local vx0 = math.sqrt(stats.throwingVelocity.x ^ 2 + stats.throwingVelocity.z ^ 2)
+        local vy0 = stats.throwingVelocity.y
         local distance = vx0 * (vy0 + math.sqrt(vy0 ^ 2 + 2 * g * h)) / g
         local uDistance, siPrefix = cytanb.CalculateSIPrefix(distance)
         predictedFlyingDistanceString = cytanb.Round(uDistance, 2) .. ' [' .. siPrefix .. 'm]'
     else
         predictedFlyingDistanceString = 'N/A'
     end
-    buf = buf .. '\n' .. indent .. 'predictedFlyingDistance: ' .. predictedFlyingDistanceString
 
-    return buf
+    local frameTimeLine = stats.throwingFrameSeconds <= 0 and '' or indent .. 'frameTime: ' .. cytanb.Round(stats.throwingFrameSeconds * 1000) .. ' [ms] (' .. cytanb.Round(1.0 / stats.throwingFrameSeconds, 2) .. ')\n'
+
+    return indent .. 'settings: ' .. settingsString
+        .. '\n' .. frameTimeLine
+        .. indent .. 'throwingCount: ' .. stats.throwingCount
+        .. '\n' .. indent .. 'velocity: ' .. cytanb.Round(stats.throwingVelocity.magnitude * 3.6, 2) .. ' [km/h], Vector3' .. tostring(stats.throwingVelocity)
+        .. '\n' .. indent .. 'angularVelocity: magnitude(' .. cytanb.Round(stats.throwingAngularVelocity.magnitude, 2) .. '), Vector3' .. tostring(stats.throwingAngularVelocity)
+        .. '\n' .. indent .. 'predictedFlyingDistance: ' .. predictedFlyingDistanceString
 end
 
 local TreatStatsCache = function ()
@@ -261,7 +263,23 @@ local TreatStatsCache = function ()
 
     statsCache.throwingCache = 0
 
-    print(StatsToString())
+    local settingsValues = {}
+    for switchName, parameter in pairs(settings.switchParameters) do
+        settingsValues[parameter.propertyName] = slideSwitchMap[switchName].GetValue()
+    end
+
+    cytanb.EmitMessage(throwingStatsMessageName, {
+        clientID = cytanb.ClientID(),
+        stats = {
+            throwingCount = settings.statsLsp.GetProperty(settings.statsThrowingCountPropertyName, 0),
+            throwingVelocity = cytanb.Vector3ToTable(statsCache.throwingVelocity),
+            throwingAngularVelocity = cytanb.Vector3ToTable(statsCache.throwingAngularVelocity),
+            throwingPosition = cytanb.Vector3ToTable(statsCache.throwingPosition),
+            throwingFrameSeconds = statsCache.throwingFrameSeconds,
+            gravity = statsCache.gravity,
+            settingsValues = settingsValues
+        }
+    })
 end
 
 local IncrementStatsHitCount = function (targetName)
@@ -288,8 +306,8 @@ local CalcAdjustmentValue = function (switch, impactMode)
     return min + (max - min) * (switch.GetValue() - parameters.minValue) / (parameters.maxValue - parameters.minValue)
 end
 
-local CalcDetectionSeconds = function ()
-    return CalcAdjustmentValue(throwingDetectionSwitch, false) ^ settings.ballKinematicDetectionTimeExponent
+local CalcThrowingAdjustmentSeconds = function ()
+    return CalcAdjustmentValue(throwingAdjustmentSwitch, false) ^ settings.ballThrowingAdjustmentTimeExponent
 end
 
 local CalcGravityFactor = function ()
@@ -589,7 +607,7 @@ local DrawThrowingTrail = function ()
             break
         end
 
-        if headTime - element.time > settings.ballKinematicDetectionTimeThreshold then
+        if headTime - element.time > settings.ballThrowingAdjustmentTimeThreshold then
             break
         end
 
@@ -601,7 +619,7 @@ end
 
 local PlayThrowingAudio = function (velocityMagnitude)
     local volume = CalcAudioVolume()
-    local min = settings.ballKinematicVelocityThreshold
+    local min = settings.ballThrowingVelocityThreshold
     if volume > 0 and velocityMagnitude > min then
         local max = settings.ballMaxThrowingAudioVelocity
         local mvol = volume * (cytanb.Clamp(velocityMagnitude, min, max) - min) / (max - min)
@@ -623,7 +641,7 @@ local IsInThrowingMotion = function ()
     local dp = head.position - prev.position
     if deltaSec > 0 then
         local velocity = dp.magnitude / deltaSec
-        local b = velocity >= settings.ballKinematicVelocityThreshold * 0.5
+        local b = velocity >= settings.ballThrowingVelocityThreshold * 0.5
         cytanb.LogTrace('test throwing motion: ', b, ', velocity = ', velocity, ', deltaSec = ', deltaSec)
         return b
     else
@@ -642,13 +660,16 @@ local ThrowBallByKinematic = function ()
 
     DrawThrowingTrail()
 
-    if not ball.IsMine or ballStatus.transformQueue.Size() < 2 then
+    if not ball.IsMine then
+        return
+    end
+
+    if ballStatus.transformQueue.Size() <= 2 then
         return
     end
 
     ballStatus.gravityFactor = CalcGravityFactor()
 
-    local detectionSec = CalcDetectionSeconds()
     local headTransform = ballStatus.transformQueue.PollLast()
     local headTime = headTransform.time
     local ballPos = headTransform.position
@@ -669,6 +690,34 @@ local ThrowBallByKinematic = function ()
     local sp = ballPos
     local sr = ballRot
 
+    -- 補正時間を計算
+    local ft = headTime
+    local frameCount = 0
+    for i = ballStatus.transformQueue.Size(), 1, -1 do
+        local element = ballStatus.transformQueue.Get(i)
+        -- 重複しているタイムは除く
+        if element.time ~= ft then
+            frameCount = frameCount + 1
+            ft = element.time
+            if frameCount > 10 then
+                break
+            end
+        end
+    end
+
+    if frameCount <= 0 then
+        return
+    end
+
+    local frameSec = (headTime - ft).TotalSeconds / frameCount
+    if frameSec <= 0 then
+        return
+    end
+    -- cytanb.LogTrace('frameCount: ', frameCount, ', frameSec: ', frameSec)
+
+    local adjustmentSec = CalcThrowingAdjustmentSeconds() * math.max(0.75, settings.ballThrowingAdjustmentFrameTimeFactor1 * frameSec + settings.ballThrowingAdjustmentFrameTimeFactor2)
+    cytanb.LogTrace('adjustmentSec: ', adjustmentSec)
+
     while true do
         local element = ballStatus.transformQueue.PollLast()
         if not element then
@@ -677,11 +726,11 @@ local ThrowBallByKinematic = function ()
 
         local kdTime = headTime - element.time
         -- cytanb.LogTrace('kdTime: ', kdTime.TotalSeconds)
-        if kdTime > settings.ballKinematicDetectionTimeThreshold then
+        if kdTime > settings.ballThrowingAdjustmentTimeThreshold then
             break
         end
 
-        if kdTime.TotalSeconds > detectionSec and velocityDirection ~= Vector3.zero then
+        if kdTime.TotalSeconds > adjustmentSec and velocityDirection ~= Vector3.zero then
             break
         end
 
@@ -705,9 +754,9 @@ local ThrowBallByKinematic = function ()
             end
 
             local dhSec = (headTime - st).TotalSeconds
-            local weight = settings.ballKinematicDetectionWeightBase ^ dhSec
-            local dirWeight = settings.ballKinematicDetectionDirWeightBase ^ dhSec
-            -- cytanb.LogTrace('ballKinematicDetection: dhSec = ', dhSec, ', weight = ', weight, ', dirWeight = ', dirWeight)
+            local weight = settings.ballThrowingAdjustmentWeightBase ^ dhSec
+            local dirWeight = settings.ballThrowingAdjustmentDirWeightBase ^ dhSec
+            -- cytanb.LogTrace('ballThrowingAdjustment: dhSec = ', dhSec, ', weight = ', weight, ', dirWeight = ', dirWeight)
 
             totalVelocityMagnitude = (totalVelocityMagnitude + dpMagnitude * weight)
             velocityDirection = (velocityDirection + dp * dirWeight)
@@ -733,7 +782,7 @@ local ThrowBallByKinematic = function ()
     local kinematicVelocityMagnitude = totalWeightSec > Vector3.kEpsilon and totalVelocityMagnitude / totalWeightSec or 0
     -- cytanb.LogTrace('kinematicVelocityMagnitude: ', kinematicVelocityMagnitude)
 
-    if kinematicVelocityMagnitude > settings.ballKinematicVelocityThreshold then
+    if kinematicVelocityMagnitude > settings.ballThrowingVelocityThreshold then
         local velocityMagnitude = CalcAdjustmentValue(velocitySwitch, false) * kinematicVelocityMagnitude
         local velocity = ApplyAltitudeAngle(velocityDirection.normalized, CalcAdjustmentValue(altitudeSwitch, false)) * velocityMagnitude
         local forwardOffset = velocity * (math.min(velocityMagnitude * settings.ballForwardOffsetFactor, settings.ballMaxForwardOffset) / velocityMagnitude)
@@ -752,6 +801,7 @@ local ThrowBallByKinematic = function ()
         statsCache.throwingVelocity = velocity
         statsCache.throwingAngularVelocity = angularVelocity
         statsCache.throwingPosition = curBallPos
+        statsCache.throwingFrameSeconds = frameSec
         statsCache.gravity = settings.defaultGravity + ballStatus.gravityFactor
 
         -- 体のコライダーに接触しないように、オフセットを足す
@@ -793,6 +843,7 @@ local ThrowBallByInputTiming = function ()
     statsCache.throwingVelocity = velocity
     statsCache.throwingAngularVelocity = ballStatus.simAngularVelocity
     statsCache.throwingPosition = curBallPos
+    statsCache.throwingFrameSeconds = 0
     statsCache.gravity = settings.defaultGravity + ballStatus.gravityFactor
 
     -- 体のコライダーに接触しないように、オフセットを足す
@@ -1221,7 +1272,7 @@ updateAll = (function ()
             velocitySwitch = cytanb.NillableValue(slideSwitchMap[settings.velocitySwitchName])
             angularVelocitySwitch = cytanb.NillableValue(slideSwitchMap[settings.angularVelocitySwitchName])
             altitudeSwitch = cytanb.NillableValue(slideSwitchMap[settings.altitudeSwitchName])
-            throwingDetectionSwitch = cytanb.NillableValue(slideSwitchMap[settings.throwingDetectionSwitchName])
+            throwingAdjustmentSwitch = cytanb.NillableValue(slideSwitchMap[settings.throwingAdjustmentSwitchName])
             gravitySwitch = cytanb.NillableValue(slideSwitchMap[settings.gravitySwitchName])
             efkLevelSwitch = cytanb.NillableValue(slideSwitchMap[settings.efkLevelSwitchName])
             audioVolumeSwitch = cytanb.NillableValue(slideSwitchMap[settings.audioVolumeSwitchName])
@@ -1379,6 +1430,12 @@ updateAll = (function ()
                             HitStandLight(light)
                         end
                     end
+                end)
+            end)
+
+            cytanb.OnInstanceMessage(throwingStatsMessageName, function (sender, name, parameterMap)
+                cytanb.NillableIfHasValue(parameterMap.stats, function (stats)
+                    print(StatsToString(stats))
                 end)
             end)
 
