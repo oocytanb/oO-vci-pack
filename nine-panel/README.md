@@ -8,7 +8,7 @@
 
 - アイテムをつかんで所有権を得ると、すり抜け現象が軽減するかもしれません。(枠上部の緑色のランプが点灯)
 
-- [検索](https://seed.online/search?text=cball)
+- [アイテム検索](https://seed.online/search?text=cball)
 
 ## 紹介動画
 [![oO-nine-panel 紹介動画](https://img.youtube.com/vi/qrr9unWc7QA/0.jpg)](https://www.youtube.com/watch?v=qrr9unWc7QA)
@@ -26,7 +26,7 @@
 
 ## 開発者向け情報
 
-- `#cytanb-ignore` というタグ文字列が、コライダーのオブジェクト名に含まれていると、パネル側では衝突を無視するようになります。
+- `#cytanb-ignore` というタグ文字列を、コライダーを設定しているオブジェクト名に追加しておくと、パネル側では衝突を無視するようになります。
 
 ## テクスチャー
 

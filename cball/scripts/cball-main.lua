@@ -372,7 +372,7 @@ local SetDiscernibleColor = function (color)
     cytanb.LogDebug('SetDiscernibleColor: color = ', color)
     ballDiscernibleEfkPlayer.SetColor(color)
     vci.assets.SetMaterialColorFromName(settings.ballCoveredLightMat, color)
-    vci.assets.SetMaterialEmissionColorFromName(settings.ballCoveredLightMat, Color.__new(color.r * 1.5, color.g * 1.5, color.b * 1.5, 1.0))
+    -- vci.assets.SetMaterialEmissionColorFromName(settings.ballCoveredLightMat, Color.__new(color.r * 1.5, color.g * 1.5, color.b * 1.5, 1.0))
 end
 
 local OfferBallTransform = function (position, rotation, time)
