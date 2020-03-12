@@ -35,11 +35,12 @@
 - **第三者の著作物などを使用する場合は、そのライセンスをご確認ください。**
 
 - [テクスチャーファイル](textures/nine-panel-tex.png)
+    - 絵柄部分の片面サイズは 512 x 512 pixel です。
 
 - [UV 展開図](textures/nine-panel-uv.png)
 
 ## Download
 
-- [Unity package](https://www.dropbox.com/s/7fzd8td0nxfzxhb/oO-nine-panel-latest.unitypackage?dl=0)
+- [Unity package](https://www.dropbox.com/s/7fzd8td0nxfzxhb/oO-nine-panel-latest.unitypackage?dl=1)
 
 - [Unity 2018.4](https://unity3d.com/) および [VCI](https://github.com/virtual-cast/VCI) が必要になります。
