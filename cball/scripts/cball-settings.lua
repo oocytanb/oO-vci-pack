@@ -70,7 +70,7 @@ return {
                     colliderName = throwingAdjustmentSwitchName,
                     baseName = 'cball-settings-throwing-detection-knob-pos',
                     knobName = 'cball-settings-throwing-detection-knob',
-                    propertyName = 'ballKinematicDetectionTime',
+                    propertyName = 'ballThrowingAdjustment',
                     minScaleValue = 0.035,
                     maxScaleValue = 0.525,
                 },
