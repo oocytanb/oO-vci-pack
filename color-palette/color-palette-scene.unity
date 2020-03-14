@@ -179,6 +179,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &39351952
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -303,6 +304,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &64129000
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -477,9 +479,9 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 1275a8fba2b4a1d4b9dbf9b45c57c433, type: 3}
-    version: 0.6.0
+    version: 0.7.0
     description: "\u30AB\u30E9\u30FC\u30D1\u30EC\u30C3\u30C8\u306E\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002\n\u5225\u306EVCI\u304B\u3089\u3001\u9078\u629E\u3057\u305F\u8272\u306E\u53D6\u5F97\u304C\u53EF\u80FD\u3067\u3059\u3002\n[\u8A73\u7D30](https://github.com/oocytanb/oO-vci-pack)"
-    exporterVersion: 0.17
+    exporterVersion: 0.25
     specVersion: 
     modelDataLicenseType: 8
     modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
@@ -510,6 +512,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &74030476
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -555,6 +558,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &74030479
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -612,6 +616,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &74030484
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -657,6 +662,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &74030487
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -708,6 +714,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &74030491
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -810,6 +817,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &126031056
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -934,6 +942,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &233894737
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1058,6 +1067,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &265706237
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1182,6 +1192,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &298271140
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1306,6 +1317,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &305107147
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1430,6 +1442,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &323745892
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1636,6 +1649,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &392434848
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1760,6 +1774,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &416178808
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1884,6 +1899,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &430035192
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2008,6 +2024,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &553752244
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2132,6 +2149,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &593104236
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2256,6 +2274,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &624026788
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2380,6 +2399,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &641025871
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2504,6 +2524,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &660799904
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2628,6 +2649,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &741851505
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2752,6 +2774,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &800795663
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2876,6 +2899,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &863940112
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3000,6 +3024,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1017564187
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3124,6 +3149,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1288933812
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3248,6 +3274,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1291348197
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3372,6 +3399,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1310373946
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3496,6 +3524,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1331332328
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3620,6 +3649,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1368118261
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3744,6 +3774,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1386267831
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3937,6 +3968,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1499771594
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4061,6 +4093,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1546850094
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4185,6 +4218,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1613302548
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4309,6 +4343,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1654293967
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4433,6 +4468,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1743058417
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4557,6 +4593,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1805868726
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4681,6 +4718,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1821433830
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4805,6 +4843,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1957606389
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4929,6 +4968,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1998118298
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5053,6 +5093,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &2001304983
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5177,6 +5218,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &2051521437
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5301,6 +5343,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &2084034614
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5425,6 +5468,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &2118457952
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5549,6 +5593,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &2130299205
 BoxCollider:
   m_ObjectHideFlags: 0

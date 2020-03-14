@@ -1,99 +1,82 @@
 fileFormatVersion: 2
-guid: c51c182d97f60594090850cbe4c9fa62
+guid: 54eee33d126bfbc49ba5c24ce71fbbf7
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: large-chalk_cytanb-color-picker
-    100004: middle-chalk_cytanb-color-picker
-    100006: small-chalk_cytanb-color-picker
-    100008: shared-variable_panel
-    100010: Plane
-    100012: Plane_001
-    100014: anymsg-receiver_panel
-    100016: unimsg-receiver_panel
-    100018: ground-panel
-    400000: //RootNode
-    400002: large-chalk_cytanb-color-picker
-    400004: middle-chalk_cytanb-color-picker
-    400006: small-chalk_cytanb-color-picker
-    400008: shared-variable_panel
-    400010: Plane
-    400012: Plane_001
-    400014: anymsg-receiver_panel
-    400016: unimsg-receiver_panel
-    400018: ground-panel
-    2100000: Material
-    2100002: small-chalk-mat
-    2100004: middle-chalk-mat
-    2100006: large-chalk-mat
-    2100008: unnamed
-    2100010: shared-variable-panel-mat
-    2100012: unimsg-receiver-panel-mat
-    2100014: anymsg-receiver-panel-mat
-    2300000: //RootNode
-    2300002: large-chalk_cytanb-color-picker
-    2300004: middle-chalk_cytanb-color-picker
-    2300006: small-chalk_cytanb-color-picker
-    2300008: shared-variable_panel
-    2300010: Plane
-    2300012: Plane_001
-    2300014: anymsg-receiver_panel
-    2300016: unimsg-receiver_panel
-    2300018: ground-panel
-    3300000: //RootNode
-    3300002: large-chalk_cytanb-color-picker
-    3300004: middle-chalk_cytanb-color-picker
-    3300006: small-chalk_cytanb-color-picker
-    3300008: shared-variable_panel
-    3300010: Plane
-    3300012: Plane_001
-    3300014: anymsg-receiver_panel
-    3300016: unimsg-receiver_panel
-    3300018: ground-panel
-    4300000: Cube
-    4300002: small-chalk_cytanb-color-picker
-    4300004: middle-chalk_cytanb-color-picker
-    4300006: large-chalk_cytanb-color-picker
-    4300008: shared-variable_panel
-    4300010: Plane_001
-    4300012: Plane
-    4300014: unimsg-receiver_panel
-    4300016: anymsg-receiver_panel
-    4300018: ground-panel
-    7400000: Default Take
-    9500000: //RootNode
+    100000: anymsg-receiver#panel
+    100002: //RootNode
+    100004: ground-panel
+    100006: large-chalk#cytanb-color-picker
+    100008: middle-chalk#cytanb-color-picker
+    100010: shared-variable#panel
+    100012: small-chalk#cytanb-color-picker
+    100014: unimsg-receiver#panel
+    400000: anymsg-receiver#panel
+    400002: //RootNode
+    400004: ground-panel
+    400006: large-chalk#cytanb-color-picker
+    400008: middle-chalk#cytanb-color-picker
+    400010: shared-variable#panel
+    400012: small-chalk#cytanb-color-picker
+    400014: unimsg-receiver#panel
+    2100000: unimsg-receiver-panel-mat
+    2100002: anymsg-receiver-panel-mat
+    2100004: shared-variable-panel-mat
+    2100006: small-chalk-mat
+    2100008: middle-chalk-mat
+    2100010: large-chalk-mat
+    2300000: anymsg-receiver#panel
+    2300002: ground-panel
+    2300004: large-chalk#cytanb-color-picker
+    2300006: middle-chalk#cytanb-color-picker
+    2300008: shared-variable#panel
+    2300010: small-chalk#cytanb-color-picker
+    2300012: unimsg-receiver#panel
+    3300000: anymsg-receiver#panel
+    3300002: ground-panel
+    3300004: large-chalk#cytanb-color-picker
+    3300006: middle-chalk#cytanb-color-picker
+    3300008: shared-variable#panel
+    3300010: small-chalk#cytanb-color-picker
+    3300012: unimsg-receiver#panel
+    4300000: unimsg-receiver#panel
+    4300002: anymsg-receiver#panel
+    4300004: shared-variable#panel
+    4300006: ground-panel
+    4300008: small-chalk#cytanb-color-picker
+    4300010: middle-chalk#cytanb-color-picker
+    4300012: large-chalk#cytanb-color-picker
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: anymsg-receiver-panel-mat
-    second: {fileID: 2100000, guid: 6b2275d7833c1e6478325c0305f07772, type: 2}
+    second: {fileID: 2100000, guid: b3a78e6aba786b2459846385d3fbe4d0, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: large-chalk-mat
-    second: {fileID: 2100000, guid: bb05bb103c86d8c469eaf27af6422321, type: 2}
+    second: {fileID: 2100000, guid: 457e29157f068d544a79e814dbb57241, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: middle-chalk-mat
-    second: {fileID: 2100000, guid: 0a4897585c48fdc4bb2952458882d085, type: 2}
+    second: {fileID: 2100000, guid: 2c2a1122afc98704c8f532435c6cdad5, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: shared-variable-panel-mat
-    second: {fileID: 2100000, guid: 355dc5588ad81b749bae9f36c093a6a6, type: 2}
+    second: {fileID: 2100000, guid: 4ab61e3cda68fe94b96d7f76b481772b, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: small-chalk-mat
-    second: {fileID: 2100000, guid: d823c92d9e95d774a882019a1e61e32a, type: 2}
+    second: {fileID: 2100000, guid: 6a72347c70e443248965641b291fd736, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: unimsg-receiver-panel-mat
-    second: {fileID: 2100000, guid: 03e89f2ff97d1ae41a3a07725efc4338, type: 2}
+    second: {fileID: 2100000, guid: 7dfa899428540c94399d9b07433a7ba7, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -127,6 +110,7 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -145,12 +129,15 @@ ModelImporter:
     secondaryUVPackMargin: 4
     useFileScale: 1
     previousCalculatedGlobalScale: 1
-    hasPreviousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
@@ -169,7 +156,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
