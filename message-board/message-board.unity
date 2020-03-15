@@ -178,7 +178,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: dc5f30cce462e174190f639ea4c82863, type: 3}
-    version: 0.0.1
+    version: 0.1.0
     description: "- \u30C6\u30AD\u30B9\u30C8\u3092\u8868\u793A\u3059\u308B VCI \u306E\u7C21\u5358\u306A\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n-
       `text.lua` \u30D5\u30A1\u30A4\u30EB\u306E `textContent` \u30D7\u30ED\u30D1\u30C6\u30A3\u3092\u66F8\u304D\u63DB\u3048\u308B\u3053\u3068\u3067\u3001\u8868\u793A\u3059\u308B\u30E1\u30C3\u30BB\u30FC\u30B8\u3092\u5909\u66F4\u3059\u308B\u3053\u3068\u304C\u3067\u304D\u307E\u3059\u3002"
     exporterVersion: 0.23
@@ -387,10 +387,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 77667297}
     m_Modifications:
-    - target: {fileID: 4943523559470062479, guid: 22d72aab40ae6404b8b022a536fe12cf,
+    - target: {fileID: 4943523559470062467, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
-      propertyPath: m_Name
-      value: text-content
+      propertyPath: m_Mesh
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062476, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
@@ -497,11 +497,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 4943523559470062467, guid: 22d72aab40ae6404b8b022a536fe12cf,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062477, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -541,6 +536,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_text
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4943523559470062479, guid: 22d72aab40ae6404b8b022a536fe12cf,
+        type: 3}
+      propertyPath: m_Name
+      value: text-content
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 22d72aab40ae6404b8b022a536fe12cf, type: 3}
@@ -715,6 +715,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 0
+  NodeIndex: 0
 --- !u!1001 &1981179565
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -722,10 +723,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1565222371}
     m_Modifications:
-    - target: {fileID: 4943523559470062479, guid: 22d72aab40ae6404b8b022a536fe12cf,
+    - target: {fileID: 4943523559470062467, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
-      propertyPath: m_Name
-      value: text-content
+      propertyPath: m_Mesh
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062476, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
@@ -832,11 +833,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 4943523559470062467, guid: 22d72aab40ae6404b8b022a536fe12cf,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062477, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -876,6 +872,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_text
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4943523559470062479, guid: 22d72aab40ae6404b8b022a536fe12cf,
+        type: 3}
+      propertyPath: m_Name
+      value: text-content
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 22d72aab40ae6404b8b022a536fe12cf, type: 3}
