@@ -1,31 +1,22 @@
 fileFormatVersion: 2
-guid: 2e416544395f32d41b2c70a8a321584e
+guid: c7027211545335d4da07f608240464f5
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
-    100002: counter-board
-    100004: SubItem
+    100002: SubItem
     400000: //RootNode
-    400002: counter-board
-    400004: SubItem
-    2100000: Material__studio-shared-counter_png
-    2300000: //RootNode
-    2300002: counter-board
-    2300004: SubItem
-    3300000: //RootNode
-    3300002: counter-board
-    3300004: SubItem
-    4300000: counter-board
-    4300002: SubItem
-    7400000: Default Take
-    9500000: //RootNode
+    400002: SubItem
+    2100000: number-mat
+    2300000: SubItem
+    3300000: SubItem
+    4300000: SubItem
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material__studio-shared-counter_png
-    second: {fileID: 2100000, guid: df0969c62c97be4438086c695c9dab3b, type: 2}
+      name: number-mat
+    second: {fileID: 2100000, guid: 1c87e618d8a93de46b4c567a9a5a096a, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -59,6 +50,7 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -77,12 +69,15 @@ ModelImporter:
     secondaryUVPackMargin: 4
     useFileScale: 1
     previousCalculatedGlobalScale: 1
-    hasPreviousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
@@ -101,7 +96,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
