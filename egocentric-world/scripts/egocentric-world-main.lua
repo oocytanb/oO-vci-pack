@@ -1,7 +1,5 @@
-----------------------------------------------------------------
---  Copyright (c) 2019 oO (https://github.com/oocytanb)
---  MIT Licensed
-----------------------------------------------------------------
+-- SPDX-License-Identifier: MIT
+-- Copyright (c) 2019 oO (https://github.com/oocytanb)
 
 -- エレベーターのアニメーション時間。+1 秒はマージン。
 local EGO_ELEVATOR_ANIM_TIME = TimeSpan.FromSeconds(10 + 1)
@@ -16,11 +14,11 @@ local EGO_BASKET_SWITCH_DARK_COLOR = Color.__new(0.25, 0.25, 0.25)
 local EGO_BASKET_SWITCH_MATERIAL_NAME = "ego_basket_switch"
 
 -- ゼロ地点を確認するためのコーン。
-local zero_cone = vci.assets.GetSubItem("zero_cone")
+local zero_cone = vci.assets.GetTransform("zero_cone")
 
 local ego_set = vci.assets.GetSubItem("ego_set")
-local ego_world_wrapper = vci.assets.GetSubItem("ego_world_wrapper")
-local ego_world = vci.assets.GetSubItem("ego_world")
+local ego_world_wrapper = vci.assets.GetTransform("ego_world_wrapper")
+local ego_world = vci.assets.GetTransform("ego_world")
 
 local worldState = 0
 local waitingForNextState = false;
@@ -42,7 +40,7 @@ if vci.assets.IsMine then
     ego_set.SetRotation(Quaternion.identity)
 end
 
-local function delaySyncWorldPosition()
+local delaySyncWorldPosition = function ()
     if ego_set.IsMine then
         if elevatorAnimWaitTime < TimeSpan.Zero then
             elevatorAnimWaitTime = vci.me.Time
@@ -58,7 +56,7 @@ local function delaySyncWorldPosition()
     end
 end
 
-local function resetWorldPosition()
+local resetWorldPosition = function ()
     elevatorAnimStartTime = TimeSpan.MinValue
     elevatorAnimWaitTime = TimeSpan.MinValue
     vci.assets.StopAnimation()
@@ -71,8 +69,7 @@ local function resetWorldPosition()
     vci.assets.SetMaterialColorFromName(EGO_BASKET_SWITCH_MATERIAL_NAME, EGO_BASKET_SWITCH_NORMAL_COLOR)
 end
 
--- 全ユーザーで、毎フレーム呼び出される。
-function updateAll()
+updateAll = function ()
     local newState = vci.state.Get("worldState")
     if (newState == nil) then
         return
@@ -192,8 +189,7 @@ function updateAll()
     end
 end
 
--- グリップしてアイテムを使用すると呼び出される。
-function onUse(use)
+onUse = function (use)
     print("onUse: " .. use)
 
     if use == "ego_set" then
