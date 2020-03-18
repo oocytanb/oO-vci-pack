@@ -193,9 +193,9 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 41632fecbaf89e7498b978f9bb0c012e, type: 3}
-    version: 0.0.1
+    version: 0.1.0
     description: 
-    exporterVersion: 0.23
+    exporterVersion: 0.25
     specVersion: 
     modelDataLicenseType: 8
     modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
@@ -463,6 +463,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!54 &1353128398
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -495,6 +496,7 @@ MonoBehaviour:
   Scalable: 0
   UniformScaling: 0
   GroupId: 100
+  NodeIndex: 0
 --- !u!65 &1353128400
 BoxCollider:
   m_ObjectHideFlags: 0
