@@ -277,254 +277,252 @@ local EmitResetMessage = function (broadcast, reason)
     })
 end
 
-updateAll = (function ()
-    local UpdateCw = cytanb.CreateUpdateRoutine(
-        function (deltaTime, unscaledDeltaTime)
-            settings.lsp.UpdateAlive()
-            panelControllerGlue.Update()
+local UpdateCw = cytanb.CreateUpdateRoutine(
+    function (deltaTime, unscaledDeltaTime)
+        settings.lsp.UpdateAlive()
+        panelControllerGlue.Update()
 
-            for name, switch in pairs(slideSwitchMap) do
-                switch.Update()
+        for name, switch in pairs(slideSwitchMap) do
+            switch.Update()
+        end
+
+        if deltaTime <= TimeSpan.Zero then
+            return
+        end
+
+        if panelBase.IsMine then
+            local now = vci.me.UnscaledTime
+            if not panelBaseStatus.grabbed then
+                -- 傾きの変更を、インターバルを設けてメッセージで通知する
+                if panelBaseStatus.tiltChanged and now >= panelBaseStatus.tiltSentTime + settings.minRequestIntervalTime then
+                    panelBaseStatus.tiltChanged = false
+                    panelBaseStatus.tiltSentTime = now
+
+                    if panelBase.IsMine then
+                        cytanb.EmitMessage(changePanelBaseMessageName, {
+                            senderID = cytanb.ClientID(),
+                            panelBase = CreatePanelBaseStatusParameter()
+                        })
+                    end
+                end
+
+                -- パネルの位置関係を、インターバルを設けて直す
+                if now >= panelBaseStatus.lastMendedTime + settings.panelMendIntervalTime then
+                    MendAllPanels()
+                end
             end
 
-            if deltaTime <= TimeSpan.Zero then
+            if resetSwitchStatus.gripPressed and now - settings.resetOperationTime > resetSwitchStatus.gripStartTime then
+                -- グリップ長押しでリセットする
+                resetSwitchStatus.gripStartTime = TimeSpan.MaxValue
+                EmitResetMessage(true, 'ButtonLongPressed')
+            elseif panelBaseStatus.gameCompletedTime > TimeSpan.Zero and now >= panelBaseStatus.gameCompletedTime + settings.autoResetWaitingTime then
+                -- 時間経過による自動リセット
+                panelBaseStatus.gameCompletedTime = TimeSpan.Zero
+                cytanb.LogTrace('AutoReset: emit resetAll')
+                EmitResetMessage(false, 'AutoReset @OnUpdate')
+            end
+        end
+
+        if panelBaseStatus.operatorLampOn ~= panelBase.IsMine then
+            -- ランプの状態を変更する
+            panelBaseStatus.operatorLampOn = not panelBaseStatus.operatorLampOn
+            panelControllerOperatorLamp.SetLocalPosition(panelBaseStatus.operatorLampOn and Vector3.zero or hiddenPosition)
+            panelFrameOperatorLamp.SetLocalPosition(panelBaseStatus.operatorLampOn and Vector3.zero or hiddenPosition)
+        end
+    end,
+
+    function ()
+        cytanb.LogTrace('OnLoad')
+        settings.lsp.UpdateAlive()
+        vciLoaded = true
+
+        local uuid = cytanb.UUIDFromString(cytanb.InstanceID())
+        hiddenPosition = Vector3.__new(uuid[1] / 0x100000, 0x1000, uuid[2] / 0x100000)
+        -- cytanb.LogTrace('hiddenPosition: ', hiddenPosition)
+
+        ignoredColliderMap = cytanb.Extend(
+            cytanb.ListToMap(settings.avatarColliders, true),
+            cytanb.ListToMap(settings.envColliders, true),
+            false, false
+        )
+
+        panelBase = cytanb.NillableValue(vci.assets.GetSubItem(settings.panelBaseName))
+        panelTilt = cytanb.NillableValue(vci.assets.GetTransform(settings.panelTiltName))
+
+        panelMap = {}
+
+        for i = 1, settings.panelCount do
+            local name = settings.panelColliderPrefix .. i
+
+            ignoredColliderMap[name] = true
+
+            local panel = {
+                index = i,
+                name = name,
+                item = cytanb.NillableValue(vci.assets.GetSubItem(name)),
+                posItem = cytanb.NillableValue(vci.assets.GetTransform(settings.panelPosPrefix .. i)),
+                meshItem = cytanb.NillableValue(vci.assets.GetTransform(settings.panelMeshPrefix .. i)),
+                active = true,
+                inactiveTime = TimeSpan.Zero,
+            }
+
+            panelMap[panel.name] = panel
+        end
+
+        panelController = cytanb.NillableValue(vci.assets.GetSubItem(settings.panelControllerName))
+        panelControllerOperatorLamp = cytanb.NillableValue(vci.assets.GetTransform(settings.panelControllerOperatorLampName))
+        panelFrameOperatorLamp = cytanb.NillableValue(vci.assets.GetTransform(settings.panelFrameOperatorLampName))
+        panelControllerGlue = cytanb.CreateSubItemGlue()
+
+        slideSwitchMap = {}
+
+        audioVolumeSwitch = cytanb.CreateSlideSwitch({
+            colliderItem = cytanb.NillableValue(vci.assets.GetSubItem(settings.audioVolumeSwitchName)),
+            knobItem = cytanb.NillableValue(vci.assets.GetTransform(settings.audioVolumeKnobName)),
+            baseItem = cytanb.NillableValue(vci.assets.GetTransform(settings.audioVolumeKnobPos)),
+            tickVector = settings.tickVector,
+            minValue = settings.audioVolumeMinValue,
+            maxValue = settings.audioVolumeMaxValue,
+            lsp = settings.lsp,
+            propertyName = settings.audioVolumePropertyName
+        })
+        audioVolumeSwitch.AddListener(function (source, value)
+            cytanb.LogTrace('switch[', source.GetColliderItem().GetName(), '] value changed: ', value)
+        end)
+        slideSwitchMap[settings.audioVolumeSwitchName] = audioVolumeSwitch
+
+        tiltSwitch = cytanb.CreateSlideSwitch({
+            colliderItem = cytanb.NillableValue(vci.assets.GetSubItem(settings.tiltSwitchName)),
+            knobItem = cytanb.NillableValue(vci.assets.GetTransform(settings.tiltKnobName)),
+            baseItem = cytanb.NillableValue(vci.assets.GetTransform(settings.tiltKnobPos)),
+            tickVector = settings.tickVector,
+            minValue = settings.tiltMinValue,
+            maxValue = settings.tiltMaxValue
+        })
+        tiltSwitch.AddListener(function (source, value)
+            cytanb.LogTrace('switch[', source.GetColliderItem().GetName(), '] value changed: ', value)
+            SetPanelBaseTilt(value)
+            panelBaseStatus.tiltChanged = true
+        end)
+        slideSwitchMap[settings.tiltSwitchName] = tiltSwitch
+
+        resetSwitch = cytanb.NillableValue(vci.assets.GetSubItem(settings.resetSwitchName))
+        panelControllerGlue.Add(cytanb.NillableValue(vci.assets.GetTransform(settings.resetSwitchMesh)), resetSwitch)
+
+        breakEfkContainer = cytanb.NillableValue(vci.assets.GetTransform(settings.breakEfkContainerName))
+        breakEfk = cytanb.NillableValue(vci.assets.GetEffekseerEmitter(settings.breakEfkContainerName))
+
+        settings.lsp.AddListener(function (source, key, value, oldValue)
+            if key == cytanb.LOCAL_SHARED_PROPERTY_EXPIRED_KEY then
+                -- cytanb.LogTrace('lsp: expired')
+                vciLoaded = false
+            end
+        end)
+
+        local OnChangePanelBase = function (parameterMap)
+            cytanb.LogTrace('OnChangePanelBase')
+            cytanb.NillableIfHasValue(parameterMap.panelBase, function (base)
+                cytanb.NillableIfHasValue(base.tiltAngle, function (tiltAngle)
+                    tiltSwitch.SetValue(tiltAngle)
+                end)
+            end)
+        end
+
+        cytanb.OnMessage(resetMessageName, function (sender, name, parameterMap)
+            -- ブロードキャストか、自己のインスタンスから送られた、リセットメッセージを処理する
+            if parameterMap.resetAll and (parameterMap.broadcast or parameterMap[cytanb.InstanceIDParameterName] == cytanb.InstanceID()) then
+                cytanb.LogTrace('on resetAll: ', cytanb.Vars(parameterMap))
+                ResetAll()
+            end
+        end)
+
+        cytanb.OnInstanceMessage(breakPanelMessageName, function (sender, name, parameterMap)
+            cytanb.NillableIfHasValue(parameterMap.target, function (panelParameters)
+                cytanb.NillableIfHasValue(panelMap[panelParameters.name], function (panel)
+                    BreakPanel(panel)
+                end)
+            end)
+        end)
+
+        cytanb.OnInstanceMessage(changePanelBaseMessageName, function (sender, name, parameterMap)
+            if parameterMap.senderID ~= cytanb.ClientID() then
+                OnChangePanelBase(parameterMap)
+            end
+        end)
+
+        -- マスターが交代したときのことを考慮して、全ユーザーが OnMessage で登録する。
+        cytanb.OnInstanceMessage(queryStatusMessageName, function (sender, name, parameterMap)
+            if not vci.assets.IsMine then
+                -- マスターでなければリターンする。
                 return
             end
 
-            if panelBase.IsMine then
-                local now = vci.me.UnscaledTime
-                if not panelBaseStatus.grabbed then
-                    -- 傾きの変更を、インターバルを設けてメッセージで通知する
-                    if panelBaseStatus.tiltChanged and now >= panelBaseStatus.tiltSentTime + settings.minRequestIntervalTime then
-                        panelBaseStatus.tiltChanged = false
-                        panelBaseStatus.tiltSentTime = now
-
-                        if panelBase.IsMine then
-                            cytanb.EmitMessage(changePanelBaseMessageName, {
-                                senderID = cytanb.ClientID(),
-                                panelBase = CreatePanelBaseStatusParameter()
-                            })
-                        end
-                    end
-
-                    -- パネルの位置関係を、インターバルを設けて直す
-                    if now >= panelBaseStatus.lastMendedTime + settings.panelMendIntervalTime then
-                        MendAllPanels()
-                    end
-                end
-
-                if resetSwitchStatus.gripPressed and now - settings.resetOperationTime > resetSwitchStatus.gripStartTime then
-                    -- グリップ長押しでリセットする
-                    resetSwitchStatus.gripStartTime = TimeSpan.MaxValue
-                    EmitResetMessage(true, 'ButtonLongPressed')
-                elseif panelBaseStatus.gameCompletedTime > TimeSpan.Zero and now >= panelBaseStatus.gameCompletedTime + settings.autoResetWaitingTime then
-                    -- 時間経過による自動リセット
-                    panelBaseStatus.gameCompletedTime = TimeSpan.Zero
-                    cytanb.LogTrace('AutoReset: emit resetAll')
-                    EmitResetMessage(false, 'AutoReset @OnUpdate')
-                end
+            local panelStatusList = {}
+            for key, panel in pairs(panelMap) do
+                panelStatusList[panel.index] = CreatePanelStatusParameter(panel)
             end
 
-            if panelBaseStatus.operatorLampOn ~= panelBase.IsMine then
-                -- ランプの状態を変更する
-                panelBaseStatus.operatorLampOn = not panelBaseStatus.operatorLampOn
-                panelControllerOperatorLamp.SetLocalPosition(panelBaseStatus.operatorLampOn and Vector3.zero or hiddenPosition)
-                panelFrameOperatorLamp.SetLocalPosition(panelBaseStatus.operatorLampOn and Vector3.zero or hiddenPosition)
-            end
-        end,
-
-        function ()
-            cytanb.LogTrace('OnLoad')
-            settings.lsp.UpdateAlive()
-            vciLoaded = true
-
-            local uuid = cytanb.UUIDFromString(cytanb.InstanceID())
-            hiddenPosition = Vector3.__new(uuid[1] / 0x100000, 0x1000, uuid[2] / 0x100000)
-            -- cytanb.LogTrace('hiddenPosition: ', hiddenPosition)
-
-            ignoredColliderMap = cytanb.Extend(
-                cytanb.ListToMap(settings.avatarColliders, true),
-                cytanb.ListToMap(settings.envColliders, true),
-                false, false
-            )
-
-            panelBase = cytanb.NillableValue(vci.assets.GetSubItem(settings.panelBaseName))
-            panelTilt = cytanb.NillableValue(vci.assets.GetTransform(settings.panelTiltName))
-
-            panelMap = {}
-
-            for i = 1, settings.panelCount do
-                local name = settings.panelColliderPrefix .. i
-
-                ignoredColliderMap[name] = true
-
-                local panel = {
-                    index = i,
-                    name = name,
-                    item = cytanb.NillableValue(vci.assets.GetSubItem(name)),
-                    posItem = cytanb.NillableValue(vci.assets.GetTransform(settings.panelPosPrefix .. i)),
-                    meshItem = cytanb.NillableValue(vci.assets.GetTransform(settings.panelMeshPrefix .. i)),
-                    active = true,
-                    inactiveTime = TimeSpan.Zero,
-                }
-
-                panelMap[panel.name] = panel
-            end
-
-            panelController = cytanb.NillableValue(vci.assets.GetSubItem(settings.panelControllerName))
-            panelControllerOperatorLamp = cytanb.NillableValue(vci.assets.GetTransform(settings.panelControllerOperatorLampName))
-            panelFrameOperatorLamp = cytanb.NillableValue(vci.assets.GetTransform(settings.panelFrameOperatorLampName))
-            panelControllerGlue = cytanb.CreateSubItemGlue()
-
-            slideSwitchMap = {}
-
-            audioVolumeSwitch = cytanb.CreateSlideSwitch({
-                colliderItem = cytanb.NillableValue(vci.assets.GetSubItem(settings.audioVolumeSwitchName)),
-                knobItem = cytanb.NillableValue(vci.assets.GetTransform(settings.audioVolumeKnobName)),
-                baseItem = cytanb.NillableValue(vci.assets.GetTransform(settings.audioVolumeKnobPos)),
-                tickVector = settings.tickVector,
-                minValue = settings.audioVolumeMinValue,
-                maxValue = settings.audioVolumeMaxValue,
-                lsp = settings.lsp,
-                propertyName = settings.audioVolumePropertyName
+            cytanb.EmitMessage(statusMessageName, {
+                senderID = cytanb.ClientID(),
+                panelBase = CreatePanelBaseStatusParameter(),
+                panels = panelStatusList
             })
-            audioVolumeSwitch.AddListener(function (source, value)
-                cytanb.LogTrace('switch[', source.GetColliderItem().GetName(), '] value changed: ', value)
-            end)
-            slideSwitchMap[settings.audioVolumeSwitchName] = audioVolumeSwitch
+        end)
 
-            tiltSwitch = cytanb.CreateSlideSwitch({
-                colliderItem = cytanb.NillableValue(vci.assets.GetSubItem(settings.tiltSwitchName)),
-                knobItem = cytanb.NillableValue(vci.assets.GetTransform(settings.tiltKnobName)),
-                baseItem = cytanb.NillableValue(vci.assets.GetTransform(settings.tiltKnobPos)),
-                tickVector = settings.tickVector,
-                minValue = settings.tiltMinValue,
-                maxValue = settings.tiltMaxValue
-            })
-            tiltSwitch.AddListener(function (source, value)
-                cytanb.LogTrace('switch[', source.GetColliderItem().GetName(), '] value changed: ', value)
-                SetPanelBaseTilt(value)
-                panelBaseStatus.tiltChanged = true
-            end)
-            slideSwitchMap[settings.tiltSwitchName] = tiltSwitch
+        cytanb.OnInstanceMessage(statusMessageName, function (sender, name, parameterMap)
+            if parameterMap.senderID ~= cytanb.ClientID() then
+                cytanb.LogTrace('on statusMessage')
+                OnChangePanelBase(parameterMap)
 
-            resetSwitch = cytanb.NillableValue(vci.assets.GetSubItem(settings.resetSwitchName))
-            panelControllerGlue.Add(cytanb.NillableValue(vci.assets.GetTransform(settings.resetSwitchMesh)), resetSwitch)
-
-            breakEfkContainer = cytanb.NillableValue(vci.assets.GetTransform(settings.breakEfkContainerName))
-            breakEfk = cytanb.NillableValue(vci.assets.GetEffekseerEmitter(settings.breakEfkContainerName))
-
-            settings.lsp.AddListener(function (source, key, value, oldValue)
-                if key == cytanb.LOCAL_SHARED_PROPERTY_EXPIRED_KEY then
-                    -- cytanb.LogTrace('lsp: expired')
-                    vciLoaded = false
-                end
-            end)
-
-            local OnChangePanelBase = function (parameterMap)
-                cytanb.LogTrace('OnChangePanelBase')
-                cytanb.NillableIfHasValue(parameterMap.panelBase, function (base)
-                    cytanb.NillableIfHasValue(base.tiltAngle, function (tiltAngle)
-                        tiltSwitch.SetValue(tiltAngle)
-                    end)
-                end)
-            end
-
-            cytanb.OnMessage(resetMessageName, function (sender, name, parameterMap)
-                -- ブロードキャストか、自己のインスタンスから送られた、リセットメッセージを処理する
-                if parameterMap.resetAll and (parameterMap.broadcast or parameterMap[cytanb.InstanceIDParameterName] == cytanb.InstanceID()) then
-                    cytanb.LogTrace('on resetAll: ', cytanb.Vars(parameterMap))
-                    ResetAll()
-                end
-            end)
-
-            cytanb.OnInstanceMessage(breakPanelMessageName, function (sender, name, parameterMap)
-                cytanb.NillableIfHasValue(parameterMap.target, function (panelParameters)
+                for key, panelParameters in pairs(parameterMap.panels) do
                     cytanb.NillableIfHasValue(panelMap[panelParameters.name], function (panel)
-                        BreakPanel(panel)
+                        -- cytanb.LogTrace('panelParameters.active: ', panelParameters.active, ', panel.active = ', panel.active)
+                        if panelParameters.active ~= panel.active then
+                            -- 通知された状態と異なれば、変更を行う
+                            panel.active = panelParameters.active
+                            ShowPanelMesh(panel, panel.active)
+                        end
                     end)
-                end)
-            end)
-
-            cytanb.OnInstanceMessage(changePanelBaseMessageName, function (sender, name, parameterMap)
-                if parameterMap.senderID ~= cytanb.ClientID() then
-                    OnChangePanelBase(parameterMap)
                 end
-            end)
+            end
+        end)
 
-            -- マスターが交代したときのことを考慮して、全ユーザーが OnMessage で登録する。
-            cytanb.OnInstanceMessage(queryStatusMessageName, function (sender, name, parameterMap)
-                if not vci.assets.IsMine then
-                    -- マスターでなければリターンする。
+        -- ターゲットにヒットしたメッセージが、別 VCI から送られてくる。
+        cytanb.OnMessage(hitMessageName, function (sender, name, parameterMap)
+            cytanb.NillableIfHasValue(parameterMap.source, function (source)
+                if not source.position then
                     return
                 end
 
-                local panelStatusList = {}
-                for key, panel in pairs(panelMap) do
-                    panelStatusList[panel.index] = CreatePanelStatusParameter(panel)
-                end
+                cytanb.NillableIfHasValue(parameterMap.target, function (targetParameters)
+                    cytanb.NillableIfHasValue(panelMap[targetParameters.name], function (panel)
+                        if not panel.item.IsMine then
+                            return
+                        end
 
-                cytanb.EmitMessage(statusMessageName, {
-                    senderID = cytanb.ClientID(),
-                    panelBase = CreatePanelBaseStatusParameter(),
-                    panels = panelStatusList
-                })
-            end)
-
-            cytanb.OnInstanceMessage(statusMessageName, function (sender, name, parameterMap)
-                if parameterMap.senderID ~= cytanb.ClientID() then
-                    cytanb.LogTrace('on statusMessage')
-                    OnChangePanelBase(parameterMap)
-
-                    for key, panelParameters in pairs(parameterMap.panels) do
-                        cytanb.NillableIfHasValue(panelMap[panelParameters.name], function (panel)
-                            -- cytanb.LogTrace('panelParameters.active: ', panelParameters.active, ', panel.active = ', panel.active)
-                            if panelParameters.active ~= panel.active then
-                                -- 通知された状態と異なれば、変更を行う
-                                panel.active = panelParameters.active
-                                ShowPanelMesh(panel, panel.active)
+                        if IsContactWithTarget(source.position, source.longSide or 0.5, panel.item.GetPosition(), settings.panelSimLongSide) then
+                            if PanelCollided(panel) then
+                                cytanb.LogTrace('    @on hit message: source = ', source.name or '[unknown]')
                             end
-                        end)
-                    end
-                end
-            end)
-
-            -- ターゲットにヒットしたメッセージが、別 VCI から送られてくる。
-            cytanb.OnMessage(hitMessageName, function (sender, name, parameterMap)
-                cytanb.NillableIfHasValue(parameterMap.source, function (source)
-                    if not source.position then
-                        return
-                    end
-
-                    cytanb.NillableIfHasValue(parameterMap.target, function (targetParameters)
-                        cytanb.NillableIfHasValue(panelMap[targetParameters.name], function (panel)
-                            if not panel.item.IsMine then
-                                return
-                            end
-
-                            if IsContactWithTarget(source.position, source.longSide or 0.5, panel.item.GetPosition(), settings.panelSimLongSide) then
-                                if PanelCollided(panel) then
-                                    cytanb.LogTrace('    @on hit message: source = ', source.name or '[unknown]')
-                                end
-                            end
-                        end)
+                        end
                     end)
                 end)
             end)
+        end)
 
-            ResetAll()
-            SetPanelBaseTilt(tiltSwitch.GetValue())
+        ResetAll()
+        SetPanelBaseTilt(tiltSwitch.GetValue())
 
-            -- 現在のステータスを問い合わせる。
-            -- 設置者よりも、ゲストのロードが早いケースを考慮して、全ユーザーがクエリーメッセージを送る。
-            cytanb.EmitMessage(queryStatusMessageName)
-        end
-    )
-
-    return function ()
-        UpdateCw()
+        -- 現在のステータスを問い合わせる。
+        -- 設置者よりも、ゲストのロードが早いケースを考慮して、全ユーザーがクエリーメッセージを送る。
+        cytanb.EmitMessage(queryStatusMessageName)
     end
-end)()
+)
+
+updateAll = function ()
+    UpdateCw()
+end
 
 onGrab = function (target)
     if not vciLoaded then

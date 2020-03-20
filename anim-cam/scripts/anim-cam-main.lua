@@ -413,88 +413,87 @@ local EmitDirectiveStateMessage = function ()
     cytanb.EmitMessage(directiveStateMessageName, {state = state, trackIndex = trackIndex})
 end
 
-updateAll = (function ()
-    local UpdateCw = cytanb.CreateUpdateRoutine(
-        function (deltaTime, unscaledDeltaTime)
-            if deltaTime <= TimeSpan.Zero then
+local UpdateCw = cytanb.CreateUpdateRoutine(
+    function (deltaTime, unscaledDeltaTime)
+        if deltaTime <= TimeSpan.Zero then
+            return
+        end
+
+        camSwitchConnector.Update()
+
+        if vci.assets.IsMine then
+            directiveProcessor.Update()
+            local state = directiveProcessor.GetState()
+            local trackIndex = directiveProcessor.GetTrackIndex()
+            if state ~= lastDirectiveState or trackIndex ~= lastDirectiveTrackIndex then
+                lastDirectiveState = state
+                lastDirectiveTrackIndex = trackIndex
+                EmitDirectiveStateMessage()
+            end
+        end
+    end,
+
+    function ()
+        cytanb.LogTrace('OnLoad')
+        vciLoaded = true
+
+        if vci.assets.IsMine and conf.camContainerToWorldOrigin then
+            camContainer.SetPosition(Vector3.zero)
+            camContainer.SetRotation(Quaternion.identity)
+        end
+
+        if cytanb.NillableHasValue(nillableCamSwitch) then
+            vci.assets.SetMaterialTextureOffsetFromName(conf.camSwitchName, multiTrackSwitchEnabled and conf.camSwitchTextureOffset or Vector2.zero)
+            SetDisplayTrackIndex(directiveProcessor.GetTrackIndex())
+        end
+
+        cytanb.OnInstanceMessage(commandMessageName, function (sender, name, parameterMap)
+            if not vci.assets.IsMine then
                 return
             end
 
-            camSwitchConnector.Update()
+            local command = parameterMap.command
+            cytanb.LogTrace('onCommandMessage: ', command)
+            if command == CommandMessageParameter.togglePlay then
+                if directiveProcessor.GetState() == DirectiveProcessorState.processing then
+                    directiveProcessor.Stop()
+                else
+                    directiveProcessor.Start()
+                end
+            elseif command == CommandMessageParameter.nextTrack then
+                directiveProcessor.NextTrack()
+            elseif command == CommandMessageParameter.prevTrack then
+                directiveProcessor.PrevTrack()
+            end
+        end)
 
+        cytanb.OnInstanceMessage(directiveStateMessageName, function (sender, name, parameterMap)
+            local state = parameterMap.state
+            local trackIndex = parameterMap.trackIndex
+            cytanb.LogInfo('onDirectiveStateMessage: state = ', state, ', trackIndex = ', trackIndex)
+            SetDisplayTrackIndex(trackIndex)
+        end)
+
+        cytanb.OnInstanceMessage(queryDirectiveStateMessageName, function (sender, name, parameterMap)
             if vci.assets.IsMine then
-                directiveProcessor.Update()
-                local state = directiveProcessor.GetState()
-                local trackIndex = directiveProcessor.GetTrackIndex()
-                if state ~= lastDirectiveState or trackIndex ~= lastDirectiveTrackIndex then
-                    lastDirectiveState = state
-                    lastDirectiveTrackIndex = trackIndex
-                    EmitDirectiveStateMessage()
-                end
+                cytanb.LogTrace('onQueryDirectiveStateMessage')
+                EmitDirectiveStateMessage()
             end
-        end,
-        function ()
-            cytanb.LogTrace('OnLoad')
-            vciLoaded = true
+        end)
 
-            if vci.assets.IsMine and conf.camContainerToWorldOrigin then
-                camContainer.SetPosition(Vector3.zero)
-                camContainer.SetRotation(Quaternion.identity)
-            end
-
-            if cytanb.NillableHasValue(nillableCamSwitch) then
-                vci.assets.SetMaterialTextureOffsetFromName(conf.camSwitchName, multiTrackSwitchEnabled and conf.camSwitchTextureOffset or Vector2.zero)
-                SetDisplayTrackIndex(directiveProcessor.GetTrackIndex())
-            end
-
-            cytanb.OnInstanceMessage(commandMessageName, function (sender, name, parameterMap)
-                if not vci.assets.IsMine then
-                    return
-                end
-
-                local command = parameterMap.command
-                cytanb.LogTrace('onCommandMessage: ', command)
-                if command == CommandMessageParameter.togglePlay then
-                    if directiveProcessor.GetState() == DirectiveProcessorState.processing then
-                        directiveProcessor.Stop()
-                    else
-                        directiveProcessor.Start()
-                    end
-                elseif command == CommandMessageParameter.nextTrack then
-                    directiveProcessor.NextTrack()
-                elseif command == CommandMessageParameter.prevTrack then
-                    directiveProcessor.PrevTrack()
-                end
-            end)
-
-            cytanb.OnInstanceMessage(directiveStateMessageName, function (sender, name, parameterMap)
-                local state = parameterMap.state
-                local trackIndex = parameterMap.trackIndex
-                cytanb.LogInfo('onDirectiveStateMessage: state = ', state, ', trackIndex = ', trackIndex)
-                SetDisplayTrackIndex(trackIndex)
-            end)
-
-            cytanb.OnInstanceMessage(queryDirectiveStateMessageName, function (sender, name, parameterMap)
-                if vci.assets.IsMine then
-                    cytanb.LogTrace('onQueryDirectiveStateMessage')
-                    EmitDirectiveStateMessage()
-                end
-            end)
-
-            if conf.playOnLoad then
-                directiveProcessor.Start()
-            end
-
-            if not vci.assets.IsMine then
-                cytanb.EmitMessage(queryDirectiveStateMessageName)
-            end
+        if conf.playOnLoad then
+            directiveProcessor.Start()
         end
-    )
 
-    return function ()
-        UpdateCw()
+        if not vci.assets.IsMine then
+            cytanb.EmitMessage(queryDirectiveStateMessageName)
+        end
     end
-end)()
+)
+
+updateAll = function ()
+    UpdateCw()
+end
 
 onUse = function (use)
     if not vciLoaded then

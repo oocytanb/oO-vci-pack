@@ -856,634 +856,632 @@ local ThrowBallByInputTiming = function ()
     OfferBallTransform(ballPos, ball.GetRotation())
 end
 
-updateAll = (function ()
-    --- 識別エフェクトの処理をする。
-    local OnUpdateDiscernibleEfk = function (deltaTime, unscaledDeltaTime)
-        if vci.assets.IsMine and not discernibleColorStatus.initialized and vci.me.UnscaledTime > discernibleColorStatus.checkRequestedTime + settings.requestIntervalTime then
-            -- 他のインスタンスの識別色と重複しないように、色を選択する
-            local lots = {}
-            local count = 0
-            for si = 0, cytanb.ColorSaturationSamples - 1 do
-                count = 0
-                for hi = 0, cytanb.ColorHueSamples - 2 do
-                    local index = hi + si * cytanb.ColorHueSamples
-                    if not discernibleColorStatus.existentIndexTable[index] then
-                        lots[count] = index
-                        count = count + 1
-                    end
-                end
-                if count >= 1 then
-                    break
+--- 識別エフェクトの処理をする。
+local OnUpdateDiscernibleEfk = function (deltaTime, unscaledDeltaTime)
+    if vci.assets.IsMine and not discernibleColorStatus.initialized and vci.me.UnscaledTime > discernibleColorStatus.checkRequestedTime + settings.requestIntervalTime then
+        -- 他のインスタンスの識別色と重複しないように、色を選択する
+        local lots = {}
+        local count = 0
+        for si = 0, cytanb.ColorSaturationSamples - 1 do
+            count = 0
+            for hi = 0, cytanb.ColorHueSamples - 2 do
+                local index = hi + si * cytanb.ColorHueSamples
+                if not discernibleColorStatus.existentIndexTable[index] then
+                    lots[count] = index
+                    count = count + 1
                 end
             end
-
-            local colorIndex = count == 0 and math.random(0, cytanb.ColorHueSamples - 1) or lots[math.random(0, count - 1)]
-            cytanb.LogDebug('discernibleColor initialized: colorIndex = ', colorIndex)
-            SetDiscernibleColor(cytanb.ColorFromIndex(colorIndex))
-
-            discernibleColorStatus.checkRequestedTime = TimeSpan.Zero
-            discernibleColorStatus.initialized = true
-
-            cytanb.EmitMessage(statusChangedMessageName, CreateDiscernibleColorParameter())
-        end
-
-        if not ballStatus.grabbed then
-            if not ballStatus.transformQueue.IsEmpty() and (ball.GetPosition() - ballStatus.transformQueue.PeekLast().position).sqrMagnitude > 0.0001 then
-                -- ボールが動いている時は、識別エフェクトを停止する。
-                ballDiscernibleEfkPlayer.Stop()
-            else
-                -- ボールが動いていない場合は、識別エフェクトを再生する
-                ballDiscernibleEfkPlayer.ContinualPlay()
+            if count >= 1 then
+                break
             end
         end
+
+        local colorIndex = count == 0 and math.random(0, cytanb.ColorHueSamples - 1) or lots[math.random(0, count - 1)]
+        cytanb.LogDebug('discernibleColor initialized: colorIndex = ', colorIndex)
+        SetDiscernibleColor(cytanb.ColorFromIndex(colorIndex))
+
+        discernibleColorStatus.checkRequestedTime = TimeSpan.Zero
+        discernibleColorStatus.initialized = true
+
+        cytanb.EmitMessage(statusChangedMessageName, CreateDiscernibleColorParameter())
     end
 
-    --- ゲージの表示を更新する。
-    local OnUpdateImpactGauge = function (deltaTime, unscaledDeltaTime)
-        if impactStatus.phase < 1 then
-            local now = vci.me.Time
-            if ballStatus.grabbed and ballStatus.gripPressed and now - settings.impactModeTransitionTime > ballStatus.gripStartTime and not IsInThrowingMotion() then
-                -- 連続して呼び出されないようにしておく
-                ballStatus.gripStartTime = TimeSpan.MaxValue
-
-                -- グリップ長押し状態で、運動による投球動作を行っていない場合は、タイミング入力に移行する。
-                cytanb.LogTrace('Start impact mode')
-                impactStatus.phase = 1
-                impactStatus.gaugeStartTime = now
-            else
-                -- タイミング入力状態ではないためリターンする。
-                return
-            end
-        end
-
-        if ballStatus.grabbed then
-            local ballPos = ball.GetPosition()
-            impactForceGauge.SetPosition(ballPos)
-            if impactStatus.phase >= 2 then
-                impactSpinGauge.SetPosition(ballPos)
-            end
-
-            if impactStatus.phase == 1 then
-                -- 方向の入力フェーズ
-                local ratio = settings.impactGaugeRatioPerSec * deltaTime.TotalSeconds
-                local angle = 180 * ratio
-                local rotD = Quaternion.AngleAxis(angle, Vector3.up)
-                -- cytanb.LogTrace('ratio: ', ratio, ', angle: ', angle, ', rotD : ', rotD)
-                impactForceGauge.SetRotation(impactForceGauge.GetRotation() * rotD)
-            elseif impactStatus.phase == 2 then
-                -- スピンの入力フェーズ
-                local ratio = cytanb.PingPong(settings.impactGaugeRatioPerSec * (vci.me.Time - impactStatus.gaugeStartTime).TotalSeconds + 0.5, 1) - 0.5
-                local angle = 180 * ratio
-                local rotD = Quaternion.AngleAxis(angle, Vector3.up)
-                -- cytanb.LogTrace('ratio: ', ratio, ', angle: ', angle, ', rotD : ', rotD)
-                impactSpinGauge.SetRotation(impactForceGauge.GetRotation() * rotD)
-
-                -- 境界付近の値を調整する
-                local absRatio = math.abs(ratio)
-                if absRatio <= 0.05 then
-                    impactStatus.spinGaugeRatio = 0
-                elseif absRatio >= 0.45 then
-                    impactStatus.spinGaugeRatio = ratio < 0 and -0.5 or 0.5
-                else
-                    impactStatus.spinGaugeRatio = ratio
-                end
-            elseif impactStatus.phase == 3 then
-                -- 威力の入力フェーズ
-                local ratio = cytanb.PingPong(settings.impactGaugeRatioPerSec * (vci.me.Time - impactStatus.gaugeStartTime).TotalSeconds, 1)
-                local offsetY = settings.impactGaugeMaxUV * ratio
-                -- cytanb.LogTrace('ratio: ', ratio, ', offsetY: ', offsetY)
-                vci.assets.SetMaterialTextureOffsetFromName(settings.impactForceGaugeMat, Vector2.__new(0, offsetY))
-
-                -- 境界付近の値を調整する
-                if ratio <= 0.05 then
-                    impactStatus.forceGaugeRatio = 0
-                elseif ratio >= 0.95 then
-                    impactStatus.forceGaugeRatio = 1
-                else
-                    impactStatus.forceGaugeRatio = ratio
-                end
-            end
+    if not ballStatus.grabbed then
+        if not ballStatus.transformQueue.IsEmpty() and (ball.GetPosition() - ballStatus.transformQueue.PeekLast().position).sqrMagnitude > 0.0001 then
+            -- ボールが動いている時は、識別エフェクトを停止する。
+            ballDiscernibleEfkPlayer.Stop()
         else
-            if vci.me.Time > impactStatus.gaugeStartTime + settings.impactGaugeDisplayTime then
-                -- ゲージの表示時間を終えた
-                impactStatus.phase = 0
-                impactForceGauge.SetPosition(hiddenPosition)
-                impactSpinGauge.SetPosition(hiddenPosition)
-            end
+            -- ボールが動いていない場合は、識別エフェクトを再生する
+            ballDiscernibleEfkPlayer.ContinualPlay()
+        end
+    end
+end
+
+--- ゲージの表示を更新する。
+local OnUpdateImpactGauge = function (deltaTime, unscaledDeltaTime)
+    if impactStatus.phase < 1 then
+        local now = vci.me.Time
+        if ballStatus.grabbed and ballStatus.gripPressed and now - settings.impactModeTransitionTime > ballStatus.gripStartTime and not IsInThrowingMotion() then
+            -- 連続して呼び出されないようにしておく
+            ballStatus.gripStartTime = TimeSpan.MaxValue
+
+            -- グリップ長押し状態で、運動による投球動作を行っていない場合は、タイミング入力に移行する。
+            cytanb.LogTrace('Start impact mode')
+            impactStatus.phase = 1
+            impactStatus.gaugeStartTime = now
+        else
+            -- タイミング入力状態ではないためリターンする。
+            return
         end
     end
 
-    --- ボールの更新処理をする。カーブさせるための計算をする。
-    local OnUpdateBall = function (deltaTime, unscaledDeltaTime)
+    if ballStatus.grabbed then
         local ballPos = ball.GetPosition()
-        local ballRot = ball.GetRotation()
-        local respawned = false
+        impactForceGauge.SetPosition(ballPos)
+        if impactStatus.phase >= 2 then
+            impactSpinGauge.SetPosition(ballPos)
+        end
 
-        if not ballStatus.grabbed and not ballStatus.transformQueue.IsEmpty() then
-            local now = vci.me.Time
-            local lastTransform = ballStatus.transformQueue.PeekLast()
-            local lastPos = lastTransform.position
+        if impactStatus.phase == 1 then
+            -- 方向の入力フェーズ
+            local ratio = settings.impactGaugeRatioPerSec * deltaTime.TotalSeconds
+            local angle = 180 * ratio
+            local rotD = Quaternion.AngleAxis(angle, Vector3.up)
+            -- cytanb.LogTrace('ratio: ', ratio, ', angle: ', angle, ', rotD : ', rotD)
+            impactForceGauge.SetRotation(impactForceGauge.GetRotation() * rotD)
+        elseif impactStatus.phase == 2 then
+            -- スピンの入力フェーズ
+            local ratio = cytanb.PingPong(settings.impactGaugeRatioPerSec * (vci.me.Time - impactStatus.gaugeStartTime).TotalSeconds + 0.5, 1) - 0.5
+            local angle = 180 * ratio
+            local rotD = Quaternion.AngleAxis(angle, Vector3.up)
+            -- cytanb.LogTrace('ratio: ', ratio, ', angle: ', angle, ', rotD : ', rotD)
+            impactSpinGauge.SetRotation(impactForceGauge.GetRotation() * rotD)
 
-            -- カップとの距離が離れていたら、ボールが転がっているものとして処理する
-            local cupSqrDistance = (ballPos - ballCup.GetPosition()).sqrMagnitude
-            if now > ballStatus.respawnTime + settings.ballRespawnCoolTime and cupSqrDistance > settings.ballActiveDistanceThreshold ^ 2 then
-                if now <= impactStatus.gaugeStartTime + settings.ballWaitingTime and cupSqrDistance <= settings.ballPlayAreaRadius ^ 2 then
-                    -- ボールの前回位置と現在位置から速度を計算する
-                    local deltaSec = deltaTime.TotalSeconds
-                    local velocity = (ballPos - lastPos) / deltaSec
+            -- 境界付近の値を調整する
+            local absRatio = math.abs(ratio)
+            if absRatio <= 0.05 then
+                impactStatus.spinGaugeRatio = 0
+            elseif absRatio >= 0.45 then
+                impactStatus.spinGaugeRatio = ratio < 0 and -0.5 or 0.5
+            else
+                impactStatus.spinGaugeRatio = ratio
+            end
+        elseif impactStatus.phase == 3 then
+            -- 威力の入力フェーズ
+            local ratio = cytanb.PingPong(settings.impactGaugeRatioPerSec * (vci.me.Time - impactStatus.gaugeStartTime).TotalSeconds, 1)
+            local offsetY = settings.impactGaugeMaxUV * ratio
+            -- cytanb.LogTrace('ratio: ', ratio, ', offsetY: ', offsetY)
+            vci.assets.SetMaterialTextureOffsetFromName(settings.impactForceGaugeMat, Vector2.__new(0, offsetY))
 
-                    if ball.IsMine then
-                        -- 角速度を計算する
-                        ballStatus.simAngularVelocity = ballStatus.simAngularVelocity * (1.0 - math.min(1.0, settings.ballSimAngularDrag * deltaSec))
-                        local angularVelocitySqrMagnitude = ballStatus.simAngularVelocity.sqrMagnitude
-                        if angularVelocitySqrMagnitude <= 0.0025 then
-                            ballStatus.simAngularVelocity = Vector3.zero
-                            angularVelocitySqrMagnitude = 0
-                        end
+            -- 境界付近の値を調整する
+            if ratio <= 0.05 then
+                impactStatus.forceGaugeRatio = 0
+            elseif ratio >= 0.95 then
+                impactStatus.forceGaugeRatio = 1
+            else
+                impactStatus.forceGaugeRatio = ratio
+            end
+        end
+    else
+        if vci.me.Time > impactStatus.gaugeStartTime + settings.impactGaugeDisplayTime then
+            -- ゲージの表示時間を終えた
+            impactStatus.phase = 0
+            impactForceGauge.SetPosition(hiddenPosition)
+            impactSpinGauge.SetPosition(hiddenPosition)
+        end
+    end
+end
 
-                        -- スピンを適用する処理
-                        local horzVelocity = Vector3.__new(velocity.x, 0, velocity.z)
-                        local velocityMagnitude = horzVelocity.magnitude
-                        if velocityMagnitude > 0.0025 and angularVelocitySqrMagnitude ~= 0 then
-                            -- 水平方向の力を計算する
-                            local rf = settings.ballSimAngularFactor * settings.ballSimMass * ballStatus.simAngularVelocity.y * math.min(settings.maxForceTimeRate, deltaSec / fixedTimestep.TotalSeconds)
-                            local vo = Vector3.Cross(Vector3.__new(0, rf, 0), horzVelocity / velocityMagnitude)
-                            local vca = Vector3.__new(vo.x, 0, vo.z)
-                            ball.AddForce(vca)
-                            -- cytanb.LogTrace('vca: ', vca, ', vo: ', vo, ', velocity: ', velocity)
-                        end
+--- ボールの更新処理をする。カーブさせるための計算をする。
+local OnUpdateBall = function (deltaTime, unscaledDeltaTime)
+    local ballPos = ball.GetPosition()
+    local ballRot = ball.GetRotation()
+    local respawned = false
 
-                        if ballPos.y < -0.25 and ballPos.y < lastPos.y then
-                            -- 床抜けの対策。
-                            local leapY = 0.125
-                            local minY = 0.25 - ballPos.y
-                            local dy = lastPos.y - ballPos.y
-                            local vy = dy * 0.5 + math.min(minY - leapY, dy * 0.25)
-                            local forceY = settings.ballSimMass * vy / deltaSec / fixedTimestep.TotalSeconds
-                            cytanb.LogDebug('leap ball: position = ', ballPos, ', vy = ', vy, ', forceY = ', forceY)
-                            ball.SetPosition(Vector3.__new(ballPos.x, leapY, ballPos.z))
-                            ball.AddForce(Vector3.__new(0, forceY, 0))
-                        elseif ballPos.y > settings.ballSimLongSide and math.abs(ballStatus.gravityFactor) > Vector3.kEpsilon then
-                            -- 重力処理
-                            local fixedSec = fixedTimestep.TotalSeconds
-                            local timeRate = deltaSec / fixedSec
-                            local accY
-                            if ballStatus.gravityFactor > 0.0 and timeRate > 1.0 and velocity.y <= 0.0 then
-                                -- 上向きに力を加える場合は、下向きに落下するはずが、フレームレートの減少による浮き上がりをなるべく抑える
-                                accY = math.min(ballStatus.gravityFactor - velocity.y / fixedSec, ballStatus.gravityFactor * timeRate)
-                            else
-                                accY = ballStatus.gravityFactor * math.min(settings.maxForceTimeRate, timeRate)
-                            end
-                            ball.AddForce(Vector3.__new(0, settings.ballSimMass * accY, 0))
-                        end
+    if not ballStatus.grabbed and not ballStatus.transformQueue.IsEmpty() then
+        local now = vci.me.Time
+        local lastTransform = ballStatus.transformQueue.PeekLast()
+        local lastPos = lastTransform.position
+
+        -- カップとの距離が離れていたら、ボールが転がっているものとして処理する
+        local cupSqrDistance = (ballPos - ballCup.GetPosition()).sqrMagnitude
+        if now > ballStatus.respawnTime + settings.ballRespawnCoolTime and cupSqrDistance > settings.ballActiveDistanceThreshold ^ 2 then
+            if now <= impactStatus.gaugeStartTime + settings.ballWaitingTime and cupSqrDistance <= settings.ballPlayAreaRadius ^ 2 then
+                -- ボールの前回位置と現在位置から速度を計算する
+                local deltaSec = deltaTime.TotalSeconds
+                local velocity = (ballPos - lastPos) / deltaSec
+
+                if ball.IsMine then
+                    -- 角速度を計算する
+                    ballStatus.simAngularVelocity = ballStatus.simAngularVelocity * (1.0 - math.min(1.0, settings.ballSimAngularDrag * deltaSec))
+                    local angularVelocitySqrMagnitude = ballStatus.simAngularVelocity.sqrMagnitude
+                    if angularVelocitySqrMagnitude <= 0.0025 then
+                        ballStatus.simAngularVelocity = Vector3.zero
+                        angularVelocitySqrMagnitude = 0
                     end
 
-                    local efkLevel = efkLevelSwitch.GetValue()
-                    if efkLevel == 5 and ball.IsMine then
-                        -- レベル 5 で、ボールの操作権があるときは、レベル 6 のエフェクトを表示する
-                        efkLevel = 6
+                    -- スピンを適用する処理
+                    local horzVelocity = Vector3.__new(velocity.x, 0, velocity.z)
+                    local velocityMagnitude = horzVelocity.magnitude
+                    if velocityMagnitude > 0.0025 and angularVelocitySqrMagnitude ~= 0 then
+                        -- 水平方向の力を計算する
+                        local rf = settings.ballSimAngularFactor * settings.ballSimMass * ballStatus.simAngularVelocity.y * math.min(settings.maxForceTimeRate, deltaSec / fixedTimestep.TotalSeconds)
+                        local vo = Vector3.Cross(Vector3.__new(0, rf, 0), horzVelocity / velocityMagnitude)
+                        local vca = Vector3.__new(vo.x, 0, vo.z)
+                        ball.AddForce(vca)
+                        -- cytanb.LogTrace('vca: ', vca, ', vo: ', vo, ', velocity: ', velocity)
                     end
 
-                    if efkLevel >= 8 or (efkLevel >= 6 and not ballStatus.grabbed) then
-                        local vm = velocity.magnitude
-                        if vm >= settings.ballTrailVelocityThreshold then
-                            local near = cupSqrDistance <= settings.ballNearDistance ^ 2
-                            local vmNodes = math.max(1, math.ceil(vm / (settings.ballSimLongSide * settings.ballTrailInterpolationDistanceFactor * (near and 0.5 or 1.0) / deltaSec)))
-                            local nodes = math.min(vmNodes, settings.ballTrailInterpolationNodesPerFrame + cytanb.Clamp(math.floor((efkLevel - 6 + (near and 1 or 0)) * 2), 0, 4))
-                            local iNodes = 1.0 / nodes
-                            local efk
-                            if near then
-                                -- 近距離の場合は、エフェクトレベルに合わせる
-                                if efkLevel >= 8 then
-                                    efk = ballEfkFadeMove
-                                elseif efkLevel == 7 then
-                                    efk = ballEfkFade
-                                else
-                                    efk = ballEfk
-                                end
-                            elseif cupSqrDistance >= settings.ballFarDistance ^ 2 then
-                                -- 遠距離の場合は、簡易エフェクト
-                                efk = ballEfkOne
+                    if ballPos.y < -0.25 and ballPos.y < lastPos.y then
+                        -- 床抜けの対策。
+                        local leapY = 0.125
+                        local minY = 0.25 - ballPos.y
+                        local dy = lastPos.y - ballPos.y
+                        local vy = dy * 0.5 + math.min(minY - leapY, dy * 0.25)
+                        local forceY = settings.ballSimMass * vy / deltaSec / fixedTimestep.TotalSeconds
+                        cytanb.LogDebug('leap ball: position = ', ballPos, ', vy = ', vy, ', forceY = ', forceY)
+                        ball.SetPosition(Vector3.__new(ballPos.x, leapY, ballPos.z))
+                        ball.AddForce(Vector3.__new(0, forceY, 0))
+                    elseif ballPos.y > settings.ballSimLongSide and math.abs(ballStatus.gravityFactor) > Vector3.kEpsilon then
+                        -- 重力処理
+                        local fixedSec = fixedTimestep.TotalSeconds
+                        local timeRate = deltaSec / fixedSec
+                        local accY
+                        if ballStatus.gravityFactor > 0.0 and timeRate > 1.0 and velocity.y <= 0.0 then
+                            -- 上向きに力を加える場合は、下向きに落下するはずが、フレームレートの減少による浮き上がりをなるべく抑える
+                            accY = math.min(ballStatus.gravityFactor - velocity.y / fixedSec, ballStatus.gravityFactor * timeRate)
+                        else
+                            accY = ballStatus.gravityFactor * math.min(settings.maxForceTimeRate, timeRate)
+                        end
+                        ball.AddForce(Vector3.__new(0, settings.ballSimMass * accY, 0))
+                    end
+                end
+
+                local efkLevel = efkLevelSwitch.GetValue()
+                if efkLevel == 5 and ball.IsMine then
+                    -- レベル 5 で、ボールの操作権があるときは、レベル 6 のエフェクトを表示する
+                    efkLevel = 6
+                end
+
+                if efkLevel >= 8 or (efkLevel >= 6 and not ballStatus.grabbed) then
+                    local vm = velocity.magnitude
+                    if vm >= settings.ballTrailVelocityThreshold then
+                        local near = cupSqrDistance <= settings.ballNearDistance ^ 2
+                        local vmNodes = math.max(1, math.ceil(vm / (settings.ballSimLongSide * settings.ballTrailInterpolationDistanceFactor * (near and 0.5 or 1.0) / deltaSec)))
+                        local nodes = math.min(vmNodes, settings.ballTrailInterpolationNodesPerFrame + cytanb.Clamp(math.floor((efkLevel - 6 + (near and 1 or 0)) * 2), 0, 4))
+                        local iNodes = 1.0 / nodes
+                        local efk
+                        if near then
+                            -- 近距離の場合は、エフェクトレベルに合わせる
+                            if efkLevel >= 8 then
+                                efk = ballEfkFadeMove
+                            elseif efkLevel == 7 then
+                                efk = ballEfkFade
                             else
-                                -- それ以外の場合は、通常エフェクト
                                 efk = ballEfk
                             end
+                        elseif cupSqrDistance >= settings.ballFarDistance ^ 2 then
+                            -- 遠距離の場合は、簡易エフェクト
+                            efk = ballEfkOne
+                        else
+                            -- それ以外の場合は、通常エフェクト
+                            efk = ballEfk
+                        end
 
-                            -- cytanb.LogTrace('ballEfk: nodes = ', nodes, ', vmNodes = ', vmNodes, ', near = ', near, ', efkName = ', efk.EffectName)
-                            for i = 1, nodes do
-                                local trailPos = Vector3.Lerp(lastPos, ballPos, i * iNodes)
-                                -- cytanb.LogTrace('  ballEfk lerp: velocity.sqrMagnitude = ', vm, ', lerp nodes = ', nodes, ', trailPos = ', trailPos)
-                                ballEfkContainer.SetPosition(trailPos)
-                                efk.Play()
-                            end
+                        -- cytanb.LogTrace('ballEfk: nodes = ', nodes, ', vmNodes = ', vmNodes, ', near = ', near, ', efkName = ', efk.EffectName)
+                        for i = 1, nodes do
+                            local trailPos = Vector3.Lerp(lastPos, ballPos, i * iNodes)
+                            -- cytanb.LogTrace('  ballEfk lerp: velocity.sqrMagnitude = ', vm, ', lerp nodes = ', nodes, ', trailPos = ', trailPos)
+                            ballEfkContainer.SetPosition(trailPos)
+                            efk.Play()
                         end
                     end
-                elseif ball.IsMine and not ballCupStatus.grabbed then
-                    -- タイムアウトしたかエリア外に出たボールをカップへ戻す。
-                    cytanb.LogTrace('elapsed: ' , (now - impactStatus.gaugeStartTime).TotalSeconds, ', sqrDistance: ', cupSqrDistance)
-                    RespawnBall()
-                    respawned = true
                 end
-            end
-        end
-
-        if not respawned then
-            OfferBallTransform(ballPos, ballRot)
-        end
-    end
-
-    --- ライトが倒れた判定、復活処理を行う。
-    local OnUpdateStandLight = function (deltaTime, unscaledDeltaTime)
-        local needBuilding = false
-        local targets = {}
-        for lightName, light in pairs(standLights) do
-            local li = light.item
-            local ls = light.status
-            local horizontalAttitude = IsHorizontalAttitude(li.GetRotation(), Vector3.up, settings.standLightHorizontalAttitudeThreshold)
-            if horizontalAttitude then
-                if not ls.active then
-                    -- 復活した
-                    cytanb.LogTrace('change [', lightName, '] state to active')
-                    ls.active = true
-                end
-            else
-                local now = vci.me.Time
-                if ls.active then
-                    -- 倒れたことを検知した
-                    cytanb.TraceLog('change [', lightName, '] state to inactive')
-                    ls.active = false
-                    ls.inactiveTime = now
-                    if now <= ls.readyInactiveTime + settings.requestIntervalTime then
-                        cytanb.TraceLog('  call HitStandLight: ', lightName, ', directHit = ', ls.directHit, ' @OnUpdateStandLight')
-                        HitStandLight(light)
-                    end
-                elseif li.IsMine then
-                    if not ls.buildFlag then
-                        -- リスポーンしてから一定時間内に倒れたか、倒れてから時間経過した場合は、復活させる。
-                        ls.buildFlag = (now >= ls.respawnTime + settings.standLightMinRebuildTime and now <= ls.respawnTime + settings.standLightMaxRebuildTime) or
-                                            (now > ls.inactiveTime + settings.standLightWaitingTime)
-                    end
-
-                    if ls.buildFlag then
-                        needBuilding = true
-                        targets[light.index] = { name = lightName }
-                    end
-                end
-            end
-        end
-
-        local unow = vci.me.UnscaledTime
-        if unow > standLightsLastRequestTime + settings.requestIntervalTime then
-            standLightsLastRequestTime = unow
-            if needBuilding then
-                cytanb.LogTrace('request buildStandLight')
-                cytanb.EmitMessage(buildStandLightMessageName, {targets = targets})
+            elseif ball.IsMine and not ballCupStatus.grabbed then
+                -- タイムアウトしたかエリア外に出たボールをカップへ戻す。
+                cytanb.LogTrace('elapsed: ' , (now - impactStatus.gaugeStartTime).TotalSeconds, ', sqrDistance: ', cupSqrDistance)
+                RespawnBall()
+                respawned = true
             end
         end
     end
 
-    local UpdateCw = cytanb.CreateUpdateRoutine(
-        function (deltaTime, unscaledDeltaTime)
-            settings.lsp.UpdateAlive()
-            settings.statsLsp.UpdateAlive()
-            settingsPanelGlue.Update()
+    if not respawned then
+        OfferBallTransform(ballPos, ballRot)
+    end
+end
 
-            for name, switch in pairs(slideSwitchMap) do
-                switch.Update()
+--- ライトが倒れた判定、復活処理を行う。
+local OnUpdateStandLight = function (deltaTime, unscaledDeltaTime)
+    local needBuilding = false
+    local targets = {}
+    for lightName, light in pairs(standLights) do
+        local li = light.item
+        local ls = light.status
+        local horizontalAttitude = IsHorizontalAttitude(li.GetRotation(), Vector3.up, settings.standLightHorizontalAttitudeThreshold)
+        if horizontalAttitude then
+            if not ls.active then
+                -- 復活した
+                cytanb.LogTrace('change [', lightName, '] state to active')
+                ls.active = true
+            end
+        else
+            local now = vci.me.Time
+            if ls.active then
+                -- 倒れたことを検知した
+                cytanb.TraceLog('change [', lightName, '] state to inactive')
+                ls.active = false
+                ls.inactiveTime = now
+                if now <= ls.readyInactiveTime + settings.requestIntervalTime then
+                    cytanb.TraceLog('  call HitStandLight: ', lightName, ', directHit = ', ls.directHit, ' @OnUpdateStandLight')
+                    HitStandLight(light)
+                end
+            elseif li.IsMine then
+                if not ls.buildFlag then
+                    -- リスポーンしてから一定時間内に倒れたか、倒れてから時間経過した場合は、復活させる。
+                    ls.buildFlag = (now >= ls.respawnTime + settings.standLightMinRebuildTime and now <= ls.respawnTime + settings.standLightMaxRebuildTime) or
+                                        (now > ls.inactiveTime + settings.standLightWaitingTime)
+                end
+
+                if ls.buildFlag then
+                    needBuilding = true
+                    targets[light.index] = { name = lightName }
+                end
+            end
+        end
+    end
+
+    local unow = vci.me.UnscaledTime
+    if unow > standLightsLastRequestTime + settings.requestIntervalTime then
+        standLightsLastRequestTime = unow
+        if needBuilding then
+            cytanb.LogTrace('request buildStandLight')
+            cytanb.EmitMessage(buildStandLightMessageName, {targets = targets})
+        end
+    end
+end
+
+local UpdateCw = cytanb.CreateUpdateRoutine(
+    function (deltaTime, unscaledDeltaTime)
+        settings.lsp.UpdateAlive()
+        settings.statsLsp.UpdateAlive()
+        settingsPanelGlue.Update()
+
+        for name, switch in pairs(slideSwitchMap) do
+            switch.Update()
+        end
+
+        if deltaTime <= TimeSpan.Zero then
+            return
+        end
+
+        fixedTimestep = timestepEstimater.Update()
+
+        if settingsPanelStatus.gripPressed and vci.me.Time - settings.resetOperationTime > settingsPanelStatus.gripStartTime then
+            -- 連続して呼び出されないようにしておく
+            settingsPanelStatus.gripStartTime = TimeSpan.MaxValue
+
+            -- 設定パネルのグリップ長押しで、統計情報をリセットする
+            ResetStats()
+        end
+        TreatStatsCache()
+
+        OnUpdateDiscernibleEfk(deltaTime, unscaledDeltaTime)
+        OnUpdateImpactGauge(deltaTime, unscaledDeltaTime)
+        OnUpdateBall(deltaTime, unscaledDeltaTime)
+        OnUpdateStandLight(deltaTime, unscaledDeltaTime)
+    end,
+
+    function ()
+        cytanb.LogTrace('OnLoad')
+        settings.lsp.UpdateAlive()
+        settings.statsLsp.UpdateAlive()
+        vciLoaded = true
+
+        local uuid = cytanb.UUIDFromString(cytanb.InstanceID())
+        hiddenPosition = Vector3.__new(uuid[1] / 0x100000, 0x1000, uuid[2] / 0x100000)
+        cytanb.LogTrace('hiddenPosition: ', hiddenPosition)
+
+        timestepEstimater = cytanb.EstimateFixedTimestep(cytanb.NillableValue(vci.assets.GetTransform('timestep-estimater')))
+        fixedTimestep = timestepEstimater.Timestep()
+
+        ball = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballName))
+
+        ballEfkContainer = cytanb.NillableValue(vci.assets.GetTransform(settings.ballEfkContainerName))
+
+        local ballEfkMap = cytanb.GetEffekseerEmitterMap(settings.ballEfkContainerName)
+        ballEfk = cytanb.NillableValue(ballEfkMap[settings.ballEfkName])
+        ballEfkFade = cytanb.NillableValue(ballEfkMap[settings.ballEfkFadeName])
+        ballEfkFadeMove = cytanb.NillableValue(ballEfkMap[settings.ballEfkFadeMoveName])
+        ballEfkOne = cytanb.NillableValue(ballEfkMap[settings.ballEfkOneName])
+        ballEfkOneLarge = cytanb.NillableValue(ballEfkMap[settings.ballEfkOneLargeName])
+
+        ballDiscernibleEfkPlayer = CreateDiscernibleEfkPlayer(
+            cytanb.NillableValue(vci.assets.GetEffekseerEmitter(settings.ballName)),
+            settings.discernibleEfkMinPeriod
+        )
+
+        ballCup = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballCupName))
+
+        currentColorPicker = {
+            item = ball,
+            status = ballStatus
+        }
+
+        colorPickers = {
+            [currentColorPicker.item.GetName()] = currentColorPicker
+        }
+
+        standLights = {}
+        for i = 1, settings.standLightCount do
+            local index = i - 1
+            local name = settings.standLightPrefix .. index
+            local item = cytanb.NillableValue(vci.assets.GetSubItem(name))
+            local entry = {
+                item = item,
+                index = index,
+                status = cytanb.Extend(cytanb.Extend({}, standLightInitialStatus), {
+                    respawnPosition = item.GetPosition(),
+                    respawnTime = vci.me.Time,
+                    grabbed = false,
+                })
+            }
+            standLights[name] = entry
+            colorPickers[name] = entry
+        end
+
+        standLightEfkContainer = cytanb.NillableValue(vci.assets.GetTransform(settings.standLightEfkContainerName))
+
+        local standLightEfkMap = cytanb.GetEffekseerEmitterMap(settings.standLightEfkContainerName)
+        standLightHitEfk = cytanb.NillableValue(standLightEfkMap[settings.standLightHitEfkName])
+        standLightDirectHitEfk = cytanb.NillableValue(standLightEfkMap[settings.standLightDirectHitEfkName])
+
+        impactForceGauge = cytanb.NillableValue(vci.assets.GetTransform(settings.impactForceGaugeName))
+        impactForceGauge.SetPosition(hiddenPosition)
+
+        impactSpinGauge = cytanb.NillableValue(vci.assets.GetTransform(settings.impactSpinGaugeName))
+        impactSpinGauge.SetPosition(hiddenPosition)
+
+        settingsPanel = cytanb.NillableValue(vci.assets.GetSubItem(settings.settingsPanelName))
+        settingsPanelGlue = cytanb.CreateSubItemGlue()
+
+        closeSwitch = cytanb.NillableValue(vci.assets.GetSubItem(settings.closeSwitchName))
+        settingsPanelGlue.Add(cytanb.NillableValue(vci.assets.GetTransform(settings.closeSwitchBaseName)), closeSwitch)
+
+        slideSwitchMap = {}
+        for k, parameters in pairs(settings.switchParameters) do
+            local switch = cytanb.CreateSlideSwitch(
+                cytanb.Extend({
+                    colliderItem = cytanb.NillableValue(vci.assets.GetSubItem(parameters.colliderName)),
+                    baseItem = cytanb.NillableValue(vci.assets.GetTransform(parameters.baseName)),
+                    knobItem = cytanb.NillableValue(vci.assets.GetTransform(parameters.knobName)),
+                    lsp = settings.lsp
+                }, parameters, false, true)
+            )
+
+            if settings.enableDebugging then
+                switch.AddListener(function (source, value)
+                    cytanb.LogTrace('switch[', source.GetColliderItem().GetName(), '] value changed: ', value)
+                end)
             end
 
-            if deltaTime <= TimeSpan.Zero then
+            slideSwitchMap[parameters.colliderName] = switch
+        end
+
+        velocitySwitch = cytanb.NillableValue(slideSwitchMap[settings.velocitySwitchName])
+        angularVelocitySwitch = cytanb.NillableValue(slideSwitchMap[settings.angularVelocitySwitchName])
+        altitudeSwitch = cytanb.NillableValue(slideSwitchMap[settings.altitudeSwitchName])
+        throwingAdjustmentSwitch = cytanb.NillableValue(slideSwitchMap[settings.throwingAdjustmentSwitchName])
+        gravitySwitch = cytanb.NillableValue(slideSwitchMap[settings.gravitySwitchName])
+        efkLevelSwitch = cytanb.NillableValue(slideSwitchMap[settings.efkLevelSwitchName])
+        audioVolumeSwitch = cytanb.NillableValue(slideSwitchMap[settings.audioVolumeSwitchName])
+
+        ballStatus.gravityFactor = CalcGravityFactor()
+
+        settings.statsLsp.AddListener(function (source, key, value, oldValue)
+            if key == cytanb.LOCAL_SHARED_PROPERTY_EXPIRED_KEY then
+                -- cytanb.LogTrace('statsLsp: expired')
+                vciLoaded = false
+            end
+        end)
+
+        local updateStatus = function (parameterMap)
+            if parameterMap.discernibleColor then
+                SetDiscernibleColor(parameterMap.discernibleColor)
+            end
+
+            if parameterMap.standLights then
+                for i, lightParameter in pairs(parameterMap.standLights) do
+                    cytanb.NillableIfHasValue(standLights[lightParameter.name], function (light)
+                        local ls = light.status
+                        if lightParameter.respawnPosition then
+                            cytanb.Extend(ls, standLightInitialStatus)
+                            ls.respawnPosition = lightParameter.respawnPosition
+                            ls.respawnTime = vci.me.Time
+                        end
+                    end)
+                end
+            end
+        end
+
+        -- 全 VCI からのクエリーに応答する。
+        -- マスターが交代したときのことを考慮して、全ユーザーが OnMessage で登録する。
+        cytanb.OnMessage(queryStatusMessageName, function (sender, name, parameterMap)
+            if not vci.assets.IsMine then
+                -- マスターでなければリターンする。
                 return
             end
 
-            fixedTimestep = timestepEstimater.Update()
+            cytanb.LogDebug('onQueryStatus')
 
-            if settingsPanelStatus.gripPressed and vci.me.Time - settings.resetOperationTime > settingsPanelStatus.gripStartTime then
-                -- 連続して呼び出されないようにしておく
-                settingsPanelStatus.gripStartTime = TimeSpan.MaxValue
-
-                -- 設定パネルのグリップ長押しで、統計情報をリセットする
-                ResetStats()
-            end
-            TreatStatsCache()
-
-            OnUpdateDiscernibleEfk(deltaTime, unscaledDeltaTime)
-            OnUpdateImpactGauge(deltaTime, unscaledDeltaTime)
-            OnUpdateBall(deltaTime, unscaledDeltaTime)
-            OnUpdateStandLight(deltaTime, unscaledDeltaTime)
-        end,
-
-        function ()
-            cytanb.LogTrace('OnLoad')
-            settings.lsp.UpdateAlive()
-            settings.statsLsp.UpdateAlive()
-            vciLoaded = true
-
-            local uuid = cytanb.UUIDFromString(cytanb.InstanceID())
-            hiddenPosition = Vector3.__new(uuid[1] / 0x100000, 0x1000, uuid[2] / 0x100000)
-            cytanb.LogTrace('hiddenPosition: ', hiddenPosition)
-
-            timestepEstimater = cytanb.EstimateFixedTimestep(cytanb.NillableValue(vci.assets.GetTransform('timestep-estimater')))
-            fixedTimestep = timestepEstimater.Timestep()
-
-            ball = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballName))
-
-            ballEfkContainer = cytanb.NillableValue(vci.assets.GetTransform(settings.ballEfkContainerName))
-
-            local ballEfkMap = cytanb.GetEffekseerEmitterMap(settings.ballEfkContainerName)
-            ballEfk = cytanb.NillableValue(ballEfkMap[settings.ballEfkName])
-            ballEfkFade = cytanb.NillableValue(ballEfkMap[settings.ballEfkFadeName])
-            ballEfkFadeMove = cytanb.NillableValue(ballEfkMap[settings.ballEfkFadeMoveName])
-            ballEfkOne = cytanb.NillableValue(ballEfkMap[settings.ballEfkOneName])
-            ballEfkOneLarge = cytanb.NillableValue(ballEfkMap[settings.ballEfkOneLargeName])
-
-            ballDiscernibleEfkPlayer = CreateDiscernibleEfkPlayer(
-                cytanb.NillableValue(vci.assets.GetEffekseerEmitter(settings.ballName)),
-                settings.discernibleEfkMinPeriod
-            )
-
-            ballCup = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballCupName))
-
-            currentColorPicker = {
-                item = ball,
-                status = ballStatus
-            }
-
-            colorPickers = {
-                [currentColorPicker.item.GetName()] = currentColorPicker
-            }
-
-            standLights = {}
-            for i = 1, settings.standLightCount do
-                local index = i - 1
-                local name = settings.standLightPrefix .. index
-                local item = cytanb.NillableValue(vci.assets.GetSubItem(name))
-                local entry = {
-                    item = item,
-                    index = index,
-                    status = cytanb.Extend(cytanb.Extend({}, standLightInitialStatus), {
-                        respawnPosition = item.GetPosition(),
-                        respawnTime = vci.me.Time,
-                        grabbed = false,
-                    })
-                }
-                standLights[name] = entry
-                colorPickers[name] = entry
+            local standLightsParameter = {}
+            for lightName, light in pairs(standLights) do
+                standLightsParameter[light.index] = CreateStandLightStatusParameter(light)
             end
 
-            standLightEfkContainer = cytanb.NillableValue(vci.assets.GetTransform(settings.standLightEfkContainerName))
+            cytanb.EmitMessage(statusMessageName, {
+                clientID = cytanb.ClientID(),
+                discernibleColor = cytanb.ColorToTable(ballDiscernibleEfkPlayer.GetColor()),
+                ball = CreateBallStatusParameter(),
+                standLights = standLightsParameter
+            })
+        end)
 
-            local standLightEfkMap = cytanb.GetEffekseerEmitterMap(settings.standLightEfkContainerName)
-            standLightHitEfk = cytanb.NillableValue(standLightEfkMap[settings.standLightHitEfkName])
-            standLightDirectHitEfk = cytanb.NillableValue(standLightEfkMap[settings.standLightDirectHitEfkName])
-
-            impactForceGauge = cytanb.NillableValue(vci.assets.GetTransform(settings.impactForceGaugeName))
-            impactForceGauge.SetPosition(hiddenPosition)
-
-            impactSpinGauge = cytanb.NillableValue(vci.assets.GetTransform(settings.impactSpinGaugeName))
-            impactSpinGauge.SetPosition(hiddenPosition)
-
-            settingsPanel = cytanb.NillableValue(vci.assets.GetSubItem(settings.settingsPanelName))
-            settingsPanelGlue = cytanb.CreateSubItemGlue()
-
-            closeSwitch = cytanb.NillableValue(vci.assets.GetSubItem(settings.closeSwitchName))
-            settingsPanelGlue.Add(cytanb.NillableValue(vci.assets.GetTransform(settings.closeSwitchBaseName)), closeSwitch)
-
-            slideSwitchMap = {}
-            for k, parameters in pairs(settings.switchParameters) do
-                local switch = cytanb.CreateSlideSwitch(
-                    cytanb.Extend({
-                        colliderItem = cytanb.NillableValue(vci.assets.GetSubItem(parameters.colliderName)),
-                        baseItem = cytanb.NillableValue(vci.assets.GetTransform(parameters.baseName)),
-                        knobItem = cytanb.NillableValue(vci.assets.GetTransform(parameters.knobName)),
-                        lsp = settings.lsp
-                    }, parameters, false, true)
-                )
-
-                if settings.enableDebugging then
-                    switch.AddListener(function (source, value)
-                        cytanb.LogTrace('switch[', source.GetColliderItem().GetName(), '] value changed: ', value)
-                    end)
-                end
-
-                slideSwitchMap[parameters.colliderName] = switch
-            end
-
-            velocitySwitch = cytanb.NillableValue(slideSwitchMap[settings.velocitySwitchName])
-            angularVelocitySwitch = cytanb.NillableValue(slideSwitchMap[settings.angularVelocitySwitchName])
-            altitudeSwitch = cytanb.NillableValue(slideSwitchMap[settings.altitudeSwitchName])
-            throwingAdjustmentSwitch = cytanb.NillableValue(slideSwitchMap[settings.throwingAdjustmentSwitchName])
-            gravitySwitch = cytanb.NillableValue(slideSwitchMap[settings.gravitySwitchName])
-            efkLevelSwitch = cytanb.NillableValue(slideSwitchMap[settings.efkLevelSwitchName])
-            audioVolumeSwitch = cytanb.NillableValue(slideSwitchMap[settings.audioVolumeSwitchName])
-
-            ballStatus.gravityFactor = CalcGravityFactor()
-
-            settings.statsLsp.AddListener(function (source, key, value, oldValue)
-                if key == cytanb.LOCAL_SHARED_PROPERTY_EXPIRED_KEY then
-                    -- cytanb.LogTrace('statsLsp: expired')
-                    vciLoaded = false
-                end
-            end)
-
-            local updateStatus = function (parameterMap)
-                if parameterMap.discernibleColor then
-                    SetDiscernibleColor(parameterMap.discernibleColor)
-                end
-
-                if parameterMap.standLights then
-                    for i, lightParameter in pairs(parameterMap.standLights) do
-                        cytanb.NillableIfHasValue(standLights[lightParameter.name], function (light)
-                            local ls = light.status
-                            if lightParameter.respawnPosition then
-                                cytanb.Extend(ls, standLightInitialStatus)
-                                ls.respawnPosition = lightParameter.respawnPosition
-                                ls.respawnTime = vci.me.Time
-                            end
-                        end)
-                    end
-                end
-            end
-
-            -- 全 VCI からのクエリーに応答する。
-            -- マスターが交代したときのことを考慮して、全ユーザーが OnMessage で登録する。
-            cytanb.OnMessage(queryStatusMessageName, function (sender, name, parameterMap)
-                if not vci.assets.IsMine then
-                    -- マスターでなければリターンする。
-                    return
-                end
-
-                cytanb.LogDebug('onQueryStatus')
-
-                local standLightsParameter = {}
-                for lightName, light in pairs(standLights) do
-                    standLightsParameter[light.index] = CreateStandLightStatusParameter(light)
-                end
-
-                cytanb.EmitMessage(statusMessageName, {
-                    clientID = cytanb.ClientID(),
-                    discernibleColor = cytanb.ColorToTable(ballDiscernibleEfkPlayer.GetColor()),
-                    ball = CreateBallStatusParameter(),
-                    standLights = standLightsParameter
-                })
-            end)
-
-            cytanb.OnMessage(statusMessageName, function (sender, name, parameterMap)
-                if parameterMap[cytanb.InstanceIDParameterName] == cytanb.InstanceID() then
-                    if parameterMap.clientID ~= cytanb.ClientID() then
-                        -- インスタンスの設置者から状態通知が来たので、ローカルの値を更新する
-                        cytanb.LogDebug('onStatus @instance')
-                        updateStatus(parameterMap)
-                    end
-                else
-                    -- 他のインスタンスの識別色を収集する
-                    if vci.assets.IsMine and not discernibleColorStatus.initialized and vci.me.UnscaledTime <= discernibleColorStatus.checkRequestedTime + settings.requestIntervalTime then
-                        if parameterMap.discernibleColor and parameterMap.discernibleColor.a > 0.0 then
-                            local colorIndex = cytanb.ColorToIndex(parameterMap.discernibleColor)
-                            cytanb.LogDebug('onStatus @other: colorIndex = ', colorIndex, ', discernibleColor = ', parameterMap.discernibleColor)
-                            discernibleColorStatus.existentIndexTable[colorIndex] = true
-                        end
-                    end
-                end
-            end)
-
-            cytanb.OnInstanceMessage(statusChangedMessageName, function (sender, name, parameterMap)
+        cytanb.OnMessage(statusMessageName, function (sender, name, parameterMap)
+            if parameterMap[cytanb.InstanceIDParameterName] == cytanb.InstanceID() then
                 if parameterMap.clientID ~= cytanb.ClientID() then
-                    cytanb.LogDebug('onStatusChanged')
+                    -- インスタンスの設置者から状態通知が来たので、ローカルの値を更新する
+                    cytanb.LogDebug('onStatus @instance')
                     updateStatus(parameterMap)
                 end
-            end)
-
-            cytanb.OnInstanceMessage(respawnBallMessageName, function (sender, name, parameterMap)
-                RespawnBall()
-            end)
-
-            -- ライトを組み立てる。
-            cytanb.OnInstanceMessage(buildStandLightMessageName, function (sender, name, parameterMap)
-                cytanb.LogDebug('onBuildStandLight')
-
-                local targets = parameterMap.targets
-                if targets then
-                    for i, lightParameter in pairs(targets) do
-                        cytanb.NillableIfHasValue(standLights[lightParameter.name], function (light)
-                            BuildStandLight(light)
-                        end)
+            else
+                -- 他のインスタンスの識別色を収集する
+                if vci.assets.IsMine and not discernibleColorStatus.initialized and vci.me.UnscaledTime <= discernibleColorStatus.checkRequestedTime + settings.requestIntervalTime then
+                    if parameterMap.discernibleColor and parameterMap.discernibleColor.a > 0.0 then
+                        local colorIndex = cytanb.ColorToIndex(parameterMap.discernibleColor)
+                        cytanb.LogDebug('onStatus @other: colorIndex = ', colorIndex, ', discernibleColor = ', parameterMap.discernibleColor)
+                        discernibleColorStatus.existentIndexTable[colorIndex] = true
                     end
                 end
-            end)
-
-            -- 全てのライトを組み立てる。別 VCI から送られてくるケースも考慮する。
-            cytanb.OnMessage(buildAllStandLightsMessageName, function (sender, name, parameterMap)
-                for lightName, light in pairs(standLights) do
-                    BuildStandLight(light)
-                end
-            end)
-
-            -- ターゲットにヒットした。別 VCI から送られてくるケースも考慮する。
-            cytanb.OnMessage(hitMessageName, function (sender, name, parameterMap)
-                local source = parameterMap.source
-                if not source.position then
-                    return
-                end
-
-                cytanb.NillableIfHasValue(standLights[parameterMap.target.name], function (light)
-                    local li = light.item
-                    local ls = light.status
-                    local now = vci.me.Time
-                    if IsContactWithTarget(source.position, source.longSide or 0.5, li.GetPosition(), settings.standLightSimLongSide) and now > ls.hitMessageTime + settings.requestIntervalTime then
-                        -- 自 VCI のターゲットにヒットした
-                        cytanb.LogTrace('onHitMessage: ', li.GetName())
-                        ls.hitMessageTime = now
-                        ls.hitSourceID = source.hitSourceID
-                        ls.directHit = parameterMap.directHit
-
-                        if ls.active then
-                            -- ライトが倒れていないので、レディ状態をセットする
-                            cytanb.LogTrace('ready inactive: ', li.GetName(), ', directHit = ', ls.directHit)
-                            ls.readyInactiveTime = now
-
-                            if li.IsMine and not ls.grabbed and parameterMap.hitSourceID ~= cytanb.ClientID() then
-                                -- ライトの操作権があり、メッセージのクライアントIDが自身のIDと異なる場合は、ソースの操作権が別ユーザーであるため、自力で倒れる
-                                local hitVelocity
-                                local sourceVelocity = source.velocity or Vector3.zero
-                                local horzSqrMagnitude = sourceVelocity.x ^ 2 + sourceVelocity.y ^ 2
-                                cytanb.LogTrace(' horzSqrMagnitude = ', horzSqrMagnitude, ', source.velocity = ', source.velocity)
-                                if horzSqrMagnitude > 0.0025 then
-                                    local horzMagnitude = math.sqrt(horzSqrMagnitude)
-                                    local im = cytanb.Clamp(horzMagnitude, settings.standLightMinHitMagnitude, settings.standLightMaxHitMagnitude) / horzMagnitude
-                                    hitVelocity = Vector3.__new(sourceVelocity.x * im, cytanb.Clamp(sourceVelocity.y, settings.standLightMinHitMagnitudeY, settings.standLightMaxHitMagnitudeY), sourceVelocity.z * im)
-                                    cytanb.LogTrace(li.GetName(), ' self-hit: source, hit velocity = ', hitVelocity)
-                                else
-                                    local rx = math.random()
-                                    local dx = (rx * 2 >= 1 and 1 or -1) * (rx * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
-                                    local rz = math.random()
-                                    local dz = (rz * 2 >= 1 and 1 or -1) * (rz * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
-                                    local dy = math.random() * (settings.standLightMaxHitMagnitudeY - settings.standLightMinHitMagnitudeY) + settings.standLightMinHitMagnitudeY
-                                    hitVelocity = Vector3.__new(dx, dy, dz)
-                                    cytanb.LogTrace(li.GetName(), ' self-hit: random, hit velocity = ', hitVelocity)
-                                end
-
-                                local sourceMass = source.mass > 0 and math.min(settings.standLightSimMass * settings.standLightMaxHitMassFactor, source.mass) or settings.standLightSimMass
-                                li.AddForce(hitVelocity * (sourceMass / fixedTimestep.TotalSeconds))
-                            end
-                        else
-                            HitStandLight(light)
-                        end
-                    end
-                end)
-            end)
-
-            cytanb.OnInstanceMessage(throwingStatsMessageName, function (sender, name, parameterMap)
-                cytanb.NillableIfHasValue(parameterMap.stats, function (stats)
-                    print(StatsToString(stats))
-                end)
-            end)
-
-            -- 設定パネルを表示する
-            cytanb.OnInstanceMessage(showSettingsPanelMessageName, function (sender, name, parameterMap)
-                if not settingsPanel.IsMine then
-                    return
-                end
-
-                local cupPosition = ballCup.GetPosition()
-                local dp = cupPosition - settingsPanel.GetPosition()
-                if dp.magnitude > settings.settingsPanelDistanceThreshold then
-                    -- 設定パネルが離れていた場合は、近づけて表示する。
-                    local position = cupPosition + settings.settingsPanelOffset
-                    cytanb.LogTrace('ShowSettingsPanel: posotion = ', position)
-                    settingsPanel.SetPosition(position)
-                    settingsPanel.SetRotation(Quaternion.LookRotation(Vector3.__new(- settings.settingsPanelOffset.x, 0, - settings.settingsPanelOffset.z)))
-                elseif Vector3.Angle(settingsPanel.GetForward(), dp) > settings.settingsPanelAngleThreshold then
-                    -- 設定パネルが近い位置にあり、角度に開きがある場合は、回転させる。
-                    cytanb.LogTrace('ShowSettingsPanel: rotate')
-                    settingsPanel.SetRotation(Quaternion.LookRotation(Vector3.__new(dp.x, 0, dp.z)))
-                end
-            end)
-
-            cytanb.OnMessage(colorPaletteItemStatusMessageName, function (sender, name, parameterMap)
-                if currentColorPicker.item.IsMine and discernibleColorStatus.paletteCollisionCount >= 1 then
-                    if currentColorPicker.status.grabbed and vci.me.UnscaledTime <= discernibleColorStatus.paletteCollisionTime + settings.requestIntervalTime then
-                        discernibleColorStatus.paletteCollisionCount = discernibleColorStatus.paletteCollisionCount - 1
-                        SetDiscernibleColor(cytanb.ColorFromARGB32(parameterMap.argb32))
-                        cytanb.EmitMessage(statusChangedMessageName, CreateDiscernibleColorParameter())
-                    else
-                        discernibleColorStatus.paletteCollisionCount = 0
-                    end
-                end
-            end)
-
-            if vci.assets.IsMine then
-                cytanb.EmitMessage(showSettingsPanelMessageName)
-                discernibleColorStatus.checkRequestedTime = vci.me.UnscaledTime
             end
-            cytanb.EmitMessage(queryStatusMessageName)
-        end
-    )
+        end)
 
-    return function ()
-        UpdateCw()
+        cytanb.OnInstanceMessage(statusChangedMessageName, function (sender, name, parameterMap)
+            if parameterMap.clientID ~= cytanb.ClientID() then
+                cytanb.LogDebug('onStatusChanged')
+                updateStatus(parameterMap)
+            end
+        end)
+
+        cytanb.OnInstanceMessage(respawnBallMessageName, function (sender, name, parameterMap)
+            RespawnBall()
+        end)
+
+        -- ライトを組み立てる。
+        cytanb.OnInstanceMessage(buildStandLightMessageName, function (sender, name, parameterMap)
+            cytanb.LogDebug('onBuildStandLight')
+
+            local targets = parameterMap.targets
+            if targets then
+                for i, lightParameter in pairs(targets) do
+                    cytanb.NillableIfHasValue(standLights[lightParameter.name], function (light)
+                        BuildStandLight(light)
+                    end)
+                end
+            end
+        end)
+
+        -- 全てのライトを組み立てる。別 VCI から送られてくるケースも考慮する。
+        cytanb.OnMessage(buildAllStandLightsMessageName, function (sender, name, parameterMap)
+            for lightName, light in pairs(standLights) do
+                BuildStandLight(light)
+            end
+        end)
+
+        -- ターゲットにヒットした。別 VCI から送られてくるケースも考慮する。
+        cytanb.OnMessage(hitMessageName, function (sender, name, parameterMap)
+            local source = parameterMap.source
+            if not source.position then
+                return
+            end
+
+            cytanb.NillableIfHasValue(standLights[parameterMap.target.name], function (light)
+                local li = light.item
+                local ls = light.status
+                local now = vci.me.Time
+                if IsContactWithTarget(source.position, source.longSide or 0.5, li.GetPosition(), settings.standLightSimLongSide) and now > ls.hitMessageTime + settings.requestIntervalTime then
+                    -- 自 VCI のターゲットにヒットした
+                    cytanb.LogTrace('onHitMessage: ', li.GetName())
+                    ls.hitMessageTime = now
+                    ls.hitSourceID = source.hitSourceID
+                    ls.directHit = parameterMap.directHit
+
+                    if ls.active then
+                        -- ライトが倒れていないので、レディ状態をセットする
+                        cytanb.LogTrace('ready inactive: ', li.GetName(), ', directHit = ', ls.directHit)
+                        ls.readyInactiveTime = now
+
+                        if li.IsMine and not ls.grabbed and parameterMap.hitSourceID ~= cytanb.ClientID() then
+                            -- ライトの操作権があり、メッセージのクライアントIDが自身のIDと異なる場合は、ソースの操作権が別ユーザーであるため、自力で倒れる
+                            local hitVelocity
+                            local sourceVelocity = source.velocity or Vector3.zero
+                            local horzSqrMagnitude = sourceVelocity.x ^ 2 + sourceVelocity.y ^ 2
+                            cytanb.LogTrace(' horzSqrMagnitude = ', horzSqrMagnitude, ', source.velocity = ', source.velocity)
+                            if horzSqrMagnitude > 0.0025 then
+                                local horzMagnitude = math.sqrt(horzSqrMagnitude)
+                                local im = cytanb.Clamp(horzMagnitude, settings.standLightMinHitMagnitude, settings.standLightMaxHitMagnitude) / horzMagnitude
+                                hitVelocity = Vector3.__new(sourceVelocity.x * im, cytanb.Clamp(sourceVelocity.y, settings.standLightMinHitMagnitudeY, settings.standLightMaxHitMagnitudeY), sourceVelocity.z * im)
+                                cytanb.LogTrace(li.GetName(), ' self-hit: source, hit velocity = ', hitVelocity)
+                            else
+                                local rx = math.random()
+                                local dx = (rx * 2 >= 1 and 1 or -1) * (rx * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
+                                local rz = math.random()
+                                local dz = (rz * 2 >= 1 and 1 or -1) * (rz * (settings.standLightMaxHitMagnitude - settings.standLightMinHitMagnitude) * 0.5 + settings.standLightMinHitMagnitude)
+                                local dy = math.random() * (settings.standLightMaxHitMagnitudeY - settings.standLightMinHitMagnitudeY) + settings.standLightMinHitMagnitudeY
+                                hitVelocity = Vector3.__new(dx, dy, dz)
+                                cytanb.LogTrace(li.GetName(), ' self-hit: random, hit velocity = ', hitVelocity)
+                            end
+
+                            local sourceMass = source.mass > 0 and math.min(settings.standLightSimMass * settings.standLightMaxHitMassFactor, source.mass) or settings.standLightSimMass
+                            li.AddForce(hitVelocity * (sourceMass / fixedTimestep.TotalSeconds))
+                        end
+                    else
+                        HitStandLight(light)
+                    end
+                end
+            end)
+        end)
+
+        cytanb.OnInstanceMessage(throwingStatsMessageName, function (sender, name, parameterMap)
+            cytanb.NillableIfHasValue(parameterMap.stats, function (stats)
+                print(StatsToString(stats))
+            end)
+        end)
+
+        -- 設定パネルを表示する
+        cytanb.OnInstanceMessage(showSettingsPanelMessageName, function (sender, name, parameterMap)
+            if not settingsPanel.IsMine then
+                return
+            end
+
+            local cupPosition = ballCup.GetPosition()
+            local dp = cupPosition - settingsPanel.GetPosition()
+            if dp.magnitude > settings.settingsPanelDistanceThreshold then
+                -- 設定パネルが離れていた場合は、近づけて表示する。
+                local position = cupPosition + settings.settingsPanelOffset
+                cytanb.LogTrace('ShowSettingsPanel: posotion = ', position)
+                settingsPanel.SetPosition(position)
+                settingsPanel.SetRotation(Quaternion.LookRotation(Vector3.__new(- settings.settingsPanelOffset.x, 0, - settings.settingsPanelOffset.z)))
+            elseif Vector3.Angle(settingsPanel.GetForward(), dp) > settings.settingsPanelAngleThreshold then
+                -- 設定パネルが近い位置にあり、角度に開きがある場合は、回転させる。
+                cytanb.LogTrace('ShowSettingsPanel: rotate')
+                settingsPanel.SetRotation(Quaternion.LookRotation(Vector3.__new(dp.x, 0, dp.z)))
+            end
+        end)
+
+        cytanb.OnMessage(colorPaletteItemStatusMessageName, function (sender, name, parameterMap)
+            if currentColorPicker.item.IsMine and discernibleColorStatus.paletteCollisionCount >= 1 then
+                if currentColorPicker.status.grabbed and vci.me.UnscaledTime <= discernibleColorStatus.paletteCollisionTime + settings.requestIntervalTime then
+                    discernibleColorStatus.paletteCollisionCount = discernibleColorStatus.paletteCollisionCount - 1
+                    SetDiscernibleColor(cytanb.ColorFromARGB32(parameterMap.argb32))
+                    cytanb.EmitMessage(statusChangedMessageName, CreateDiscernibleColorParameter())
+                else
+                    discernibleColorStatus.paletteCollisionCount = 0
+                end
+            end
+        end)
+
+        if vci.assets.IsMine then
+            cytanb.EmitMessage(showSettingsPanelMessageName)
+            discernibleColorStatus.checkRequestedTime = vci.me.UnscaledTime
+        end
+        cytanb.EmitMessage(queryStatusMessageName)
     end
-end)()
+)
+
+updateAll = function ()
+    UpdateCw()
+end
 
 onGrab = function (target)
     if not vciLoaded then
