@@ -248,6 +248,7 @@ MonoBehaviour:
   Scalable: 1
   UniformScaling: 1
   GroupId: 0
+  NodeIndex: 0
 --- !u!23 &1271969181
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -401,7 +402,7 @@ GameObject:
   - component: {fileID: 1898780604}
   - component: {fileID: 1898780603}
   m_Layer: 0
-  m_Name: cytanb-two-se
+  m_Name: cytanb-sound-box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -420,15 +421,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Meta:
-    title: cytanb-two-se
+    title: cytanb-sound-box
     author: oO
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 32fcd1e3fab49464f8a3a4ac7a7a91f3, type: 3}
-    version: 0.0.1
+    version: 0.1.0
     description: "- \u97F3\u58F0\u3092\u518D\u751F\u3059\u308B VCI \u306E\u7C21\u5358\u306A\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n\r-
       \u9752\u3068\u7DD1\u306E\u4E8C\u3064\u306E\u7BB1\u3092\u30B0\u30EA\u30C3\u30D7\u3057\u3066\u4F7F\u7528\u3059\u308B\u3068\u3001\u305D\u308C\u305E\u308C\u9055\u3046\u97F3\u58F0\u304C\u518D\u751F\u3055\u308C\u307E\u3059\u3002\r\n"
-    exporterVersion: 0.21
+    exporterVersion: 0.25
     specVersion: 
     modelDataLicenseType: 8
     modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
@@ -441,7 +442,7 @@ MonoBehaviour:
   - name: main
     mimeType: 0
     targetEngine: 0
-    filePath: Assets/oO-vci-pack/two-se/scripts/two-se-main.lua
+    filePath: Assets/oO-vci-pack/sound-box/scripts/sound-box-main.lua
     source: 
 --- !u!4 &1898780602
 Transform:
@@ -718,6 +719,7 @@ MonoBehaviour:
   Scalable: 1
   UniformScaling: 1
   GroupId: 0
+  NodeIndex: 0
 --- !u!23 &1943064647
 MeshRenderer:
   m_ObjectHideFlags: 0
