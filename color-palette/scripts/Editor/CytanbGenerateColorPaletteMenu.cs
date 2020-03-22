@@ -1,10 +1,8 @@
-/*
- * Copyright (c) 2019 oO (https://github.com/oocytanb)
- * MIT Licensed
- *
- * cytanb-color-palette のオブジェクトを生成するスクリプトです。
- * `UnityEditor Menu > Cytanb > Generate Color Palette` から実行します。
- */
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2019 oO (https://github.com/oocytanb)
+
+// cytanb-color-palette のオブジェクトを生成するスクリプトです。
+// `UnityEditor Menu > Cytanb > Generate Color Palette` から実行します。
 
 using UnityEditor;
 using UnityEngine;
@@ -38,14 +36,12 @@ namespace cytanb
                 return false;
             }
 
-            return root.transform.Find(COLOR_PALETTE_BASE_NAME) && !root.transform.Find(COLOR_INDEX_OBJECT_PREFIX + "0");
+            return root.transform.Find(COLOR_PALETTE_BASE_NAME) && !root.transform.Find($"{COLOR_INDEX_OBJECT_PREFIX}0");
         }
 
         [MenuItem(MENU_ITEM_KEY, false, 500)]
         static void GenerateColorPaletteMenu()
         {
-            string longMsg = "";
-
             try
             {
                 var groupId = Undo.GetCurrentGroup();
@@ -53,14 +49,14 @@ namespace cytanb
                 var root = Selection.activeObject as GameObject;
                 if (!root)
                 {
-                    EditorUtility.DisplayDialog("Error", "There is no selected object.", "OK");
+                    Debug.LogError("There is no selected object.");
                     return;
                 }
 
                 var paletteBaseTransform = root.transform.Find(COLOR_PALETTE_BASE_NAME);
                 if (!paletteBaseTransform)
                 {
-                    EditorUtility.DisplayDialog("Error", "There is no palette base.", "OK");
+                    Debug.LogError("There is no palette base.");
                     return;
                 }
                 var paletteBase = paletteBaseTransform.gameObject;
@@ -68,8 +64,8 @@ namespace cytanb
                 var prefab = ResolvePrefab(COLOR_INDEX_PREFAB_NAME);
                 if (!prefab)
                 {
-                    var msg = "[Warning] " + COLOR_INDEX_PREFAB_NAME + ".prefab was not found.";
-                    longMsg += msg + "\n";
+                    Debug.LogError($"{COLOR_INDEX_PREFAB_NAME}.prefab was not found.");
+                    return;
                 }
 
                 Undo.RecordObject(root, ACTION_NAME);
@@ -84,9 +80,7 @@ namespace cytanb
                         GameObject go = GameObject.Instantiate(prefab);
                         go.transform.SetParent(root.transform, false);
                         go.transform.localPosition = new Vector3(prefabPosition.x + COLOR_INDEX_POSITION_INTERVAL * x, prefabPosition.y - COLOR_INDEX_POSITION_INTERVAL * y, prefabPosition.z);
-                        go.transform.localRotation = prefab.transform.localRotation;
-                        go.transform.localScale = prefab.transform.localScale;
-                        go.name = COLOR_INDEX_OBJECT_PREFIX + (y * HUE_SAMPLES + x);
+                        go.name = $"{COLOR_INDEX_OBJECT_PREFIX}{y * HUE_SAMPLES + x}";
 
                         var joint = go.GetComponent<FixedJoint>();
                         if (joint)
@@ -103,20 +97,13 @@ namespace cytanb
             }
             catch (System.Exception e)
             {
-                longMsg += "Failed to bind components: Unsupported operation.";
                 Debug.LogException(e);
-            }
-
-            if (!string.IsNullOrEmpty(longMsg))
-            {
-                var assembly = typeof(UnityEditor.EditorWindow).Assembly;
-                EditorWindow.GetWindow(assembly.GetType("UnityEditor.ProjectBrowser")).ShowNotification(new GUIContent(longMsg));
             }
         }
 
         private static GameObject ResolvePrefab(string name)
         {
-            foreach (var guid in AssetDatabase.FindAssets("t:prefab " + name))
+            foreach (var guid in AssetDatabase.FindAssets($"t:prefab {name}"))
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
                 if (string.IsNullOrEmpty(path))

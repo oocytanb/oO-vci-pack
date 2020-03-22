@@ -7,7 +7,6 @@
 //   メニューから `Cytanb/Generate mat-cube` を実行します。
 // - 5 個分のゲームオブジェクトと、マテリアルがそれぞれ生成されます。
 
-using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
@@ -19,7 +18,7 @@ namespace cytanb
     {
         const string ACTION_NAME = "Generate mat-cube";
         const string MENU_ITEM_KEY = "Cytanb/" + ACTION_NAME;
-        const int CUBE_COUNT = 5;
+        static readonly int CUBE_COUNT = 5;
         const float CUBE_POSITION_INTERVAL = 1.0f;
         const string CUBE_BASE_NAME = "demo-mat-cube";
         const string MATERIAL_DIR = "materials";
@@ -62,14 +61,15 @@ namespace cytanb
                 var prefab = ResolvePrefab(CUBE_BASE_NAME);
                 if (!prefab)
                 {
-                    Debug.LogWarning(CUBE_BASE_NAME + ".prefab was not found.");
+                    Debug.LogError($"{CUBE_BASE_NAME}.prefab was not found.");
+                    return;
                 }
 
                 Undo.RecordObject(root, ACTION_NAME);
 
                 // generate cubes
                 var subprjDir = Regex.Replace(AssetDatabase.GetAssetPath(prefab), "\\/[^/]+$", "");
-                foreach (var index in Enumerable.Range(1, CUBE_COUNT))
+                for (int index = 1; index <= CUBE_COUNT; ++index)
                 {
                     GenerateMatCube(index, root, prefab, subprjDir);
                 }
@@ -84,7 +84,7 @@ namespace cytanb
 
         static bool GenerateMatCube(int index, GameObject root, GameObject prefab, string subprjDir)
         {
-            var goName = CUBE_BASE_NAME + "-" + index;
+            var goName = $"{CUBE_BASE_NAME}-{index}";
             var go = root.transform.Find(goName)?.gameObject;
             var genGo = !go;
             if (genGo) {
@@ -96,20 +96,19 @@ namespace cytanb
                 go.name = goName;
             }
 
-            var renderer = go.GetComponent<Renderer>();
-            var materialPath = subprjDir + "/" + MATERIAL_DIR + "/" + CUBE_BASE_NAME + "-" + index + MATERIAL_EXT;
+            var materialPath = $"{subprjDir}/{MATERIAL_DIR}/{CUBE_BASE_NAME}-{index}{MATERIAL_EXT}";
             var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
             var genMaterial = !material;
             if (genMaterial) {
                 // マテリアルファイルが存在しない場合は、生成する。
                 // マテリアルのカラーとテクスチャーを変更する。
-                Debug.LogFormat("material path: {0}", materialPath);
+                Debug.Log($"material path: {materialPath}");
                 material = new Material(prefab.GetComponent<Renderer>().sharedMaterial);
                 material.color = Color.HSVToRGB((float) index / CUBE_COUNT, 1.0f, 1.0f);
-                material.mainTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(subprjDir + "/" + TEXTURE_DIR + "/" + CUBE_BASE_NAME + "-" + index + TEXTURE_EXT);
+                material.mainTexture = AssetDatabase.LoadAssetAtPath<Texture2D>($"{subprjDir}/{TEXTURE_DIR}/{CUBE_BASE_NAME}-{index}{TEXTURE_EXT}");
                 AssetDatabase.CreateAsset(material, materialPath);
             }
-            renderer.sharedMaterial = material;
+            go.GetComponent<Renderer>().sharedMaterial = material;
 
             if (genGo) {
                 Undo.RegisterCreatedObjectUndo(go, ACTION_NAME);
@@ -120,7 +119,7 @@ namespace cytanb
 
         static GameObject ResolvePrefab(string name)
         {
-            foreach (var guid in AssetDatabase.FindAssets("t:prefab " + name))
+            foreach (var guid in AssetDatabase.FindAssets($"t:prefab {name}"))
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
                 if (string.IsNullOrEmpty(path))
