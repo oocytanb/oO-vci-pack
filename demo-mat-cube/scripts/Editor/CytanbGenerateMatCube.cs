@@ -3,10 +3,12 @@
 
 // - オブジェクトとマテリアルを生成するサンプルです。
 // ## 使い方
-// - `demo-mat-cube.scene` を開き、ルートの VCI オブジェクトの `demo-mat-cube-root` を選択した状態で、
+// - `demo-mat-cube.scene` を開き、ルートの VCI オブジェクトの `cytanb-demo-mat-cube` を選択した状態で、
 //   メニューから `Cytanb/Generate mat-cube` を実行します。
 // - 5 個分のゲームオブジェクトと、マテリアルがそれぞれ生成されます。
 
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 using VCI;
@@ -17,12 +19,13 @@ namespace cytanb
     {
         const string ACTION_NAME = "Generate mat-cube";
         const string MENU_ITEM_KEY = "Cytanb/" + ACTION_NAME;
+        const int CUBE_COUNT = 5;
         const float CUBE_POSITION_INTERVAL = 1.0f;
-        const string CUBE_PREFAB_NAME = "demo-mat-cube";
-        const string CUBE_OBJECT_PREFIX = CUBE_PREFAB_NAME + "-";
-        const string MATERIAL_PREFIX = "demo-mat-";
+        const string CUBE_BASE_NAME = "demo-mat-cube";
         const string MATERIAL_DIR = "materials";
-        const int GENERATION_COUNT = 5;
+        const string MATERIAL_EXT = ".mat";
+        const string TEXTURE_DIR = "textures";
+        const string TEXTURE_EXT = ".png";
 
         [MenuItem(MENU_ITEM_KEY, true)]
         static bool ValidatGenerateMatCubeMenu()
@@ -56,51 +59,19 @@ namespace cytanb
                     return;
                 }
 
-                var prefab = ResolvePrefab(CUBE_PREFAB_NAME);
+                var prefab = ResolvePrefab(CUBE_BASE_NAME);
                 if (!prefab)
                 {
-                    Debug.LogWarning(CUBE_PREFAB_NAME + ".prefab was not found.");
+                    Debug.LogWarning(CUBE_BASE_NAME + ".prefab was not found.");
                 }
 
                 Undo.RecordObject(root, ACTION_NAME);
 
                 // generate cubes
-                var prefabPath = AssetDatabase.GetAssetPath(prefab);
-                var prefabMaterial = prefab.GetComponent<Renderer>().sharedMaterial;
-                var prefabPosition = prefab.transform.localPosition;
-                var subprjDir = System.Text.RegularExpressions.Regex.Replace(prefabPath, "\\/[^/]+$", "");
-
-                for (int i = 0; i < GENERATION_COUNT; ++i)
+                var subprjDir = Regex.Replace(AssetDatabase.GetAssetPath(prefab), "\\/[^/]+$", "");
+                foreach (var index in Enumerable.Range(1, CUBE_COUNT))
                 {
-                    var genIndex = (i + 1);
-
-                    var goName = CUBE_OBJECT_PREFIX + genIndex;
-                    GameObject go = root.transform.Find(goName)?.gameObject;
-                    if (!go) {
-                        // ゲームオブジェクトが存在しない場合は、生成する。
-                        go = GameObject.Instantiate(prefab);
-                        go.transform.SetParent(root.transform, false);
-                        go.transform.localPosition = new Vector3(prefabPosition.x + CUBE_POSITION_INTERVAL * i, prefabPosition.y, prefabPosition.z);
-                        go.transform.localRotation = prefab.transform.localRotation;
-                        go.transform.localScale = prefab.transform.localScale;
-                        go.name = goName;
-                    }
-
-                    var materialPath = subprjDir + "/" + MATERIAL_DIR + "/" + MATERIAL_PREFIX + genIndex + ".mat";
-
-                    var renderer = go.GetComponent<Renderer>();
-                    var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
-                    if (!material) {
-                        // マテリアルファイルが存在しない場合は、生成する。
-                        // サンプルとして、マテリアルのカラーを変更する。
-                        Debug.LogFormat("material path: {0}", materialPath);
-                        material = new Material(prefabMaterial);
-                        material.color = Color.HSVToRGB((float) i / GENERATION_COUNT, 1.0f, 1.0f);
-                        AssetDatabase.CreateAsset(material, materialPath);
-                    }
-                    renderer.sharedMaterial = material;
-
-                    Undo.RegisterCreatedObjectUndo(go, ACTION_NAME);
+                    GenerateMatCube(index, root, prefab, subprjDir);
                 }
 
                 Undo.CollapseUndoOperations(groupId);
@@ -111,7 +82,43 @@ namespace cytanb
             }
         }
 
-        private static GameObject ResolvePrefab(string name)
+        static bool GenerateMatCube(int index, GameObject root, GameObject prefab, string subprjDir)
+        {
+            var goName = CUBE_BASE_NAME + "-" + index;
+            var go = root.transform.Find(goName)?.gameObject;
+            var genGo = !go;
+            if (genGo) {
+                // ゲームオブジェクトが存在しない場合は、生成する。
+                go = GameObject.Instantiate(prefab);
+                go.transform.SetParent(root.transform, false);
+                var prefabPosition = prefab.transform.localPosition;
+                go.transform.localPosition = new Vector3(prefabPosition.x + CUBE_POSITION_INTERVAL * index, prefabPosition.y, prefabPosition.z);
+                go.name = goName;
+            }
+
+            var renderer = go.GetComponent<Renderer>();
+            var materialPath = subprjDir + "/" + MATERIAL_DIR + "/" + CUBE_BASE_NAME + "-" + index + MATERIAL_EXT;
+            var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+            var genMaterial = !material;
+            if (genMaterial) {
+                // マテリアルファイルが存在しない場合は、生成する。
+                // マテリアルのカラーとテクスチャーを変更する。
+                Debug.LogFormat("material path: {0}", materialPath);
+                material = new Material(prefab.GetComponent<Renderer>().sharedMaterial);
+                material.color = Color.HSVToRGB((float) index / CUBE_COUNT, 1.0f, 1.0f);
+                material.mainTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(subprjDir + "/" + TEXTURE_DIR + "/" + CUBE_BASE_NAME + "-" + index + TEXTURE_EXT);
+                AssetDatabase.CreateAsset(material, materialPath);
+            }
+            renderer.sharedMaterial = material;
+
+            if (genGo) {
+                Undo.RegisterCreatedObjectUndo(go, ACTION_NAME);
+            }
+
+            return genGo || genMaterial;
+        }
+
+        static GameObject ResolvePrefab(string name)
         {
             foreach (var guid in AssetDatabase.FindAssets("t:prefab " + name))
             {
