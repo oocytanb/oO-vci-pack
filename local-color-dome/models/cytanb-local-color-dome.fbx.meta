@@ -1,0 +1,241 @@
+fileFormatVersion: 2
+guid: 699c16a245709d747889582e3d771665
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: dome-controller
+    100004: opaque-dome
+    100006: alpha-dome
+    100008: alpha-knob
+    100010: alpha-knob-position
+    100012: alpha-switch
+    100014: brightness-knob
+    100016: brightness-knob-position
+    100018: brightness-switch
+    100020: elevation-knob
+    100022: elevation-knob-position
+    100024: elevation-switch
+    100026: hue-knob
+    100028: hue-knob-position
+    100030: hue-switch
+    100032: power-knob
+    100034: power-lamp
+    100036: reset-knob
+    100038: saturation-knob
+    100040: saturation-knob-position
+    100042: saturation-switch
+    100044: scale-knob
+    100046: scale-knob-position
+    100048: scale-switch
+    100050: power-switch
+    100052: reset-switch
+    100054: controller-collider-bottom
+    100056: controller-collider-left
+    100058: controller-collider-right
+    100060: controller-collider-top
+    400000: //RootNode
+    400002: dome-controller
+    400004: opaque-dome
+    400006: alpha-dome
+    400008: alpha-knob
+    400010: alpha-knob-position
+    400012: alpha-switch
+    400014: brightness-knob
+    400016: brightness-knob-position
+    400018: brightness-switch
+    400020: elevation-knob
+    400022: elevation-knob-position
+    400024: elevation-switch
+    400026: hue-knob
+    400028: hue-knob-position
+    400030: hue-switch
+    400032: power-knob
+    400034: power-lamp
+    400036: reset-knob
+    400038: saturation-knob
+    400040: saturation-knob-position
+    400042: saturation-switch
+    400044: scale-knob
+    400046: scale-knob-position
+    400048: scale-switch
+    400050: power-switch
+    400052: reset-switch
+    400054: controller-collider-bottom
+    400056: controller-collider-left
+    400058: controller-collider-right
+    400060: controller-collider-top
+    2100000: opaque-dome-mat
+    2100002: No Name
+    2100004: dome-controller-mat
+    2100006: alpha-dome-mat
+    2100008: transparent-mat
+    2300000: //RootNode
+    2300002: dome-controller
+    2300004: opaque-dome
+    2300006: alpha-dome
+    2300008: alpha-knob
+    2300010: alpha-switch
+    2300012: brightness-knob
+    2300014: brightness-switch
+    2300016: elevation-knob
+    2300018: elevation-switch
+    2300020: hue-knob
+    2300022: hue-switch
+    2300024: power-knob
+    2300026: power-lamp
+    2300028: reset-knob
+    2300030: saturation-knob
+    2300032: saturation-switch
+    2300034: scale-knob
+    2300036: scale-switch
+    2300038: power-switch
+    2300040: reset-switch
+    2300042: controller-collider-bottom
+    2300044: controller-collider-left
+    2300046: controller-collider-right
+    2300048: controller-collider-top
+    3300000: //RootNode
+    3300002: dome-controller
+    3300004: opaque-dome
+    3300006: alpha-dome
+    3300008: alpha-knob
+    3300010: alpha-switch
+    3300012: brightness-knob
+    3300014: brightness-switch
+    3300016: elevation-knob
+    3300018: elevation-switch
+    3300020: hue-knob
+    3300022: hue-switch
+    3300024: power-knob
+    3300026: power-lamp
+    3300028: reset-knob
+    3300030: saturation-knob
+    3300032: saturation-switch
+    3300034: scale-knob
+    3300036: scale-switch
+    3300038: power-switch
+    3300040: reset-switch
+    3300042: controller-collider-bottom
+    3300044: controller-collider-left
+    3300046: controller-collider-right
+    3300048: controller-collider-top
+    4300000: opaque-dome
+    4300002: dome-controller
+    4300004: alpha-dome
+    4300006: alpha-knob
+    4300008: power-lamp
+    4300010: power-knob
+    4300012: hue-switch
+    4300014: reset-switch
+    4300016: controller-collider-right
+    4300018: controller-collider-top
+    4300020: controller-collider-bottom
+    4300022: controller-collider-left
+    4300024: reset-knob
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: alpha-dome-mat
+    second: {fileID: 2100000, guid: e11ed8e74cf51a84cbf4b07bd5097586, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: dome-controller-mat
+    second: {fileID: 2100000, guid: 55817e4566a87af489a9cec48e811601, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: opaque-dome-mat
+    second: {fileID: 2100000, guid: d08eb1c9252264d4bbfd204cfd9a2b4a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: transparent-mat
+    second: {fileID: 2100000, guid: 2da2c5d61538cf94bbffc7113d8d2351, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
