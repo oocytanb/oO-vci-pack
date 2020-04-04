@@ -7,6 +7,7 @@ GetEffekseerEmitterMap=function(ak)local cb=vci.assets.GetEffekseerEmitters(ak)i
 CreateSlideSwitch=function(dm)local dn=a.NillableValue(dm.colliderItem)local dp=a.NillableValue(dm.baseItem)local dq=a.NillableValue(dm.knobItem)local dr=a.NillableValueOrDefault(dm.minValue,0)local ds=a.NillableValueOrDefault(dm.maxValue,10)if dr>=ds then error('SlideSwitch: Invalid argument: minValue >= maxValue',2)end;local dt=(dr+ds)*0.5;local du=function(aA)local dv,dw=a.PingPong(aA-dr,ds-dr)return dv+dr,dw end;local q=du(a.NillableValueOrDefault(dm.value,0))local dx=a.NillableIfHasValueOrElse(dm.tickFrequency,function(dy)if dy<=0 then error('SlideSwitch: Invalid argument: tickFrequency <= 0',3)end;return math.min(dy,ds-dr)end,function()return(ds-dr)/10.0 end)local dz=a.NillableIfHasValueOrElse(dm.tickVector,function(b0)return Vector3.__new(b0.x,b0.y,b0.z)end,function()return Vector3.__new(0.01,0.0,0.0)end)local dA=dz.magnitude;if dA<Vector3.kEpsilon then error('SlideSwitch: Invalid argument: tickVector is too small',2)end;local dB=a.NillableValueOrDefault(dm.snapToTick,true)local dC=dm.valueTextName;local dD=a.NillableValueOrDefault(dm.valueToText,tostring)local dE=TimeSpan.FromMilliseconds(1000)local dF=TimeSpan.FromMilliseconds(50)local dG,dH;local cy={}local self;local dI=false;local dJ=0;local dK=false;local dL=TimeSpan.Zero;local dM=TimeSpan.Zero;local dN=function(dO,dP)if dP or dO~=q then local cz=q;q=dO;for cA,E in pairs(cy)do cA(self,q,cz)end end;dq.SetLocalPosition((dO-dt)/dx*dz)if dC then vci.assets.SetText(dC,dD(dO,self))end end;local dQ=function()local dR=dG()local dS,dT=du(dR)local dU=dR+dx;local dV,dW=du(dU)assert(dV)local dO;if dT==dW or dS==ds or dS==dr then dO=dU else dO=dT>=0 and ds or dr end;dM=vci.me.UnscaledTime;if dO==ds or dO==dr then dL=dM end;dH(dO)end;a.NillableIfHasValueOrElse(dm.lsp,function(dX)if not a.NillableHasValue(dm.propertyName)then error('SlideSwitch: Invalid argument: propertyName is nil',3)end;local dY=a.NillableValue(dm.propertyName)dG=function()return dX.GetProperty(dY,q)end;dH=function(aA)dX.SetProperty(dY,aA)end;dX.AddListener(function(ao,z,dZ,d_)if z==dY then dN(du(dZ),true)end end)end,function()local dZ=q;dG=function()return dZ end;dH=function(aA)dZ=aA;dN(du(aA),true)end end)self={GetColliderItem=function()return dn end,GetBaseItem=function()return dp end,GetKnobItem=function()return dq end,GetMinValue=function()return dr end,GetMaxValue=function()return ds end,GetValue=function()return q end,GetScaleValue=function(e0,e1)assert(e0<=e1)return e0+(e1-e0)*(q-dr)/(ds-dr)end,SetValue=function(aA)dH(du(aA))end,GetTickFrequency=function()return dx end,IsSnapToTick=function()return dB end,AddListener=function(cA)cy[cA]=cA end,RemoveListener=function(cA)cy[cA]=nil end,DoUse=function()if not dI then dK=true;dL=vci.me.UnscaledTime;dQ()end end,DoUnuse=function()dK=false end,DoGrab=function()if not dK then dI=true;dJ=(q-dt)/dx end end,DoUngrab=function()dI=false end,Update=function()if dI then local e2=dn.GetPosition()-dp.GetPosition()local e3=dq.GetRotation()*dz;local e4=Vector3.Project(e2,e3)local e5=(Vector3.Dot(e3,e4)>=0 and 1 or-1)*e4.magnitude/dA+dJ;local e6=(dB and a.Round(e5)or e5)*dx+dt;local dO=a.Clamp(e6,dr,ds)if dO~=q then dH(dO)end elseif dK then local e7=vci.me.UnscaledTime;if e7>=dL+dE and e7>=dM+dF then dQ()end elseif dn.IsMine then a.AlignSubItemOrigin(dp,dn)end end}dN(du(dG()),false)return self end,CreateSubItemConnector=function()local e8=function(e9,cY,ea)e9.item=cY;e9.position=cY.GetPosition()e9.rotation=cY.GetRotation()e9.initialPosition=e9.position;e9.initialRotation=e9.rotation;e9.propagation=not not ea;return e9 end;local eb=function(ec)for cY,e9 in pairs(ec)do e8(e9,cY,e9.propagation)end end;local ed=function(ee,bf,e9,ef,eg)local e2=ee-e9.initialPosition;local eh=bf*Quaternion.Inverse(e9.initialRotation)e9.position=ee;e9.rotation=bf;for cY,ei in pairs(ef)do if cY~=e9.item and(not eg or eg(ei))then ei.position,ei.rotation=a.RotateAround(ei.initialPosition+e2,ei.initialRotation,ee,eh)cY.SetPosition(ei.position)cY.SetRotation(ei.rotation)end end end;local ej={}local ek=true;local el=false;local self;self={IsEnabled=function()return ek end,SetEnabled=function(aC)ek=aC;if aC then eb(ej)el=false end end,Contains=function(em)return a.NillableHasValue(ej[em])end,Add=function(en,eo)if not en then error('SubItemConnector.Add: Invalid argument: subItems = '..tostring(en),2)end;local ep=type(en)=='table'and en or{en}eb(ej)el=false;for N,cY in pairs(ep)do ej[cY]=e8({},cY,not eo)end end,Remove=function(em)local aQ=a.NillableHasValue(ej[em])ej[em]=nil;return aQ end,RemoveAll=function()ej={}return true end,Each=function(ah)for cY,e9 in pairs(ej)do if ah(cY,self)==false then return false end end end,GetItems=function()local ep={}for cY,e9 in pairs(ej)do table.insert(ep,cY)end;return ep end,Update=function()if not ek then return end;local eq=false;for cY,e9 in pairs(ej)do local cd=cY.GetPosition()local er=cY.GetRotation()if not a.VectorApproximatelyEquals(cd,e9.position)or not a.QuaternionApproximatelyEquals(er,e9.rotation)then if e9.propagation then if cY.IsMine then ed(cd,er,ej[cY],ej,function(ei)if ei.item.IsMine then return true else el=true;return false end end)eq=true;break else el=true end else el=true end end end;if not eq and el then eb(ej)el=false end end}return self end,GetSubItemTransform=function(em)local ee=em.GetPosition()local bf=em.GetRotation()local es=em.GetLocalScale()return{positionX=ee.x,positionY=ee.y,positionZ=ee.z,rotationX=bf.x,rotationY=bf.y,rotationZ=bf.z,rotationW=bf.w,scaleX=es.x,scaleY=es.y,scaleZ=es.z}end,RestoreCytanbTransform=function(et)local cd=et.positionX and et.positionY and et.positionZ and Vector3.__new(et.positionX,et.positionY,et.positionZ)or nil;local er=et.rotationX and et.rotationY and et.rotationZ and et.rotationW and Quaternion.__new(et.rotationX,et.rotationY,et.rotationZ,et.rotationW)or nil;local es=et.scaleX and et.scaleY and et.scaleZ and Vector3.__new(et.scaleX,et.scaleY,et.scaleZ)or nil;return cd,er,es end}a.SetConstEach(a,{LogLevelOff=0,LogLevelFatal=100,LogLevelError=200,LogLevelWarn=300,LogLevelInfo=400,LogLevelDebug=500,LogLevelTrace=600,LogLevelAll=0x7FFFFFFF,ColorHueSamples=10,ColorSaturationSamples=4,ColorBrightnessSamples=5,EscapeSequenceTag='#__CYTANB',SolidusTag='#__CYTANB_SOLIDUS',NegativeNumberTag='#__CYTANB_NEGATIVE_NUMBER',ArrayNumberTag='#__CYTANB_ARRAY_NUMBER',InstanceIDParameterName='__CYTANB_INSTANCE_ID',MessageValueParameterName='__CYTANB_MESSAGE_VALUE',TypeParameterName='__CYTANB_TYPE',ColorTypeName='Color',Vector2TypeName='Vector2',Vector3TypeName='Vector3',Vector4TypeName='Vector4',QuaternionTypeName='Quaternion',LOCAL_SHARED_PROPERTY_EXPIRED_KEY='__CYTANB_LOCAL_SHARED_PROPERTY_EXPIRED'})a.SetConstEach(a,{ColorMapSize=a.ColorHueSamples*a.ColorSaturationSamples*a.ColorBrightnessSamples,FatalLogLevel=a.LogLevelFatal,ErrorLogLevel=a.LogLevelError,WarnLogLevel=a.LogLevelWarn,InfoLogLevel=a.LogLevelInfo,DebugLogLevel=a.LogLevelDebug,TraceLogLevel=a.LogLevelTrace})c={[a.ColorTypeName]={compositionFieldNames=a.ListToMap({'r','g','b','a'}),compositionFieldLength=4,toTableFunc=a.ColorToTable,fromTableFunc=a.ColorFromTable},[a.Vector2TypeName]={compositionFieldNames=a.ListToMap({'x','y'}),compositionFieldLength=2,toTableFunc=a.Vector2ToTable,fromTableFunc=a.Vector2FromTable},[a.Vector3TypeName]={compositionFieldNames=a.ListToMap({'x','y','z'}),compositionFieldLength=3,toTableFunc=a.Vector3ToTable,fromTableFunc=a.Vector3FromTable},[a.Vector4TypeName]={compositionFieldNames=a.ListToMap({'x','y','z','w'}),compositionFieldLength=4,toTableFunc=a.Vector4ToTable,fromTableFunc=a.Vector4FromTable},[a.QuaternionTypeName]={compositionFieldNames=a.ListToMap({'x','y','z','w'}),compositionFieldLength=4,toTableFunc=a.QuaternionToTable,fromTableFunc=a.QuaternionFromTable}}d={{tag=a.NegativeNumberTag,pattern='^'..a.NegativeNumberTag,replacement=''},{tag=a.ArrayNumberTag,pattern='^'..a.ArrayNumberTag,replacement=''},{tag=a.SolidusTag,pattern='^'..a.SolidusTag,replacement='/'},{tag=a.EscapeSequenceTag,pattern='^'..a.EscapeSequenceTag..a.EscapeSequenceTag,replacement=a.EscapeSequenceTag}}e=a.ListToMap({a.NegativeNumberTag,a.ArrayNumberTag})f=a.LogLevelInfo;h={[a.LogLevelFatal]='FATAL',[a.LogLevelError]='ERROR',[a.LogLevelWarn]='WARN',[a.LogLevelInfo]='INFO',[a.LogLevelDebug]='DEBUG',[a.LogLevelTrace]='TRACE'}package.loaded['cytanb']=a;i,j=(function()local cr='eff3a188-bfc7-4b0e-93cb-90fd1adc508c'local cx=_G[cr]if not cx then cx={}_G[cr]=cx end;local eu=cx.randomSeedValue;if not eu then eu=os.time()-os.clock()*10000;cx.randomSeedValue=eu;math.randomseed(eu)end;local ev=cx.clientID;if type(ev)~='string'then ev=tostring(a.RandomUUID())cx.clientID=ev end;local ew=vci.state.Get(b)or''if ew==''and vci.assets.IsMine then ew=tostring(a.RandomUUID())vci.state.Set(b,ew)end;return ew,ev end)()return a end)()
 
 local GetSubItem = function (name) return assert(vci.assets.GetSubItem(name)) end
+local GetGameObjectTransform = function (name) return assert(vci.assets.GetTransform(name)) end
 
 local settings = (function ()
     return {
@@ -18,12 +19,72 @@ local settings = (function ()
         colorStateName = 'measure-color',
         displayTextName = 'measure-display',
         updatePeriod = TimeSpan.FromMilliseconds(200),
+        directionOffset = Vector3.__new(0, 0.25, 0.05),
+        directionEfkContainerName = 'direction-efk',
+        directionOperationTime = TimeSpan.FromMilliseconds(3000)
     }
 end)()
 
-local vciLoaded = false
+---@class MeasureTerminal
+---@field name string
+---@field index number
+---@field item ExportTransform
+---@field new fun (index: number, directionEfkContainer: ExportTransform, directionEfk: ExportEffekseer): MeasureTerminal
+---@field Update fun (self: MeasureTerminal)
+---@field DoUse fun (self: MeasureTerminal)
+---@field DoUnuse fun (self: MeasureTerminal)
+local MeasureTerminal
 
-local measureList
+---@type table<string, MeasureTerminal>
+local terminalMap
+
+---@type MeasureTerminal[]
+local terminalList
+
+MeasureTerminal = {
+    new = function (index, directionEfkContainer, directionEfk)
+        local name = settings.measureName .. '#' .. settings.indexTag .. '=' .. index
+
+        return setmetatable({
+            name = name,
+            index = index,
+            item = GetSubItem(name),
+            directionEfkContainer = assert(directionEfkContainer),
+            directionEfk = assert(directionEfk),
+            gripPressed = false,
+            gripStartTime = TimeSpan.MaxValue
+        }, {
+            __index = MeasureTerminal
+        })
+    end,
+
+    Update = function (self)
+        local now = vci.me.UnscaledTime
+        if self.gripPressed and now - settings.directionOperationTime >= self.gripStartTime then
+            -- グリップ長押しで、方向を表示する
+            self.gripStartTime = now
+            cytanb.LogTrace('play direction-efk: ', self.name)
+            local pos = self.item.GetPosition() + self.item.GetRotation() * settings.directionOffset
+            local targetPos = terminalList[self.index % 2 + 1].item.GetPosition()
+            local lr = Quaternion.LookRotation(targetPos - pos)
+            self.directionEfkContainer.SetPosition(pos)
+            self.directionEfkContainer.SetRotation(lr)
+            self.directionEfk.Play()
+        end
+    end,
+
+    DoUse = function (self)
+        self.gripPressed = true
+        self.gripStartTime = vci.me.UnscaledTime
+    end,
+
+    DoUnuse = function (self)
+        self.gripPressed = false
+        self.gripStartTime = TimeSpan.MaxValue
+    end
+}
+
+local vciLoaded = false
 
 local measureStatus = {
     colorInitialized = false,
@@ -43,7 +104,7 @@ local UpdateDisplay = function (force)
         return
     end
 
-    local distance = (measureList[1].GetPosition() - measureList[2].GetPosition()).magnitude
+    local distance = (terminalList[1].item.GetPosition() - terminalList[2].item.GetPosition()).magnitude
     if not force and distance == measureStatus.distance then
         -- 距離に変更がない
         return
@@ -55,7 +116,6 @@ local UpdateDisplay = function (force)
     local uDistance, siPrefix = cytanb.CalculateSIPrefix(measureStatus.distance)
     local str = cytanb.Round(uDistance, 2) .. ' ' .. siPrefix .. 'm'
     vci.assets.SetText(settings.displayTextName, str)
-
     cytanb.LogTrace('update display: ', str)
 end
 
@@ -73,16 +133,25 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
         end
 
         UpdateDisplay()
+
+        for name, terminal in pairs(terminalMap) do
+            MeasureTerminal.Update(terminal)
+        end
     end,
 
     function ()
         cytanb.LogTrace('OnLoad')
         vciLoaded = true
 
-        measureList = {}
+        local directionEfkContainer = GetGameObjectTransform(settings.directionEfkContainerName)
+        local directionEfk = assert(vci.assets.GetEffekseerEmitter(settings.directionEfkContainerName))
+
+        terminalMap = {}
+        terminalList = {}
         for i = 1, 2 do
-            local name = settings.measureName .. '#' .. settings.indexTag .. '=' .. i
-            measureList[i] = GetSubItem(name)
+            local terminal = MeasureTerminal.new(i, directionEfkContainer, directionEfk)
+            terminalMap[terminal.name] = terminal
+            terminalList[i] = terminal
         end
 
         if vci.assets.IsMine and not vci.state.Get(settings.colorStateName) then
@@ -98,4 +167,26 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
 
 updateAll = function ()
     UpdateCw()
+end
+
+onUse = function (use)
+    if not vciLoaded then
+        return
+    end
+
+    local terminal = terminalMap[use]
+    if terminal then
+        MeasureTerminal.DoUse(terminal)
+    end
+end
+
+onUnuse = function (use)
+    if not vciLoaded then
+        return
+    end
+
+    local terminal = terminalMap[use]
+    if terminal then
+        MeasureTerminal.DoUnuse(terminal)
+    end
 end
