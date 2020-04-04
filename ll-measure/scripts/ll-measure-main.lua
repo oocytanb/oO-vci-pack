@@ -114,7 +114,7 @@ local UpdateDisplay = function (force)
     measureStatus.distance = distance
 
     local uDistance, siPrefix = cytanb.CalculateSIPrefix(measureStatus.distance)
-    local str = cytanb.Round(uDistance, 2) .. ' ' .. siPrefix .. 'm'
+    local str = string.format('%.2f %sm', uDistance, siPrefix)
     vci.assets.SetText(settings.displayTextName, str)
     cytanb.LogTrace('update display: ', str)
 end

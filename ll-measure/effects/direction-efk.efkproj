@@ -19,9 +19,9 @@
           <PVA>
             <Velocity>
               <Z>
-                <Center>-0.005</Center>
-                <Max>-0.005</Max>
-                <Min>-0.005</Min>
+                <Center>-0.01</Center>
+                <Max>-0.01</Max>
+                <Min>-0.01</Min>
               </Z>
             </Velocity>
           </PVA>
@@ -76,14 +76,17 @@
                 <ColorLeft>1</ColorLeft>
                 <ColorLeft_Random>
                   <R>
+                    <Center>191</Center>
                     <Min>128</Min>
                     <DrawnAs>0</DrawnAs>
                   </R>
                   <G>
+                    <Center>191</Center>
                     <Min>128</Min>
                     <DrawnAs>0</DrawnAs>
                   </G>
                   <B>
+                    <Center>191</Center>
                     <Min>128</Min>
                     <DrawnAs>0</DrawnAs>
                   </B>
@@ -94,14 +97,17 @@
                 <ColorLeftMiddle>1</ColorLeftMiddle>
                 <ColorLeftMiddle_Random>
                   <R>
+                    <Center>191</Center>
                     <Min>128</Min>
                     <DrawnAs>0</DrawnAs>
                   </R>
                   <G>
+                    <Center>191</Center>
                     <Min>128</Min>
                     <DrawnAs>0</DrawnAs>
                   </G>
                   <B>
+                    <Center>191</Center>
                     <Min>128</Min>
                     <DrawnAs>0</DrawnAs>
                   </B>
@@ -153,16 +159,19 @@
                 <ColorRight>1</ColorRight>
                 <ColorRight_Random>
                   <R>
+                    <Center>64</Center>
                     <Max>128</Max>
                     <Min>0</Min>
                     <DrawnAs>0</DrawnAs>
                   </R>
                   <G>
+                    <Center>64</Center>
                     <Max>128</Max>
                     <Min>0</Min>
                     <DrawnAs>0</DrawnAs>
                   </G>
                   <B>
+                    <Center>64</Center>
                     <Max>128</Max>
                     <Min>0</Min>
                     <DrawnAs>0</DrawnAs>
@@ -174,16 +183,19 @@
                 <ColorRightMiddle>1</ColorRightMiddle>
                 <ColorRightMiddle_Random>
                   <R>
+                    <Center>64</Center>
                     <Max>128</Max>
                     <Min>0</Min>
                     <DrawnAs>0</DrawnAs>
                   </R>
                   <G>
+                    <Center>64</Center>
                     <Max>128</Max>
                     <Min>0</Min>
                     <DrawnAs>0</DrawnAs>
                   </G>
                   <B>
+                    <Center>64</Center>
                     <Max>128</Max>
                     <Min>0</Min>
                     <DrawnAs>0</DrawnAs>
