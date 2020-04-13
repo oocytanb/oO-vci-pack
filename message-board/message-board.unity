@@ -178,10 +178,10 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: dc5f30cce462e174190f639ea4c82863, type: 3}
-    version: 0.1.0
+    version: 0.1.1
     description: "- \u30C6\u30AD\u30B9\u30C8\u3092\u8868\u793A\u3059\u308B VCI \u306E\u7C21\u5358\u306A\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n-
       `text.lua` \u30D5\u30A1\u30A4\u30EB\u306E `textContent` \u30D7\u30ED\u30D1\u30C6\u30A3\u3092\u66F8\u304D\u63DB\u3048\u308B\u3053\u3068\u3067\u3001\u8868\u793A\u3059\u308B\u30E1\u30C3\u30BB\u30FC\u30B8\u3092\u5909\u66F4\u3059\u308B\u3053\u3068\u304C\u3067\u304D\u307E\u3059\u3002"
-    exporterVersion: 0.23
+    exporterVersion: 0.25
     specVersion: 
     modelDataLicenseType: 8
     modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack

@@ -1336,7 +1336,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 6459d2326f07c724fbda1493b7423062, type: 3}
-    version: 0.1.0
+    version: 0.1.1
     description: "- \u30ED\u30FC\u30AB\u30EB\u3067\u3001\u8272\u3084\u30B5\u30A4\u30BA\u3092\u6307\u5B9A\u3067\u304D\u308B\u30C9\u30FC\u30E0\u3067\u3059\u3002\r\n-
       \u5404\u81EA\u3067\u3001\u304A\u597D\u307F\u306E\u8A2D\u5B9A\u306B\u5909\u66F4\u3059\u308B\u3053\u3068\u304C\u3067\u304D\u307E\u3059\u3002"
     exporterVersion: 0.25

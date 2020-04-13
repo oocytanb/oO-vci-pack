@@ -119,6 +119,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4308903526776672, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4308903526776672, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4308903526776672, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4308903526776672, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4308903526776672, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4308903526776672, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4787485531692982, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -150,30 +174,6 @@ PrefabInstance:
     - target: {fileID: 4787485531692982, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
       propertyPath: m_RootOrder
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4308903526776672, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4308903526776672, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4308903526776672, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4308903526776672, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4308903526776672, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 4308903526776672, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e1eac359aeacbda408a25d1bab8527da, type: 3}
@@ -213,9 +213,9 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: c2e3bf2d4f9f3444681bedc8985c087c, type: 3}
-    version: 0.1.0
+    version: 0.1.1
     description: "\u30B5\u30F3\u30D7\u30EB\u7528\u306E\u5358\u7D14\u306A VCI \u3067\u3059\u3002"
-    exporterVersion: 0.17
+    exporterVersion: 0.25
     specVersion: 
     modelDataLicenseType: 8
     modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
@@ -225,7 +225,7 @@ MonoBehaviour:
     scriptEnableDebugging: 1
     scriptFormat: 0
   Scripts:
-  - name: main.lua
+  - name: main
     mimeType: 0
     targetEngine: 0
     filePath: Assets/oO-vci-pack/paint3d-fish/scripts/paint3d-fish-main.lua
@@ -275,6 +275,7 @@ MonoBehaviour:
   Scalable: 1
   UniformScaling: 0
   GroupId: 0
+  NodeIndex: 0
 --- !u!1 &622577280
 GameObject:
   m_ObjectHideFlags: 0
