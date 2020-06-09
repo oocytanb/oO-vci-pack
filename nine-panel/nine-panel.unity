@@ -54,7 +54,7 @@ LightmapSettings:
     m_EnableBakedLightmaps: 1
     m_EnableRealtimeLightmaps: 1
   m_LightmapEditorSettings:
-    serializedVersion: 10
+    serializedVersion: 12
     m_Resolution: 2
     m_BakeResolution: 40
     m_AtlasSize: 1024
@@ -62,6 +62,7 @@ LightmapSettings:
     m_AOMaxDistance: 1
     m_CompAOExponent: 1
     m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
     m_Padding: 2
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
@@ -76,10 +77,16 @@ LightmapSettings:
     m_PVRDirectSampleCount: 32
     m_PVRSampleCount: 500
     m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 500
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 2
+    m_PVRDenoiserTypeDirect: 0
+    m_PVRDenoiserTypeIndirect: 0
+    m_PVRDenoiserTypeAO: 0
     m_PVRFilterTypeDirect: 0
     m_PVRFilterTypeIndirect: 0
     m_PVRFilterTypeAO: 0
-    m_PVRFilteringMode: 1
+    m_PVREnvironmentMIS: 0
     m_PVRCulling: 1
     m_PVRFilteringGaussRadiusDirect: 1
     m_PVRFilteringGaussRadiusIndirect: 5
@@ -87,7 +94,9 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
-    m_ShowResolutionOverlay: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -399,8 +408,7 @@ MonoBehaviour:
       \u30EA\u30BB\u30C3\u30C8\u30DC\u30BF\u30F3\u304B\u30D5\u30EC\u30FC\u30E0\u3092\u30B0\u30EA\u30C3\u30D7\u3059\u308B\u3068\u3001\u30D1\u30CD\u30EB\u3092\u30EA\u30BB\u30C3\u30C8\u3057\u307E\u3059\u3002\n-
       \u30A2\u30A4\u30C6\u30E0\u3092\u3064\u304B\u3093\u3067\u6240\u6709\u6A29\u3092\u5F97\u308B\u3068\u3001\u3059\u308A\u629C\u3051\u73FE\u8C61\u304C\u8EFD\u6E1B\u3059\u308B\u304B\u3082\u3057\u308C\u307E\u305B\u3093\u3002(\u67A0\u4E0A\u90E8\u306E\u7DD1\u8272\u306E\u30E9\u30F3\u30D7\u304C\u70B9\u706F)\n-
       \u30C6\u30AF\u30B9\u30C1\u30E3\u30FC\u30D5\u30A1\u30A4\u30EB\u3092\u7DE8\u96C6\u3059\u308B\u3053\u3068\u3067\u3001\u30AA\u30EA\u30B8\u30CA\u30EB\u306E\u7D75\u67C4\u306E\u30D1\u30CD\u30EB\u3092\u4F5C\u308B\u3053\u3068\u304C\u3067\u304D\u307E\u3059\u3002\n-
-      [\u8A73\u7D30](https://github.com/oocytanb/oO-vci-pack/tree/2018.4/nine-panel)\n-
-      [\u30A2\u30A4\u30C6\u30E0\u691C\u7D22](https://seed.online/search?text=cball)"
+      [\u8A73\u7D30](https://github.com/oocytanb/oO-vci-pack)\n- [\u30A2\u30A4\u30C6\u30E0\u691C\u7D22](https://seed.online/search?text=cball)"
     exporterVersion: 0.25
     specVersion: 
     modelDataLicenseType: 8
@@ -1473,12 +1481,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 988833384}
   m_Enabled: 1
-  serializedVersion: 8
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
@@ -1488,6 +1498,24 @@ Light:
     m_Bias: 0.05
     m_NormalBias: 0.4
     m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
@@ -1495,12 +1523,15 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &988833386
@@ -1555,9 +1586,10 @@ Camera:
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_GateFitMode: 2
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -1642,6 +1674,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35d396bcb8480c24eb784eebe6096a99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  EmitterScale: 0
   effectAsset: {fileID: 11400000, guid: 4d4c5753a09ce6f4680f26eaa6013d19, type: 2}
   playOnStart: 0
   isLooping: 0

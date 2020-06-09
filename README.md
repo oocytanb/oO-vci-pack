@@ -6,7 +6,7 @@
 
 ## Softwares / Assets
 
-- [Unity](https://unity3d.com/) 2018.4
+- [Unity](https://unity3d.com/) 2019.4
 - [VCI](https://github.com/virtual-cast/VCI)
 - [Blender](https://www.blender.org/) 2.8
 - [M+ FONTS](https://mplus-fonts.osdn.jp/)

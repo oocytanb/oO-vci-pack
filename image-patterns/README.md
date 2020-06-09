@@ -14,4 +14,4 @@
 
 - [Unity package](https://www.dropbox.com/s/6xov5g4wt9t0mfp/cytanb-image-patterns-latest.unitypackage?dl=1)
 
-- [Unity 2018.4](https://unity3d.com/) および [VCI](https://github.com/virtual-cast/VCI) が必要になります。
+- [Unity](https://unity3d.com/) および [VCI](https://github.com/virtual-cast/VCI) が必要になります。

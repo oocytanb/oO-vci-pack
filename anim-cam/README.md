@@ -63,4 +63,4 @@
 
 - [Unity package](https://www.dropbox.com/s/1u2mh7feav0zxl6/cytanb-anim-cam-latest.unitypackage?dl=1)
 
-- [Unity 2018.4](https://unity3d.com/), [VCI](https://github.com/virtual-cast/VCI), および `TextMesh Pro` が必要になります。
+- [Unity](https://unity3d.com/), [VCI](https://github.com/virtual-cast/VCI), および `TextMesh Pro` が必要になります。

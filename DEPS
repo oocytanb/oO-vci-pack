@@ -6,7 +6,7 @@ vars = {
   'master_branch': 'master',
   'develop_branch': 'develop',
   'assets_branch': 'assets',
-  'target_branch': '2018.4',
+  'target_branch': '2019.4',
 }
 
 deps = {

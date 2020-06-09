@@ -43,4 +43,4 @@
 
 - [Unity package](https://www.dropbox.com/s/7fzd8td0nxfzxhb/oO-nine-panel-latest.unitypackage?dl=1)
 
-- [Unity 2018.4](https://unity3d.com/) および [VCI](https://github.com/virtual-cast/VCI) が必要になります。
+- [Unity](https://unity3d.com/) および [VCI](https://github.com/virtual-cast/VCI) が必要になります。
