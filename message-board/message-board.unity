@@ -54,7 +54,7 @@ LightmapSettings:
     m_EnableBakedLightmaps: 1
     m_EnableRealtimeLightmaps: 1
   m_LightmapEditorSettings:
-    serializedVersion: 10
+    serializedVersion: 12
     m_Resolution: 2
     m_BakeResolution: 40
     m_AtlasSize: 1024
@@ -62,6 +62,7 @@ LightmapSettings:
     m_AOMaxDistance: 1
     m_CompAOExponent: 1
     m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
     m_Padding: 2
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
@@ -76,10 +77,16 @@ LightmapSettings:
     m_PVRDirectSampleCount: 32
     m_PVRSampleCount: 500
     m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 500
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 2
+    m_PVRDenoiserTypeDirect: 0
+    m_PVRDenoiserTypeIndirect: 0
+    m_PVRDenoiserTypeAO: 0
     m_PVRFilterTypeDirect: 0
     m_PVRFilterTypeIndirect: 0
     m_PVRFilterTypeAO: 0
-    m_PVRFilteringMode: 1
+    m_PVREnvironmentMIS: 0
     m_PVRCulling: 1
     m_PVRFilteringGaussRadiusDirect: 1
     m_PVRFilteringGaussRadiusIndirect: 5
@@ -87,7 +94,9 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
-    m_ShowResolutionOverlay: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -178,7 +187,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: dc5f30cce462e174190f639ea4c82863, type: 3}
-    version: 0.1.1
+    version: 0.2.0
     description: "- \u30C6\u30AD\u30B9\u30C8\u3092\u8868\u793A\u3059\u308B VCI \u306E\u7C21\u5358\u306A\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n-
       `text.lua` \u30D5\u30A1\u30A4\u30EB\u306E `textContent` \u30D7\u30ED\u30D1\u30C6\u30A3\u3092\u66F8\u304D\u63DB\u3048\u308B\u3053\u3068\u3067\u3001\u8868\u793A\u3059\u308B\u30E1\u30C3\u30BB\u30FC\u30B8\u3092\u5909\u66F4\u3059\u308B\u3053\u3068\u304C\u3067\u304D\u307E\u3059\u3002"
     exporterVersion: 0.25
@@ -254,9 +263,10 @@ Camera:
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_GateFitMode: 2
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -378,7 +388,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.59999996, y: 0.29999998, z: 0.01}
+  m_Size: {x: 1.0999999, y: 0.44, z: 0.01}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &854477335
 PrefabInstance:
@@ -460,12 +470,12 @@ PrefabInstance:
     - target: {fileID: 4943523559470062476, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0.56
+      value: 1.04
       objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062476, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0.26
+      value: 0.38
       objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062476, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
@@ -525,17 +535,22 @@ PrefabInstance:
     - target: {fileID: 4943523559470062477, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
       propertyPath: m_fontSize
-      value: 0.35
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062477, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
       propertyPath: m_fontSizeBase
-      value: 0.35
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062477, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
       propertyPath: m_text
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4943523559470062477, guid: 22d72aab40ae6404b8b022a536fe12cf,
+        type: 3}
+      propertyPath: m_textAlignment
+      value: 513
       objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062479, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
@@ -575,12 +590,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1156245438}
   m_Enabled: 1
-  serializedVersion: 8
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
@@ -590,6 +607,24 @@ Light:
     m_Bias: 0.05
     m_NormalBias: 0.4
     m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
@@ -597,12 +632,15 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &1156245440
@@ -796,12 +834,12 @@ PrefabInstance:
     - target: {fileID: 4943523559470062476, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0.56
+      value: 1.04
       objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062476, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0.26
+      value: 0.38
       objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062476, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
@@ -861,17 +899,27 @@ PrefabInstance:
     - target: {fileID: 4943523559470062477, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
       propertyPath: m_fontSize
-      value: 0.35
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062477, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
       propertyPath: m_fontSizeBase
-      value: 0.35
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062477, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
       propertyPath: m_text
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4943523559470062477, guid: 22d72aab40ae6404b8b022a536fe12cf,
+        type: 3}
+      propertyPath: m_firstOverflowCharacterIndex
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4943523559470062477, guid: 22d72aab40ae6404b8b022a536fe12cf,
+        type: 3}
+      propertyPath: m_textAlignment
+      value: 513
       objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062479, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
