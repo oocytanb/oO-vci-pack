@@ -36,7 +36,6 @@ local vciLoaded = false
 local talkativeCream
 
 local creamStatus = {
-    messageCount = 0,
     color = cytanb.ColorFromARGB32(0xFFE7E7E7)
 }
 
@@ -48,12 +47,6 @@ end
 local UpdateCreamStatus = function (status, color)
     status.color = color
     vci.assets.material.SetColor(settings.talkativeCreamMat, color)
-end
-
-local EmitCreamMessage = function (status, msg)
-    local count = status.messageCount + 1
-    status.messageCount = count
-    EmitCommentMessage(tostring(count) .. ' : ' .. msg)
 end
 
 local UpdateCw = cytanb.CreateUpdateRoutine(
@@ -114,8 +107,8 @@ onUse = function (use)
 
     if use == settings.talkativeCreamName then
         -- 送信するコメントの内容は、自由に書き換えて使う。
-        EmitCreamMessage(creamStatus, 'これは、おしゃべりなクリームからの、テストメッセージです。')
-        EmitCreamMessage(creamStatus,'VCIから、スタジオ内にコメントメッセージを送信しています。')
-        EmitCreamMessage(creamStatus,'そのため、送信者名や送信元が特殊な状態になっています。')
+        EmitCommentMessage('これは、おしゃべりなクリームからの、テストメッセージです。')
+        EmitCommentMessage('VCIから、スタジオ内にコメントメッセージを送信しています。')
+        EmitCommentMessage('そのため、送信者名や送信元が特殊な状態になっています。')
     end
 end
