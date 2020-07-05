@@ -2,7 +2,7 @@
 
 - おしゃべりなクリーム。実験用アイテムです。
 
-- 別アイテムの [cytanb-color-palette](../color-palette/README.md) を使うと、色を変更できます。
+- クリームを掴んだ状態で [cytanb-color-palette](../color-palette/README.md) を使うと、色を変更できます。
 
 - アイテムをグリップして使用すると、スタジオ内にコメントメッセージを送信します。
 

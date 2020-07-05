@@ -15,8 +15,7 @@ end
 local settings = {
     enableDebugging = true,
     talkativeCreamName = 'talkative-cream',
-    talkativeCreamMat = 'cream_mat',
-    longPressOperationTime = TimeSpan.FromMilliseconds(1000)
+    talkativeCreamMat = 'cream_mat'
 }
 
 --- カラーパレットのメッセージの名前空間。
@@ -46,16 +45,8 @@ local Cream; Cream = {
     Make = function ()
         return {
             color = cytanb.ColorFromARGB32(0xFFE7E7E7),
-            colorLocked = false,
-            gripPressed = false,
-            gripStartTime = TimeSpan.MaxValue,
-            useEventConsumed = false
+            grabbed = false
         }
-    end,
-
-    SetColorLocked = function (self, colorLocked)
-        self.colorLocked = colorLocked
-        cytanb.LogTrace('Cream.colorLocked: ', colorLocked)
     end,
 
     SetColor = function (self, color)
@@ -66,34 +57,16 @@ local Cream; Cream = {
     MakeStatusParameters = function (self)
         return {
             senderID = cytanb.ClientID(),
-            argb32 = cytanb.ColorToARGB32(self.color),
-            colorLocked = self.colorLocked
+            argb32 = cytanb.ColorToARGB32(self.color)
         }
     end,
 
-    Update = function (self)
-        local now = vci.me.UnscaledTime
-        if self.gripPressed and now - settings.longPressOperationTime >= self.gripStartTime then
-            -- グリップ長押し
-            self.gripStartTime = TimeSpan.MaxValue
-            self.useEventConsumed = true
-
-            Cream.SetColorLocked(self, not self.colorLocked)
-            local params = Cream.MakeStatusParameters(self)
-            params.argb32 = nil
-            cytanb.EmitMessage(statusMessageName, params)
-        end
+    Grab = function (self)
+        self.grabbed = true
     end,
 
-    Use = function (self)
-        self.gripPressed = true
-        self.gripStartTime = vci.me.UnscaledTime
-        self.useEventConsumed = false
-    end,
-
-    Unuse = function (self)
-        self.gripPressed = false
-        self.gripStartTime = TimeSpan.MaxValue
+    Ungrab = function (self)
+        self.grabbed = false
     end
 }
 
@@ -101,7 +74,6 @@ local creamInstance = Cream.Make()
 
 local UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
-        Cream.Update(creamInstance)
     end,
 
     function ()
@@ -112,32 +84,29 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
 
         cytanb.OnMessage(ColorPaletteItemStatusMessageName, function (sender, name, parameterMap)
             local version = parameterMap.version
-            if version and version >= ColorPaletteMinMessageVersion and not creamInstance.colorLocked then
-                -- vci.message から色情報を取得する
+            if version and version >= ColorPaletteMinMessageVersion and talkativeCream.IsMine and creamInstance.grabbed then
+                -- クリームを掴んでいる場合は、カラーパレットから色情報を取得する
                 local color = cytanb.ColorFromARGB32(parameterMap.argb32)
-                cytanb.LogDebug('on item status: color = ', color)
-                Cream.SetColor(creamInstance, color)
+                if creamInstance.color ~= color then
+                    cytanb.LogDebug('on item status: color = ', color)
+                    Cream.SetColor(creamInstance, color)
+                    cytanb.EmitMessage(statusMessageName, Cream.MakeStatusParameters(creamInstance))
+                end
             end
         end)
 
         cytanb.OnInstanceMessage(queryStatusMessageName, function (sender, name, parameterMap)
-            if not vci.assets.IsMine then
-                -- マスターでなければリターンする。
-                return
+            if vci.assets.IsMine then
+                -- マスターのみ応答する
+                cytanb.EmitMessage(statusMessageName, Cream.MakeStatusParameters(creamInstance))
             end
-
-            cytanb.EmitMessage(statusMessageName, Cream.MakeStatusParameters(creamInstance))
         end)
 
         cytanb.OnInstanceMessage(statusMessageName, function (sender, name, parameterMap)
             if parameterMap.senderID ~= cytanb.ClientID() then
-                cytanb.LogTrace('on statusMessage')
+                cytanb.LogTrace('on cream status message')
                 if parameterMap.argb32 then
                     Cream.SetColor(creamInstance, cytanb.ColorFromARGB32(parameterMap.argb32))
-                end
-
-                if parameterMap.colorLocked ~= nil then
-                    Cream.SetColorLocked(creamInstance, parameterMap.colorLocked)
                 end
             end
         end)
@@ -154,26 +123,27 @@ updateAll = function ()
     UpdateCw()
 end
 
-onUse = function (use)
+onGrab = function (target)
     if not vciLoaded then
         return
     end
 
-    if use == settings.talkativeCreamName then
-        Cream.Use(creamInstance)
+    if target == settings.talkativeCreamName then
+        Cream.Grab(creamInstance)
     end
 end
 
-onUnuse = function (use)
-    if use == settings.talkativeCreamName then
-        local consumed = creamInstance.useEventConsumed
-        Cream.Unuse(creamInstance)
+onUngrab = function (target)
+    if target == settings.talkativeCreamName then
+        Cream.Ungrab(creamInstance)
+    end
+end
 
-        if not consumed then
-            -- 送信するコメントの内容は、自由に書き換えて使う。
-            EmitCommentMessage('これは、おしゃべりなクリームからの、テストメッセージです。')
-            EmitCommentMessage('VCIから、スタジオ内にコメントメッセージを送信しています。')
-            EmitCommentMessage('そのため、送信者名や送信元が特殊な状態になっています。')
-        end
+onUse = function (use)
+    if use == settings.talkativeCreamName then
+        -- 送信するコメントの内容は、自由に書き換えて使う。
+        EmitCommentMessage('これは、おしゃべりなクリームからの、テストメッセージです。')
+        EmitCommentMessage('VCIから、スタジオ内にコメントメッセージを送信しています。')
+        EmitCommentMessage('そのため、送信者名や送信元が特殊な状態になっています。')
     end
 end
