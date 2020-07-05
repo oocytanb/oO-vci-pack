@@ -13,9 +13,10 @@ local EmitCommentMessage = function (msg)
 end
 
 local settings = {
-    enableDebugging = false,
+    enableDebugging = true,
     talkativeCreamName = 'talkative-cream',
-    talkativeCreamMat = 'cream_mat'
+    talkativeCreamMat = 'cream_mat',
+    longPressOperationTime = TimeSpan.FromMilliseconds(1000)
 }
 
 --- カラーパレットのメッセージの名前空間。
@@ -30,27 +31,77 @@ local ColorPaletteItemStatusMessageName = ColorPaletteMessageNS .. '.item-status
 local creamNS = 'com.github.oocytanb.oO-vci-pack.talkative-cream'
 local statusMessageName = creamNS .. '.status'
 local queryStatusMessageName = creamNS .. '.query-status'
+local statusChangedMessageName = creamNS .. '.status-changed'
 
 local vciLoaded = false
 
 local talkativeCream
-
-local creamStatus = {
-    color = cytanb.ColorFromARGB32(0xFFE7E7E7)
-}
 
 cytanb.SetOutputLogLevelEnabled(true)
 if settings.enableDebugging then
     cytanb.SetLogLevel(cytanb.LogLevelAll)
 end
 
-local UpdateCreamStatus = function (status, color)
-    status.color = color
-    vci.assets.material.SetColor(settings.talkativeCreamMat, color)
-end
+local Cream; Cream = {
+    Make = function ()
+        return {
+            color = cytanb.ColorFromARGB32(0xFFE7E7E7),
+            colorLocked = false,
+            gripPressed = false,
+            gripStartTime = TimeSpan.MaxValue,
+            useEventConsumed = false
+        }
+    end,
+
+    SetColorLocked = function (self, colorLocked)
+        self.colorLocked = colorLocked
+        cytanb.LogTrace('Cream.colorLocked: ', colorLocked)
+    end,
+
+    SetColor = function (self, color)
+        self.color = color
+        vci.assets.material.SetColor(settings.talkativeCreamMat, color)
+    end,
+
+    MakeStatusParameters = function (self)
+        return {
+            senderID = cytanb.ClientID(),
+            argb32 = cytanb.ColorToARGB32(self.color),
+            colorLocked = self.colorLocked
+        }
+    end,
+
+    Update = function (self)
+        local now = vci.me.UnscaledTime
+        if self.gripPressed and now - settings.longPressOperationTime >= self.gripStartTime then
+            -- グリップ長押し
+            self.gripStartTime = TimeSpan.MaxValue
+            self.useEventConsumed = true
+
+            Cream.SetColorLocked(self, not self.colorLocked)
+            local params = Cream.MakeStatusParameters(self)
+            params.argb32 = nil
+            cytanb.EmitMessage(statusMessageName, params)
+        end
+    end,
+
+    Use = function (self)
+        self.gripPressed = true
+        self.gripStartTime = vci.me.UnscaledTime
+        self.useEventConsumed = false
+    end,
+
+    Unuse = function (self)
+        self.gripPressed = false
+        self.gripStartTime = TimeSpan.MaxValue
+    end
+}
+
+local creamInstance = Cream.Make()
 
 local UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
+        Cream.Update(creamInstance)
     end,
 
     function ()
@@ -61,11 +112,11 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
 
         cytanb.OnMessage(ColorPaletteItemStatusMessageName, function (sender, name, parameterMap)
             local version = parameterMap.version
-            if version and version >= ColorPaletteMinMessageVersion then
+            if version and version >= ColorPaletteMinMessageVersion and not creamInstance.colorLocked then
                 -- vci.message から色情報を取得する
                 local color = cytanb.ColorFromARGB32(parameterMap.argb32)
                 cytanb.LogDebug('on item status: color = ', color)
-                UpdateCreamStatus(creamStatus, color)
+                Cream.SetColor(creamInstance, color)
             end
         end)
 
@@ -75,20 +126,23 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
                 return
             end
 
-            cytanb.EmitMessage(statusMessageName, {
-                senderID = cytanb.ClientID(),
-                argb32 = cytanb.ColorToARGB32(creamStatus.color)
-            })
+            cytanb.EmitMessage(statusMessageName, Cream.MakeStatusParameters(creamInstance))
         end)
 
         cytanb.OnInstanceMessage(statusMessageName, function (sender, name, parameterMap)
             if parameterMap.senderID ~= cytanb.ClientID() then
                 cytanb.LogTrace('on statusMessage')
-                UpdateCreamStatus(creamStatus, cytanb.ColorFromARGB32(parameterMap.argb32))
+                if parameterMap.argb32 then
+                    Cream.SetColor(creamInstance, cytanb.ColorFromARGB32(parameterMap.argb32))
+                end
+
+                if parameterMap.colorLocked ~= nil then
+                    Cream.SetColorLocked(creamInstance, parameterMap.colorLocked)
+                end
             end
         end)
 
-        UpdateCreamStatus(creamStatus, creamStatus.color)
+        Cream.SetColor(creamInstance, creamInstance.color)
 
         -- 現在のステータスを問い合わせる。
         -- 設置者よりも、ゲストのロードが早いケースを考慮して、全ユーザーがクエリーメッセージを送る。
@@ -106,9 +160,20 @@ onUse = function (use)
     end
 
     if use == settings.talkativeCreamName then
-        -- 送信するコメントの内容は、自由に書き換えて使う。
-        EmitCommentMessage('これは、おしゃべりなクリームからの、テストメッセージです。')
-        EmitCommentMessage('VCIから、スタジオ内にコメントメッセージを送信しています。')
-        EmitCommentMessage('そのため、送信者名や送信元が特殊な状態になっています。')
+        Cream.Use(creamInstance)
+    end
+end
+
+onUnuse = function (use)
+    if use == settings.talkativeCreamName then
+        local consumed = creamInstance.useEventConsumed
+        Cream.Unuse(creamInstance)
+
+        if not consumed then
+            -- 送信するコメントの内容は、自由に書き換えて使う。
+            EmitCommentMessage('これは、おしゃべりなクリームからの、テストメッセージです。')
+            EmitCommentMessage('VCIから、スタジオ内にコメントメッセージを送信しています。')
+            EmitCommentMessage('そのため、送信者名や送信元が特殊な状態になっています。')
+        end
     end
 end

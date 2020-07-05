@@ -406,20 +406,12 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.02, y: 0.05, z: 0.02}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1901706892
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+--- !u!1 &1901706892 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3648433623157557303, guid: cd783f0dd211bee43aac159e4d97dde9,
+    type: 3}
+  m_PrefabInstance: {fileID: 1901706887}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1901706890}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0829e5b3934f1ad458def49d46164ebe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _attachableHumanBodyBones: 0000000001000000020000000300000004000000050000000600000007000000090000000a0000000b0000000c0000000d0000000e000000
-  _attachableDistance: 0.22
 --- !u!114 &1901706893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -466,6 +458,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.19394247, y: 0.2547183, z: 0.2010653}
   m_Center: {x: 0.0036437437, y: 0.115790956, z: -0.0026802756}
+--- !u!114 &1901706896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1901706892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0829e5b3934f1ad458def49d46164ebe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _attachableHumanBodyBones: 00000000010000000200000003000000040000000500000006000000070000000a0000000d0000000e0000000e00000008000000
+  _attachableDistance: 0.2
 --- !u!1 &1982394637
 GameObject:
   m_ObjectHideFlags: 0
@@ -501,7 +507,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: a7d9ef3115b24e44eba6d539a57d448d, type: 3}
-    version: 0.1.1
+    version: 0.2.0
     description: "- \u304A\u3057\u3083\u3079\u308A\u306A\u30AF\u30EA\u30FC\u30E0\u3002\u5B9F\u9A13\u7528\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002\n-
       \u5225\u30A2\u30A4\u30C6\u30E0\u306E [cytanb-color-palette](https://seed.online/search?text=color%20palette)
       \u3092\u4F7F\u3046\u3068\u3001\u8272\u3092\u5909\u66F4\u3067\u304D\u307E\u3059\u3002\n-
