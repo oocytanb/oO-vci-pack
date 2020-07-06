@@ -30,11 +30,8 @@ local ColorPaletteItemStatusMessageName = ColorPaletteMessageNS .. '.item-status
 local creamNS = 'com.github.oocytanb.oO-vci-pack.talkative-cream'
 local statusMessageName = creamNS .. '.status'
 local queryStatusMessageName = creamNS .. '.query-status'
-local statusChangedMessageName = creamNS .. '.status-changed'
 
 local vciLoaded = false
-
-local talkativeCream
 
 cytanb.SetOutputLogLevelEnabled(true)
 if settings.enableDebugging then
@@ -42,8 +39,10 @@ if settings.enableDebugging then
 end
 
 local Cream; Cream = {
-    Make = function ()
+    Make = function (name)
         return {
+            name = name,
+            item = GetSubItem(name),
             color = cytanb.ColorFromARGB32(0xFFE7E7E7),
             grabbed = false
         }
@@ -61,6 +60,12 @@ local Cream; Cream = {
         }
     end,
 
+    Update = function (self)
+        if self.grabbed and not self.item.IsMine then
+            Cream.Ungrab(self)
+        end
+    end,
+
     Grab = function (self)
         self.grabbed = true
     end,
@@ -70,21 +75,20 @@ local Cream; Cream = {
     end
 }
 
-local creamInstance = Cream.Make()
+local creamInstance = Cream.Make(settings.talkativeCreamName)
 
 local UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
+        Cream.Update(creamInstance)
     end,
 
     function ()
         cytanb.LogTrace('OnLoad')
         vciLoaded = true
 
-        talkativeCream = GetSubItem(settings.talkativeCreamName)
-
         cytanb.OnMessage(ColorPaletteItemStatusMessageName, function (sender, name, parameterMap)
             local version = parameterMap.version
-            if version and version >= ColorPaletteMinMessageVersion and talkativeCream.IsMine and creamInstance.grabbed then
+            if version and version >= ColorPaletteMinMessageVersion and creamInstance.grabbed then
                 -- クリームを掴んでいる場合は、カラーパレットから色情報を取得する
                 local color = cytanb.ColorFromARGB32(parameterMap.argb32)
                 if creamInstance.color ~= color then
@@ -128,19 +132,19 @@ onGrab = function (target)
         return
     end
 
-    if target == settings.talkativeCreamName then
+    if target == creamInstance.name then
         Cream.Grab(creamInstance)
     end
 end
 
 onUngrab = function (target)
-    if target == settings.talkativeCreamName then
+    if target == creamInstance.name then
         Cream.Ungrab(creamInstance)
     end
 end
 
 onUse = function (use)
-    if use == settings.talkativeCreamName then
+    if use == creamInstance.name then
         -- 送信するコメントの内容は、自由に書き換えて使う。
         EmitCommentMessage('これは、おしゃべりなクリームからの、テストメッセージです。')
         EmitCommentMessage('VCIから、スタジオ内にコメントメッセージを送信しています。')
