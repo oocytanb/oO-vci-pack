@@ -1,7 +1,5 @@
-----------------------------------------------------------------
---  Copyright (c) 2019 oO (https://github.com/oocytanb)
---  MIT Licensed
-----------------------------------------------------------------
+-- SPDX-License-Identifier: MIT
+-- Copyright (c) 2019 oO (https://github.com/oocytanb)
 
 local COLOR_LIST = {
     Color.__new(0.9, 0.7, 0.133),
