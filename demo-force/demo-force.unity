@@ -995,7 +995,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 47630206be542564fa00392669462c60, type: 3}
-    version: 0.0.4
+    version: 0.0.5
     description: 
     exporterVersion: 0.27
     specVersion: 

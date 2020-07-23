@@ -402,7 +402,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 1ba3248c8ec5ada44914b19a9703b183, type: 3}
-    version: 1.1.6
+    version: 1.1.7
     description: "- \u7684\u5F53\u3066\u7528\u306E\u30D1\u30CD\u30EB\u3067\u3059\u3002\n-
       \u30DC\u30FC\u30EB\u306A\u3069\u3092\u5F53\u3066\u3066\u904A\u3073\u307E\u3059\u3002\n-
       \u30EA\u30BB\u30C3\u30C8\u30DC\u30BF\u30F3\u304B\u30D5\u30EC\u30FC\u30E0\u3092\u30B0\u30EA\u30C3\u30D7\u3059\u308B\u3068\u3001\u30D1\u30CD\u30EB\u3092\u30EA\u30BB\u30C3\u30C8\u3057\u307E\u3059\u3002\n-
