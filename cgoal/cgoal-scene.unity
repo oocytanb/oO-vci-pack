@@ -383,7 +383,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: cda7067c4039f8f4fb3356f4bdc7d52c, type: 3}
-    version: 0.1.4
+    version: 0.1.5
     description: 
     exporterVersion: 0.27
     specVersion: 
