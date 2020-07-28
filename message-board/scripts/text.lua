@@ -1,1 +1,3 @@
-return { textContent = 'Hello, World!' }
+return { textContent = [==[
+Hello, World!
+]==] }
