@@ -6,30 +6,12 @@ StringEachCode=function(w,bg,bD,a7,bE,bF,bG,bH)local aB=string.len(w)if aB==0 th
 ColorFromIndex=function(d1,d2,d3,d4,d5)local d6=math.max(math.floor(d2 or a.ColorHueSamples),1)local d7=d5 and d6 or d6-1;local d8=math.max(math.floor(d3 or a.ColorSaturationSamples),1)local d9=math.max(math.floor(d4 or a.ColorBrightnessSamples),1)local cP=a.Clamp(math.floor(d1 or 0),0,d6*d8*d9-1)local da=cP%d6;local db=math.floor(cP/d6)local C=db%d8;local dc=math.floor(db/d8)if d5 or da~=d7 then local am=da/d7;local cZ=(d8-C)/d8;local ao=(d9-dc)/d9;return Color.HSVToRGB(am,cZ,ao)else local ao=(d9-dc)/d9*C/(d8-1)return Color.HSVToRGB(0.0,0.0,ao)end end,ColorToIndex=function(cW,d2,d3,d4,d5)local d6=math.max(math.floor(d2 or a.ColorHueSamples),1)local d7=d5 and d6 or d6-1;local d8=math.max(math.floor(d3 or a.ColorSaturationSamples),1)local d9=math.max(math.floor(d4 or a.ColorBrightnessSamples),1)local am,cZ,ao=a.ColorRGBToHSV(cW)local C=a.Round(d8*(1.0-cZ))if d5 or C<d8 then local dd=a.Round(d7*am)if dd>=d7 then dd=0 end;if C>=d8 then C=d8-1 end;local dc=math.min(d9-1,a.Round(d9*(1.0-ao)))return dd+d6*(C+d8*dc)else local de=a.Round((d8-1)*ao)if de==0 then local df=a.Round(d9*(1.0-ao))if df>=d9 then return d6-1 else return d6*(1+a.Round(ao*(d8-1)/(d9-df)*d9)+d8*df)-1 end else return d6*(1+de+d8*a.Round(d9*(1.0-ao*(d8-1)/de)))-1 end end end,ColorToTable=function(cW)return{[a.TypeParameterName]=a.ColorTypeName,r=cW.r,g=cW.g,b=cW.b,a=cW.a}end,ColorFromTable=function(aq)local M,aw=ap(aq,a.ColorTypeName)return M and Color.__new(aq.r,aq.g,aq.b,aq.a)or nil,aw end,Vector2ToTable=function(aa)return{[a.TypeParameterName]=a.Vector2TypeName,x=aa.x,y=aa.y}end,Vector2FromTable=function(aq)local M,aw=ap(aq,a.Vector2TypeName)return M and Vector2.__new(aq.x,aq.y)or nil,aw end,Vector3ToTable=function(aa)return{[a.TypeParameterName]=a.Vector3TypeName,x=aa.x,y=aa.y,z=aa.z}end,Vector3FromTable=function(aq)local M,aw=ap(aq,a.Vector3TypeName)return M and Vector3.__new(aq.x,aq.y,aq.z)or nil,aw end,Vector4ToTable=function(aa)return{[a.TypeParameterName]=a.Vector4TypeName,x=aa.x,y=aa.y,z=aa.z,w=aa.w}end,Vector4FromTable=function(aq)local M,aw=ap(aq,a.Vector4TypeName)return M and Vector4.__new(aq.x,aq.y,aq.z,aq.w)or nil,aw end,QuaternionToTable=function(aa)return{[a.TypeParameterName]=a.QuaternionTypeName,x=aa.x,y=aa.y,z=aa.z,w=aa.w}end,QuaternionFromTable=function(aq)local M,aw=ap(aq,a.QuaternionTypeName)return M and Quaternion.__new(aq.x,aq.y,aq.z,aq.w)or nil,aw end,TableToSerializable=function(aJ)return aI(aJ)end,TableFromSerializable=function(aL,aQ)return aP(aL,aQ)end,TableToSerialiable=function(aJ)return aI(aJ)end,TableFromSerialiable=function(aL,aQ)return aP(aL,aQ)end,EmitMessage=function(b9,bd)local aL=a.NillableIfHasValueOrElse(bd,function(aJ)if type(aJ)~='table'then error('EmitMessage: Invalid argument: table expected',3)end;return a.TableToSerializable(aJ)end,function()return{}end)aL[a.InstanceIDParameterName]=a.InstanceID()vci.message.Emit(b9,json.serialize(aL))end,OnMessage=function(b9,bg)local b0=function(b2,bj,ba)if type(ba)=='string'and string.startsWith(ba,'{')then local dg,aL=pcall(json.parse,ba)if dg and type(aL)=='table'and aL[a.InstanceIDParameterName]then local dh=a.TableFromSerializable(aL)bg(b1(b2,dh[a.MessageSenderOverride]),bj,dh)return end end;bg(b2,bj,{[a.MessageValueParameterName]=ba})end;vci.message.On(b9,b0)return{Off=function()if b0 then b0=nil end end}end,OnInstanceMessage=function(b9,bg)local b0=function(b2,bj,bd)local di=a.InstanceID()if di~=''and di==bd[a.InstanceIDParameterName]then bg(b2,bj,bd)end end;return a.OnMessage(b9,b0)end,EmitCommentMessage=function(ba,b3)b8(a.DedicatedCommentMessageName,ba,b3,'comment')end,OnCommentMessage=function(bg)return be(a.DedicatedCommentMessageName,'comment',bg)end,EmitNotificationMessage=function(ba,b3)b8(a.DedicatedNotificationMessageName,ba,b3,'notification')end,OnNotificationMessage=function(bg)return be(a.DedicatedNotificationMessageName,'notification',bg)end,GetEffekseerEmitterMap=function(b9)local dj=vci.assets.GetEffekseerEmitters(b9)if not dj then return nil end;local c6={}for a7,dk in pairs(dj)do c6[dk.EffectName]=dk end;return c6 end,ClientID=function()return p end,ParseTagString=function(w)local bK=string.find(w,'#',1,true)if not bK then return{},w end;local dl={}local dm=string.sub(w,1,bK-1)bK=bK+1;local aB=string.len(w)while bK<=aB do local dn,dp=a.StringStartsWith(w,h,bK)if dn then local dq=bK+dp;local dr=string.sub(w,bK,dq-1)local ds=dr;bK=dq;if bK<=aB and a.StringStartsWith(w,'=',bK)then bK=bK+1;local dt,du=a.StringStartsWith(w,h,bK)if dt then local dv=bK+du;ds=string.sub(w,bK,dv-1)bK=dv else ds=''end end;dl[dr]=ds end;bK=string.find(w,'#',bK,true)if not bK then break end;bK=bK+1 end;return dl,dm end,CalculateSIPrefix=(function()local dw=9;local dx={'y','z','a','f','p','n','u','m','','k','M','G','T','P','E','Z','Y'}local dy=#dx;return function(c9)local dz=c9==0 and 0 or a.Clamp(math.floor(math.log(math.abs(c9),1000)),1-dw,dy-dw)return dz==0 and c9 or c9/1000^dz,dx[dw+dz],dz*3 end end)(),CreateLocalSharedProperties=function(dA,dB)local dC=TimeSpan.FromSeconds(5)local dD='33657f0e-7c44-4ee7-acd9-92dd8b8d807a'local dE='__CYTANB_LOCAL_SHARED_PROPERTIES_LISTENER_MAP'if type(dA)~='string'or string.len(dA)<=0 or type(dB)~='string'or string.len(dB)<=0 then error('LocalSharedProperties: Invalid arguments',2)end;local dF=_G[dD]if not dF then dF={}_G[dD]=dF end;dF[dB]=vci.me.UnscaledTime;local dG=_G[dA]if not dG then dG={[dE]={}}_G[dA]=dG end;local dH=dG[dE]local self;self={GetLspID=function()return dA end,GetLoadID=function()return dB end,GetProperty=function(aj,bl)local aa=dG[aj]if aa==nil then return bl else return aa end end,SetProperty=function(aj,aa)if aj==dE then error('LocalSharedProperties: Invalid argument: key = ',aj,2)end;local cU=vci.me.UnscaledTime;local dI=dG[aj]dG[aj]=aa;for dJ,di in pairs(dH)do local bY=dF[di]if bY and bY+dC>=cU then dJ(self,aj,aa,dI)else dJ(self,a.LOCAL_SHARED_PROPERTY_EXPIRED_KEY,true,false)dH[dJ]=nil;dF[di]=nil end end end,Clear=function()for aj,aa in pairs(dG)do if aj~=dE then self.SetProperty(aj,nil)end end end,Each=function(bg)for aj,aa in pairs(dG)do if aj~=dE and bg(aa,aj,self)==false then return false end end end,AddListener=function(dJ)dH[dJ]=dB end,RemoveListener=function(dJ)dH[dJ]=nil end,UpdateAlive=function()dF[dB]=vci.me.UnscaledTime end}return self end,EstimateFixedTimestep=function(dK)local dL=1.0;local dM=1000.0;local dN=TimeSpan.FromSeconds(0.02)local dO=0xFFFF;local dP=a.CreateCircularQueue(64)local dQ=TimeSpan.FromSeconds(5)local dR=TimeSpan.FromSeconds(30)local dS=false;local dT=vci.me.Time;local dU=a.Random32()local dV=Vector3.__new(bit32.bor(0x400,bit32.band(dU,0x1FFF)),bit32.bor(0x400,bit32.band(bit32.rshift(dU,16),0x1FFF)),0.0)dK.SetPosition(dV)dK.SetRotation(Quaternion.identity)dK.SetVelocity(Vector3.zero)dK.SetAngularVelocity(Vector3.zero)dK.AddForce(Vector3.__new(0.0,0.0,dL*dM))local self={Timestep=function()return dN end,Precision=function()return dO end,IsFinished=function()return dS end,Update=function()if dS then return dN end;local dW=vci.me.Time-dT;local dX=dW.TotalSeconds;if dX<=Vector3.kEpsilon then return dN end;local dY=dK.GetPosition().z-dV.z;local dZ=dY/dX;local d_=dZ/dM;if d_<=Vector3.kEpsilon then return dN end;dP.Offer(d_)local e0=dP.Size()if e0>=2 and dW>=dQ then local e1=0.0;for a7=1,e0 do e1=e1+dP.Get(a7)end;local e2=e1/e0;local e3=0.0;for a7=1,e0 do e3=e3+(dP.Get(a7)-e2)^2 end;local e4=e3/e0;if e4<dO then dO=e4;dN=TimeSpan.FromSeconds(e2)end;if dW>dR then dS=true;dK.SetPosition(dV)dK.SetRotation(Quaternion.identity)dK.SetVelocity(Vector3.zero)dK.SetAngularVelocity(Vector3.zero)end else dN=TimeSpan.FromSeconds(d_)end;return dN end}return self end,AlignSubItemOrigin=function(e5,e6,e7)local e8=e5.GetRotation()if not a.QuaternionApproximatelyEquals(e6.GetRotation(),e8)then e6.SetRotation(e8)end;local e9=e5.GetPosition()if not a.VectorApproximatelyEquals(e6.GetPosition(),e9)then e6.SetPosition(e9)end;if e7 then e6.SetVelocity(Vector3.zero)e6.SetAngularVelocity(Vector3.zero)end end,CreateSubItemGlue=function()local ea={}local self;self={Contains=function(eb,ec)return a.NillableIfHasValueOrElse(ea[eb],function(bO)return a.NillableHasValue(bO[ec])end,function()return false end)end,Add=function(eb,ed,e7)if not eb or not ed then local ee='SubItemGlue.Add: Invalid arguments '..(not eb and', parent = '..tostring(eb)or'')..(not ed and', children = '..tostring(ed)or'')error(ee,2)end;local bO=a.NillableIfHasValueOrElse(ea[eb],function(ef)return ef end,function()local ef={}ea[eb]=ef;return ef end)if type(ed)=='table'then for aj,aX in pairs(ed)do bO[aX]={velocityReset=not not e7}end else bO[ed]={velocityReset=not not e7}end end,Remove=function(eb,ec)return a.NillableIfHasValueOrElse(ea[eb],function(bO)if a.NillableHasValue(bO[ec])then bO[ec]=nil;return true else return false end end,function()return false end)end,RemoveParent=function(eb)if a.NillableHasValue(ea[eb])then ea[eb]=nil;return true else return false end end,RemoveAll=function()ea={}return true end,Each=function(bg,eg)return a.NillableIfHasValueOrElse(eg,function(eb)return a.NillableIfHasValue(ea[eb],function(bO)for ec,eh in pairs(bO)do if bg(ec,eb,self)==false then return false end end end)end,function()for eb,bO in pairs(ea)do if self.Each(bg,eb)==false then return false end end end)end,Update=function(ei)for eb,bO in pairs(ea)do local ej=eb.GetPosition()local ek=eb.GetRotation()for ec,eh in pairs(bO)do if ei or ec.IsMine then if not a.QuaternionApproximatelyEquals(ec.GetRotation(),ek)then ec.SetRotation(ek)end;if not a.VectorApproximatelyEquals(ec.GetPosition(),ej)then ec.SetPosition(ej)end;if eh.velocityReset then ec.SetVelocity(Vector3.zero)ec.SetAngularVelocity(Vector3.zero)end end end end end}return self end,
 CreateUpdateRoutine=function(el,em)return coroutine.wrap(function()local en=TimeSpan.FromSeconds(30)local eo=vci.me.UnscaledTime;local ep=eo;local cR=vci.me.Time;local eq=true;while true do local di=a.InstanceID()if di~=''then break end;local er=vci.me.UnscaledTime;if er-en>eo then a.LogError('TIMEOUT: Could not receive Instance ID.')return-1 end;ep=er;cR=vci.me.Time;eq=false;coroutine.yield(100)end;if eq then ep=vci.me.UnscaledTime;cR=vci.me.Time;coroutine.yield(100)end;a.NillableIfHasValue(em,function(es)es()end)while true do local cU=vci.me.Time;local et=cU-cR;local er=vci.me.UnscaledTime;local eu=er-ep;el(et,eu)cR=cU;ep=er;coroutine.yield(100)end end)end,CreateSlideSwitch=function(ev)local ew=a.NillableValue(ev.colliderItem)local ex=a.NillableValue(ev.baseItem)local ey=a.NillableValue(ev.knobItem)local ez=a.NillableValueOrDefault(ev.minValue,0)local eA=a.NillableValueOrDefault(ev.maxValue,10)if ez>=eA then error('SlideSwitch: Invalid argument: minValue >= maxValue',2)end;local eB=(ez+eA)*0.5;local eC=function(aX)local eD,eE=a.PingPong(aX-ez,eA-ez)return eD+ez,eE end;local aa=eC(a.NillableValueOrDefault(ev.value,0))local eF=a.NillableIfHasValueOrElse(ev.tickFrequency,function(eG)if eG<=0 then error('SlideSwitch: Invalid argument: tickFrequency <= 0',3)end;return math.min(eG,eA-ez)end,function()return(eA-ez)/10.0 end)local eH=a.NillableIfHasValueOrElse(ev.tickVector,function(co)return Vector3.__new(co.x,co.y,co.z)end,function()return Vector3.__new(0.01,0.0,0.0)end)local eI=eH.magnitude;if eI<Vector3.kEpsilon then error('SlideSwitch: Invalid argument: tickVector is too small',2)end;local eJ=a.NillableValueOrDefault(ev.snapToTick,true)local eK=ev.valueTextName;local eL=a.NillableValueOrDefault(ev.valueToText,tostring)local eM=TimeSpan.FromMilliseconds(1000)local eN=TimeSpan.FromMilliseconds(50)local eO,eP;local dH={}local self;local eQ=false;local eR=0;local eS=false;local eT=TimeSpan.Zero;local eU=TimeSpan.Zero;local eV=function(eW,eX)if eX or eW~=aa then local dI=aa;aa=eW;for dJ,ao in pairs(dH)do dJ(self,aa,dI)end end;ey.SetLocalPosition((eW-eB)/eF*eH)if eK then vci.assets.SetText(eK,eL(eW,self))end end;local eY=function()local eZ=eO()local e_,f0=eC(eZ)local f1=eZ+eF;local f2,f3=eC(f1)assert(f2)local eW;if f0==f3 or e_==eA or e_==ez then eW=f1 else eW=f0>=0 and eA or ez end;eU=vci.me.UnscaledTime;if eW==eA or eW==ez then eT=eU end;eP(eW)end;a.NillableIfHasValueOrElse(ev.lsp,function(f4)if not a.NillableHasValue(ev.propertyName)then error('SlideSwitch: Invalid argument: propertyName is nil',3)end;local f5=a.NillableValue(ev.propertyName)eO=function()return f4.GetProperty(f5,aa)end;eP=function(aX)f4.SetProperty(f5,aX)end;f4.AddListener(function(bP,aj,f6,f7)if aj==f5 then eV(eC(f6),true)end end)end,function()local f6=aa;eO=function()return f6 end;eP=function(aX)f6=aX;eV(eC(aX),true)end end)self={GetColliderItem=function()return ew end,GetBaseItem=function()return ex end,GetKnobItem=function()return ey end,GetMinValue=function()return ez end,GetMaxValue=function()return eA end,GetValue=function()return aa end,GetScaleValue=function(f8,f9)assert(f8<=f9)return f8+(f9-f8)*(aa-ez)/(eA-ez)end,SetValue=function(aX)eP(eC(aX))end,GetTickFrequency=function()return eF end,IsSnapToTick=function()return eJ end,AddListener=function(dJ)dH[dJ]=dJ end,RemoveListener=function(dJ)dH[dJ]=nil end,DoUse=function()if not eQ then eS=true;eT=vci.me.UnscaledTime;eY()end end,DoUnuse=function()eS=false end,DoGrab=function()if not eS then eQ=true;eR=(aa-eB)/eF end end,DoUngrab=function()eQ=false end,Update=function()if eQ then local fa=ew.GetPosition()-ex.GetPosition()local fb=ey.GetRotation()*eH;local fc=Vector3.Project(fa,fb)local fd=(Vector3.Dot(fb,fc)>=0 and 1 or-1)*fc.magnitude/eI+eR;local fe=(eJ and a.Round(fd)or fd)*eF+eB;local eW=a.Clamp(fe,ez,eA)if eW~=aa then eP(eW)end elseif eS then local ff=vci.me.UnscaledTime;if ff>=eT+eM and ff>=eU+eN then eY()end elseif ew.IsMine then a.AlignSubItemOrigin(ex,ew)end end}eV(eC(eO()),false)return self end,CreateSubItemConnector=function()local fg=function(fh,e6,fi)fh.item=e6;fh.position=e6.GetPosition()fh.rotation=e6.GetRotation()fh.initialPosition=fh.position;fh.initialRotation=fh.rotation;fh.propagation=not not fi;return fh end;local fj=function(fk)for e6,fh in pairs(fk)do fg(fh,e6,fh.propagation)end end;local fl=function(r,cC,fh,fm,fn)local fa=r-fh.initialPosition;local fo=cC*Quaternion.Inverse(fh.initialRotation)fh.position=r;fh.rotation=cC;for e6,fp in pairs(fm)do if e6~=fh.item and(not fn or fn(fp))then fp.position,fp.rotation=a.RotateAround(fp.initialPosition+fa,fp.initialRotation,r,fo)e6.SetPosition(fp.position)e6.SetRotation(fp.rotation)end end end;local fq={}local fr=true;local fs=false;local self;self={IsEnabled=function()return fr end,SetEnabled=function(c1)fr=c1;if c1 then fj(fq)fs=false end end,Contains=function(ft)return a.NillableHasValue(fq[ft])end,Add=function(fu,fv)if not fu then error('SubItemConnector.Add: Invalid argument: subItems = '..tostring(fu),2)end;local fw=type(fu)=='table'and fu or{fu}fj(fq)fs=false;for ax,e6 in pairs(fw)do fq[e6]=fg({},e6,not fv)end end,Remove=function(ft)local M=a.NillableHasValue(fq[ft])fq[ft]=nil;return M end,RemoveAll=function()fq={}return true end,Each=function(bg)for e6,fh in pairs(fq)do if bg(e6,self)==false then return false end end end,GetItems=function()local fw={}for e6,fh in pairs(fq)do table.insert(fw,e6)end;return fw end,Update=function()if not fr then return end;local fx=false;for e6,fh in pairs(fq)do local bK=e6.GetPosition()local fy=e6.GetRotation()if not a.VectorApproximatelyEquals(bK,fh.position)or not a.QuaternionApproximatelyEquals(fy,fh.rotation)then if fh.propagation then if e6.IsMine then fl(bK,fy,fq[e6],fq,function(fp)if fp.item.IsMine then return true else fs=true;return false end end)fx=true;break else fs=true end else fs=true end end end;if not fx and fs then fj(fq)fs=false end end}return self end,GetSubItemTransform=function(ft)local r=ft.GetPosition()local cC=ft.GetRotation()local fz=ft.GetLocalScale()return{positionX=r.x,positionY=r.y,positionZ=r.z,rotationX=cC.x,rotationY=cC.y,rotationZ=cC.z,rotationW=cC.w,scaleX=fz.x,scaleY=fz.y,scaleZ=fz.z}end}a.SetConstEach(a,{LogLevelOff=0,LogLevelFatal=100,LogLevelError=200,LogLevelWarn=300,LogLevelInfo=400,LogLevelDebug=500,LogLevelTrace=600,LogLevelAll=0x7FFFFFFF,ColorHueSamples=10,ColorSaturationSamples=4,ColorBrightnessSamples=5,EscapeSequenceTag='#__CYTANB',SolidusTag='#__CYTANB_SOLIDUS',NegativeNumberTag='#__CYTANB_NEGATIVE_NUMBER',ArrayNumberTag='#__CYTANB_ARRAY_NUMBER',InstanceIDParameterName='__CYTANB_INSTANCE_ID',MessageValueParameterName='__CYTANB_MESSAGE_VALUE',MessageSenderOverride='__CYTANB_MESSAGE_SENDER_OVERRIDE',MessageOriginalSender='__CYTANB_MESSAGE_ORIGINAL_SENDER',TypeParameterName='__CYTANB_TYPE',ColorTypeName='Color',Vector2TypeName='Vector2',Vector3TypeName='Vector3',Vector4TypeName='Vector4',QuaternionTypeName='Quaternion',DedicatedCommentMessageName='cytanb.comment.a2a6a035-6b8d-4e06-b4f9-07e6209b0639',DedicatedNotificationMessageName='cytanb.notification.698ba55f-2b69-47f2-a68d-bc303994cff3',LOCAL_SHARED_PROPERTY_EXPIRED_KEY='__CYTANB_LOCAL_SHARED_PROPERTY_EXPIRED'})a.SetConstEach(a,{ColorMapSize=a.ColorHueSamples*a.ColorSaturationSamples*a.ColorBrightnessSamples,FatalLogLevel=a.LogLevelFatal,ErrorLogLevel=a.LogLevelError,WarnLogLevel=a.LogLevelWarn,InfoLogLevel=a.LogLevelInfo,DebugLogLevel=a.LogLevelDebug,TraceLogLevel=a.LogLevelTrace})c=a.MakeSearchPattern({'\t','\n','\v','\f','\r',' '},1,-1)d=a.MakeSearchPattern({'sprite=','SPRITE='})e=a.MakeSearchPattern({'0','1','2','3','4','5','6','7','8','9'},1,9)f,g=(function()local fA={'A','B','C','D','E','F','a','b','c','d','e','f','0','1','2','3','4','5','6','7','8','9'}return a.MakeSearchPattern(fA,4,4),a.MakeSearchPattern(fA,8,8)end)()h=a.MakeSearchPattern({'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9','_','-','.','(',')','!','~','*','\'','%'},1,-1)i={{tag=a.NegativeNumberTag,search=a.NegativeNumberTag,replacement=''},{tag=a.ArrayNumberTag,search=a.ArrayNumberTag,replacement=''},{tag=a.SolidusTag,search=a.SolidusTag,replacement='/'},{tag=a.EscapeSequenceTag,search=a.EscapeSequenceTag..a.EscapeSequenceTag,replacement=a.EscapeSequenceTag}}j={[a.ColorTypeName]={compositionFieldNames=a.ListToMap({'r','g','b','a'}),compositionFieldLength=4,toTableFunc=a.ColorToTable,fromTableFunc=a.ColorFromTable},[a.Vector2TypeName]={compositionFieldNames=a.ListToMap({'x','y'}),compositionFieldLength=2,toTableFunc=a.Vector2ToTable,fromTableFunc=a.Vector2FromTable},[a.Vector3TypeName]={compositionFieldNames=a.ListToMap({'x','y','z'}),compositionFieldLength=3,toTableFunc=a.Vector3ToTable,fromTableFunc=a.Vector3FromTable},[a.Vector4TypeName]={compositionFieldNames=a.ListToMap({'x','y','z','w'}),compositionFieldLength=4,toTableFunc=a.Vector4ToTable,fromTableFunc=a.Vector4FromTable},[a.QuaternionTypeName]={compositionFieldNames=a.ListToMap({'x','y','z','w'}),compositionFieldLength=4,toTableFunc=a.QuaternionToTable,fromTableFunc=a.QuaternionFromTable}}k=a.ListToMap({a.NegativeNumberTag,a.ArrayNumberTag})l=a.LogLevelInfo;n={[a.LogLevelFatal]='FATAL',[a.LogLevelError]='ERROR',[a.LogLevelWarn]='WARN',[a.LogLevelInfo]='INFO',[a.LogLevelDebug]='DEBUG',[a.LogLevelTrace]='TRACE'}package.loaded['cytanb']=a;o,p=(function()local dA='eff3a188-bfc7-4b0e-93cb-90fd1adc508c'local dG=_G[dA]if not dG then dG={}_G[dA]=dG end;local fB=dG.randomSeedValue;if not fB then fB=os.time()-os.clock()*10000;dG.randomSeedValue=fB;math.randomseed(fB)end;local fC=dG.clientID;if type(fC)~='string'then fC=tostring(a.RandomUUID())dG.clientID=fC end;local fD=vci.state.Get(b)or''if fD==''and vci.assets.IsMine then fD=tostring(a.RandomUUID())vci.state.Set(b,fD)end;return fD,fC end)()return a end)()
 
+local GetGameObjectTransform = function (name) return assert(vci.assets.GetTransform(name)) end
 local GetSubItem = function (name) return assert(vci.assets.GetSubItem(name)) end
 
-local EmitRawCommentMessage = function (msg)
-    vci.message.Emit('comment', tostring(msg))
-end
-
 local settings = {
-    enableDebugging = false,
-    talkativeCreamName = 'talkative-cream',
-    talkativeCreamMat = 'cream_mat'
+    enableDebugging = false
 }
-
---- カラーパレットのメッセージの名前空間。
-local ColorPaletteMessageNS = 'cytanb.color-palette'
-
---- メッセージフォーマットの最小バージョン。
-local ColorPaletteMinMessageVersion = 0x10000
-
---- アイテムのステータスを通知するメッセージ名。
-local ColorPaletteItemStatusMessageName = ColorPaletteMessageNS .. '.item-status'
-
-local creamNS = 'com.github.oocytanb.oO-vci-pack.talkative-cream'
-local statusMessageName = creamNS .. '.status'
-local queryStatusMessageName = creamNS .. '.query-status'
 
 local vciLoaded = false
 
@@ -38,172 +20,499 @@ if settings.enableDebugging then
     cytanb.SetLogLevel(cytanb.LogLevelAll)
 end
 
-local TalkativeCream; TalkativeCream = {
-    Make = function (name)
-        return {
-            name = name,
-            item = GetSubItem(name),
-            color = cytanb.ColorFromARGB32(0xFFE7E7E7),
-            grabbed = false
-        }
-    end,
+local BinarySearchInsert = function (sortedList, size, value, less)
+    local listSize = math.floor(size)
+    local beginIndex = 1
+    local endIndex = listSize
 
-    SetColor = function (self, color)
-        self.color = color
-        vci.assets.material.SetColor(settings.talkativeCreamMat, color)
-    end,
+    if endIndex <= 0 then
+        sortedList[1] = value
+        return 1
+    end
 
-    MakeStatusParameters = function (self)
-        return {
-            senderID = cytanb.ClientID(),
-            argb32 = cytanb.ColorToARGB32(self.color)
-        }
-    end,
-
-    Update = function (self)
-        if self.grabbed and not self.item.IsMine then
-            TalkativeCream.Ungrab(self)
+    while beginIndex < endIndex do
+        local middleIndex = bit32.rshift(beginIndex + endIndex, 1)
+        if less(value, sortedList[middleIndex]) then
+            endIndex = middleIndex - 1
+        else
+            beginIndex = middleIndex + 1
         end
+    end
+
+    local insertIndex = less(value, sortedList[beginIndex]) and beginIndex or beginIndex + 1
+    table.insert(sortedList, insertIndex, value)
+    return insertIndex
+end
+
+local RingIterator; RingIterator = {
+    Make = function (list, i, j)
+        local beginIndex = i and math.floor(i) or 1
+        local endIndex = j and math.floor(j) or #list
+
+        local size
+        if beginIndex == 0 and endIndex == 0 then
+            size = 0
+        elseif beginIndex >= 1 and beginIndex <= endIndex then
+            size = endIndex - beginIndex + 1
+        else
+            error('RingIterator: invalid range')
+        end
+
+        return {
+            list = list,
+            size = size,
+            offset = beginIndex - 1,
+            index = 0
+        }
     end,
 
-    Grab = function (self)
-        self.grabbed = true
-    end,
-
-    Ungrab = function (self)
-        self.grabbed = false
+    Next = function (self)
+        if self.size > 0 then
+            local nextIndex = self.index % self.size + 1
+            self.index = nextIndex
+            return self.list[self.offset + nextIndex]
+        else
+            return nil
+        end
     end
 }
 
-local cream = TalkativeCream.Make(settings.talkativeCreamName)
+local TenthCube; TenthCube = cytanb.SetConstEach({
+    ItemName = function (x, y, z)
+        return TenthCube.Prefix .. x .. '-' .. y .. '-' .. z
+    end,
+
+    IsApproximatelySamePosition = function (pos1, pos2)
+        return (pos1 - pos2).sqrMagnitude < TenthCube.SqrMinDistanceThreshold
+    end,
+
+    Make = function (x, y, z, relativePosition)
+        local name = TenthCube.ItemName(x, y, z)
+        return {
+            name = name,
+            x = x,
+            y = y,
+            z = z,
+            relativePosition = relativePosition,
+            distance = relativePosition.magnitude,
+            item = GetGameObjectTransform(name),
+        }
+    end,
+
+    TargetPosition = function (self, posistion, rotation)
+        return posistion + rotation * self.relativePosition
+    end
+}, {
+    Prefix = 'tenth-cube-',
+    EdgeLength = 0.1,
+    IntervalLength = 0.05,
+    SqrMinDistanceThreshold = 1E-4,
+})
+
+local CubeMaterial; CubeMaterial = {
+    Make = function (name)
+        local color = assert(vci.assets.material.GetColor(name))
+        local h, s, v = cytanb.ColorRGBToHSV(color)
+        local hsv = {h = h, s = s, v = v}
+        return {
+            name = name,
+            initialHSV = hsv,
+            hsv = cytanb.Extend({}, hsv),
+        }
+    end,
+
+    SetHSV = function (self, h, s, v)
+        local hsv = self.hsv
+        hsv.h = h - math.floor(h)
+        hsv.s = s
+        hsv.v = v
+        vci.assets.material.SetColor(self.name, Color.HSVToRGB(hsv.h, hsv.s, hsv.v))
+        return self
+    end,
+}
+
+local CubeLump; CubeLump = cytanb.SetConstEach({
+    CubeIndex = function (edgeSize, x, y, z)
+        return (z * edgeSize + y) * edgeSize + x + 1
+    end,
+
+    CalcCubeEdgeOffset = function (edgeLength, n)
+        return (- edgeLength + TenthCube.EdgeLength) * 0.5 + (TenthCube.EdgeLength + TenthCube.IntervalLength) * n
+    end,
+
+    LazyMake = function ()
+        return coroutine.wrap(function ()
+            -- check edge size.
+            local edgeSize = 0
+            while true do
+                local name = TenthCube.ItemName(0, 0, edgeSize)
+                if not vci.assets.GetTransform(name) then
+                    break
+                end
+                edgeSize = edgeSize + 1
+            end
+
+            local edgeLength = (TenthCube.EdgeLength + TenthCube.IntervalLength) * edgeSize - TenthCube.IntervalLength
+            local size = edgeSize ^ 3
+            local blockSize = math.min(size, math.floor(CubeLump.MaxBlockSize / edgeSize) * edgeSize)
+
+            -- make cubes.
+            local cubes = {}
+            local sortedCuu
+            local i = 1
+            for x = 0, edgeSize - 1 do
+                local px = CubeLump.CalcCubeEdgeOffset(edgeLength, x)
+                for y = 0, edgeSize - 1 do
+                    local py = CubeLump.CalcCubeEdgeOffset(edgeLength, y)
+                    for z = 0, edgeSize - 1 do
+                        local pz = CubeLump.CalcCubeEdgeOffset(edgeLength, z)
+                        local relativePosition = Vector3.__new(px, py, pz)
+                        local index = CubeLump.CubeIndex(edgeSize, x, y, z)
+                        local cube = TenthCube.Make(x, y, z, relativePosition)
+                        cubes[index] = cube
+
+                        if i < size and i % blockSize == 0 then
+                            coroutine.yield()
+                        end
+                        i = i + 1
+                    end
+                end
+            end
+
+            return {
+                edgeSize = edgeSize,
+                cubes = cubes,
+                size = size,
+                boundsItem = GetSubItem(CubeLump.BoundsName),
+                blockSize = blockSize
+            }
+        end)
+    end
+}, {
+    BoundsName = 'bounds-item',
+    MaxBlockSize = 50
+})
+
+local CubeInterpolator; CubeInterpolator = cytanb.SetConstEach({
+    Make = function (cube)
+        return {
+            cube = cube,
+            startSec = 0,
+            durationSec = 0,
+            processSec = 0,
+            startPosition = cube.relativePosition,
+            startRotation = Quaternion.identity,
+            targetPosition = cube.relativePosition,
+            targetRotation = Quaternion.identity
+        }
+    end,
+
+    SetTarget = function (self, targetPosition, targetRotation, currentSec, optDurationSec)
+        local item = self.cube.item
+        self.startSec = currentSec
+        self.durationSec = optDurationSec or CubeInterpolator.InterpolationSec
+        self.processSec = 0
+        self.startPosition = item.GetPosition()
+        self.startRotation = item.GetRotation()
+        self.targetPosition = targetPosition
+        self.targetRotation = targetRotation
+    end,
+
+    IsProcessing = function (self)
+        return self.processSec < self.durationSec
+    end,
+
+    Process = function (self, currentSec)
+        if not CubeInterpolator.IsProcessing(self) then
+            return false
+        end
+
+        local pos, rot
+        if self.durationSec > 0 then
+            self.processSec = currentSec - self.startSec
+            local t = self.processSec / self.durationSec
+            pos = Vector3.Slerp(self.startPosition, self.targetPosition, t)
+            rot = Quaternion.Slerp(self.startRotation, self.targetRotation, t)
+        else
+            self.processSec = self.durationSec
+            pos = self.targetPosition
+            rot = self.targetRotation
+        end
+
+        local item = self.cube.item
+        item.SetPosition(pos)
+        item.SetRotation(rot)
+
+        return true
+    end
+}, {
+    InterpolationSec = 1.0,
+    PrimaryInterpolationSec = 0.025
+})
+
+local CubeTransformer; CubeTransformer = {
+    SetNewInterpolatorTarget = function (interpolator, boundsPosition, boundsRotation, currentSec, optDurationSec)
+        local targetPosition = TenthCube.TargetPosition(interpolator.cube, boundsPosition, boundsRotation)
+        CubeInterpolator.SetTarget(interpolator, targetPosition, boundsRotation, currentSec, optDurationSec)
+    end,
+
+    LazyMake = function (lump)
+        return coroutine.wrap(function ()
+            local cubes = lump.cubes
+            local interpolators = {}
+            local size = lump.size
+            local blockSize = lump.blockSize
+            for i = 1, size do
+                BinarySearchInsert(interpolators, i - 1, CubeInterpolator.Make(cubes[i]), function (a, b)
+                    return a.cube.distance < b.cube.distance
+                end)
+
+                if i < size and i % blockSize == 0 then
+                    coroutine.yield()
+                end
+            end
+
+            -- make primary block iterators.
+            local primaryBlockIterator = RingIterator.Make(interpolators, 1, blockSize)
+            coroutine.yield()
+
+            -- make secondary block.
+            local secondaryBlockSize = size - blockSize
+            local secondaryQueue = cytanb.CreateCircularQueue(secondaryBlockSize)
+            local secondaryProcessingQueue = cytanb.CreateCircularQueue(blockSize)
+            local secondaryRestQueue = cytanb.CreateCircularQueue(secondaryBlockSize)
+
+            for i = blockSize + 1, size do
+                secondaryQueue.Offer(interpolators[i])
+                if i < size and i % blockSize == 0 then
+                    coroutine.yield()
+                end
+            end
+
+            return {
+                interpolators = interpolators,
+                size = size,
+                blockSize = blockSize,
+                boundsItem = lump.boundsItem,
+                primaryBlockIterator = primaryBlockIterator,
+                lastPrimaryPositionChanged = false,
+                secondaryQueue = secondaryQueue,
+                secondaryProcessingQueue = secondaryProcessingQueue,
+                secondaryRestQueue = secondaryRestQueue,
+                operationStartTime = vci.me.UnscaledTime,
+                operationCount = 0,
+            }
+        end)
+    end,
+
+    ProcessPrimaryBlock = function (self, boundsPosition, boundsRotation, currentSec)
+        local iterator = self.primaryBlockIterator
+        local blockSize = self.blockSize
+        local headIpl = RingIterator.Next(iterator)
+        local headPos = CubeInterpolator.IsProcessing(headIpl) and headIpl.targetPosition or headIpl.cube.item.GetPosition()
+        local headTargetPosition = TenthCube.TargetPosition(headIpl.cube, boundsPosition, boundsRotation)
+        if TenthCube.IsApproximatelySamePosition(headTargetPosition, headPos) then
+            -- 先頭のキューブの位置がおよそ同じであった場合。
+            if CubeInterpolator.IsProcessing(headIpl) then
+                CubeInterpolator.Process(headIpl, currentSec)
+                for i = 2, blockSize do
+                    local ipl = RingIterator.Next(iterator)
+                    CubeInterpolator.Process(ipl, currentSec)
+                end
+                return blockSize, false
+            else
+                -- 処理が完了している。
+                return 0, false
+            end
+        else
+            -- 先頭のキューブの位置が離れていた場合。
+            CubeInterpolator.Process(headIpl, currentSec)
+            CubeInterpolator.SetTarget(headIpl, headTargetPosition, boundsRotation, currentSec, CubeInterpolator.PrimaryInterpolationSec)
+            for i = 2, blockSize do
+                local ipl = RingIterator.Next(iterator)
+                CubeInterpolator.Process(ipl, currentSec)
+                CubeTransformer.SetNewInterpolatorTarget(ipl, boundsPosition, boundsRotation, currentSec, CubeInterpolator.PrimaryInterpolationSec)
+            end
+            return blockSize, true
+        end
+    end,
+
+    ProcessSecondaryBlock = function (self, boundsPosition, boundsRotation, currentSec, primaryPositionChanged)
+        if primaryPositionChanged and not self.secondaryRestQueue.IsEmpty() then
+            -- rest queue が空でなければ、逆順にすべて戻す。
+            local operationCount = self.secondaryProcessingQueue.Size() + self.secondaryRestQueue.Size()
+            while not self.secondaryProcessingQueue.IsEmpty() do
+                self.secondaryQueue.OfferFirst(self.secondaryProcessingQueue.PollLast())
+            end
+
+            while not self.secondaryRestQueue.IsEmpty() do
+                self.secondaryQueue.OfferFirst(self.secondaryRestQueue.PollLast())
+            end
+
+            return operationCount
+        else
+            local operationCount = self.secondaryProcessingQueue.Size();
+            for i = 1, operationCount do
+                local ipl = self.secondaryProcessingQueue.Poll()
+
+                if primaryPositionChanged then
+                    -- 位置が変更されていたら、再セットする。
+                    CubeTransformer.SetNewInterpolatorTarget(ipl, boundsPosition, boundsRotation, currentSec)
+                end
+
+                CubeInterpolator.Process(ipl, currentSec)
+                if CubeInterpolator.IsProcessing(ipl) then
+                    self.secondaryProcessingQueue.Offer(ipl)
+                else
+                    self.secondaryRestQueue.Offer(ipl)
+                end
+            end
+
+            while not self.secondaryProcessingQueue.IsFull() and not self.secondaryQueue.IsEmpty() do
+                local ipl = self.secondaryQueue.Poll()
+                CubeTransformer.SetNewInterpolatorTarget(ipl, boundsPosition, boundsRotation, currentSec)
+                self.secondaryProcessingQueue.Offer(ipl)
+                operationCount = operationCount + 1
+            end
+
+            return operationCount
+        end
+    end,
+
+    Update = function (self)
+        local boundsItem = self.boundsItem
+        local boundsPosition = boundsItem.GetPosition()
+        local boundsRotation = boundsItem.GetRotation()
+        local currentSec = vci.me.UnscaledTime.TotalSeconds
+
+        local primaryOperationCount, primaryPositionChanged = CubeTransformer.ProcessPrimaryBlock(self, boundsPosition, boundsRotation, currentSec)
+        self.operationCount = self.operationCount + primaryOperationCount
+        if not primaryPositionChanged then
+            self.operationCount = self.operationCount + CubeTransformer.ProcessSecondaryBlock(self, boundsPosition, boundsRotation, currentSec, self.lastPrimaryPositionChanged)
+        end
+        self.lastPrimaryPositionChanged = primaryPositionChanged
+
+        if settings.enableDebugging then
+            local now = vci.me.UnscaledTime
+            local odt = (now - self.operationStartTime).TotalSeconds
+            if odt >= 10 then
+                cytanb.LogTrace('transform operation rate: ', cytanb.Round(self.operationCount / odt, 2), ' [op/sec]')
+                self.operationStartTime = now
+                self.operationCount = 0
+            end
+        end
+    end
+}
+
+local CubeColorWavelet; CubeColorWavelet = cytanb.SetConstEach({
+    LazyMake = function ()
+        return coroutine.wrap(function ()
+            local size = 0
+            local materials = {}
+            local blockSize = CubeLump.MaxBlockSize
+            for k, name in pairs(vci.assets.material.GetNames()) do
+                if cytanb.StringStartsWith(name, TenthCube.Prefix) then
+                    size = size + 1
+                    materials[size] = CubeMaterial.Make(name)
+                end
+
+                if size % blockSize == 0 then
+                    coroutine.yield()
+                end
+            end
+
+            local ringIterator = RingIterator.Make(materials, 1, size)
+
+            return {
+                materials = materials,
+                size = size,
+                ringIterator = ringIterator,
+                startTime = vci.me.UnscaledTime,
+                operationStartTime = vci.me.UnscaledTime,
+                operationCount = 0,
+            }
+        end)
+    end,
+
+    Update = function (self)
+        -- 最大で、1 フレームあたり、1 マテリアルを変更する。
+        local now = vci.me.UnscaledTime
+        local deltaSec = (now - self.startTime).TotalSeconds
+
+        local material = RingIterator.Next(self.ringIterator)
+        local hsv = material.initialHSV
+        local s = cytanb.PingPong(hsv.s + deltaSec * CubeColorWavelet.WaveletPerSec, 1.0)
+        if math.abs(material.hsv.s - s) >= CubeColorWavelet.WaveletThreshold then
+            CubeMaterial.SetHSV(material, hsv.h, s, hsv.v)
+
+            if settings.enableDebugging then
+                local odt = (now - self.operationStartTime).TotalSeconds
+                self.operationCount = self.operationCount + 1
+                if odt >= 10 then
+                    cytanb.LogTrace('material operation rate: ', cytanb.Round(self.operationCount / odt, 2), ' [op/sec]')
+                    self.operationStartTime = now
+                    self.operationCount = 0
+                end
+            end
+        end
+    end
+}, {
+    WaveletPerSec = 0.01,
+    WaveletThreshold = 0.01,
+})
+
+local MakeCubeRoutine = function ()
+    return coroutine.wrap(function ()
+        local lumpCw = CubeLump.LazyMake()
+        local lump = nil
+        while not lump do
+            lump = lumpCw()
+            coroutine.yield()
+        end
+
+        local transformerCw = CubeTransformer.LazyMake(lump)
+        local transformer = nil
+        while not transformer do
+            transformer = transformerCw()
+            coroutine.yield()
+        end
+
+        local colorWaveletCw = CubeColorWavelet.LazyMake()
+        local colorWavelet = nil
+        while not colorWavelet do
+            colorWavelet = colorWaveletCw()
+            coroutine.yield()
+        end
+
+        cytanb.LogInfo('cubes: ', lump.size, ', materials: ', colorWavelet.size)
+
+        while true do
+            CubeTransformer.Update(transformer)
+            CubeColorWavelet.Update(colorWavelet)
+            coroutine.yield()
+        end
+    end)
+end
+
+local CubeCw
 
 local UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
-        TalkativeCream.Update(cream)
+        if deltaTime <= TimeSpan.Zero then
+            return
+        end
+
+        CubeCw()
     end,
 
     function ()
         cytanb.LogTrace('OnLoad')
         vciLoaded = true
 
-        cytanb.OnMessage(ColorPaletteItemStatusMessageName, function (sender, name, parameterMap)
-            local version = parameterMap.version
-            if version and version >= ColorPaletteMinMessageVersion and cream.grabbed then
-                -- クリームを掴んでいる場合は、カラーパレットから色情報を取得する
-                local color = cytanb.ColorFromARGB32(parameterMap.argb32)
-                if cream.color ~= color then
-                    cytanb.LogDebug('on item status: color = ', color)
-                    TalkativeCream.SetColor(cream, color)
-                    cytanb.EmitMessage(statusMessageName, TalkativeCream.MakeStatusParameters(cream))
-                end
-            end
-        end)
-
-        cytanb.OnInstanceMessage(queryStatusMessageName, function (sender, name, parameterMap)
-            if vci.assets.IsMine then
-                -- マスターのみ応答する
-                cytanb.EmitMessage(statusMessageName, TalkativeCream.MakeStatusParameters(cream))
-            end
-        end)
-
-        cytanb.OnInstanceMessage(statusMessageName, function (sender, name, parameterMap)
-            if parameterMap.senderID ~= cytanb.ClientID() then
-                cytanb.LogTrace('on cream status message')
-                if parameterMap.argb32 then
-                    TalkativeCream.SetColor(cream, cytanb.ColorFromARGB32(parameterMap.argb32))
-                end
-            end
-        end)
-
-        TalkativeCream.SetColor(cream, cream.color)
-
-        -- 現在のステータスを問い合わせる。
-        -- 設置者よりも、ゲストのロードが早いケースを考慮して、全ユーザーがクエリーメッセージを送る。
-        cytanb.EmitMessage(queryStatusMessageName)
+        CubeCw = MakeCubeRoutine();
     end
 )
 
 updateAll = function ()
     UpdateCw()
 end
-
-onGrab = function (target)
-    if not vciLoaded then
-        return
-    end
-
-    if target == cream.name then
-        TalkativeCream.Grab(cream)
-    end
-end
-
-onUngrab = function (target)
-    if not vciLoaded then
-        return
-    end
-
-    if target == cream.name then
-        TalkativeCream.Ungrab(cream)
-    end
-end
-
-onUse = function (use)
-    if not vciLoaded then
-        return
-    end
-
-    if use == cream.name then
-        -- 疑似的に、コメントメッセージを送信します。コメントの内容は、自由に書き換えて使います。
-        EmitRawCommentMessage('これは、おしゃべりなクリームからの、テストメッセージです。')
-        EmitRawCommentMessage('VCIから、スタジオ内にコメントメッセージを送信しています。')
-        EmitRawCommentMessage('そのため、送信者名や送信元が特殊な状態になっています。')
-        -- EmitRawCommentMessage('😀|👩🏻‍🚀|<sprite=1580>')
-
-        -- 疑似的に、ニコニコのコメントメッセージを送信します。`cytanb.OnCommentMessage` 関数を使って受信する必要があります。
-        -- cytanb.EmitCommentMessage('ニコニコのコメントのテストメッセージです。', {name = 'DummyNicoUser', commentSource = 'Nicolive'})
-        -- cytanb.EmitCommentMessage('名前が空文字のテストメッセージです。', {name = '', commentSource = 'Nicolive'})
-
-        -- 疑似的に、Twitter のコメントメッセージを送信します。`cytanb.OnCommentMessage` 関数を使って受信する必要があります。
-        -- cytanb.EmitCommentMessage('Twitterのコメントのテストメッセージです。', {name = 'DummyTwitterUser', commentSource = 'Twitter'})
-        -- cytanb.EmitCommentMessage('', {name = 'DummyTwitterEmptyMessenger', commentSource = 'Twitter'})
-        -- cytanb.EmitCommentMessage('  ', {name = 'DummyTwitterWhiteSpaceMessenger', commentSource = 'Twitter'})
-
-        -- 疑似的に、Showroom のコメントメッセージを送信します。`cytanb.OnCommentMessage` 関数を使って受信する必要があります。
-        -- cytanb.EmitCommentMessage('Showroomのコメントのテストメッセージです。', {name = 'DummyShowroomUser', commentSource = 'Showroom'})
-        -- cytanb.EmitCommentMessage('-1', {name = 'DummyShowroomUser', commentSource = 'Showroom'})
-        -- cytanb.EmitCommentMessage('0', {name = 'DummyShowroomUser', commentSource = 'Showroom'})
-        -- cytanb.EmitCommentMessage('1', {name = 'DummyShowroomUser', commentSource = 'Showroom'})
-        -- cytanb.EmitCommentMessage('2', {name = 'DummyShowroomUser', commentSource = 'Showroom'})
-        -- cytanb.EmitCommentMessage('49', {name = 'DummyShowroomUser', commentSource = 'Showroom'})
-        -- cytanb.EmitCommentMessage('50', {name = 'DummyShowroomUser', commentSource = 'Showroom'})
-        -- cytanb.EmitCommentMessage('51', {name = 'DummyShowroomUser', commentSource = 'Showroom'})
-
-        -- 疑似的に、入室メッセージを送信します。`cytanb.OnNotificationMessage` 関数を使って受信する必要があります。
-        -- cytanb.EmitNotificationMessage('joined', {name = 'DummyNotificationUser'})
-
-        -- 疑似的に、退室メッセージを送信します。`cytanb.OnNotificationMessage` 関数を使って受信する必要があります。
-        -- cytanb.EmitNotificationMessage('left', {name = 'DummyNotificationUser'})
-    end
-end
-
-cytanb.OnCommentMessage(function (sender, name, message)
-    local originalLength = string.len(message)
-    local trimmedMessage = cytanb.StringTrim(message)
-    local messageLength = string.len(trimmedMessage)
-    cytanb.LogInfo(
-        'on comment: senderName = ', sender.name,
-        ', commentSource = ', sender.commentSource,
-        ', message = ', trimmedMessage,
-        ' [length = ', messageLength , (messageLength == originalLength and '' or ', originalLength = ' .. tostring(originalLength)), ']'
-    )
-
-    local codeText = ''
-    local codeCount = cytanb.StringEachCode(trimmedMessage, function(codeString)
-        codeText = codeText .. ' <' .. codeString .. ':' .. string.len(codeString) .. '>'
-    end, nil, 1, messageLength, true)
-    cytanb.LogTrace('codeCount: ', codeCount, ', codes: ', codeText)
-end)
-
-cytanb.OnNotificationMessage(function (sender, name, message)
-    cytanb.LogInfo('on notification: senderName = ', sender.name, ', message = ', message)
-end)
