@@ -471,6 +471,152 @@ local CubeTransformer; CubeTransformer = {
     end
 }
 
+local CubeTeleporter; CubeTeleporter = cytanb.SetConstEach({
+    Teleport = function (node, boundsPosition, boundsRotation, currentSec)
+        local cube = node.cube
+        local targetPosition = TenthCube.TargetPosition(cube, boundsPosition, boundsRotation)
+        node.startSec = currentSec
+        cube.item.SetPosition(targetPosition)
+        cube.item.SetRotation(boundsRotation)
+    end,
+
+    LazyMake = function (lump)
+        local MakeCubeNode = function (cube)
+            return {
+                cube = cube,
+                startSec = 0
+            }
+        end
+
+        return coroutine.wrap(function ()
+            local cubes = lump.cubes
+            local nodes = {}
+            local size = lump.size
+            local blockSize = lump.blockSize
+            for i = 1, size do
+                BinarySearchInsert(nodes, i - 1, MakeCubeNode(cubes[i]), function (a, b)
+                    return a.cube.distance < b.cube.distance
+                end)
+
+                if i < size and i % blockSize == 0 then
+                    coroutine.yield()
+                end
+            end
+
+            -- make primary block iterators.
+            local primaryBlockIterator = RingIterator.Make(nodes, 1, blockSize)
+            coroutine.yield()
+
+            -- make secondary block.
+            local secondaryBlockSize = size - blockSize
+            local secondaryRestQueue = cytanb.CreateCircularQueue(secondaryBlockSize)
+            local secondaryProcessingQueue = cytanb.CreateCircularQueue(secondaryBlockSize)
+
+            for i = blockSize + 1, size do
+                secondaryRestQueue.Offer(nodes[i])
+                if i < size and i % blockSize == 0 then
+                    coroutine.yield()
+                end
+            end
+
+            return {
+                nodes = nodes,
+                size = size,
+                blockSize = blockSize,
+                boundsItem = lump.boundsItem,
+                primaryBlockIterator = primaryBlockIterator,
+                positionChangedSec = 0,
+                secondaryRestQueue = secondaryRestQueue,
+                secondaryProcessingQueue = secondaryProcessingQueue,
+                operationStartTime = vci.me.UnscaledTime,
+                operationCount = 0,
+            }
+        end)
+    end,
+
+    ProcessPrimaryBlock = function (self, boundsPosition, boundsRotation, currentSec)
+        local iterator = self.primaryBlockIterator
+        local blockSize = self.blockSize
+        local headNode = RingIterator.Next(iterator)
+        local headPos = headNode.cube.item.GetPosition()
+        local headTargetPosition = TenthCube.TargetPosition(headNode.cube, boundsPosition, boundsRotation)
+        if TenthCube.IsApproximatelySamePosition(headTargetPosition, headPos) then
+            -- 先頭のキューブの位置がおよそ同じであった場合。
+            return 0, false
+        else
+            -- 先頭のキューブの位置が離れていた場合。
+            for i = 1, blockSize do
+                local node = RingIterator.Next(iterator)
+                CubeTeleporter.Teleport(node, boundsPosition, boundsRotation, currentSec)
+            end
+            return blockSize, true
+        end
+    end,
+
+    ProcessSecondaryBlock = function (self, boundsPosition, boundsRotation, currentSec)
+        local operationCount = 0
+
+        -- TODO 秒間に処理する個数にあわせて、実装する。現状は仮実装として、1 フレームにつき1個だけ。
+        if not self.secondaryRestQueue.IsEmpty() then
+            -- rest queue.
+            local node = self.secondaryRestQueue.PollLast()
+            if node.startSec < self.positionChangedSec then
+                -- 位置が変更された。
+                CubeTeleporter.Teleport(node, CubeTeleporter.HiddenPosition, boundsRotation, currentSec)
+                self.secondaryProcessingQueue.OfferFirst(node)
+                operationCount = operationCount + 1
+                return operationCount
+            else
+                -- そのままキューに戻す。
+                self.secondaryRestQueue.Offer(node)
+            end
+        end
+
+        -- processing queue.
+        if not self.secondaryProcessingQueue.IsEmpty() then
+            local node = self.secondaryProcessingQueue.Poll()
+            if node.startSec + CubeTeleporter.IntervalSec < currentSec then
+                CubeTeleporter.Teleport(node, boundsPosition, boundsRotation, currentSec)
+                self.secondaryRestQueue.Offer(node)
+                operationCount = operationCount + 1
+            else
+                -- そのままキューに戻す。
+                self.secondaryProcessingQueue.OfferFirst(node)
+            end
+        end
+        return operationCount
+    end,
+
+    Update = function (self)
+        local boundsItem = self.boundsItem
+        local boundsPosition = boundsItem.GetPosition()
+        local boundsRotation = boundsItem.GetRotation()
+        local currentSec = vci.me.UnscaledTime.TotalSeconds
+
+        local primaryOperationCount, positionChanged = CubeTeleporter.ProcessPrimaryBlock(self, boundsPosition, boundsRotation, currentSec)
+        if positionChanged then
+            self.positionChangedSec = currentSec
+        end
+
+        self.operationCount = self.operationCount
+            + primaryOperationCount
+            + CubeTeleporter.ProcessSecondaryBlock(self, boundsPosition, boundsRotation, currentSec)
+
+        if settings.enableDebugging then
+            local now = vci.me.UnscaledTime
+            local odt = (now - self.operationStartTime).TotalSeconds
+            if odt >= 10 then
+                cytanb.LogTrace('teleport operation rate: ', cytanb.Round(self.operationCount / odt, 2), ' [op/sec]')
+                self.operationStartTime = now
+                self.operationCount = 0
+            end
+        end
+    end
+}, {
+    HiddenPosition = Vector3.__new(0xC00, 0xC00, 0xC00),
+    IntervalSec = 5
+})
+
 local CubeColorWavelet; CubeColorWavelet = cytanb.SetConstEach({
     LazyMake = function ()
         return coroutine.wrap(function ()
@@ -549,48 +695,53 @@ local CubeColorWavelet; CubeColorWavelet = cytanb.SetConstEach({
     WaveletThreshold = 0.01,
 })
 
-local MakeCubeRoutine = function (optReadyCallback)
-    local self; self = {
-        lump = nil,
-        transformer = nil,
-        colorWavelet = nil,
+local CubeRoutine; CubeRoutine = {
+    Make = function (optReadyCallback)
+        local self; self = {
+            lump = nil,
+            teleporter = nil,
+            colorWavelet = nil,
 
-        Update = coroutine.wrap(function ()
-            local lumpCw = CubeLump.LazyMake()
-            while not self.lump do
-                self.lump = lumpCw()
-                coroutine.yield()
-            end
+            _cw = coroutine.wrap(function ()
+                local lumpCw = CubeLump.LazyMake()
+                while not self.lump do
+                    self.lump = lumpCw()
+                    coroutine.yield()
+                end
 
-            local transformerCw = CubeTransformer.LazyMake(self.lump)
-            while not self.transformer do
-                self.transformer = transformerCw()
-                coroutine.yield()
-            end
+                local teleporterCw = CubeTeleporter.LazyMake(self.lump)
+                while not self.teleporter do
+                    self.teleporter = teleporterCw()
+                    coroutine.yield()
+                end
 
-            local colorWaveletCw = CubeColorWavelet.LazyMake()
-            while not self.colorWavelet do
-                self.colorWavelet = colorWaveletCw()
-                coroutine.yield()
-            end
+                local colorWaveletCw = CubeColorWavelet.LazyMake()
+                while not self.colorWavelet do
+                    self.colorWavelet = colorWaveletCw()
+                    coroutine.yield()
+                end
 
-            cytanb.LogInfo('cubes: ', self.lump.size, ', materials: ', self.colorWavelet.size)
+                cytanb.LogInfo('cubes: ', self.lump.size, ', materials: ', self.colorWavelet.size)
 
-            if optReadyCallback then
-                optReadyCallback(self)
-            end
+                if optReadyCallback then
+                    optReadyCallback(self)
+                end
 
-            while true do
-                CubeLump.Update(self.lump)
-                CubeTransformer.Update(self.transformer)
-                CubeColorWavelet.Update(self.colorWavelet)
-                coroutine.yield()
-            end
-        end)
-    }
+                while true do
+                    CubeLump.Update(self.lump)
+                    CubeTeleporter.Update(self.teleporter)
+                    CubeColorWavelet.Update(self.colorWavelet)
+                    coroutine.yield()
+                end
+            end)
+        }
+        return self
+    end,
 
-    return self
-end
+    Update = function (self)
+        self._cw()
+    end
+}
 
 local MakeStatusParameters = function (routine)
     return {
@@ -599,7 +750,7 @@ local MakeStatusParameters = function (routine)
     }
 end
 
-local cubeRoutine
+local routine
 
 local UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
@@ -607,26 +758,26 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
             return
         end
 
-        cubeRoutine.Update()
+        CubeRoutine.Update(routine)
     end,
 
     function ()
         cytanb.LogTrace('OnLoad')
 
-        cubeRoutine = MakeCubeRoutine(function (routine)
+        routine = CubeRoutine.Make(function ()
             vciLoaded = true
 
             cytanb.OnMessage(ColorPaletteItemStatusMessageName, function (sender, name, parameterMap)
                 local version = parameterMap.version
-                if version and version >= ColorPaletteMinMessageVersion and cubeRoutine.lump.grabbed then
+                if version and version >= ColorPaletteMinMessageVersion and routine.lump.grabbed then
                     -- クリームを掴んでいる場合は、カラーパレットから色情報を取得する
                     local color = cytanb.ColorFromARGB32(parameterMap.argb32)
                     local h, s, v = cytanb.ColorRGBToHSV(color)
-                    local keyHSV = cubeRoutine.colorWavelet.keyHSV
+                    local keyHSV = routine.colorWavelet.keyHSV
                     if keyHSV.h ~= h or keyHSV.s ~= s or keyHSV.v ~= v then
                         cytanb.LogDebug('on palette color: ', color)
-                        CubeColorWavelet.SetKeyHSV(cubeRoutine.colorWavelet, h, s, v)
-                        cytanb.EmitMessage(statusMessageName, MakeStatusParameters(cubeRoutine))
+                        CubeColorWavelet.SetKeyHSV(routine.colorWavelet, h, s, v)
+                        cytanb.EmitMessage(statusMessageName, MakeStatusParameters(routine))
                     end
                 end
             end)
@@ -634,7 +785,7 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
             cytanb.OnInstanceMessage(queryStatusMessageName, function (sender, name, parameterMap)
                 if vci.assets.IsMine then
                     -- マスターのみ応答する
-                    cytanb.EmitMessage(statusMessageName, MakeStatusParameters(cubeRoutine))
+                    cytanb.EmitMessage(statusMessageName, MakeStatusParameters(routine))
                 end
             end)
 
@@ -643,7 +794,7 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
                     cytanb.LogTrace('on lump status message')
                     local keyHSV = parameterMap.keyHSV
                     if keyHSV then
-                        CubeColorWavelet.SetKeyHSV(cubeRoutine.colorWavelet, keyHSV.h, keyHSV.s, keyHSV.v)
+                        CubeColorWavelet.SetKeyHSV(routine.colorWavelet, keyHSV.h, keyHSV.s, keyHSV.v)
                     end
                 end
             end)
@@ -664,7 +815,7 @@ onGrab = function (target)
     end
 
     if target == CubeLump.BoundsName then
-        CubeLump.Grab(cubeRoutine.lump)
+        CubeLump.Grab(routine.lump)
     end
 end
 
@@ -674,6 +825,6 @@ onUngrab = function (target)
     end
 
     if target == CubeLump.BoundsName then
-        CubeLump.Ungrab(cubeRoutine.lump)
+        CubeLump.Ungrab(routine.lump)
     end
 end
