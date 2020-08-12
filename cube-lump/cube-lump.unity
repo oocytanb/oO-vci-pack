@@ -4966,7 +4966,7 @@ GameObject:
   - component: {fileID: 360241333}
   - component: {fileID: 360241332}
   m_Layer: 0
-  m_Name: bounds-collider
+  m_Name: bounds-collider#cytanb-color-picker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18022,8 +18022,8 @@ MonoBehaviour:
     author: oO
     contactInformation: 
     reference: 
-    thumbnail: {fileID: 0}
-    version: 0.5.1
+    thumbnail: {fileID: 2800000, guid: 3f02d69f7debaa144bac446b83cf31d1, type: 3}
+    version: 0.6.0
     description: "- \u591A\u6570\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u6271\u3046\u3001\u5B9F\u9A13\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002\n-
       \u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u304C\u5F90\u3005\u306B\u5909\u5316\u3057\u307E\u3059\u3002"
     exporterVersion: 0.29

@@ -13,6 +13,19 @@ local settings = {
     enableDebugging = false
 }
 
+--- カラーパレットのメッセージの名前空間。
+local ColorPaletteMessageNS = 'cytanb.color-palette'
+
+--- メッセージフォーマットの最小バージョン。
+local ColorPaletteMinMessageVersion = 0x10000
+
+--- アイテムのステータスを通知するメッセージ名。
+local ColorPaletteItemStatusMessageName = ColorPaletteMessageNS .. '.item-status'
+
+local lumpNS = 'com.github.oocytanb.oO-vci-pack.cube-lump'
+local statusMessageName = lumpNS .. '.status'
+local queryStatusMessageName = lumpNS .. '.query-status'
+
 local vciLoaded = false
 
 cytanb.SetOutputLogLevelEnabled(true)
@@ -158,7 +171,6 @@ local CubeLump; CubeLump = cytanb.SetConstEach({
 
             -- make cubes.
             local cubes = {}
-            local sortedCuu
             local i = 1
             for x = 0, edgeSize - 1 do
                 local px = CubeLump.CalcCubeEdgeOffset(edgeLength, x)
@@ -184,9 +196,26 @@ local CubeLump; CubeLump = cytanb.SetConstEach({
                 cubes = cubes,
                 size = size,
                 boundsItem = GetSubItem(CubeLump.BoundsName),
-                blockSize = blockSize
+                blockSize = blockSize,
+                grabbed = false
             }
         end)
+    end,
+
+    Update = function (self)
+        if self.grabbed and not self.boundsItem.IsMine then
+            CubeLump.Ungrab(self)
+        end
+    end,
+
+    Grab = function (self)
+        self.grabbed = true
+    end,
+
+    Ungrab = function (self)
+        if self.grabbed then
+            self.grabbed = false
+        end
     end
 }, {
     BoundsName = 'bounds-item',
@@ -447,11 +476,20 @@ local CubeColorWavelet; CubeColorWavelet = cytanb.SetConstEach({
         return coroutine.wrap(function ()
             local size = 0
             local materials = {}
+            local originMaterial = nil
             local blockSize = CubeLump.MaxBlockSize
             for k, name in pairs(vci.assets.material.GetNames()) do
                 if cytanb.StringStartsWith(name, TenthCube.Prefix) then
                     size = size + 1
-                    materials[size] = CubeMaterial.Make(name)
+                    local mat = CubeMaterial.Make(name)
+                    materials[size] = mat
+                    if originMaterial then
+                        if mat.initialHSV.s > originMaterial.initialHSV.s then
+                            originMaterial = mat
+                        end
+                    else
+                        originMaterial = mat
+                    end
                 end
 
                 if size % blockSize == 0 then
@@ -459,11 +497,15 @@ local CubeColorWavelet; CubeColorWavelet = cytanb.SetConstEach({
                 end
             end
 
+            local originHSV = originMaterial and cytanb.Extend({}, originMaterial.initialHSV) or { h = 0, s = 0, v = 0 }
+
             local ringIterator = RingIterator.Make(materials, 1, size)
 
             return {
                 materials = materials,
                 size = size,
+                originHSV = originHSV,
+                keyHSV = cytanb.Extend({}, originHSV),
                 ringIterator = ringIterator,
                 startTime = vci.me.UnscaledTime,
                 operationStartTime = vci.me.UnscaledTime,
@@ -479,9 +521,11 @@ local CubeColorWavelet; CubeColorWavelet = cytanb.SetConstEach({
 
         local material = RingIterator.Next(self.ringIterator)
         local hsv = material.initialHSV
+        local h = hsv.h + self.keyHSV.h - self.originHSV.h
         local s = cytanb.PingPong(hsv.s + deltaSec * CubeColorWavelet.WaveletPerSec, 1.0)
+        local v = hsv.v + self.keyHSV.v - self.originHSV.v
         if math.abs(material.hsv.s - s) >= CubeColorWavelet.WaveletThreshold then
-            CubeMaterial.SetHSV(material, hsv.h, s, hsv.v)
+            CubeMaterial.SetHSV(material, h, s, v)
 
             if settings.enableDebugging then
                 local odt = (now - self.operationStartTime).TotalSeconds
@@ -493,46 +537,69 @@ local CubeColorWavelet; CubeColorWavelet = cytanb.SetConstEach({
                 end
             end
         end
+    end,
+
+    SetKeyHSV = function (self, h, s, v)
+        self.keyHSV.h = h
+        self.keyHSV.s = s
+        self.keyHSV.v = v
     end
 }, {
     WaveletPerSec = 0.01,
     WaveletThreshold = 0.01,
 })
 
-local MakeCubeRoutine = function ()
-    return coroutine.wrap(function ()
-        local lumpCw = CubeLump.LazyMake()
-        local lump = nil
-        while not lump do
-            lump = lumpCw()
-            coroutine.yield()
-        end
+local MakeCubeRoutine = function (optReadyCallback)
+    local self; self = {
+        lump = nil,
+        transformer = nil,
+        colorWavelet = nil,
 
-        local transformerCw = CubeTransformer.LazyMake(lump)
-        local transformer = nil
-        while not transformer do
-            transformer = transformerCw()
-            coroutine.yield()
-        end
+        Update = coroutine.wrap(function ()
+            local lumpCw = CubeLump.LazyMake()
+            while not self.lump do
+                self.lump = lumpCw()
+                coroutine.yield()
+            end
 
-        local colorWaveletCw = CubeColorWavelet.LazyMake()
-        local colorWavelet = nil
-        while not colorWavelet do
-            colorWavelet = colorWaveletCw()
-            coroutine.yield()
-        end
+            local transformerCw = CubeTransformer.LazyMake(self.lump)
+            while not self.transformer do
+                self.transformer = transformerCw()
+                coroutine.yield()
+            end
 
-        cytanb.LogInfo('cubes: ', lump.size, ', materials: ', colorWavelet.size)
+            local colorWaveletCw = CubeColorWavelet.LazyMake()
+            while not self.colorWavelet do
+                self.colorWavelet = colorWaveletCw()
+                coroutine.yield()
+            end
 
-        while true do
-            CubeTransformer.Update(transformer)
-            CubeColorWavelet.Update(colorWavelet)
-            coroutine.yield()
-        end
-    end)
+            cytanb.LogInfo('cubes: ', self.lump.size, ', materials: ', self.colorWavelet.size)
+
+            if optReadyCallback then
+                optReadyCallback(self)
+            end
+
+            while true do
+                CubeLump.Update(self.lump)
+                CubeTransformer.Update(self.transformer)
+                CubeColorWavelet.Update(self.colorWavelet)
+                coroutine.yield()
+            end
+        end)
+    }
+
+    return self
 end
 
-local CubeCw
+local MakeStatusParameters = function (routine)
+    return {
+        senderID = cytanb.ClientID(),
+        keyHSV = routine.colorWavelet.keyHSV
+    }
+end
+
+local cubeRoutine
 
 local UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
@@ -540,17 +607,73 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
             return
         end
 
-        CubeCw()
+        cubeRoutine.Update()
     end,
 
     function ()
         cytanb.LogTrace('OnLoad')
-        vciLoaded = true
 
-        CubeCw = MakeCubeRoutine();
+        cubeRoutine = MakeCubeRoutine(function (routine)
+            vciLoaded = true
+
+            cytanb.OnMessage(ColorPaletteItemStatusMessageName, function (sender, name, parameterMap)
+                local version = parameterMap.version
+                if version and version >= ColorPaletteMinMessageVersion and cubeRoutine.lump.grabbed then
+                    -- クリームを掴んでいる場合は、カラーパレットから色情報を取得する
+                    local color = cytanb.ColorFromARGB32(parameterMap.argb32)
+                    local h, s, v = cytanb.ColorRGBToHSV(color)
+                    local keyHSV = cubeRoutine.colorWavelet.keyHSV
+                    if keyHSV.h ~= h or keyHSV.s ~= s or keyHSV.v ~= v then
+                        cytanb.LogDebug('on palette color: ', color)
+                        CubeColorWavelet.SetKeyHSV(cubeRoutine.colorWavelet, h, s, v)
+                        cytanb.EmitMessage(statusMessageName, MakeStatusParameters(cubeRoutine))
+                    end
+                end
+            end)
+
+            cytanb.OnInstanceMessage(queryStatusMessageName, function (sender, name, parameterMap)
+                if vci.assets.IsMine then
+                    -- マスターのみ応答する
+                    cytanb.EmitMessage(statusMessageName, MakeStatusParameters(cubeRoutine))
+                end
+            end)
+
+            cytanb.OnInstanceMessage(statusMessageName, function (sender, name, parameterMap)
+                if parameterMap.senderID ~= cytanb.ClientID() then
+                    cytanb.LogTrace('on lump status message')
+                    local keyHSV = parameterMap.keyHSV
+                    if keyHSV then
+                        CubeColorWavelet.SetKeyHSV(cubeRoutine.colorWavelet, keyHSV.h, keyHSV.s, keyHSV.v)
+                    end
+                end
+            end)
+
+            -- 現在のステータスを問い合わせる。
+            cytanb.EmitMessage(queryStatusMessageName)
+        end)
     end
 )
 
 updateAll = function ()
     UpdateCw()
+end
+
+onGrab = function (target)
+    if not vciLoaded then
+        return
+    end
+
+    if target == CubeLump.BoundsName then
+        CubeLump.Grab(cubeRoutine.lump)
+    end
+end
+
+onUngrab = function (target)
+    if not vciLoaded then
+        return
+    end
+
+    if target == CubeLump.BoundsName then
+        CubeLump.Ungrab(cubeRoutine.lump)
+    end
 end
