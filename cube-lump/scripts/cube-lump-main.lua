@@ -199,27 +199,34 @@ local CubeInterpolator; CubeInterpolator = cytanb.SetConstEach({
             cube = cube,
             startSec = 0,
             durationSec = 0,
-            processSec = 0,
+            processingSec = 0,
             startPosition = cube.relativePosition,
             startRotation = Quaternion.identity,
             targetPosition = cube.relativePosition,
-            targetRotation = Quaternion.identity
+            targetRotation = Quaternion.identity,
+            processingPosition = cube.relativePosition,
+            processingRotation = Quaternion.identity
         }
     end,
 
     SetTarget = function (self, targetPosition, targetRotation, currentSec, optDurationSec)
         local item = self.cube.item
+        if CubeInterpolator.IsProcessing(self) then
+            self.startPosition = self.processingPosition
+            self.startRotation = self.processingRotation
+        else
+            self.startPosition = item.GetPosition()
+            self.startRotation = item.GetRotation()
+        end
         self.startSec = currentSec
         self.durationSec = optDurationSec or CubeInterpolator.InterpolationSec
-        self.processSec = 0
-        self.startPosition = item.GetPosition()
-        self.startRotation = item.GetRotation()
+        self.processingSec = 0
         self.targetPosition = targetPosition
         self.targetRotation = targetRotation
     end,
 
     IsProcessing = function (self)
-        return self.processSec < self.durationSec
+        return self.processingSec < self.durationSec
     end,
 
     Process = function (self, currentSec)
@@ -229,15 +236,18 @@ local CubeInterpolator; CubeInterpolator = cytanb.SetConstEach({
 
         local pos, rot
         if self.durationSec > 0 then
-            self.processSec = currentSec - self.startSec
-            local t = self.processSec / self.durationSec
-            pos = Vector3.Slerp(self.startPosition, self.targetPosition, t)
-            rot = Quaternion.Slerp(self.startRotation, self.targetRotation, t)
+            self.processingSec = currentSec - self.startSec
+            local t = self.processingSec / self.durationSec
+            pos = Vector3.Lerp(self.startPosition, self.targetPosition, t)
+            rot = Quaternion.Lerp(self.startRotation, self.targetRotation, t)
         else
-            self.processSec = self.durationSec
+            self.processingSec = self.durationSec
             pos = self.targetPosition
             rot = self.targetRotation
         end
+
+        self.processingPosition = pos
+        self.processingRotation = rot
 
         local item = self.cube.item
         item.SetPosition(pos)
@@ -246,12 +256,12 @@ local CubeInterpolator; CubeInterpolator = cytanb.SetConstEach({
         return true
     end
 }, {
-    InterpolationSec = 1.0,
-    PrimaryInterpolationSec = 0.025
+    InterpolationSec = 5.0,
+    PrimaryInterpolationSec = 0.01
 })
 
 local CubeTransformer; CubeTransformer = {
-    SetNewInterpolatorTarget = function (interpolator, boundsPosition, boundsRotation, currentSec, optDurationSec)
+    SetInterpolatorTarget = function (interpolator, boundsPosition, boundsRotation, currentSec, optDurationSec)
         local targetPosition = TenthCube.TargetPosition(interpolator.cube, boundsPosition, boundsRotation)
         CubeInterpolator.SetTarget(interpolator, targetPosition, boundsRotation, currentSec, optDurationSec)
     end,
@@ -295,7 +305,7 @@ local CubeTransformer; CubeTransformer = {
                 blockSize = blockSize,
                 boundsItem = lump.boundsItem,
                 primaryBlockIterator = primaryBlockIterator,
-                lastPrimaryPositionChanged = false,
+                positionChangedSec = 0,
                 secondaryQueue = secondaryQueue,
                 secondaryProcessingQueue = secondaryProcessingQueue,
                 secondaryRestQueue = secondaryRestQueue,
@@ -331,52 +341,78 @@ local CubeTransformer; CubeTransformer = {
             for i = 2, blockSize do
                 local ipl = RingIterator.Next(iterator)
                 CubeInterpolator.Process(ipl, currentSec)
-                CubeTransformer.SetNewInterpolatorTarget(ipl, boundsPosition, boundsRotation, currentSec, CubeInterpolator.PrimaryInterpolationSec)
+                CubeTransformer.SetInterpolatorTarget(ipl, boundsPosition, boundsRotation, currentSec, CubeInterpolator.PrimaryInterpolationSec)
             end
             return blockSize, true
         end
     end,
 
-    ProcessSecondaryBlock = function (self, boundsPosition, boundsRotation, currentSec, primaryPositionChanged)
-        if primaryPositionChanged and not self.secondaryRestQueue.IsEmpty() then
-            -- rest queue が空でなければ、逆順にすべて戻す。
-            local operationCount = self.secondaryProcessingQueue.Size() + self.secondaryRestQueue.Size()
-            while not self.secondaryProcessingQueue.IsEmpty() do
-                self.secondaryQueue.OfferFirst(self.secondaryProcessingQueue.PollLast())
-            end
+    ProcessSecondaryBlock = function (self, boundsPosition, boundsRotation, currentSec)
+        local operationCount = 0
 
-            while not self.secondaryRestQueue.IsEmpty() do
-                self.secondaryQueue.OfferFirst(self.secondaryRestQueue.PollLast())
-            end
-
-            return operationCount
-        else
-            local operationCount = self.secondaryProcessingQueue.Size();
-            for i = 1, operationCount do
-                local ipl = self.secondaryProcessingQueue.Poll()
-
-                if primaryPositionChanged then
-                    -- 位置が変更されていたら、再セットする。
-                    CubeTransformer.SetNewInterpolatorTarget(ipl, boundsPosition, boundsRotation, currentSec)
+        -- rest queue.
+        while not self.secondaryRestQueue.IsEmpty() do
+            local ipl = self.secondaryRestQueue.Poll()
+            if ipl.startSec < self.positionChangedSec then
+                -- 位置が変更されたので、キューに返す。
+                self.secondaryQueue.Offer(ipl)
+                operationCount = operationCount + 1
+                if operationCount >= self.blockSize then
+                    return operationCount
                 end
+            else
+                -- そのまま rest に戻して break。1つだけ検査すれば十分。
+                self.secondaryRestQueue.Offer(ipl)
+                break
+            end
+        end
 
-                CubeInterpolator.Process(ipl, currentSec)
-                if CubeInterpolator.IsProcessing(ipl) then
-                    self.secondaryProcessingQueue.Offer(ipl)
-                else
-                    self.secondaryRestQueue.Offer(ipl)
-                end
+        -- processing queue.
+        for i = 1, self.secondaryProcessingQueue.Size() do
+            local ipl = self.secondaryProcessingQueue.Poll()
+            CubeInterpolator.Process(ipl, currentSec)
+
+            if ipl.startSec < self.positionChangedSec and ipl.processingSec >= ipl.durationSec * 0.5 then
+                -- 位置が変更されたので、キューに返す。
+                self.secondaryQueue.Offer(ipl)
+            elseif CubeInterpolator.IsProcessing(ipl) then
+                -- 処理続行。
+                self.secondaryProcessingQueue.Offer(ipl)
+            else
+                -- 処理を終えた。
+                self.secondaryRestQueue.Offer(ipl)
             end
 
+            operationCount = operationCount + 1
+            if operationCount >= self.blockSize then
+                return operationCount
+            end
+        end
+
+        -- 新しく処理する対象を選択する。
+        if not self.secondaryProcessingQueue.IsFull() and not self.secondaryQueue.IsEmpty() then
+            local sizeRatio = self.secondaryQueue.Size() / (self.secondaryProcessingQueue.MaxSize() - self.secondaryProcessingQueue.Size())
+            local maxTrials = math.floor(sizeRatio)
+            local remain = maxTrials >= 2 and 1 or 0
             while not self.secondaryProcessingQueue.IsFull() and not self.secondaryQueue.IsEmpty() do
                 local ipl = self.secondaryQueue.Poll()
-                CubeTransformer.SetNewInterpolatorTarget(ipl, boundsPosition, boundsRotation, currentSec)
-                self.secondaryProcessingQueue.Offer(ipl)
-                operationCount = operationCount + 1
+                if remain <= 0 or math.random(0, remain) == 0 then
+                    CubeTransformer.SetInterpolatorTarget(ipl, boundsPosition, boundsRotation, currentSec)
+                    self.secondaryProcessingQueue.Offer(ipl)
+                    remain = maxTrials
+                    operationCount = operationCount + 1
+                    if operationCount >= self.blockSize then
+                        return operationCount
+                    end
+                else
+                    -- 再試行
+                    self.secondaryQueue.Offer(ipl)
+                    remain = remain - 1
+                end
             end
-
-            return operationCount
         end
+
+        return operationCount
     end,
 
     Update = function (self)
@@ -385,12 +421,14 @@ local CubeTransformer; CubeTransformer = {
         local boundsRotation = boundsItem.GetRotation()
         local currentSec = vci.me.UnscaledTime.TotalSeconds
 
-        local primaryOperationCount, primaryPositionChanged = CubeTransformer.ProcessPrimaryBlock(self, boundsPosition, boundsRotation, currentSec)
-        self.operationCount = self.operationCount + primaryOperationCount
-        if not primaryPositionChanged then
-            self.operationCount = self.operationCount + CubeTransformer.ProcessSecondaryBlock(self, boundsPosition, boundsRotation, currentSec, self.lastPrimaryPositionChanged)
+        local primaryOperationCount, positionChanged = CubeTransformer.ProcessPrimaryBlock(self, boundsPosition, boundsRotation, currentSec)
+        if positionChanged then
+            self.positionChangedSec = currentSec
         end
-        self.lastPrimaryPositionChanged = primaryPositionChanged
+
+        self.operationCount = self.operationCount
+            + primaryOperationCount
+            + CubeTransformer.ProcessSecondaryBlock(self, boundsPosition, boundsRotation, currentSec)
 
         if settings.enableDebugging then
             local now = vci.me.UnscaledTime
