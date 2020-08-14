@@ -17,17 +17,8 @@ namespace cytanb
 {
     using GenerateCubePred = Func<Vector3Int, GameObject, GameObject, string, bool>;
 
-
     public static class CytanbGenerateCubeLump
     {
-        enum GenerationType
-        {
-            Default,
-            ColorMaterial,
-            ColorMesh,
-            LimitedColorMaterial,
-        }
-
         const string ActionName = "Generate cube-lump";
         const string MenuItemName = "Cytanb/" + ActionName;
         const string BaseCubeName = "tenth-cube";
@@ -41,11 +32,6 @@ namespace cytanb
         static readonly float TenthCubeInterval = 0.05f;
         static readonly int EdgeSize = 7;
         static readonly float EdgeLength = (TenthCubeEdgeLength + TenthCubeInterval) * EdgeSize - TenthCubeInterval;
-
-        //static readonly GenerationType CustomGenerationType = GenerationType.Default;
-        //static readonly GenerationType CustomGenerationType = GenerationType.ColorMaterial;
-        //static readonly GenerationType CustomGenerationType = GenerationType.ColorMesh;
-        static readonly GenerationType CustomGenerationType = GenerationType.LimitedColorMaterial;
 
         [MenuItem(MenuItemName, true)]
         static bool ValidatGenerateMatCubeMenu()
@@ -78,14 +64,15 @@ namespace cytanb
                 Undo.RecordObject(root, ActionName);
 
                 var boundsTransform = root.transform.Find(BoundsObjectRelativePath);
-                if (!boundsTransform) {
+                if (!boundsTransform)
+                {
                     Debug.LogError($"{BoundsObjectRelativePath}.prefab was not found.");
                     return;
                 }
 
                 // generate cubes
                 var subprjDir = DirectoryPath(AssetDatabase.GetAssetPath(prefab));
-                GenerateCubes(root, prefab, boundsTransform, subprjDir);
+                GenerateCubes(root, prefab, boundsTransform, subprjDir, customPred);
 
                 Undo.CollapseUndoOperations(groupId);
             }
@@ -134,24 +121,8 @@ namespace cytanb
             return Color.HSVToRGB((float)index3.x / EdgeSize, 1.0f - (float)index3.z / EdgeSize, (float)(index3.y + 1) / EdgeSize);
         }
 
-        static bool GenerateCubes(GameObject root, GameObject templatePrefab, Transform boundsTransform, string subprjDir)
+        static bool GenerateCubes(GameObject root, GameObject templatePrefab, Transform boundsTransform, string subprjDir, GenerateCubePred pred)
         {
-            GenerateCubePred pred;
-            switch (CustomGenerationType)
-            {
-                case GenerationType.ColorMaterial:
-                    pred = ColorMaterialPred;
-                    break;
-                case GenerationType.ColorMesh:
-                    pred = ColorMeshPred;
-                    break;
-                case GenerationType.LimitedColorMaterial:
-                    pred = LimitedColorMaterialPred;
-                    break;
-                default:
-                    pred = DefaultPred;
-                    break;
-            }
             boundsTransform.localScale = new Vector3(EdgeLength, EdgeLength, EdgeLength);
 
             for (int x = 0; x < EdgeSize; ++x)
@@ -294,9 +265,9 @@ namespace cytanb
             //var limitedIndex3 =  new Vector3Int(x, EdgeSize - 1, (int) (EdgeSize * 0.25));
 
             // 彩度を、座標から決定する。
-            var x = (int) (EdgeSize * 0.7);
+            var x = (int)(EdgeSize * 0.7);
             var y = EdgeSize - 1;
-            var z = (int) Mathf.PingPong(index3.x + index3.y + index3.z, EdgeSize - 1);
+            var z = (int)Mathf.PingPong(index3.x + index3.y + index3.z, EdgeSize - 1);
             var limitedIndex3 = new Vector3Int(x, y, z);
 
             return ColorMaterialPred(limitedIndex3, go, templatePrefab, subprjDir);
@@ -334,5 +305,10 @@ namespace cytanb
             }
             return null;
         }
+
+        //static readonly GenerateCubePred customPred = DefaultPred;
+        //static readonly GenerateCubePred customPred = ColorMaterialPred;
+        //static readonly GenerateCubePred customPred = ColorMeshPred;
+        static readonly GenerateCubePred customPred = LimitedColorMaterialPred;
     }
 }

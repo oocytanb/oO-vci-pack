@@ -165,6 +165,10 @@ local CubeLump; CubeLump = cytanb.SetConstEach({
                 edgeSize = edgeSize + 1
             end
 
+            if edgeSize <= 0 then
+                error('CubeLump: invalid range: edgeSize = ' .. tostring(edgeSize))
+            end
+
             local edgeLength = (TenthCube.EdgeLength + TenthCube.IntervalLength) * edgeSize - TenthCube.IntervalLength
             local size = edgeSize ^ 3
             local blockSize = math.min(size, math.floor(CubeLump.MaxBlockSize / edgeSize) * edgeSize)
