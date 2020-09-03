@@ -383,9 +383,9 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: cda7067c4039f8f4fb3356f4bdc7d52c, type: 3}
-    version: 0.1.6
+    version: 0.1.7
     description: 
-    exporterVersion: 0.27
+    exporterVersion: 0.29
     specVersion: 
     modelDataLicenseType: 8
     modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
@@ -399,6 +399,11 @@ MonoBehaviour:
     mimeType: 0
     targetEngine: 0
     filePath: Assets/oO-vci-pack/cgoal/scripts/cgoal-main.lua
+    source: 
+  - name: cytanb
+    mimeType: 0
+    targetEngine: 0
+    filePath: Assets/oO-vci-pack/lua-modules/cytanb.lua
     source: 
 --- !u!54 &1895383198
 Rigidbody:

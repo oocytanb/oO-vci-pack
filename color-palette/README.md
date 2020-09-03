@@ -51,8 +51,6 @@ local color = ColorFromARGB32(vci.studio.shared.Get('com.github.oocytanb.cytanb-
 
 - パラメーターのシリアライズ / デシリアライズは、[cytanb.lua](https://github.com/oocytanb/cytanb-vci-lua/tree/master/src) の `cytanb.EmitMessage` / `cytanb.OnMessage` によって透過的に行われます。
 
-- `cytanb.lua` ライブラリーを利用する時は、`cytanb_min.lua` の内容を、メインスクリプトの先頭付近にコピーするとよいでしょう。
-
 ### カラーパレットが送出するメッセージ
 - 概要: カラーパレットの状態 (インスタンス ID、オブジェクトのトランスフォーム、選択色) を通知します。
     パレットで新しい色が選択されたとき、および、問い合わせメッセージ 'cytanb.color-palette.query-status' を受けたときに、このメッセージを送出します。

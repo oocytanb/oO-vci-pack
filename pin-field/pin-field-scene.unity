@@ -202,9 +202,9 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 41632fecbaf89e7498b978f9bb0c012e, type: 3}
-    version: 0.1.3
+    version: 0.1.4
     description: 
-    exporterVersion: 0.27
+    exporterVersion: 0.29
     specVersion: 
     modelDataLicenseType: 8
     modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
@@ -218,6 +218,11 @@ MonoBehaviour:
     mimeType: 0
     targetEngine: 0
     filePath: Assets/oO-vci-pack/pin-field/scripts/pin-field-main.lua
+    source: 
+  - name: cytanb
+    mimeType: 0
+    targetEngine: 0
+    filePath: Assets/oO-vci-pack/lua-modules/cytanb.lua
     source: 
 --- !u!1 &1353128373 stripped
 GameObject:

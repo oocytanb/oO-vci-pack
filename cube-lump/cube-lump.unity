@@ -19998,7 +19998,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 3f02d69f7debaa144bac446b83cf31d1, type: 3}
-    version: 0.7.1
+    version: 0.7.2
     description: "- \u591A\u6570\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u6271\u3046\u3001\u5B9F\u9A13\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002\n-
       \u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u304C\u5F90\u3005\u306B\u5909\u5316\u3057\u307E\u3059\u3002"
     exporterVersion: 0.29
@@ -20015,6 +20015,11 @@ MonoBehaviour:
     mimeType: 0
     targetEngine: 0
     filePath: Assets/oO-vci-pack/cube-lump/scripts/cube-lump-main.lua
+    source: 
+  - name: cytanb
+    mimeType: 0
+    targetEngine: 0
+    filePath: Assets/oO-vci-pack/lua-modules/cytanb.lua
     source: 
 --- !u!4 &1508549924
 Transform:

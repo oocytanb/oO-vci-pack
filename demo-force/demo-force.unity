@@ -995,9 +995,9 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 47630206be542564fa00392669462c60, type: 3}
-    version: 0.0.5
+    version: 0.0.6
     description: 
-    exporterVersion: 0.27
+    exporterVersion: 0.29
     specVersion: 
     modelDataLicenseType: 8
     modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
@@ -1011,6 +1011,11 @@ MonoBehaviour:
     mimeType: 0
     targetEngine: 0
     filePath: Assets/oO-vci-pack/demo-force/scripts/demo-force-main.lua
+    source: 
+  - name: cytanb
+    mimeType: 0
+    targetEngine: 0
+    filePath: Assets/oO-vci-pack/lua-modules/cytanb.lua
     source: 
 --- !u!4 &357394972
 Transform:
