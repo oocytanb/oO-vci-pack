@@ -124,5 +124,10 @@ assert((function()
     assert(ea70[4][1] == '#'); assert(ea70[4][2] == 4); assert(ea70[4][3] == 5); assert(ea70[4][4] == 5)
     assert(ea70[5][1] == '㌣'); assert(ea70[5][2] == 5); assert(ea70[5][3] == 6); assert(ea70[5][4] == 6)
 
+    local now = os.time()
+    assert(now == cytanb.UnixTime())
+    assert(now == cytanb.UnixTime(now))
+    assert(0 == cytanb.UnixTime(0))
+
     return true
 end)())
