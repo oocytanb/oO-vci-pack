@@ -9,7 +9,8 @@ local settings = {
     tmpName = 'text-content',
     boardNamePrefix = 'message-item-',
     boardCount = 3,
-    hiddenPositionBase = Vector3.__new(0, 2050, 0)
+    hiddenPositionBase = Vector3.__new(0, 2050, 0),
+    maxAvatarListLength = 32
 }
 
 local makeBoards = function (settings)
@@ -33,6 +34,23 @@ local nextBoard = function (currentIndex)
     return boards[settings.boardNamePrefix .. tostring(currentIndex % settings.boardCount + 1)]
 end
 
+
+-- アバターの一覧を更新する
+local updateAvatarList = function ()
+    local avatarList = vci.studio.GetAvatars()
+    if avatarList then
+        for i = 1, settings.maxAvatarListLength do
+            local ava = avatarList[i]
+            if not ava then
+                break
+            end
+            local id = ava and ava.GetId() or ''
+            local name = ava and ava.GetName() or ''
+            print(name .. ' : ' .. id)
+        end
+    end
+end
+
 local vciLoaded = false
 local initialUpdateSkipped = false
 
@@ -46,6 +64,17 @@ updateAll = function ()
         -- ロード完了
         vciLoaded = true
         vci.assets.SetText(settings.tmpName, textContent)
+
+        -- ロード時に、アバターリストを初期化する
+        updateAvatarList()
+
+        -- 入退室の通知メッセージを受信したタイミングで、更新する。
+        -- updateAll での更新は不要になる。
+        vci.message.On('notification', function (sender, name, message)
+            if message == 'joined' or message == 'left' then
+                updateAvatarList()
+            end
+        end)
     end
 end
 

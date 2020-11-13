@@ -16,12 +16,13 @@ local lastUpdateTime = TimeSpan.Zero
 local lastColorIndex = -1
 
 -- アイテムを設置したときの初期化処理
+print('vci.assets.IsMine: ' .. tostring(vci.assets.IsMine))
 if vci.assets.IsMine then
     vci.state.Set('colorIndex', 0)
 end
 print('on chunk evaluated: colorIndex = ' .. tostring(vci.state.Get('colorIndex')))
 
-function updateAll()
+updateAll = function ()
     local time = vci.me.Time
     local waitTime = lastUpdateTime + (lastColorIndex < 0 and TimeSpan.FromMilliseconds(10) or UpdatePeriod)
     if time >= waitTime then
@@ -38,14 +39,12 @@ function updateAll()
     end
 end
 
--- SubItem をトリガーでつかむと呼び出される。
-function onGrab(target)
+onGrab = function (target)
     print('onGrab: ' .. target)
 end
 
--- グリップしてアイテムを使用すると呼び出される。
-function onUse(use)
-    print('onUse: ' .. use)
+onUse = function (use)
+    print('onUse: ' .. use .. ', vci.assets.IsMine: ' .. tostring(vci.assets.IsMine))
     vci.state.Add('colorIndex', 1)
     lastUpdateTime = TimeSpan.Zero
 end
