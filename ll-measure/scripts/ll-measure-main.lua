@@ -116,7 +116,7 @@ local UpdateDisplay = function (force)
     cytanb.LogTrace('update display: ', str)
 end
 
-local UpdateCw = cytanb.CreateUpdateRoutine(
+local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
         -- 色を設定する。
         if not measureStatus.colorInitialized then
@@ -159,6 +159,11 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
 
         -- initialize
         UpdateDisplay(true)
+    end,
+
+    function (reason)
+        cytanb.LogError('Error on update routine: ', reason)
+        UpdateCw = function () end
     end
 )
 

@@ -274,7 +274,7 @@ local EmitResetMessage = function (broadcast, reason)
     })
 end
 
-local UpdateCw = cytanb.CreateUpdateRoutine(
+local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
         settings.lsp.UpdateAlive()
         panelControllerGlue.Update()
@@ -514,6 +514,11 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
         -- 現在のステータスを問い合わせる。
         -- 設置者よりも、ゲストのロードが早いケースを考慮して、全ユーザーがクエリーメッセージを送る。
         cytanb.EmitMessage(queryStatusMessageName)
+    end,
+
+    function (reason)
+        cytanb.LogError('Error on update routine: ', reason)
+        UpdateCw = function () end
     end
 )
 

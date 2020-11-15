@@ -74,7 +74,7 @@ local TalkativeCream; TalkativeCream = {
 
 local cream = TalkativeCream.Make(settings.talkativeCreamName)
 
-local UpdateCw = cytanb.CreateUpdateRoutine(
+local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
         TalkativeCream.Update(cream)
     end,
@@ -114,6 +114,11 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
 
         TalkativeCream.SetColor(cream, cream.color)
         cytanb.EmitMessage(queryStatusMessageName)
+    end,
+
+    function (reason)
+        cytanb.LogError('Error on update routine: ', reason)
+        UpdateCw = function () end
     end
 )
 

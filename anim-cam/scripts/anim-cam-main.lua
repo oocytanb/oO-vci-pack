@@ -410,7 +410,7 @@ local EmitDirectiveStateMessage = function ()
     cytanb.EmitMessage(directiveStateMessageName, {state = state, trackIndex = trackIndex})
 end
 
-local UpdateCw = cytanb.CreateUpdateRoutine(
+local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
         if deltaTime <= TimeSpan.Zero then
             return
@@ -485,6 +485,11 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
         if not vci.assets.IsMine then
             cytanb.EmitMessage(queryDirectiveStateMessageName)
         end
+    end,
+
+    function (reason)
+        cytanb.LogError('Error on update routine: ', reason)
+        UpdateCw = function () end
     end
 )
 

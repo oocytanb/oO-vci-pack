@@ -5,12 +5,13 @@ local cytanb = require('cytanb')(_ENV)
 
 local vciLoaded = false
 
-local UpdateCw = cytanb.CreateUpdateRoutine(
+local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
         if deltaTime <= TimeSpan.Zero then
             return
         end
     end,
+
     function ()
         cytanb.LogTrace('OnLoad')
         vciLoaded = true
@@ -18,6 +19,11 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
         --vci.assets.SetMaterialColorFromName('field-mat', Color.red)
         local field = vci.assets.GetSubItem('pin-field-base')
         print(tostring(field.GetPosition()))
+    end,
+
+    function (reason)
+        cytanb.LogError('Error on update routine: ', reason)
+        UpdateCw = function () end
     end
 )
 

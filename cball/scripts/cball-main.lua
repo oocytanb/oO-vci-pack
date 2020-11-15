@@ -1138,7 +1138,7 @@ local OnUpdateStandLight = function (deltaTime, unscaledDeltaTime)
     end
 end
 
-local UpdateCw = cytanb.CreateUpdateRoutine(
+local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
         settings.lsp.UpdateAlive()
         settings.statsLsp.UpdateAlive()
@@ -1474,6 +1474,11 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
             discernibleColorStatus.checkRequestedTime = vci.me.UnscaledTime
         end
         cytanb.EmitMessage(queryStatusMessageName)
+    end,
+
+    function (reason)
+        cytanb.LogError('Error on update routine: ', reason)
+        UpdateCw = function () end
     end
 )
 

@@ -265,7 +265,7 @@ local OnResetCommand = function ()
     end
 end
 
-local UpdateCw = cytanb.CreateUpdateRoutine(
+local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
         controllerGlue.Update()
 
@@ -359,6 +359,11 @@ local UpdateCw = cytanb.CreateUpdateRoutine(
         -- initialize
         ResetDome(domeStatus)
         UpdateDomeVisible(domeStatus, false)
+    end,
+
+    function (reason)
+        cytanb.LogError('Error on update routine: ', reason)
+        UpdateCw = function () end
     end
 )
 

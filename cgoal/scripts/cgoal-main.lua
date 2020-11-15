@@ -16,18 +16,24 @@ cytanb.LogTrace('ge: vci.state.__CYTANB_INSTANCE_ID = ', vci.state.Get('__CYTANB
 
 cytanb.EmitMessage(evalMessageName, { foo = 'test'})
 
-local UpdateCw = cytanb.CreateUpdateRoutine(
+local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
         if deltaTime <= TimeSpan.Zero then
             return
         end
     end,
+
     function ()
         cytanb.LogTrace('OnLoad')
         vciLoaded = true
 
         local goal = vci.assets.GetSubItem('cgoal')
         print(tostring(goal.GetPosition()))
+    end,
+
+    function (reason)
+        cytanb.LogError('Error on update routine: ', reason)
+        UpdateCw = function () end
     end
 )
 
@@ -124,10 +130,10 @@ assert((function()
     assert(ea70[4][1] == '#'); assert(ea70[4][2] == 4); assert(ea70[4][3] == 5); assert(ea70[4][4] == 5)
     assert(ea70[5][1] == '㌣'); assert(ea70[5][2] == 5); assert(ea70[5][3] == 6); assert(ea70[5][4] == 6)
 
-    local now = os.time()
-    assert(now == cytanb.UnixTime())
-    assert(now == cytanb.UnixTime(now))
     assert(0 == cytanb.UnixTime(0))
+    local now = os.time()
+    assert(now == cytanb.UnixTime(now))
+    assert(os.time() == cytanb.UnixTime())
 
     return true
 end)())
