@@ -112,6 +112,28 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
             end
         end)
 
+        cytanb.OnCommentMessage(function (sender, name, message)
+            local originalLength = string.len(message)
+            local trimmedMessage = cytanb.StringTrim(message)
+            local messageLength = string.len(trimmedMessage)
+            cytanb.LogInfo(
+                'on comment: senderName = ', sender.name,
+                ', commentSource = ', sender.commentSource,
+                ', message = ', trimmedMessage,
+                ' [length = ', messageLength , (messageLength == originalLength and '' or ', originalLength = ' .. tostring(originalLength)), ']'
+            )
+
+            local codeText = ''
+            local codeCount = cytanb.StringEachCode(trimmedMessage, function(codeString)
+                codeText = codeText .. ' <' .. codeString .. ':' .. string.len(codeString) .. '>'
+            end, nil, 1, messageLength, true)
+            cytanb.LogTrace('codeCount: ', codeCount, ', codes: ', codeText)
+        end)
+
+        cytanb.OnNotificationMessage(function (sender, name, message)
+            cytanb.LogInfo('on notification: senderName = ', sender.name, ', message = ', message)
+        end)
+
         TalkativeCream.SetColor(cream, cream.color)
         cytanb.EmitMessage(queryStatusMessageName)
     end,
@@ -184,25 +206,3 @@ onUse = function (use)
         -- cytanb.EmitNotificationMessage('left', {name = 'DummyNotificationUser'})
     end
 end
-
-cytanb.OnCommentMessage(function (sender, name, message)
-    local originalLength = string.len(message)
-    local trimmedMessage = cytanb.StringTrim(message)
-    local messageLength = string.len(trimmedMessage)
-    cytanb.LogInfo(
-        'on comment: senderName = ', sender.name,
-        ', commentSource = ', sender.commentSource,
-        ', message = ', trimmedMessage,
-        ' [length = ', messageLength , (messageLength == originalLength and '' or ', originalLength = ' .. tostring(originalLength)), ']'
-    )
-
-    local codeText = ''
-    local codeCount = cytanb.StringEachCode(trimmedMessage, function(codeString)
-        codeText = codeText .. ' <' .. codeString .. ':' .. string.len(codeString) .. '>'
-    end, nil, 1, messageLength, true)
-    cytanb.LogTrace('codeCount: ', codeCount, ', codes: ', codeText)
-end)
-
-cytanb.OnNotificationMessage(function (sender, name, message)
-    cytanb.LogInfo('on notification: senderName = ', sender.name, ', message = ', message)
-end)

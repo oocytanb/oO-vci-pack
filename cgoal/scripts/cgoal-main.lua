@@ -135,5 +135,87 @@ assert((function()
     assert(now == cytanb.UnixTime(now))
     assert(os.time() == cytanb.UnixTime())
 
+    assert(function ()
+        print('json.null: ' .. type(json.null))
+        print('json.isnull: ' .. type(json.isnull))
+        print('json.isNull: ' .. type(json.isNull))
+
+        local table1 = {foo = "apple"}
+        local table2 = {bar = 1234.5}
+        local table3 = {qux = true, quux = table1}
+        local table4 = {baz = nil}
+        local table20 = {negativeNumber = -567}
+        local table21 = {[-90] = "negativeNumberIndex"}
+        local table22 = {[92] = "someNumberIndex"}
+
+        local arr40 = {arr = {100, 200, 300}}
+        local arr41 = {arr = {{101, 102}}}
+        local arr42 = {arr = {{{111, 112}}}}
+        local arr43 = {arr = {100, {201, 202}}}
+        local arr44 = {arr = {100, {{211, 212}, 202}}}
+        local arr45 = {arr = {100, {201, {{2111}}, 203}}}
+        local arr46 = {arr = {100, {201, {211, {2111}}, 203}}}
+        local arr47 = {arr = {[1] = 100, [2] = 200, [4040] = 4040}}
+        local arr48 = {arr = {[1] = 100, [2] = 200, foo = "apple"}}
+        local arr49 = {arr = {[0] = 0, [1] = 100, [2] = 200}}
+
+        local jstr1 = json.serialize(table1)
+        local jstr2 = json.serialize(table2)
+        local jstr3 = json.serialize(table3)
+        local jstr4 = json.serialize(table4)
+        local jstr20 = json.serialize(table20)
+        -- local jstr21 = json.serialize(table21)
+        -- local jstr22 = json.serialize(table22)
+
+        local jarr40 = json.serialize(arr40)
+        local jarr41 = json.serialize(arr41)
+        local jarr42 = json.serialize(arr42)
+        local jarr43 = json.serialize(arr43)
+        local jarr44 = json.serialize(arr44)
+        local jarr45 = json.serialize(arr45)
+        local jarr46 = json.serialize(arr46)
+        -- local jarr47 = json.serialize(arr47)
+        -- local jarr48 = json.serialize(arr48)
+        -- local jarr49 = json.serialize(arr49)
+
+        assert('{"foo":"apple"}' == jstr1)
+        assert('{"bar":1234.5}' == jstr2)
+        assert('{"baz":null}' == jstr4)
+        assert('{"negativeNumber":-567}' == jstr20)
+        --assert('{"-90":"negativeNumberIndex"}' == jstr21)             -- VCAS 2.0.0a: '{}'
+        --assert('{"92":"someNumberIndex"}' == jstr22)                  -- VCAS 2.0.0a: '{}'
+
+        assert('{"arr":[100,200,300]}' == jarr40)
+        assert('{"arr":[[101,102]]}' == jarr41)
+        assert('{"arr":[[[111,112]]]}' == jarr42)
+        assert('{"arr":[100,[201,202]]}' == jarr43)
+        assert('{"arr":[100,[[211,212],202]]}' == jarr44)
+        assert('{"arr":[100,[201,[[2111]],203]]}' == jarr45)
+        assert('{"arr":[100,[201,[211,[2111]],203]]}' == jarr46)
+        -- assert('{"arr":{"1":100,"2":200,"4040":4040}}' == jarr47)    -- VCAS 2.0.0a: '{"arr":[100,200]}'
+        -- assert('{"arr":{"1":100,"2":200,"foo":"apple"}}' == jarr48)  -- VCAS 2.0.0a: '{"arr":[100,200]}'
+        -- assert('{"arr":{"0":0,"1":100,"2":200}}' == jarr49)          -- VCAS 2.0.0a: '{"arr":[100,200]}'
+
+        assert("apple" == json.parse(jstr1).foo)
+        assert(1234.5 == json.parse(jstr2).bar)
+        assert(true == json.parse(jstr3).qux)
+        assert("apple" == json.parse(jstr3).quux.foo)
+        assert(json.isnull(json.parse(jstr4).baz))
+        -- assert(-567 == json.parse(jstr20).negativeNumber)        -- VCAS 2.0.0a: https://virtualcast.jp/wiki/doku.php?id=vci:updatelog:2.0.0a
+        -- assert("negativeNumberIndex" == json.parse(jstr21)["-90"])
+        -- assert("someNumberIndex" == json.parse(jstr22)["92"])
+        -- assert("/" == json.parse('{"solidas":"\\/"}').solidas)   -- VCAS 2.0.0a: https://virtualcast.jp/blog/2020/11/virtualcast200a_beta/
+
+        assert(300 == json.parse(jarr40).arr[3])
+        -- assert(102 == json.parse(jarr41).arr[1][2])      -- VCAS 2.0.0a: Unexpected token : '101,102'
+        -- assert(112 == json.parse(jarr42).arr[1][1][2])   -- VCAS 2.0.0a: Unexpected token : '[111,112'
+        assert(202 == json.parse(jarr43).arr[2][2])
+        -- assert(212, json.parse(jarr44).arr[2][1][2])     -- VCAS 2.0.0a: Unexpected token : '211,212],202'
+        -- assert(2111, json.parse(jarr45).arr[2][2][1][1]) -- VCAS 2.0.0a: Unexpected token : '2111'
+        assert(2111, json.parse(jarr46).arr[2][2][2][1])
+
+        return true
+    end)()
+
     return true
 end)())
