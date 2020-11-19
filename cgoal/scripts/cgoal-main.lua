@@ -34,7 +34,9 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
     function (reason)
         cytanb.LogError('Error on update routine: ', reason)
         UpdateCw = function () end
-    end
+    end,
+
+    TimeSpan.FromSeconds(10)
 )
 
 updateAll = function ()
@@ -145,8 +147,8 @@ assert((function()
         local table3 = {qux = true, quux = table1}
         local table4 = {baz = nil}
         local table20 = {negativeNumber = -567}
-        local table21 = {[-90] = "negativeNumberIndex"}
-        local table22 = {[92] = "someNumberIndex"}
+        -- local table21 = {[-90] = "negativeNumberIndex"}
+        -- local table22 = {[92] = "someNumberIndex"}
 
         local arr40 = {arr = {100, 200, 300}}
         local arr41 = {arr = {{101, 102}}}
@@ -155,9 +157,9 @@ assert((function()
         local arr44 = {arr = {100, {{211, 212}, 202}}}
         local arr45 = {arr = {100, {201, {{2111}}, 203}}}
         local arr46 = {arr = {100, {201, {211, {2111}}, 203}}}
-        local arr47 = {arr = {[1] = 100, [2] = 200, [4040] = 4040}}
-        local arr48 = {arr = {[1] = 100, [2] = 200, foo = "apple"}}
-        local arr49 = {arr = {[0] = 0, [1] = 100, [2] = 200}}
+        -- local arr47 = {arr = {[1] = 100, [2] = 200, [4040] = 4040}}
+        -- local arr48 = {arr = {[1] = 100, [2] = 200, foo = "apple"}}
+        -- local arr49 = {arr = {[0] = 0, [1] = 100, [2] = 200}}
 
         local jstr1 = json.serialize(table1)
         local jstr2 = json.serialize(table2)

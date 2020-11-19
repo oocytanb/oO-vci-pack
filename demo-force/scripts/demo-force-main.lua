@@ -23,8 +23,8 @@ local CreateSoftImpactor = function (item, maxForceMagnitude)
             return maxMagnitude
         end,
 
-        SetMaxForceMagnitude = function (maxForceMagnitude)
-            maxMagnitude = AssertMaxForceMagnitude(maxForceMagnitude)
+        SetMaxForceMagnitude = function (magnitude)
+            maxMagnitude = AssertMaxForceMagnitude(magnitude)
         end,
 
         GetAccumulatedForce = function ()
@@ -156,171 +156,126 @@ local ResetMdgPosition = function ()
     end
 end
 
-local OnLoad = function ()
-    cytanb.LogTrace('OnLoad')
-    vciLoaded = true
-
-    resetSwitch = cytanb.NillableValue(vci.assets.GetSubItem('reset-switch'))
-    mdgPosBase = cytanb.NillableValue(vci.assets.GetSubItem('cube-pos-base'))
-
-    m1d0g0 = CreateMdg('m1d0g0', 1.0, 0.0, false)
-    m1d0g1 = CreateMdg('m1d0g1', 1.0, 0.0, true)
-    m1d0gf = CreateMdg('m1d0gf', 1.0, 0.0, true)
-    m5d0g0 = CreateMdg('m5d0g0', 5.0, 0.0, false)
-    m5d0g1 = CreateMdg('m5d0g1', 5.0, 0.0, true)
-    m5d0gf = CreateMdg('m5d0gf', 5.0, 0.0, true)
-    m5d9g0 = CreateMdg('m5d9g0', 5.0, 9.0, false)
-    m5d9g1 = CreateMdg('m5d9g1', 5.0, 9.0, true)
-    m5d9gf = CreateMdg('m5d9gf', 5.0, 9.0, true)
-    estimaterObject = CreateMdg('timestep-estimater', 1.0, 0.0, false)
-
-    mdgList = {m1d0g0, m1d0g1, m1d0gf, m5d0g0, m5d0g1, m5d0gf, m5d9g0, m5d9g1, m5d9gf}
-
-    timestepEstimater = cytanb.EstimateFixedTimestep(estimaterObject.item)
-    fixedTimestep = timestepEstimater.Timestep()
-    timestepPrecision = timestepEstimater.Precision()
-
-    cytanb.OnInstanceMessage(statusMessageName, function (sender, name, parameterMap)
-        if not resetSwitch.IsMine then
-            cytanb.LogTrace('on status: timestep = ', cytanb.Round(TimeSpan.FromTicks(parameterMap.timestepTicks).TotalSeconds, 4), ', rate: ', cytanb.Round(parameterMap.fps > 0 and 1 / parameterMap.fps or 0, 4), ' (', cytanb.Round(parameterMap.fps, 4), ')')
-            UpdateStatusText(cytanb.Extend({
-                timestep = TimeSpan.FromTicks(parameterMap.timestepTicks),
-                timestepBeingCalculated = TimeSpan.FromTicks(parameterMap.timestepTicksBeingCalculated)
-            }, parameterMap))
-        end
-    end)
-end
-
-local OnUpdate = function (deltaTime, unscaledDeltaTime)
-    if deltaTime <= TimeSpan.Zero then
-        --return
-    end
-
-    if startEstimateFlag then
-        timestepEstimater = cytanb.EstimateFixedTimestep(estimaterObject.item)
-        startEstimateFlag = false
-    else
-        timestepEstimater.Update()
-        if initialEstimater then
-            fixedTimestep = timestepEstimater.Timestep()
-            timestepPrecision = timestepEstimater.Precision()
-        end
-    end
-
-    if resetSwitch.IsMine then
-        local unscaledTime = vci.me.UnscaledTime
-        timeQueue.Offer({time = vci.me.Time, unscaledTime = unscaledTime})
-        local fps, unscaledFps = CalcFrameRate(timeQueue)
-        local statusMap = {
-            timestep = fixedTimestep,
-            timestepPrecision = timestepPrecision,
-            timestepBeingCalculated = timestepEstimater.Timestep(),
-            timestepPrecisionBeingCalculated = timestepEstimater.Precision(),
-            fps = fps,
-            unscaledFps = unscaledFps
-        }
-        
-        if unscaledTime > lastStatusTime + statusPeriod then
-            UpdateStatusText(statusMap)
-            lastStatusTime = unscaledTime
-        end
-
-        if unscaledTime > lastMessageTime + messagePeriod then
-            local parameterMap = cytanb.Extend({
-                timestepTicks = statusMap.timestep.Ticks,
-                timestepTicksBeingCalculated = timestepEstimater.Timestep().Ticks
-            }, statusMap)
-            cytanb.EmitMessage(statusMessageName, parameterMap)
-            lastMessageTime = unscaledTime
-            cytanb.LogTrace('emit status: timestep = ', cytanb.Round(parameterMap.timestep.TotalSeconds, 4), ', rate: ', cytanb.Round(parameterMap.fps > 0 and 1 / parameterMap.fps or 0, 4), ' (', cytanb.Round(parameterMap.fps, 4), ')')
-        end
-
-        -- Unity の重力加速度の規定値は 9.81 だが、update で AddForce する分には、完全に静止することはない。
-        if impactorEnabled then
-            local acc = 9.81
-            m1d0g0.impactor.AccumulateForce(Vector3.up * (m1d0g1.mass * -acc), deltaTime, fixedTimestep)
-            m1d0gf.impactor.AccumulateForce(Vector3.up * (m1d0gf.mass * acc), deltaTime, fixedTimestep)
-
-            m5d0g0.impactor.AccumulateForce(Vector3.up * (m5d0g0.mass * -acc), deltaTime, fixedTimestep)
-            m5d0gf.impactor.AccumulateForce(Vector3.up * (m5d0gf.mass * acc), deltaTime, fixedTimestep)
-
-            m5d9g0.impactor.AccumulateForce(Vector3.up * (m5d9g0.mass * -acc), deltaTime, fixedTimestep)
-            m5d9gf.impactor.AccumulateForce(Vector3.up * (m5d9gf.mass * acc), deltaTime, fixedTimestep)
+local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
+    function (deltaTime, unscaledDeltaTime)
+        if startEstimateFlag then
+            timestepEstimater = cytanb.EstimateFixedTimestep(estimaterObject.item)
+            startEstimateFlag = false
         else
-            local acc = 9.81 * deltaTime.TotalSeconds / fixedTimestep.TotalSeconds
-            --local acc = 9.81
-            --cytanb.LogTrace('deltaSec: ', deltaTime.TotalSeconds)
-
-            m1d0g0.item.AddForce(Vector3.up * (m1d0g1.mass * -acc))
-            m1d0gf.item.AddForce(Vector3.up * (m1d0gf.mass * acc))
-
-            m5d0g0.item.AddForce(Vector3.up * (m5d0g0.mass * -acc))
-            m5d0gf.item.AddForce(Vector3.up * (m5d0gf.mass * acc))
-
-            m5d9g0.item.AddForce(Vector3.up * (m5d9g0.mass * -acc))
-            m5d9gf.item.AddForce(Vector3.up * (m5d9gf.mass * acc))
-        end
-    end
-
-    if impactorEnabled then
-        for i, mdg in ipairs(mdgList) do
-            mdg.impactor.Update()
-            -- local accf = mdg.impactor.GetAccumulatedForce()
-            -- if accf ~= Vector3.zero then
-            --     cytanb.LogTrace('accf = ', accf, ', maxMagnitude = ', mdg.impactor.GetMaxForceMagnitude())
-            --     mdg.impactor.SetMaxForceMagnitude(mdg.impactor.GetMaxForceMagnitude() * 1.1)
-            -- end
-        end
-    end
-end
-
-local UpdateCw = coroutine.wrap(function ()
-    -- InstanceID を取得できるまで待つ。
-    local MaxWaitTime = TimeSpan.FromSeconds(30)
-    local unscaledStartTime = vci.me.UnscaledTime
-    local unscaledLastTime = unscaledStartTime
-    local lastTime = vci.me.Time
-    local needWaiting = true
-    while true do
-        local id = cytanb.InstanceID()
-        if id ~= '' then
-            break
+            timestepEstimater.Update()
+            if initialEstimater then
+                fixedTimestep = timestepEstimater.Timestep()
+                timestepPrecision = timestepEstimater.Precision()
+            end
         end
 
-        local unscaledNow = vci.me.UnscaledTime
-        if unscaledNow > unscaledStartTime + MaxWaitTime then
-            cytanb.LogError('TIMEOUT: Could not receive Instance ID.')
-            return -1
+        if resetSwitch.IsMine then
+            local unscaledTime = vci.me.UnscaledTime
+            timeQueue.Offer({time = vci.me.Time, unscaledTime = unscaledTime})
+            local fps, unscaledFps = CalcFrameRate(timeQueue)
+            local statusMap = {
+                timestep = fixedTimestep,
+                timestepPrecision = timestepPrecision,
+                timestepBeingCalculated = timestepEstimater.Timestep(),
+                timestepPrecisionBeingCalculated = timestepEstimater.Precision(),
+                fps = fps,
+                unscaledFps = unscaledFps
+            }
+
+            if unscaledTime > lastStatusTime + statusPeriod then
+                UpdateStatusText(statusMap)
+                lastStatusTime = unscaledTime
+            end
+
+            if unscaledTime > lastMessageTime + messagePeriod then
+                local parameterMap = cytanb.Extend({
+                    timestepTicks = statusMap.timestep.Ticks,
+                    timestepTicksBeingCalculated = timestepEstimater.Timestep().Ticks
+                }, statusMap)
+                cytanb.EmitMessage(statusMessageName, parameterMap)
+                lastMessageTime = unscaledTime
+                cytanb.LogTrace('emit status: timestep = ', cytanb.Round(parameterMap.timestep.TotalSeconds, 4), ', rate: ', cytanb.Round(parameterMap.fps > 0 and 1 / parameterMap.fps or 0, 4), ' (', cytanb.Round(parameterMap.fps, 4), ')')
+            end
+
+            -- Unity の重力加速度の規定値は 9.81 だが、update で AddForce する分には、完全に静止することはない。
+            if impactorEnabled then
+                local acc = 9.81
+                m1d0g0.impactor.AccumulateForce(Vector3.up * (m1d0g1.mass * -acc), deltaTime, fixedTimestep)
+                m1d0gf.impactor.AccumulateForce(Vector3.up * (m1d0gf.mass * acc), deltaTime, fixedTimestep)
+
+                m5d0g0.impactor.AccumulateForce(Vector3.up * (m5d0g0.mass * -acc), deltaTime, fixedTimestep)
+                m5d0gf.impactor.AccumulateForce(Vector3.up * (m5d0gf.mass * acc), deltaTime, fixedTimestep)
+
+                m5d9g0.impactor.AccumulateForce(Vector3.up * (m5d9g0.mass * -acc), deltaTime, fixedTimestep)
+                m5d9gf.impactor.AccumulateForce(Vector3.up * (m5d9gf.mass * acc), deltaTime, fixedTimestep)
+            else
+                local acc = 9.81 * deltaTime.TotalSeconds / fixedTimestep.TotalSeconds
+                --local acc = 9.81
+                --cytanb.LogTrace('deltaSec: ', deltaTime.TotalSeconds)
+
+                m1d0g0.item.AddForce(Vector3.up * (m1d0g1.mass * -acc))
+                m1d0gf.item.AddForce(Vector3.up * (m1d0gf.mass * acc))
+
+                m5d0g0.item.AddForce(Vector3.up * (m5d0g0.mass * -acc))
+                m5d0gf.item.AddForce(Vector3.up * (m5d0gf.mass * acc))
+
+                m5d9g0.item.AddForce(Vector3.up * (m5d9g0.mass * -acc))
+                m5d9gf.item.AddForce(Vector3.up * (m5d9gf.mass * acc))
+            end
         end
 
-        unscaledLastTime = unscaledNow
-        lastTime = vci.me.Time
-        needWaiting = false
-        coroutine.yield(100)
-    end
+        if impactorEnabled then
+            for i, mdg in ipairs(mdgList) do
+                mdg.impactor.Update()
+                -- local accf = mdg.impactor.GetAccumulatedForce()
+                -- if accf ~= Vector3.zero then
+                --     cytanb.LogTrace('accf = ', accf, ', maxMagnitude = ', mdg.impactor.GetMaxForceMagnitude())
+                --     mdg.impactor.SetMaxForceMagnitude(mdg.impactor.GetMaxForceMagnitude() * 1.1)
+                -- end
+            end
+        end
+    end,
 
-    if needWaiting then
-        -- VCI アイテムを出して 1 フレーム目の update 後に、onUngrab が発生するのを待つ。
-        unscaledLastTime = vci.me.UnscaledTime
-        lastTime = vci.me.Time
-        coroutine.yield(100)
-    end
+    function ()
+        cytanb.LogTrace('OnLoad')
+        vciLoaded = true
 
-    -- ロード完了。
-    OnLoad()
+        resetSwitch = cytanb.NillableValue(vci.assets.GetSubItem('reset-switch'))
+        mdgPosBase = cytanb.NillableValue(vci.assets.GetSubItem('cube-pos-base'))
 
-    while true do
-        local now = vci.me.Time
-        local delta = now - lastTime
-        local unscaledNow = vci.me.UnscaledTime
-        local unscaledDelta = unscaledNow - unscaledLastTime
-        OnUpdate(delta, unscaledDelta)
-        lastTime = now
-        unscaledLastTime = unscaledNow
-        coroutine.yield(100)
+        m1d0g0 = CreateMdg('m1d0g0', 1.0, 0.0, false)
+        m1d0g1 = CreateMdg('m1d0g1', 1.0, 0.0, true)
+        m1d0gf = CreateMdg('m1d0gf', 1.0, 0.0, true)
+        m5d0g0 = CreateMdg('m5d0g0', 5.0, 0.0, false)
+        m5d0g1 = CreateMdg('m5d0g1', 5.0, 0.0, true)
+        m5d0gf = CreateMdg('m5d0gf', 5.0, 0.0, true)
+        m5d9g0 = CreateMdg('m5d9g0', 5.0, 9.0, false)
+        m5d9g1 = CreateMdg('m5d9g1', 5.0, 9.0, true)
+        m5d9gf = CreateMdg('m5d9gf', 5.0, 9.0, true)
+        estimaterObject = CreateMdg('timestep-estimater', 1.0, 0.0, false)
+
+        mdgList = {m1d0g0, m1d0g1, m1d0gf, m5d0g0, m5d0g1, m5d0gf, m5d9g0, m5d9g1, m5d9gf}
+
+        timestepEstimater = cytanb.EstimateFixedTimestep(estimaterObject.item)
+        fixedTimestep = timestepEstimater.Timestep()
+        timestepPrecision = timestepEstimater.Precision()
+
+        cytanb.OnInstanceMessage(statusMessageName, function (sender, name, parameterMap)
+            if not resetSwitch.IsMine then
+                cytanb.LogTrace('on status: timestep = ', cytanb.Round(TimeSpan.FromTicks(parameterMap.timestepTicks).TotalSeconds, 4), ', rate: ', cytanb.Round(parameterMap.fps > 0 and 1 / parameterMap.fps or 0, 4), ' (', cytanb.Round(parameterMap.fps, 4), ')')
+                UpdateStatusText(cytanb.Extend({
+                    timestep = TimeSpan.FromTicks(parameterMap.timestepTicks),
+                    timestepBeingCalculated = TimeSpan.FromTicks(parameterMap.timestepTicksBeingCalculated)
+                }, parameterMap))
+            end
+        end)
+    end,
+
+    function (reason)
+        cytanb.LogError('Error on update routine: ', reason)
+        UpdateCw = function () end
     end
-    -- return 0
-end)
+)
 
 updateAll = function ()
     UpdateCw()

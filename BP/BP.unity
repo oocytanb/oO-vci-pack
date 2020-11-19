@@ -642,8 +642,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0829e5b3934f1ad458def49d46164ebe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _attachableHumanBodyBones: 00000000010000000200000003000000040000000500000006000000070000000a0000000d0000000e00000008000000
-  _attachableDistance: 0.22
+  _attachableHumanBodyBones: 0000000001000000020000000300000004000000050000000600000007000000080000000a0000000d0000000e000000
+  _attachableDistance: 0.26
   _scalable: 1
   _offset: {x: 0, y: 0, z: 0}
 --- !u!54 &1530021637
@@ -714,7 +714,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: e2568cfc2deed004a89fb122c2e1685c, type: 3}
-    version: 0.1.0
+    version: 0.1.1
     description: "\u3068\u3042\u308B B \u304B\u3089\u59CB\u307E\u308B 3DCG\n\u30BD\u30D5\u30C8\u30A6\u30A7\u30A2\u306E\u7D4C\u9A13\u3092\u7A4D\u3080\u3068\u3001\n\u5165\u624B\u3067\u304D\u308B\u30DD\u30A4\u30F3\u30C8\u304C\u3042\u308B\u3068\u304B\u3001\u306A\u3044\u3068\u304B\u3002\n\u305D\u3093\u306A\u5642\u306E\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
     exporterVersion: 0.29
     specVersion: 

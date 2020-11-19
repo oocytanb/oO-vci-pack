@@ -75,7 +75,7 @@ local TalkativeCream; TalkativeCream = {
 local cream = TalkativeCream.Make(settings.talkativeCreamName)
 
 local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
-    function (deltaTime, unscaledDeltaTime)
+    function ()
         TalkativeCream.Update(cream)
     end,
 
