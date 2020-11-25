@@ -121,7 +121,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &99278420
+--- !u!1 &379699658
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -129,9 +129,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 99278423}
-  - component: {fileID: 99278422}
-  - component: {fileID: 99278421}
+  - component: {fileID: 379699661}
+  - component: {fileID: 379699660}
+  - component: {fileID: 379699659}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -139,21 +139,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &99278421
+--- !u!81 &379699659
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 99278420}
+  m_GameObject: {fileID: 379699658}
   m_Enabled: 1
---- !u!20 &99278422
+--- !u!20 &379699660
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 99278420}
+  m_GameObject: {fileID: 379699658}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
@@ -190,13 +190,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &99278423
+--- !u!4 &379699661
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 99278420}
+  m_GameObject: {fileID: 379699658}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -204,7 +204,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1742085974
+--- !u!1 &704414480
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -212,8 +212,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1742085976}
-  - component: {fileID: 1742085975}
+  - component: {fileID: 704414482}
+  - component: {fileID: 704414481}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -221,13 +221,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!108 &1742085975
+--- !u!108 &704414481
 Light:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1742085974}
+  m_GameObject: {fileID: 704414480}
   m_Enabled: 1
   serializedVersion: 10
   m_Type: 1
@@ -282,13 +282,13 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!4 &1742085976
+--- !u!4 &704414482
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1742085974}
+  m_GameObject: {fileID: 704414480}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -296,185 +296,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1001 &1901706887
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 1982394639}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.9
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_Name
-      value: talkative-cream
-      objectReference: {fileID: 0}
-    - target: {fileID: 2095425701985729065, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_Materials.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7685969175268261126, guid: cd783f0dd211bee43aac159e4d97dde9,
-        type: 3}
-      propertyPath: m_Name
-      value: picker#cytanb-color-picker
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: cd783f0dd211bee43aac159e4d97dde9, type: 3}
---- !u!4 &1901706888 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: cd783f0dd211bee43aac159e4d97dde9,
-    type: 3}
-  m_PrefabInstance: {fileID: 1901706887}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1901706889 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7685969175268261126, guid: cd783f0dd211bee43aac159e4d97dde9,
-    type: 3}
-  m_PrefabInstance: {fileID: 1901706887}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1901706890 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: cd783f0dd211bee43aac159e4d97dde9,
-    type: 3}
-  m_PrefabInstance: {fileID: 1901706887}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &1901706891
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1901706889}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.049999997, y: 0.089999996, z: 0.049999997}
-  m_Center: {x: 0, y: -0.035, z: 0}
---- !u!1 &1901706892 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3648433623157557303, guid: cd783f0dd211bee43aac159e4d97dde9,
-    type: 3}
-  m_PrefabInstance: {fileID: 1901706887}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1901706893
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1901706890}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed42f86ebdb20ba4597c4e753b47ee4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Grabbable: 1
-  Scalable: 1
-  UniformScaling: 1
-  GroupId: 0
-  NodeIndex: 0
---- !u!54 &1901706894
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1901706890}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!65 &1901706895
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1901706890}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.19394247, y: 0.25465173, z: 0.2010653}
-  m_Center: {x: 0.0036437437, y: 0.115924254, z: -0.0026802756}
---- !u!114 &1901706896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1901706892}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0829e5b3934f1ad458def49d46164ebe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _attachableHumanBodyBones: 0000000001000000020000000300000004000000050000000600000007000000080000000a0000000d0000000e000000
-  _attachableDistance: 0.2
-  _scalable: 0
-  _offset: {x: 0, y: 0, z: 0}
---- !u!1 &1982394637
+--- !u!1 &1092995795
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -482,39 +304,85 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1982394639}
-  - component: {fileID: 1982394638}
+  - component: {fileID: 1092995796}
+  - component: {fileID: 1092995797}
   m_Layer: 0
-  m_Name: cytanb-talkative-cream
+  m_Name: lively-efk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1982394638
+--- !u!4 &1092995796
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1092995795}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2096129527}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1092995797
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1982394637}
+  m_GameObject: {fileID: 1092995795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d396bcb8480c24eb784eebe6096a99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EmitterScale: 0
+  effectAsset: {fileID: 11400000, guid: fc5b7d71a62c67f4a9ac8ca8ba3219bb, type: 2}
+  playOnStart: 1
+  isLooping: 1
+--- !u!1 &2096129525
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2096129527}
+  - component: {fileID: 2096129526}
+  m_Layer: 0
+  m_Name: cytanb-lively-effect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2096129526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096129525}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 66b0828df2674da449a4ede7b8596dd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Meta:
-    title: cytanb-talkative-cream
+    title: cytanb-lively-effect
     author: oO
     contactInformation: 
     reference: 
-    thumbnail: {fileID: 2800000, guid: a7d9ef3115b24e44eba6d539a57d448d, type: 3}
-    version: 0.3.8
-    description: "- \u304A\u3057\u3083\u3079\u308A\u306A\u30AF\u30EA\u30FC\u30E0\u3002\u5B9F\u9A13\u7528\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002\n-
-      \u30AF\u30EA\u30FC\u30E0\u3092\u63B4\u3093\u3060\u72B6\u614B\u3067 [cytanb-color-palette](https://seed.online/search?text=color%20palette)
-      \u3092\u4F7F\u3046\u3068\u3001\u8272\u3092\u5909\u66F4\u3067\u304D\u307E\u3059\u3002\n-
-      \u30A2\u30A4\u30C6\u30E0\u3092\u30B0\u30EA\u30C3\u30D7\u3057\u3066\u4F7F\u7528\u3059\u308B\u3068\u3001\u30B9\u30BF\u30B8\u30AA\u5185\u306B\u30B3\u30E1\u30F3\u30C8\u30E1\u30C3\u30BB\u30FC\u30B8\u3092\u9001\u4FE1\u3057\u307E\u3059\u3002\n-
-      \u30B3\u30E1\u30F3\u30C8\u53D7\u4FE1 VCI \u306E\u305F\u3081\u306E\u7C21\u6613\u30C7\u30D0\u30C3\u30B0\u7528\u3067\u3059\u306E\u3067\u3001\u9001\u4FE1\u8005\u540D\u3084\u9001\u4FE1\u5143\u304C\u901A\u5E38\u306E\u30B3\u30E1\u30F3\u30C8\u30E1\u30C3\u30BB\u30FC\u30B8\u3068\u306F\u7570\u306A\u308A\u307E\u3059\u3002"
+    thumbnail: {fileID: 2800000, guid: ab392bad201e0384d8b6c5dc404d2f15, type: 3}
+    version: 0.1.0
+    description: "- \u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u518D\u751F\u3059\u308B
+      VCI \u306E\u7C21\u5358\u306A\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n- VCI
+      \u3092\u914D\u7F6E\u3059\u308B\u3068\u81EA\u52D5\u7684\u306B\u30EB\u30FC\u30D7\u518D\u751F\u3057\u307E\u3059\u3002\n-
+      \u30E1\u30CB\u30E5\u30FC\u304B\u3089 VCI \u3092\u524A\u9664\u3059\u308B\u3068\u3001\u505C\u6B62\u3059\u308B\u3053\u3068\u304C\u3067\u304D\u307E\u3059\u3002"
     exporterVersion: 0.29
     specVersion: 
     modelDataLicenseType: 8
@@ -522,31 +390,21 @@ MonoBehaviour:
     scriptLicenseType: 8
     scriptOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
     scriptWriteProtected: 0
-    scriptEnableDebugging: 1
+    scriptEnableDebugging: 0
     scriptFormat: 0
-  Scripts:
-  - name: main
-    mimeType: 0
-    targetEngine: 0
-    filePath: Assets/oO-vci-pack/talkative-cream/scripts/talkative-cream-main.lua
-    source: 
-  - name: cytanb
-    mimeType: 0
-    targetEngine: 0
-    filePath: Assets/oO-vci-pack/lua-modules/cytanb.lua
-    source: 
---- !u!4 &1982394639
+  Scripts: []
+--- !u!4 &2096129527
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1982394637}
+  m_GameObject: {fileID: 2096129525}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1901706888}
+  - {fileID: 1092995796}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

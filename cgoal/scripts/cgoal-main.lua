@@ -3,6 +3,8 @@
 ---@type cytanb @See `cytanb_annotations.lua`
 local cytanb = require('cytanb')(_ENV)
 
+local InstanceIdSupported = vci.me.CompareSystemVersion('2.0.0b') >= 0
+
 local panelNS = 'com.github.oocytanb.oO-vci-pack.cgoal'
 local evalMessageName = panelNS .. '.eval'
 
@@ -12,7 +14,11 @@ local frameCount = 0
 cytanb.SetOutputLogLevelEnabled(true)
 cytanb.SetLogLevel(cytanb.LogLevelAll)
 
-cytanb.LogTrace('ge: vci.state.__CYTANB_INSTANCE_ID = ', vci.state.Get('__CYTANB_INSTANCE_ID'), ', cytanb.InstanceID() = ', cytanb.InstanceID())
+cytanb.LogTrace('on chunk evaluate:')
+if InstanceIdSupported then
+    cytanb.LogTrace('  vci.assets.GetInstanceId: ', vci.assets.GetInstanceId())
+end
+cytanb.LogTrace('  vci.state.__CYTANB_INSTANCE_ID = ', vci.state.Get('__CYTANB_INSTANCE_ID'), ', cytanb.InstanceID() = ', cytanb.InstanceID())
 
 cytanb.EmitMessage(evalMessageName, { foo = 'test'})
 
@@ -42,7 +48,11 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
 updateAll = function ()
     frameCount = frameCount + 1
     if frameCount <= 2 then
-        cytanb.LogTrace('updateAll: frameCount = ', frameCount, ', vci.state.__CYTANB_INSTANCE_ID = ', vci.state.Get('__CYTANB_INSTANCE_ID'), ', cytanb.InstanceID() = ', cytanb.InstanceID())
+        cytanb.LogTrace('updateAll: frameCount = ', frameCount)
+        if InstanceIdSupported then
+            cytanb.LogTrace('  vci.assets.GetInstanceId: ', vci.assets.GetInstanceId())
+        end
+        cytanb.LogTrace('  vci.state.__CYTANB_INSTANCE_ID = ', vci.state.Get('__CYTANB_INSTANCE_ID'), ', cytanb.InstanceID() = ', cytanb.InstanceID())
     end
     UpdateCw()
 end

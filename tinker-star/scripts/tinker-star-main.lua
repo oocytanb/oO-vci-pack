@@ -1,6 +1,8 @@
 -- SPDX-License-Identifier: MIT
 -- Copyright (c) 2019 oO (https://github.com/oocytanb)
 
+local InstanceIdSupported = vci.me.CompareSystemVersion('2.0.0b') >= 0
+
 local COLOR_LIST = {
     Color.__new(0.9, 0.7, 0.133),
     Color.__new(0.04, 0.9, 0.04),
@@ -27,12 +29,16 @@ local UpdateUserCountState = function ()
 end
 
 -- アイテムを設置したときの初期化処理
-print('vci.assets.IsMine: ' .. tostring(vci.assets.IsMine))
+print('on chunk evaluate:')
+if InstanceIdSupported then
+    print('  vci.assets.GetInstanceId: ' .. tostring(vci.assets.GetInstanceId()))
+end
+print('  vci.assets.IsMine: ' .. tostring(vci.assets.IsMine))
 if vci.assets.IsMine then
     vci.state.Set('colorIndex', 0)
     vci.state.Set('stateInitialized', 'OK')
 end
-print('on chunk evaluated: colorIndex = ' .. tostring(vci.state.Get('colorIndex')))
+print('  colorIndex = ' .. tostring(vci.state.Get('colorIndex')))
 
 updateAll = function ()
     local time = vci.me.Time
@@ -43,6 +49,9 @@ updateAll = function ()
         if colorIndex and colorIndex ~= lastColorIndex then
             if lastColorIndex < 0 then
                 print('sync time = ' .. (time - chunkEvaluatedTime).TotalMilliseconds .. ' ms')
+                if InstanceIdSupported then
+                    print('  vci.assets.GetInstanceId: ' .. tostring(vci.assets.GetInstanceId()))
+                end
             end
             print('color index changed: ' .. colorIndex)
             lastColorIndex = colorIndex
