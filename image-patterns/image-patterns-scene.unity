@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -54,7 +54,7 @@ LightmapSettings:
     m_EnableBakedLightmaps: 1
     m_EnableRealtimeLightmaps: 1
   m_LightmapEditorSettings:
-    serializedVersion: 10
+    serializedVersion: 12
     m_Resolution: 2
     m_BakeResolution: 40
     m_AtlasSize: 1024
@@ -62,6 +62,7 @@ LightmapSettings:
     m_AOMaxDistance: 1
     m_CompAOExponent: 1
     m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
     m_Padding: 2
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
@@ -76,10 +77,16 @@ LightmapSettings:
     m_PVRDirectSampleCount: 32
     m_PVRSampleCount: 500
     m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 500
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 2
+    m_PVRDenoiserTypeDirect: 0
+    m_PVRDenoiserTypeIndirect: 0
+    m_PVRDenoiserTypeAO: 0
     m_PVRFilterTypeDirect: 0
     m_PVRFilterTypeIndirect: 0
     m_PVRFilterTypeAO: 0
-    m_PVRFilteringMode: 1
+    m_PVREnvironmentMIS: 0
     m_PVRCulling: 1
     m_PVRFilteringGaussRadiusDirect: 1
     m_PVRFilteringGaussRadiusIndirect: 5
@@ -87,7 +94,9 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
-    m_ShowResolutionOverlay: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -162,14 +171,15 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 29a489c324d65e74c830313f6d091c22, type: 3}
-    version: 0.3.1
+    version: 0.3.2
     description: "- \u30A2\u30A4\u30C6\u30E0\u3092\u30B0\u30EA\u30C3\u30D7\u3057\u3066\u4F7F\u7528\u3059\u308B\u3054\u3068\u306B\u3001\u753B\u50CF\u30D1\u30BF\u30FC\u30F3\u3092\u5909\u66F4\u3059\u308B
       VCI \u306E\u30C6\u30F3\u30D7\u30EC\u30FC\u30C8\u3067\u3059\u3002\n- \u30E6\u30FC\u30B6\u30FC\u3054\u3068\u306B\u3001\u305D\u308C\u305E\u308C\u30E9\u30F3\u30C0\u30E0\u306E\u753B\u50CF\u30D1\u30BF\u30FC\u30F3\u304C\u8868\u793A\u3055\u308C\u308B\u3088\u3046\u306B\u306A\u3063\u3066\u3044\u307E\u3059\u3002\n-
       \u30B0\u30EA\u30C3\u30D7\u3092\u9577\u62BC\u3057\u3059\u308B\u3068\u3001\u307B\u304B\u306E\u30E6\u30FC\u30B6\u30FC\u306B\u540C\u3058\u753B\u50CF\u3092\u8868\u793A\u3057\u307E\u3059\u3002\n-
       \u30C6\u30AF\u30B9\u30C1\u30E3\u30FC\u753B\u50CF\u3092\u5909\u66F4\u3059\u308B\u3060\u3051\u3067\u3001\u30AA\u30EA\u30B8\u30CA\u30EB\u306E
       VCI \u3092\u4F5C\u308B\u3053\u3068\u304C\u51FA\u6765\u308B\u3088\u3046\u306B\u306A\u3063\u3066\u3044\u307E\u3059\u3002\n-
-      [\u30BD\u30FC\u30B9\u30B3\u30FC\u30C9](https://github.com/oocytanb/oO-vci-pack)"
-    exporterVersion: 0.25
+      [\u30BD\u30FC\u30B9\u30B3\u30FC\u30C9](https://github.com/oocytanb/oO-vci-pack
+      )"
+    exporterVersion: 0.31
     specVersion: 
     modelDataLicenseType: 8
     modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
@@ -182,8 +192,57 @@ MonoBehaviour:
   - name: main
     mimeType: 0
     targetEngine: 0
-    filePath: Assets/oO-vci-pack/image-patterns/scripts/image-patterns-main.lua
-    source: 
+    textAsset: {fileID: 1042094116111776886, guid: f2e9af644798a8a428036368dd38546d,
+      type: 3}
+    source: "-- SPDX-License-Identifier: MIT\n-- Copyright (c) 2019 oO (https://github.com/oocytanb)\n\n---
+      \u30C6\u30AF\u30B9\u30C1\u30E3\u30FC\u306A\u3069\u306E\u8A2D\u5B9A\u3002\u69CB\u6210\u306B\u5408\u308F\u305B\u3066\u3001\u9069\u5B9C\u5909\u66F4\u3059\u308B\u3002\nlocal
+      conf = {\n    --- \u5168\u7D75\u67C4\u7D44\u306E\u6570\u3002\n    patternCount
+      = 6,\n\n    --- \u6A2A\u65B9\u5411\u306E\u7D75\u67C4\u7D44\u306E\u6570\u3002\n   
+      horizontalPatternCount = 3,\n\n    --- \u30C6\u30AF\u30B9\u30C1\u30E3\u30FC\u306E\u6A2A\u5EA7\u6A19\u306E\u30AA\u30D5\u30BB\u30C3\u30C8\u3002\n   
+      offsetU = (3840 / 4096) / 3,\n\n    --- \u30C6\u30AF\u30B9\u30C1\u30E3\u30FC\u306E\u7E26\u5EA7\u6A19\u306E\u30AA\u30D5\u30BB\u30C3\u30C8\u3002\n   
+      offsetV = 2048 / 4096\n}\n\n--- \u6307\u5B9A\u3057\u305F\u30B5\u30A4\u30BA\u306E\u304F\u3058\u3092\u4F5C\u6210\u3059\u308B\u3002\nlocal
+      CreateLots = function (size)\n    local lotsSize = math.floor(size)\n    if
+      lotsSize <= 0 then\n        print('Error | INVALID PARAMETER: size = ' .. tostring(size))\n       
+      return nil\n    end\n\n    local remainSize = 0\n    local lotsMap = {}\n   
+      local lastLot = -1\n\n    return {\n        --- `0` \u304B\u3089 `size - 1`
+      \u306E\u30E9\u30F3\u30C0\u30E0\u306A\u756A\u53F7\u3092\u8FD4\u3059\u3002\u304F\u3058\u304C\u7A7A\u306B\u306A\u308B\u307E\u3067\u3001\u540C\u3058\u756A\u53F7\u306F\u51FA\u306A\u3044\u3002\u7A7A\u306B\u306A\u3063\u305F\u3089\u3001\u81EA\u52D5\u7684\u306B\u304F\u3058\u3092\u30B7\u30E3\u30C3\u30D5\u30EB\u3059\u308B\u3002\n       
+      Draw = function ()\n            if remainSize <= 0 then\n                --
+      \u7A7A\u306B\u306A\u3063\u305F\u306E\u3067\u4F5C\u308A\u76F4\u3059\n               
+      for i = 0, lotsSize - 1 do\n                    local r = math.random(0, lotsSize
+      - 1)\n                    if r < i and lotsMap[r] then\n                       
+      -- \u5B58\u5728\u3059\u308B\u756A\u53F7\u3067\u3042\u3063\u305F\u3089\u3001\u4EA4\u63DB\u3059\u308B\n                       
+      lotsMap[i] = lotsMap[r]\n                        lotsMap[r] = i\n                   
+      else\n                        -- \u5B58\u5728\u3057\u306A\u3051\u308C\u3070\u3001\u756A\u53F7\u3092\u305D\u306E\u307E\u307E\u30BB\u30C3\u30C8\u3059\u308B\n                       
+      lotsMap[i] = i\n                    end\n                end\n\n               
+      if lastLot == lotsMap[lotsSize - 1] then\n                    -- \u6700\u5F8C\u306B\u5F15\u3044\u305F\u756A\u53F7\u3068\u540C\u3058\u3067\u3042\u308C\u3070\u3001\u5148\u982D\u3068\u5165\u308C\u66FF\u3048\u308B\n                   
+      local head = lotsMap[0]\n                    lotsMap[0] = lotsMap[lotsSize
+      - 1]\n                    lotsMap[lotsSize - 1] = head\n                end\n\n               
+      remainSize = lotsSize\n            end\n\n            lastLot = lotsMap[remainSize
+      - 1]\n            remainSize = remainSize - 1\n            return lastLot\n       
+      end,\n\n        --- \u304F\u3058\u306E\u30B5\u30A4\u30BA\u3092\u53D6\u5F97\u3059\u308B\u3002\n       
+      GetSize = function ()\n            return lotsSize\n        end,\n\n       
+      --- \u304F\u3058\u306E\u6B8B\u308A\u306E\u30B5\u30A4\u30BA\u3092\u53D6\u5F97\u3059\u308B\u3002\n       
+      GetRemainSize = function ()\n            return remainSize\n        end\n   
+      }\nend\n\nlocal vciLoaded = false\nlocal initialUpdateSkipped = false\nlocal
+      longPressTime = TimeSpan.FromSeconds(1)\nlocal gripPressed = false\nlocal gripStartTime
+      = TimeSpan.Zero\nlocal lots = CreateLots(conf.patternCount)\nlocal lastImageIndex
+      = 0\n\nlocal ChangeImagePattern = function (index, sync)\n    print('ChangeImagePattern:
+      index = ' .. index)\n    local vi = math.floor(index / conf.horizontalPatternCount)\n   
+      local ui = index - vi * conf.horizontalPatternCount\n    local offset = Vector2.__new(conf.offsetU
+      * ui, conf.offsetV * vi)\n    if sync then\n        vci.assets._ALL_SetMaterialTextureOffsetFromIndex(0,
+      offset)\n    else\n        vci.assets.SetMaterialTextureOffsetFromIndex(0,
+      offset)\n    end\nend\n\nupdateAll = function ()\n    if not initialUpdateSkipped
+      then\n        initialUpdateSkipped = true\n        return\n    end\n\n    if
+      vciLoaded then\n        if gripPressed and vci.me.UnscaledTime - longPressTime
+      > gripStartTime then\n            -- \u30B0\u30EA\u30C3\u30D7\u9577\u62BC\u3057\u3067\u3001\u307B\u304B\u306E\u30E6\u30FC\u30B6\u30FC\u306B\u540C\u3058\u753B\u50CF\u3092\u8868\u793A\u3059\u308B\n           
+      gripStartTime = TimeSpan.MaxValue\n            ChangeImagePattern(lastImageIndex,
+      true)\n        end\n    else\n        -- \u30ED\u30FC\u30C9\u5B8C\u4E86\n       
+      vciLoaded = true\n        lastImageIndex = lots.Draw()\n        ChangeImagePattern(lastImageIndex)\n   
+      end\nend\n\nonUse = function (use)\n    if not vciLoaded then\n        return\n   
+      end\n\n    gripPressed = true\n    gripStartTime = vci.me.UnscaledTime\n\n   
+      lastImageIndex = lots.Draw()\n    ChangeImagePattern(lastImageIndex)\n-- print('remain
+      size: ' .. lots.GetRemainSize())\nend\n\nonUnuse = function (use)\n    if not
+      vciLoaded then\n        return\n    end\n\n    gripPressed = false\nend\n"
 --- !u!1001 &833392356
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -263,6 +322,7 @@ MonoBehaviour:
   Grabbable: 1
   Scalable: 1
   UniformScaling: 1
+  Attractable: 1
   GroupId: 0
   NodeIndex: 0
 --- !u!4 &1285151224 stripped
@@ -309,9 +369,10 @@ Camera:
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_GateFitMode: 2
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -378,12 +439,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1865268756}
   m_Enabled: 1
-  serializedVersion: 8
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
@@ -393,6 +456,24 @@ Light:
     m_Bias: 0.05
     m_NormalBias: 0.4
     m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
@@ -400,12 +481,15 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &1865268758

@@ -22,7 +22,7 @@ namespace cytanb
         static readonly Dictionary<string, string> EXCLUDE_EXTENSIONS = (new string[]{".blend", ".blend1", ".xcf", ".cwp"}).ToDictionary(ext => ext);
 
         [MenuItem(MENU_ITEM_KEY, true)]
-        static bool ValidatExportVCIPackageMenu()
+        static bool ValidateExportVCIPackageMenu()
         {
             return GetActiveObjectPath() != null;
         }

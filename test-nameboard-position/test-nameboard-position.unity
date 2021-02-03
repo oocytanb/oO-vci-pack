@@ -131,7 +131,6 @@ GameObject:
   m_Component:
   - component: {fileID: 328274924}
   - component: {fileID: 328274928}
-  - component: {fileID: 328274927}
   - component: {fileID: 328274926}
   - component: {fileID: 328274925}
   m_Layer: 0
@@ -204,13 +203,12 @@ MonoBehaviour:
   m_fontColorGradientPreset: {fileID: 0}
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_outlineColor:
-    serializedVersion: 2
-    rgba: 4278190080
   m_fontSize: 0.3
   m_fontSizeBase: 0.3
   m_fontWeight: 400
@@ -218,7 +216,9 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_textAlignment: 514
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -228,10 +228,8 @@ MonoBehaviour:
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
-  m_isLinkedTextComponent: 0
-  m_isTextTruncated: 0
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
@@ -239,42 +237,23 @@ MonoBehaviour:
   m_parseCtrlCharacters: 1
   m_isOrthographic: 0
   m_isCullingEnabled: 0
-  m_ignoreRectMaskCulling: 0
-  m_ignoreCulling: 1
   m_horizontalMapping: 0
   m_verticalMapping: 0
   m_uvLineOffset: 0
   m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
   m_VertexBufferAutoSizeReduction: 1
-  m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
   m_margin: {x: 0, y: 0, z: 0, w: 0}
-  m_textInfo:
-    textComponent: {fileID: 328274925}
-    characterCount: 33
-    spriteCount: 0
-    spaceCount: 2
-    wordCount: 3
-    linkCount: 0
-    lineCount: 3
-    pageCount: 1
-    materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_spriteAnimator: {fileID: 0}
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 328274928}
-  m_subTextObjects:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   m_maskType: 0
+  _SortingLayer: 0
+  _SortingLayerID: 0
+  _SortingOrder: 0
 --- !u!222 &328274926
 CanvasRenderer:
   m_ObjectHideFlags: 2
@@ -283,14 +262,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 328274923}
   m_CullTransparentMesh: 0
---- !u!33 &328274927
-MeshFilter:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 328274923}
-  m_Mesh: {fileID: 0}
 --- !u!23 &328274928
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -448,7 +419,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 0}
-    version: 0.0.2
+    version: 0.0.3
     description: "- \u30CD\u30FC\u30E0\u30DC\u30FC\u30C9\u306B\u95A2\u3059\u308B\u3001\u30A8\u30E9\u30FC\u3092\u691C\u8A3C\u3059\u308B\u305F\u3081\u306EVCI\u3067\u3059\u3002\n-
       \u30E6\u30FC\u30B6\u30FC\u30B9\u30BF\u30B8\u30AA\u3067\u3001\u30DB\u30B9\u30C8\u304C\u3053\u306E\u30A2\u30A4\u30C6\u30E0\u3092\u8A2D\u7F6E\u3059\u308B\u5FC5\u8981\u304C\u3042\u308A\u307E\u3059\u3002\n-
       **\u30A8\u30E9\u30FC\u304C\u767A\u751F\u3059\u308B\u3068\u3001\u30B9\u30BF\u30B8\u30AA\u3092\u4F5C\u308A\u76F4\u3059\u5FC5\u8981\u304C\u3042\u308A\u307E\u3059\u3002**\n-
@@ -462,7 +433,7 @@ MonoBehaviour:
       Lua \u30B9\u30EC\u30C3\u30C9\u304C\u505C\u6B62\u3057\u307E\u3059\u3002\n   
       (System.Reflection.TargetInvocationException)\n\n## \u78BA\u8A8D\u3057\u305F\u30D0\u30FC\u30B8\u30E7\u30F3\n\u5B89\u5B9A\u677F
       VCAS 1.9.3h"
-    exporterVersion: 0.29
+    exporterVersion: 0.31
     specVersion: 
     modelDataLicenseType: 1
     modelDataOtherLicenseUrl: 
@@ -475,8 +446,86 @@ MonoBehaviour:
   - name: main
     mimeType: 0
     targetEngine: 0
-    filePath: Assets/oO-vci-pack/test-nameboard-position/scripts/test-nameboard-position-main.lua
-    source: 
+    textAsset: {fileID: 1042094116111776886, guid: 8812e276fd936ef4ab86f6e893208603,
+      type: 3}
+    source: "-- SPDX-License-Identifier: CC0-1.0\n\n--[[\n- \u30CD\u30FC\u30E0\u30DC\u30FC\u30C9\u306B\u95A2\u3059\u308B\u3001\u30A8\u30E9\u30FC\u3092\u691C\u8A3C\u3059\u308B\u305F\u3081\u306EVCI\u3067\u3059\u3002\n-
+      \u30E6\u30FC\u30B6\u30FC\u30B9\u30BF\u30B8\u30AA\u3067\u3001\u30DB\u30B9\u30C8\u304C\u3053\u306E\u30A2\u30A4\u30C6\u30E0\u3092\u8A2D\u7F6E\u3059\u308B\u5FC5\u8981\u304C\u3042\u308A\u307E\u3059\u3002\n-
+      **\u30A8\u30E9\u30FC\u304C\u767A\u751F\u3059\u308B\u3068\u3001\u30B9\u30BF\u30B8\u30AA\u3092\u4F5C\u308A\u76F4\u3059\u5FC5\u8981\u304C\u3042\u308A\u307E\u3059\u3002**\n-
+      **\u3088\u304F\u7406\u89E3\u3055\u308C\u305F\u3046\u3048\u3067\u3001\u3054\u4F7F\u7528\u304F\u3060\u3055\u3044\u3002**\n\n##
+      \u624B\u9806\n  1. \u30E6\u30FC\u30B6\u30FC\u30B9\u30BF\u30B8\u30AA\u3067\u3001\u30DB\u30B9\u30C8\u304C\u3053\u306E\u30A2\u30A4\u30C6\u30E0\u3092\u8A2D\u7F6E\u3057\u307E\u3059\u3002\n 
+      2. \u30B2\u30B9\u30C8\u304C\u51F8\u3057\u307E\u3059\u3002\n  3. \u30B7\u30EA\u30F3\u30C0\u30FC\u578B\u306E\u30A2\u30A4\u30C6\u30E0\u3092\u30B0\u30EA\u30C3\u30D7\u3057\u3066\u3001\u30B9\u30BF\u30B8\u30AA\u5185\u306E\u30CD\u30FC\u30E0\u30DC\u30FC\u30C9\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u53D6\u5F97\u3057\u307E\u3059\u3002\n   
+      (vci.studio.GetNameBoard)\n  4. \u30AD\u30E5\u30FC\u30D6\u578B\u306E\u30A2\u30A4\u30C6\u30E0\u3092\u30B0\u30EA\u30C3\u30D7\u3057\u3001\u30CD\u30FC\u30E0\u30DC\u30FC\u30C9\u306E\u4F4D\u7F6E\u8A2D\u5B9A\u3092\u3001\u958B\u59CB\u3057\u307E\u3059\u3002\n   
+      \u30A2\u30A4\u30C6\u30E0\u304C\u9EC4\u8272\u306B\u306A\u308A\u3001\u6BCE\u30D5\u30EC\u30FC\u30E0\u3001\u51E6\u7406\u72B6\u6CC1\u304C\u30ED\u30B0\u306B\u51FA\u529B\u3055\u308C\u7D9A\u3051\u307E\u3059\u3002\n   
+      (NameBoard.SetPosition)\n  5. \u30B2\u30B9\u30C8\u304C\u9000\u5BA4\u3057\u307E\u3059\u3002\n 
+      6. \u30A8\u30E9\u30FC\u304C\u767A\u751F\u3057\u3001\u30B9\u30BF\u30B8\u30AA\u306E
+      Lua \u30B9\u30EC\u30C3\u30C9\u304C\u505C\u6B62\u3057\u307E\u3059\u3002\n   
+      (System.Reflection.TargetInvocationException:\n      Exception has been thrown
+      by the target of an invocation.\n      ---> System.NullReferenceException:\n       
+      Object reference not set to an instance of an object.\n        at Infiniteloop.VRLive.Item.RequestInteraction
+      () [0x00000]\n          in <00000000000000000000000000000000>:0)\n\n## \u78BA\u8A8D\u3057\u305F\u30D0\u30FC\u30B8\u30E7\u30F3\n\u5B89\u5B9A\u677F
+      VCAS 1.9.3h\n]]\n\nlocal settings = {\n    refreshSwitchName = 'refresh-switch',\n   
+      nameboardActionSwitchName = 'nameboard-action-switch',\n\n    defaultColor
+      = Color.white,\n    nameBoardActionProcessingColor = Color.__new(0.9, 0.7,
+      0.15),\n\n    -- \u6BCE\u56DE HasNameBoard \u3067\u30C1\u30A7\u30C3\u30AF\u3092\u884C\u3044\u3001GetNameBoard
+      \u3067\u30CD\u30FC\u30E0\u30DC\u30FC\u30C9\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u3001\u53D6\u5F97\u3059\u308B\u3088\u3046\u306B\u3059\u308B\u304B\u3092\u6307\u5B9A\u3057\u307E\u3059\u3002\n   
+      nameboardCheckAndGet = false,\n\n    -- notification \u30E1\u30C3\u30BB\u30FC\u30B8\u3092\u53D7\u4FE1\u3057\u305F\u969B\u306B\u3001\u30E1\u30F3\u30D0\u30FC\u30EA\u30B9\u30C8\u3092\u66F4\u65B0\u3059\u308B\u304B\u3092\u6307\u5B9A\u3057\u307E\u3059\u3002\n   
+      refreshMembersOnNotification = false,\n\n    -- \u30ED\u30B0\u51FA\u529B\u3092\u884C\u3046\u304B\u3092\u6307\u5B9A\u3057\u307E\u3059\u3002\n   
+      outputDebugLog = true,\n}\n\nlocal GetSubItem = function (name) return assert(vci.assets.GetSubItem(name))
+      end\n\nlocal OutputLog = function (msg)\n    if settings.outputDebugLog then\n       
+      print(msg)\n    end\nend\n\nlocal MakeStudioMembers = function ()\n    local
+      members = {}\n    local i = 1\n    for _k, avatar in ipairs(vci.studio.GetAvatars())
+      do\n        local id = avatar.GetId()\n        local name = avatar.GetName()\n       
+      local nameBoard = vci.studio.GetNameBoard(id)\n        if id and name and nameBoard
+      then\n            members[i] = {\n                id = id,\n               
+      name = name,\n                avatar = avatar,\n                nameBoard =
+      nameBoard\n            }\n            i = i + 1\n        end\n    end\n   
+      return members\nend\n\nlocal ArrayToString = function (arr, predicate)\n   
+      local str = '['\n    for i, item in ipairs(arr) do\n        str = (i == 1 and
+      str or str .. ', ')\n            .. (predicate and tostring(predicate(item,
+      i)) or tostring(item))\n    end\n    str = str .. ']'\n    return str\nend\n\nlocal
+      StudioMembersNameString = function (members)\n    return ArrayToString(members,
+      function (member) return member.name end)\nend\n\nlocal AvatarsNameString =
+      function (avatars)\n    return ArrayToString(avatars, function (avatar) return
+      avatar.GetName() end)\nend\n\nlocal ActionStudioMembersNameBoard = function
+      (members)\n    OutputLog(\n        '# ActionStudioMembersNameBoard\\n'\n       
+      .. '  - studio.GetAvatars: ' .. AvatarsNameString(vci.studio.GetAvatars())\n   
+      )\n\n    for _k, member in ipairs(members) do\n        local hasNameBoard =
+      vci.studio.HasNameBoard(member.id)\n        local nameBoard\n        if settings.nameboardCheckAndGet
+      then\n            if hasNameBoard then\n                nameBoard = vci.studio.GetNameBoard(member.id)\n           
+      else\n                nameBoard = nil\n            end\n        else\n           
+      nameBoard = member.nameBoard\n        end\n\n        if nameBoard then\n           
+      local newPosition = Vector3.zero\n\n            -- \u51F8\u8005\u304C\u9000\u5BA4\u5F8C\u3082\u3001GetName/GetPosition
+      \u306F\u52D5\u4F5C\u3059\u308B\u6A21\u69D8\u3002\n            OutputLog(\n               
+      '  - [' .. member.name .. '].nameBoard\\n'\n                .. '    - HasNameBoard:
+      ' .. tostring(hasNameBoard) .. '\\n'\n                .. '    - GetName: '
+      .. tostring(nameBoard.GetName()) .. '\\n'\n                .. '    - GetPosition:
+      ' .. tostring(nameBoard.GetPosition()) .. '\\n'\n                .. '    -
+      NewPosition: ' .. tostring(newPosition)\n            )\n\n            -- \u51F8\u8005\u304C\u9000\u5BA4\u5F8C\u306B\u3001SetPosition
+      \u3059\u308B\u3068\u3001System.Reflection.TargetInvocationException\u3000\u304C\u767A\u751F\u3059\u308B\u3002\n           
+      nameBoard.SetPosition(newPosition)\n            OutputLog('    - [' .. member.name
+      .. '].nameBoard.SetPosition proceeded')\n            -- SetRotation \u3067\u3082\u518D\u73FE\u3059\u308B\u3002\n           
+      -- nameBoard.SetRotation(Quaternion.identity)\n        else\n            OutputLog(\n               
+      '  - **SKIPPED** [' .. member.name .. '].nameBoard\\n'\n                ..
+      '    - HasNameBoard: ' .. tostring(hasNameBoard)\n            )\n        end\n   
+      end\nend\n\nGetSubItem(settings.refreshSwitchName)\nGetSubItem(settings.nameboardActionSwitchName)\n\n--
+      \u521D\u671F\u8272\u3092\u8A2D\u5B9A\u3059\u308B\u3002\u9014\u4E2D\u5165\u5BA4\u6642\u306E\u540C\u671F\u306F\u8003\u616E\u3057\u306A\u3044\u3002\nvci.assets.material.SetColorFromIndex(0,
+      settings.defaultColor)\n\nlocal studioMembers = MakeStudioMembers()\nlocal
+      nameBoardActionProcessing = false\n\nlocal OnRefreshStudioMembers = function
+      ()\n    studioMembers = MakeStudioMembers()\n    OutputLog('# studio members:
+      ' .. StudioMembersNameString(studioMembers))\nend\n\nlocal OnNameBoardAction
+      = function ()\n    nameBoardActionProcessing = not nameBoardActionProcessing\n\n   
+      -- \u30A2\u30AF\u30B7\u30E7\u30F3\u306E\u5B9F\u884C\u72B6\u6CC1\u306B\u5FDC\u3058\u3066\u8272\u3092\u8A2D\u5B9A\u3059\u308B\u3002\u9014\u4E2D\u5165\u5BA4\u6642\u306E\u540C\u671F\u306F\u8003\u616E\u3057\u306A\u3044\u3002\n   
+      local color = nameBoardActionProcessing and settings.nameBoardActionProcessingColor
+      or settings.defaultColor\n    vci.assets.material._ALL_SetColorFromIndex(0,
+      color)\nend\n\nonUse = function (use)\n    if vci.assets.IsMine then\n       
+      if use == settings.refreshSwitchName then\n            OnRefreshStudioMembers()\n       
+      elseif use == settings.nameboardActionSwitchName then\n            OnNameBoardAction()\n       
+      end\n    end\nend\n\nupdate = function ()\n    if nameBoardActionProcessing
+      then\n        ActionStudioMembersNameBoard(studioMembers)\n    end\nend\n\nvci.message.On('notification',
+      function (sender, messageName, message)\n    OutputLog(\n        '# on notification:
+      [' .. sender.name .. ']  ' .. message .. '\\n'\n        .. '  - studio.GetAvatars:
+      ' .. AvatarsNameString(vci.studio.GetAvatars())\n    )\n\n    if settings.refreshMembersOnNotification
+      then\n        OnRefreshStudioMembers()\n    end\nend)\n"
 --- !u!4 &1112644662
 Transform:
   m_ObjectHideFlags: 0
@@ -503,7 +552,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1434172904}
   - component: {fileID: 1434172908}
-  - component: {fileID: 1434172907}
   - component: {fileID: 1434172906}
   - component: {fileID: 1434172905}
   m_Layer: 0
@@ -572,13 +620,12 @@ MonoBehaviour:
   m_fontColorGradientPreset: {fileID: 0}
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_outlineColor:
-    serializedVersion: 2
-    rgba: 4278190080
   m_fontSize: 0.3
   m_fontSizeBase: 0.3
   m_fontWeight: 400
@@ -586,7 +633,9 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_textAlignment: 514
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -596,10 +645,8 @@ MonoBehaviour:
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
-  m_isLinkedTextComponent: 0
-  m_isTextTruncated: 0
+  parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
@@ -607,42 +654,23 @@ MonoBehaviour:
   m_parseCtrlCharacters: 1
   m_isOrthographic: 0
   m_isCullingEnabled: 0
-  m_ignoreRectMaskCulling: 0
-  m_ignoreCulling: 1
   m_horizontalMapping: 0
   m_verticalMapping: 0
   m_uvLineOffset: 0
   m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
   m_VertexBufferAutoSizeReduction: 1
-  m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
   m_margin: {x: 0, y: 0, z: 0, w: 0}
-  m_textInfo:
-    textComponent: {fileID: 1434172905}
-    characterCount: 26
-    spriteCount: 0
-    spaceCount: 3
-    wordCount: 2
-    linkCount: 0
-    lineCount: 2
-    pageCount: 1
-    materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_spriteAnimator: {fileID: 0}
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1434172908}
-  m_subTextObjects:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   m_maskType: 0
+  _SortingLayer: 0
+  _SortingLayerID: 0
+  _SortingOrder: 0
 --- !u!222 &1434172906
 CanvasRenderer:
   m_ObjectHideFlags: 2
@@ -651,14 +679,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1434172903}
   m_CullTransparentMesh: 0
---- !u!33 &1434172907
-MeshFilter:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1434172903}
-  m_Mesh: {fileID: 0}
 --- !u!23 &1434172908
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -855,6 +875,7 @@ MonoBehaviour:
   Grabbable: 1
   Scalable: 0
   UniformScaling: 0
+  Attractable: 1
   GroupId: 0
   NodeIndex: 0
 --- !u!1 &1805379902
@@ -1108,5 +1129,6 @@ MonoBehaviour:
   Grabbable: 1
   Scalable: 0
   UniformScaling: 0
+  Attractable: 1
   GroupId: 0
   NodeIndex: 0

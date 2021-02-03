@@ -415,9 +415,9 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 7054eac09fd29a04391539e44752f35b, type: 3}
-    version: 0.2.5
+    version: 0.2.6
     description: "\u30B5\u30F3\u30D7\u30EB\u7528\u306E\u5358\u7D14\u306A VCI \u3067\u3059\u3002"
-    exporterVersion: 0.29
+    exporterVersion: 0.31
     specVersion: 
     modelDataLicenseType: 8
     modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
@@ -430,8 +430,43 @@ MonoBehaviour:
   - name: main
     mimeType: 0
     targetEngine: 0
-    filePath: Assets/oO-vci-pack/tinker-star/scripts/tinker-star-main.lua
-    source: 
+    textAsset: {fileID: 1042094116111776886, guid: f40363f8afa62204b8dac48c89fc8c7c,
+      type: 3}
+    source: "-- SPDX-License-Identifier: MIT\n-- Copyright (c) 2019 oO (https://github.com/oocytanb)\n\nlocal
+      InstanceIdSupported = vci.me.CompareSystemVersion('2.0.0b') >= 0\n\nlocal COLOR_LIST
+      = {\n    Color.__new(0.9, 0.7, 0.133),\n    Color.__new(0.04, 0.9, 0.04),\n   
+      Color.__new(0.0, 0.66, 0.04),\n    Color.__new(0.0, 0.58, 0.85),\n    Color.__new(0.4,
+      0.19, 0.56),\n    Color.__new(0.93, 0.2, 0.31)\n}\n\nlocal UpdatePeriod = TimeSpan.FromMilliseconds(500)\nlocal
+      chunkEvaluatedTime = vci.me.Time\nlocal updateUserCountTime = TimeSpan.MaxValue\nlocal
+      lastUpdateTime = TimeSpan.Zero\nlocal lastColorIndex = -1\n\nlocal UpdateUserCountState
+      = function ()\n    local avatars = vci.studio.GetAvatars()\n    local count
+      = avatars and #avatars or -1\n    vci.state.Set('userCount', count)\n\n   
+      local updateTime = vci.me.Time.TotalSeconds\n    vci.state.Set('updateTime',
+      updateTime)\n    print('updateTime: ' .. tostring(updateTime) .. ' | vci.state.Get:
+      ' .. tostring(vci.state.Get('updateTime')))\nend\n\n-- \u30A2\u30A4\u30C6\u30E0\u3092\u8A2D\u7F6E\u3057\u305F\u3068\u304D\u306E\u521D\u671F\u5316\u51E6\u7406\nprint('on
+      chunk evaluate:')\nif InstanceIdSupported then\n    print('  vci.assets.GetInstanceId:
+      ' .. tostring(vci.assets.GetInstanceId()))\nend\nprint('  vci.assets.IsMine:
+      ' .. tostring(vci.assets.IsMine))\nif vci.assets.IsMine then\n    vci.state.Set('colorIndex',
+      0)\n    vci.state.Set('stateInitialized', 'OK')\nend\nprint('  colorIndex =
+      ' .. tostring(vci.state.Get('colorIndex')))\n\nupdateAll = function ()\n   
+      local time = vci.me.Time\n    local waitTime = lastUpdateTime + (lastColorIndex
+      < 0 and TimeSpan.FromMilliseconds(10) or UpdatePeriod)\n    if time >= waitTime
+      then\n        lastUpdateTime = time\n        local colorIndex = vci.state.Get('colorIndex')\n       
+      if colorIndex and colorIndex ~= lastColorIndex then\n            if lastColorIndex
+      < 0 then\n                print('sync time = ' .. (time - chunkEvaluatedTime).TotalMilliseconds
+      .. ' ms')\n                if InstanceIdSupported then\n                   
+      print('  vci.assets.GetInstanceId: ' .. tostring(vci.assets.GetInstanceId()))\n               
+      end\n            end\n            print('color index changed: ' .. colorIndex)\n           
+      lastColorIndex = colorIndex\n            vci.assets.SetMaterialColorFromIndex(0,
+      COLOR_LIST[colorIndex % #COLOR_LIST + 1])\n        end\n    end\n\n    if vci.assets.IsMine
+      and time >= updateUserCountTime then\n        updateUserCountTime = TimeSpan.MaxValue\n       
+      UpdateUserCountState()\n    end\nend\n\nonGrab = function (target)\n    print('onGrab:
+      ' .. target)\nend\n\nonUse = function (use)\n    print('onUse: ' .. use ..
+      ', vci.assets.IsMine: ' .. tostring(vci.assets.IsMine))\n    UpdateUserCountState()\n   
+      vci.state.Add('colorIndex', 1)\n    lastUpdateTime = TimeSpan.Zero\nend\n\nvci.message.On('notification',
+      function (sender, name, message)\n    if vci.assets.IsMine then\n        if
+      message == 'joined' then\n            UpdateUserCountState()\n            updateUserCountTime
+      = vci.me.Time + TimeSpan.FromSeconds(30)\n        end\n    end\nend)\n"
 --- !u!54 &1380032257
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -463,6 +498,7 @@ MonoBehaviour:
   Grabbable: 1
   Scalable: 1
   UniformScaling: 0
+  Attractable: 1
   GroupId: 0
   NodeIndex: 0
 --- !u!65 &1380032259

@@ -367,13 +367,13 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: dc5f30cce462e174190f639ea4c82863, type: 3}
-    version: 0.3.3
+    version: 0.3.4
     description: "- \u30B9\u30AF\u30EA\u30D7\u30C8\u306E\u30C6\u30AD\u30B9\u30C8\u3092\u7DE8\u96C6\u3057\u3066\u3001\u305D\u306E\u5185\u5BB9\u3092\u8868\u793A\u3059\u308B
       VCI \u3067\u3059\u3002\n- `text.lua` \u30D5\u30A1\u30A4\u30EB\u306E `textContent`
       \u306E\u5185\u5BB9\u3092\u66F8\u304D\u63DB\u3048\u308B\u3053\u3068\u3067\u3001\n\u8868\u793A\u3059\u308B\u30E1\u30C3\u30BB\u30FC\u30B8\u3092\u5909\u66F4\u3059\u308B\u3053\u3068\u304C\u3067\u304D\u307E\u3059\u3002\n-
       \u30DC\u30FC\u30C9\u3092\u30B0\u30EA\u30C3\u30D7\u3057\u3066\u4F7F\u7528\u3059\u308B\u3068\u3001\u30B9\u30BF\u30A4\u30EB\u3092\u9806\u756A\u306B\u5207\u308A\u66FF\u3048\u307E\u3059\u3002\n-
       \u30C0\u30FC\u30AF\u30D6\u30EB\u30FC\u306E\u30DC\u30FC\u30C9\u306F\u3001\u30EA\u30C3\u30C1\u30C6\u30AD\u30B9\u30C8\u304C\u6709\u52B9\u306B\u306A\u3063\u3066\u3044\u307E\u3059\u3002"
-    exporterVersion: 0.29
+    exporterVersion: 0.31
     specVersion: 
     modelDataLicenseType: 8
     modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
@@ -386,13 +386,49 @@ MonoBehaviour:
   - name: main
     mimeType: 0
     targetEngine: 0
-    filePath: Assets/oO-vci-pack/message-board/scripts/message-board-main.lua
-    source: 
+    textAsset: {fileID: 1042094116111776886, guid: 9092936d5c231af48bae58731df73b40,
+      type: 3}
+    source: "-- SPDX-License-Identifier: MIT\n-- Copyright (c) 2019 oO (https://github.com/oocytanb)\n\nlocal
+      GetSubItem = function (name) return assert(vci.assets.GetSubItem(name)) end\n\nlocal
+      textContent = tostring(require('text').textContent)\n\nlocal settings = {\n   
+      tmpName = 'text-content',\n    boardNamePrefix = 'message-item-',\n    boardCount
+      = 3,\n    hiddenPositionBase = Vector3.__new(0, 2050, 0)\n}\n\nlocal makeBoards
+      = function (boardSettings)\n    local boards = {}\n    for i = 1, boardSettings.boardCount
+      do\n        local name = boardSettings.boardNamePrefix .. tostring(i)\n       
+      boards[name] = {\n            name = name,\n            index = i,\n           
+      item = GetSubItem(name),\n            hiddenPosition = boardSettings.hiddenPositionBase
+      + Vector3.__new(0, 10 * i, 0),\n            grabbed = false\n        }\n   
+      end\n    return boards\nend\n\nlocal boards = makeBoards(settings)\n\nlocal
+      nextBoard = function (currentIndex)\n    return boards[settings.boardNamePrefix
+      .. tostring(currentIndex % settings.boardCount + 1)]\nend\n\nlocal vciLoaded
+      = false\nlocal initialUpdateSkipped = false\n\nupdateAll = function ()\n   
+      if not initialUpdateSkipped then\n        initialUpdateSkipped = true\n       
+      return\n    end\n\n    if not vciLoaded then\n        -- \u30ED\u30FC\u30C9\u5B8C\u4E86\n       
+      vciLoaded = true\n        vci.assets.SetText(settings.tmpName, textContent)\n   
+      end\nend\n\nonGrab = function (target)\n    if not vciLoaded then\n       
+      return\n    end\n\n    local board = boards[target]\n    if board then\n       
+      board.grabbed = true\n    end\n\nend\n\nonUngrab = function (target)\n    if
+      not vciLoaded then\n        return\n    end\n\n    local board = boards[target]\n   
+      if board then\n        board.grabbed = false\n    end\nend\n\nonUse = function
+      (use)\n    if not vciLoaded then\n        return\n    end\n\n    local board
+      = boards[use]\n    if board and not board.grabbed then\n        -- \u30DC\u30FC\u30C9\u304C\u3064\u304B\u307E\u308C\u3066\u3044\u306A\u3044\u72B6\u614B\u3067\u3001Use
+      \u3055\u308C\u305F\u306A\u3089\u3001\u6B21\u306E\u30DC\u30FC\u30C9\u306B\u5165\u308C\u66FF\u3048\u308B\u3002\n       
+      local next = nextBoard(board.index)\n\n        local item = board.item\n       
+      local pos = item.GetPosition()\n        local rot = item.GetRotation()\n       
+      item.SetPosition(board.hiddenPosition)\n\n        local nextItem = next.item\n       
+      nextItem.SetPosition(pos)\n        nextItem.SetRotation(rot)\n    end\nend\n"
   - name: text
     mimeType: 0
     targetEngine: 0
-    filePath: Assets/oO-vci-pack/message-board/scripts/text.lua
-    source: 
+    textAsset: {fileID: 1042094116111776886, guid: 23d8ac933c426454ab470b229b0a6919,
+      type: 3}
+    source: 'return { textContent = [==[
+
+      Hello, World!
+
+      ]==] }
+
+'
 --- !u!4 &118133476
 Transform:
   m_ObjectHideFlags: 0
@@ -598,7 +634,6 @@ GameObject:
   - component: {fileID: 431020563}
   - component: {fileID: 431020566}
   - component: {fileID: 431020565}
-  - component: {fileID: 431020564}
   m_Layer: 0
   m_Name: TMP SubMesh [TextMeshPro/Sprite]
   m_TagString: Untagged
@@ -620,27 +655,6 @@ Transform:
   m_Father: {fileID: 537855344}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &431020564
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 431020562}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07994bfe8b0e4adb97d706de5dea48d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_spriteAsset: {fileID: 11400000, guid: c41005c129ba4d66911b75229fd70b45, type: 2}
-  m_material: {fileID: 0}
-  m_sharedMaterial: {fileID: 2103686, guid: c41005c129ba4d66911b75229fd70b45, type: 2}
-  m_isDefaultMaterial: 1
-  m_padding: 0
-  m_renderer: {fileID: 431020566}
-  m_meshFilter: {fileID: 431020565}
-  m_TextComponent: {fileID: 537855345}
 --- !u!33 &431020565
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -869,7 +883,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_subTextObjects.Array.data[1]
       value: 
-      objectReference: {fileID: 431020564}
+      objectReference: {fileID: 0}
     - target: {fileID: 4943523559470062479, guid: 22d72aab40ae6404b8b022a536fe12cf,
         type: 3}
       propertyPath: m_Name
@@ -883,18 +897,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 537855343}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &537855345 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4943523559470062477, guid: 22d72aab40ae6404b8b022a536fe12cf,
-    type: 3}
-  m_PrefabInstance: {fileID: 537855343}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &597299752
 GameObject:
   m_ObjectHideFlags: 0
@@ -961,6 +963,7 @@ MonoBehaviour:
   Grabbable: 1
   Scalable: 0
   UniformScaling: 0
+  Attractable: 1
   GroupId: 100
   NodeIndex: 0
 --- !u!1 &665521502
@@ -1958,6 +1961,7 @@ MonoBehaviour:
   Grabbable: 1
   Scalable: 0
   UniformScaling: 0
+  Attractable: 1
   GroupId: 100
   NodeIndex: 0
 --- !u!1 &1898418159
@@ -2026,6 +2030,7 @@ MonoBehaviour:
   Grabbable: 1
   Scalable: 0
   UniformScaling: 0
+  Attractable: 1
   GroupId: 100
   NodeIndex: 0
 --- !u!1 &1956327537

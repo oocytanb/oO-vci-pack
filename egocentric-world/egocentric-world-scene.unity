@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -54,7 +54,7 @@ LightmapSettings:
     m_EnableBakedLightmaps: 1
     m_EnableRealtimeLightmaps: 1
   m_LightmapEditorSettings:
-    serializedVersion: 10
+    serializedVersion: 12
     m_Resolution: 2
     m_BakeResolution: 40
     m_AtlasSize: 1024
@@ -62,6 +62,7 @@ LightmapSettings:
     m_AOMaxDistance: 1
     m_CompAOExponent: 1
     m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
     m_Padding: 2
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
@@ -76,10 +77,16 @@ LightmapSettings:
     m_PVRDirectSampleCount: 32
     m_PVRSampleCount: 500
     m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 500
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 2
+    m_PVRDenoiserTypeDirect: 0
+    m_PVRDenoiserTypeIndirect: 0
+    m_PVRDenoiserTypeAO: 0
     m_PVRFilterTypeDirect: 0
     m_PVRFilterTypeIndirect: 0
     m_PVRFilterTypeAO: 0
-    m_PVRFilteringMode: 1
+    m_PVREnvironmentMIS: 0
     m_PVRCulling: 1
     m_PVRFilteringGaussRadiusDirect: 1
     m_PVRFilteringGaussRadiusIndirect: 5
@@ -87,7 +94,9 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
-    m_ShowResolutionOverlay: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -150,9 +159,10 @@ Camera:
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_GateFitMode: 2
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -335,9 +345,9 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 28d505800ad2e1c47963bba3d22e8e76, type: 3}
-    version: 0.2.1
+    version: 0.2.2
     description: "\u6607\u964D\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u306E\u5B9F\u9A13\u7528\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002\r"
-    exporterVersion: 0.25
+    exporterVersion: 0.31
     specVersion: 
     modelDataLicenseType: 8
     modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
@@ -350,8 +360,109 @@ MonoBehaviour:
   - name: main
     mimeType: 0
     targetEngine: 0
-    filePath: Assets/oO-vci-pack/egocentric-world/scripts/egocentric-world-main.lua
-    source: 
+    textAsset: {fileID: 1042094116111776886, guid: 01368dc8e255d474faa05c92ec9fa7f6,
+      type: 3}
+    source: "-- SPDX-License-Identifier: MIT\n-- Copyright (c) 2019 oO (https://github.com/oocytanb)\n\n--
+      \u30A8\u30EC\u30D9\u30FC\u30BF\u30FC\u306E\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u6642\u9593\u3002+1
+      \u79D2\u306F\u30DE\u30FC\u30B8\u30F3\u3002\nlocal EGO_ELEVATOR_ANIM_TIME =
+      TimeSpan.FromSeconds(10 + 1)\nlocal EGO_ELEVATOR_ANIM_WAIT_TIME = TimeSpan.FromSeconds(1)\n\n--
+      \u4E16\u754C\u3092\u4E0A\u6607\u3055\u305B\u308B\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u306E\u3001\u958B\u59CB\u30AD\u30FC\u30D5\u30EC\u30FC\u30E0\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u4F4D\u7F6E\u3002\nlocal
+      EGO_WORLD_RISE_ANIM_START_POSITION = Vector3.__new(0.0, -30, 0.0)\n\nlocal
+      EGO_BASKET_SWITCH_NORMAL_COLOR = Color.__new(0.8, 0.8, 0.25)\nlocal EGO_BASKET_SWITCH_ELEVATING_COLOR
+      = Color.__new(0.8, 0.25, 0.25)\nlocal EGO_BASKET_SWITCH_DARK_COLOR = Color.__new(0.25,
+      0.25, 0.25)\nlocal EGO_BASKET_SWITCH_MATERIAL_NAME = \"ego_basket_switch\"\n\n--
+      \u30BC\u30ED\u5730\u70B9\u3092\u78BA\u8A8D\u3059\u308B\u305F\u3081\u306E\u30B3\u30FC\u30F3\u3002\nlocal
+      zero_cone = vci.assets.GetTransform(\"zero_cone\")\n\nlocal ego_set = vci.assets.GetSubItem(\"ego_set\")\nlocal
+      ego_world_wrapper = vci.assets.GetTransform(\"ego_world_wrapper\")\nlocal ego_world
+      = vci.assets.GetTransform(\"ego_world\")\n\nlocal worldState = 0\nlocal waitingForNextState
+      = false;\nlocal elevatorAnimStartTime = TimeSpan.MinValue\nlocal elevatorAnimWaitTime
+      = TimeSpan.MinValue\n\n-- \u30A2\u30A4\u30C6\u30E0\u3092\u8A2D\u7F6E\u3057\u305F\u3068\u304D\u306E\u521D\u671F\u5316\u51E6\u7406\nif
+      vci.assets.IsMine then\n    vci.state.Set(\"worldState\", worldState)\n   
+      vci.assets._ALL_SetMaterialColorFromName(EGO_BASKET_SWITCH_MATERIAL_NAME, EGO_BASKET_SWITCH_NORMAL_COLOR)\n\n   
+      zero_cone.SetPosition(Vector3.zero)\n    zero_cone.SetRotation(Quaternion.identity)\n\n   
+      -- Y\u5EA7\u6A19\u306E\u4F4D\u7F6E\u3060\u3051\u3092\u3001\u30BC\u30ED\u306B\u3059\u308B\u3002\n   
+      local position = ego_set.GetPosition()\n    position.y = 0\n    ego_set.SetPosition(position)\n   
+      ego_set.SetRotation(Quaternion.identity)\nend\n\nlocal delaySyncWorldPosition
+      = function ()\n    if ego_set.IsMine then\n        if elevatorAnimWaitTime
+      < TimeSpan.Zero then\n            elevatorAnimWaitTime = vci.me.Time\n       
+      elseif (elevatorAnimWaitTime < TimeSpan.MaxValue) and (vci.me.Time >= elevatorAnimWaitTime
+      + EGO_ELEVATOR_ANIM_WAIT_TIME) then\n            -- \u5F85\u6A5F\u6642\u9593\u3092\u7D4C\u904E\u3057\u305F\u306E\u3067\u3001\u505C\u6B62\u4F4D\u7F6E\u3092\u5168\u30E6\u30FC\u30B6\u30FC\u306B\u540C\u671F\u3055\u305B\u308B\u3002\n           
+      print(\"sync world position\")\n            elevatorAnimWaitTime = TimeSpan.MaxValue\n\n           
+      local position = ego_world_wrapper.GetLocalPosition() + ego_world.GetLocalPosition()\n           
+      ego_world_wrapper.SetLocalPosition(Vector3.zero)\n            ego_world.SetLocalPosition(position)\n       
+      end\n    end\nend\n\nlocal resetWorldPosition = function ()\n    elevatorAnimStartTime
+      = TimeSpan.MinValue\n    elevatorAnimWaitTime = TimeSpan.MinValue\n    vci.assets.StopAnimation()\n   
+      if ego_world_wrapper.GetLocalPosition() ~= Vector3.zero then\n        ego_world_wrapper.SetLocalPosition(Vector3.zero)\n   
+      end\n    if ego_world.GetLocalPosition() then\n        ego_world.SetLocalPosition(Vector3.zero)\n   
+      end\n    vci.assets.SetMaterialColorFromName(EGO_BASKET_SWITCH_MATERIAL_NAME,
+      EGO_BASKET_SWITCH_NORMAL_COLOR)\nend\n\nupdateAll = function ()\n    local
+      newState = vci.state.Get(\"worldState\")\n    if (newState == nil) then\n       
+      return\n    end\n\n    local stateChanged = newState ~= worldState\n    worldState
+      = newState\n\n    if waitingForNextState then\n        if stateChanged then\n           
+      -- \u6B21\u306E\u72B6\u614B\u3078\u79FB\u884C\u3057\u305F\u306E\u3067\u3001\u5F85\u6A5F\u30D5\u30E9\u30B0\u3092\u30AF\u30EA\u30A2\u3059\u308B\n           
+      waitingForNextState = false\n        else\n            -- \u6B21\u306E\u72B6\u614B\u3078\u79FB\u884C\u3059\u308B\u306E\u3092\u5F85\u3063\u3066\u3044\u308B\n           
+      return\n        end\n    end\n\n    if worldState == 0 then\n        -- \u521D\u671F\u4F4D\u7F6E\u3067\u505C\u6B62\u3057\u3066\u3044\u308B\u72B6\u614B\n       
+      if stateChanged then\n            resetWorldPosition()\n        end\n       
+      delaySyncWorldPosition()\n    elseif worldState == 1 then\n        if stateChanged
+      then\n            elevatorAnimStartTime = TimeSpan.MinValue\n            elevatorAnimWaitTime
+      = vci.me.Time\n            vci.assets.SetMaterialColorFromName(EGO_BASKET_SWITCH_MATERIAL_NAME,
+      EGO_BASKET_SWITCH_DARK_COLOR)\n        end\n\n        if elevatorAnimStartTime
+      < TimeSpan.Zero then\n            -- \u30B9\u30A4\u30C3\u30C1\u304C\u62BC\u3055\u308C\u3001\u4E16\u754C\u3092\u4E0B\u964D\u3055\u305B\u308B\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u3092\u958B\u59CB\u3059\u308B\u307E\u3067\u306E\u3001\u5F85\u6A5F\u72B6\u614B\u3002\n\n           
+      if vci.me.Time >= elevatorAnimWaitTime + EGO_ELEVATOR_ANIM_WAIT_TIME then\n               
+      -- \u5F85\u6A5F\u6642\u9593\u3092\u7D4C\u904E\u3057\u305F\u306E\u3067\u3001\u4E16\u754C\u3092\u4E0B\u964D\u3055\u305B\u308B\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u958B\u59CB\u3002(\u30AB\u30B4\u304C\u4E0A\u6607\u3057\u3066\u3044\u308B\u3088\u3046\u306B\u898B\u3048\u308B)\n               
+      print(\"play anim: world-fall\")\n                elevatorAnimStartTime = vci.me.Time\n               
+      vci.assets.SetMaterialColorFromName(EGO_BASKET_SWITCH_MATERIAL_NAME, EGO_BASKET_SWITCH_ELEVATING_COLOR)\n               
+      vci.assets.PlayAnimationFromName(\"world-fall\", false)\n            end\n       
+      elseif vci.me.Time >= elevatorAnimStartTime + EGO_ELEVATOR_ANIM_TIME then\n          
+      print(\"world-fall anim finished.\")\n           elevatorAnimStartTime = TimeSpan.MinValue\n          
+      elevatorAnimWaitTime = TimeSpan.MinValue\n           waitingForNextState =
+      true\n           if ego_set.IsMine then\n               vci.state.Set(\"worldState\",
+      3)\n           end\n           vci.assets.SetMaterialColorFromName(EGO_BASKET_SWITCH_MATERIAL_NAME,
+      EGO_BASKET_SWITCH_NORMAL_COLOR)\n       end\n    elseif worldState == 2 then\n       
+      -- \u4E16\u754C\u3092\u4E0B\u964D\u3055\u305B\u308B\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u3092\u3001\u7DCA\u6025\u505C\u6B62\u3057\u305F\u72B6\u614B\u3002\n       
+      if stateChanged then\n            print(\"emergency stop world-fall anim.\")\n           
+      elevatorAnimStartTime = TimeSpan.MinValue\n            elevatorAnimWaitTime
+      = TimeSpan.MinValue\n            vci.assets.StopAnimation()\n            vci.assets.SetMaterialColorFromName(EGO_BASKET_SWITCH_MATERIAL_NAME,
+      EGO_BASKET_SWITCH_NORMAL_COLOR)\n        end\n        delaySyncWorldPosition()\n   
+      elseif worldState == 3 then\n        -- \u4E16\u754C\u3092\u4E0B\u964D\u3055\u305B\u308B\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u304C\u5B8C\u4E86\u3057\u3066\u3001\u505C\u6B62\u3057\u3066\u3044\u308B\u72B6\u614B\u3002\n       
+      delaySyncWorldPosition()\n    elseif worldState == 4 then\n        if stateChanged
+      then\n            elevatorAnimStartTime = TimeSpan.MinValue\n            elevatorAnimWaitTime
+      = vci.me.Time\n            vci.assets.SetMaterialColorFromName(EGO_BASKET_SWITCH_MATERIAL_NAME,
+      EGO_BASKET_SWITCH_DARK_COLOR)\n        end\n\n        if elevatorAnimStartTime
+      < TimeSpan.Zero then\n            -- \u30B9\u30A4\u30C3\u30C1\u304C\u62BC\u3055\u308C\u3001\u4E16\u754C\u3092\u4E0A\u6607\u3055\u305B\u308B\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u3092\u958B\u59CB\u3059\u308B\u307E\u3067\u306E\u3001\u5F85\u6A5F\u72B6\u614B\u3002\n\n           
+      if vci.me.Time >= elevatorAnimWaitTime + EGO_ELEVATOR_ANIM_WAIT_TIME then\n               
+      -- \u5F85\u6A5F\u6642\u9593\u3092\u7D4C\u904E\u3057\u305F\u306E\u3067\u3001\u4E16\u754C\u3092\u4E0A\u6607\u3055\u305B\u308B\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u958B\u59CB\u3002(\u30AB\u30B4\u304C\u4E0B\u964D\u3057\u3066\u3044\u308B\u3088\u3046\u306B\u898B\u3048\u308B)\n               
+      print(\"play anim: world-rise\")\n                elevatorAnimStartTime = vci.me.Time\n               
+      vci.assets.SetMaterialColorFromName(EGO_BASKET_SWITCH_MATERIAL_NAME, EGO_BASKET_SWITCH_ELEVATING_COLOR)\n\n               
+      local position = ego_world.GetLocalPosition() - EGO_WORLD_RISE_ANIM_START_POSITION\n               
+      if ego_world_wrapper.GetLocalPosition() ~= position then\n                   
+      -- \u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u306E\u958B\u59CB\u6642\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u4F4D\u7F6E\u3092\u3001wrapper
+      \u306B\u8A2D\u5B9A\u3059\u308B\u3053\u3068\u3067\u3001\u7591\u4F3C\u7684\u306B\u73FE\u5728\u306E\u4F4D\u7F6E\u304B\u3089\u958B\u59CB\u3059\u308B\u3088\u3046\u306B\u898B\u305B\u308B\n                   
+      ego_world_wrapper.SetLocalPosition(position)\n                end\n               
+      vci.assets.PlayAnimationFromName(\"world-rise\", false)\n            end\n       
+      elseif vci.me.Time >= elevatorAnimStartTime + EGO_ELEVATOR_ANIM_TIME then\n           
+      print(\"world-rise anim finished.\")\n            elevatorAnimStartTime = TimeSpan.MinValue\n           
+      elevatorAnimWaitTime = TimeSpan.MinValue\n            waitingForNextState =
+      true\n            if ego_set.IsMine then\n                vci.state.Set(\"worldState\",
+      0)\n            end\n            vci.assets.SetMaterialColorFromName(EGO_BASKET_SWITCH_MATERIAL_NAME,
+      EGO_BASKET_SWITCH_NORMAL_COLOR)\n        elseif (ego_world_wrapper.GetLocalPosition()
+      + ego_world.GetLocalPosition()).y >= -0.1 then\n            -- \u4E16\u754C\u3092\u4E0A\u6607\u4E2D\u306B\u3001\u5730\u9762\u306B\u8FD1\u3065\u3044\u305F\u306E\u3067\u3001\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u3092\u505C\u6B62\u3055\u305B\u308B\u3002\n           
+      -- (\u9014\u4E2D\u4F4D\u7F6E\u304B\u3089\u4E0A\u6607\u3055\u305B\u305F\u5834\u5408\u306F\u3001\u5730\u9762\u3092\u8D8A\u3048\u3066\u3057\u307E\u3046\u306E\u3067\u5BFE\u7B56)\n           
+      print(\"stop world-rise anim: position rised near the ground.\")\n           
+      resetWorldPosition()\n            waitingForNextState = true\n            if
+      ego_set.IsMine then\n                vci.state.Set(\"worldState\", 0)\n           
+      end\n        end\n    elseif worldState == 5 then\n        -- \u4E16\u754C\u3092\u4E0A\u6607\u3055\u305B\u308B\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u3092\u3001\u7DCA\u6025\u505C\u6B62\u3057\u305F\u72B6\u614B\u3002\n       
+      if stateChanged then\n            print(\"emergency stop world-rise anim.\")\n           
+      elevatorAnimStartTime = TimeSpan.MinValue\n            elevatorAnimWaitTime
+      = TimeSpan.MinValue\n            vci.assets.StopAnimation()\n            vci.assets.SetMaterialColorFromName(EGO_BASKET_SWITCH_MATERIAL_NAME,
+      EGO_BASKET_SWITCH_NORMAL_COLOR)\n        end\n        delaySyncWorldPosition()\n   
+      end\nend\n\nonUse = function (use)\n    print(\"onUse: \" .. use)\n\n    if
+      use == \"ego_set\" then\n        -- \u30B9\u30A4\u30C3\u30C1\u304C\u4F7F\u7528\u3055\u308C\u305F\u3002\n       
+      if worldState == 2 then\n            vci.state.Set(\"worldState\", 4)\n       
+      elseif worldState >= 5 then\n            -- \u4E16\u754C\u306E\u4E0A\u6607\u4E2D\u306B\u7DCA\u6025\u505C\u6B62\u3057\u305F\u72B6\u614B\u3067\u3001\u518D\u5EA6\u30B9\u30A4\u30C3\u30C1\u3092\u4F7F\u7528\u3057\u305F\u72B6\u614B\u3002\u4E16\u754C\u3092\u30BC\u30ED\u5730\u70B9\u306B\u30EA\u30BB\u30C3\u30C8\u3059\u308B\u3002\n           
+      print(\"reset world position.\")\n            resetWorldPosition()\n           
+      vci.state.Set(\"worldState\", 0)\n        else\n            vci.state.Set(\"worldState\",
+      worldState + 1)\n        end\n    end\nend\n"
 --- !u!95 &565910018
 Animator:
   serializedVersion: 3
@@ -399,6 +510,7 @@ MonoBehaviour:
   Grabbable: 1
   Scalable: 0
   UniformScaling: 0
+  Attractable: 1
   GroupId: 0
   NodeIndex: 0
 --- !u!54 &565910021
@@ -442,12 +554,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1835383532}
   m_Enabled: 1
-  serializedVersion: 8
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
@@ -457,6 +571,24 @@ Light:
     m_Bias: 0.05
     m_NormalBias: 0.4
     m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
@@ -464,12 +596,15 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &1835383534

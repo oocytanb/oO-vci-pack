@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -54,7 +54,7 @@ LightmapSettings:
     m_EnableBakedLightmaps: 1
     m_EnableRealtimeLightmaps: 1
   m_LightmapEditorSettings:
-    serializedVersion: 10
+    serializedVersion: 12
     m_Resolution: 2
     m_BakeResolution: 40
     m_AtlasSize: 1024
@@ -62,6 +62,7 @@ LightmapSettings:
     m_AOMaxDistance: 1
     m_CompAOExponent: 1
     m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
     m_Padding: 2
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
@@ -76,10 +77,16 @@ LightmapSettings:
     m_PVRDirectSampleCount: 32
     m_PVRSampleCount: 500
     m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 500
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 2
+    m_PVRDenoiserTypeDirect: 0
+    m_PVRDenoiserTypeIndirect: 0
+    m_PVRDenoiserTypeAO: 0
     m_PVRFilterTypeDirect: 0
     m_PVRFilterTypeIndirect: 0
     m_PVRFilterTypeAO: 0
-    m_PVRFilteringMode: 1
+    m_PVREnvironmentMIS: 0
     m_PVRCulling: 1
     m_PVRFilteringGaussRadiusDirect: 1
     m_PVRFilteringGaussRadiusIndirect: 5
@@ -87,7 +94,9 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
-    m_ShowResolutionOverlay: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -150,9 +159,10 @@ Camera:
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_GateFitMode: 2
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -275,9 +285,9 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 171cd3115590f0c4caad60a161814cee, type: 3}
-    version: 0.3.1
+    version: 0.3.2
     description: "\u5171\u6709\u5909\u6570\u306E\u5B9F\u9A13\u7528\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002"
-    exporterVersion: 0.25
+    exporterVersion: 0.31
     specVersion: 
     modelDataLicenseType: 8
     modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
@@ -290,8 +300,27 @@ MonoBehaviour:
   - name: main
     mimeType: 0
     targetEngine: 0
-    filePath: Assets/oO-vci-pack/studio-shared-counter/scripts/studio-shared-counter-main.lua
-    source: 
+    textAsset: {fileID: 1042094116111776886, guid: e75b7628664f6c340846a99139f20b77,
+      type: 3}
+    source: "-- SPDX-License-Identifier: MIT\n-- Copyright (c) 2019 oO (https://github.com/oocytanb)\n\nlocal
+      SHARED_COUNTER_NAME = 'com.github.oocytanb.cytanb-tso-collab.studio-shared-counter'\n\nlocal
+      UpdatePeriod = TimeSpan.FromMilliseconds(500)\nlocal chunkEvaluatedTime = vci.me.Time\nlocal
+      lastUpdateTime = TimeSpan.Zero\nlocal lastCounter = -1\n\nprint('on chunk evaluated:
+      counter = ' .. tostring(vci.studio.shared.Get(SHARED_COUNTER_NAME)))\n\nlocal
+      setCounterUV = function (counter)\n    -- 0 \uFF5E 9 \u307E\u3067\u306E UV
+      \u5EA7\u6A19\u3092\u8A2D\u5B9A\u3059\u308B\u3002\n    local x = (counter %
+      10) / 10.0\n    local offset = Vector2.__new(x, 0)\n    vci.assets.SetMaterialTextureOffsetFromIndex(0,
+      offset)\nend\n\nupdateAll = function ()\n    local time = vci.me.Time\n   
+      local waitTime = lastUpdateTime + (lastCounter < 0 and TimeSpan.FromMilliseconds(10)
+      or UpdatePeriod)\n    if time >= waitTime then\n        lastUpdateTime = time\n       
+      local counter = vci.studio.shared.Get(SHARED_COUNTER_NAME)\n        if counter
+      and counter ~= lastCounter then\n            if lastCounter < 0 then\n               
+      print('sync time = ' .. (time - chunkEvaluatedTime).TotalMilliseconds .. '
+      ms')\n            end\n            print('counter changed: ' .. counter)\n           
+      lastCounter = counter\n            setCounterUV(counter)\n        end\n   
+      end\nend\n\nonGrab = function (target)\n    print('onGrab: ' .. target)\nend\n\nonUse
+      = function (use)\n    print('onUse: ' .. use)\n    vci.studio.shared.Add(SHARED_COUNTER_NAME,
+      1)\n    lastUpdateTime = TimeSpan.Zero\nend\n"
 --- !u!1 &1646408372 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100002, guid: c7027211545335d4da07f608240464f5,
@@ -313,6 +342,7 @@ MonoBehaviour:
   Grabbable: 1
   Scalable: 1
   UniformScaling: 0
+  Attractable: 1
   GroupId: 0
   NodeIndex: 0
 --- !u!65 &1646408374
@@ -369,12 +399,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1650073607}
   m_Enabled: 1
-  serializedVersion: 8
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
@@ -384,6 +416,24 @@ Light:
     m_Bias: 0.05
     m_NormalBias: 0.4
     m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
@@ -391,12 +441,15 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &1650073609
