@@ -938,7 +938,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 47630206be542564fa00392669462c60, type: 3}
-    version: 0.1.1
+    version: 0.2.0
     description: 
     exporterVersion: 0.31
     specVersion: 
@@ -1108,15 +1108,12 @@ MonoBehaviour:
       \u3068\u3057\u3066\u8FFD\u52A0\u8A2D\u5B9A\u3059\u308B\u3002\n--   3. VCI \u306E
       `require` \u95A2\u6570\u3092 `main.lua` \u30B9\u30AF\u30EA\u30D7\u30C8\u304B\u3089
       `cytanb = cytanb or require('cytanb')(_ENV)` \u3068\u3057\u3066\u547C\u3073\u51FA\u3059\u3002\n\n--
-      **`cytanb.lua` \u3092\u30E2\u30B8\u30E5\u30FC\u30EB\u3068\u3057\u3066\u5229\u7528\u3059\u308B\u5834\u5408\u306F\u3001\u6B21\u306E\u884C\u3092\u6709\u52B9\u306B\u3059\u308B\u3053\u3068\u3002**\nlocal
-      __CYTANB_EXPORT_MODULE = true\n\n---@type cytanb @See `cytanb_annotations.lua`\nlocal
+      **`cytanb.lua` \u3092\u30E2\u30B8\u30E5\u30FC\u30EB\u3068\u3057\u3066\u5229\u7528\u3059\u308B\u5834\u5408\u306F\u3001\u6B21\u306E\u884C\u3092\u6709\u52B9\u306B\u3059\u308B\u3053\u3068\u3002**\n--
+      local __CYTANB_EXPORT_MODULE = true\n\n---@type cytanb @See `cytanb_annotations.lua`\nlocal
       cytanb = (function ()\n    local makeImpl = function (_ENV)\n        if not
       require or not vci then\n            error('Invalid _ENV: Enable `__CYTANB_EXPORT_MODULE
       = true` line and pass valid _ENV of VCI-main if use cytanb.lua as module.',
-      3)\n        end\n\n        --- \u30A4\u30F3\u30B9\u30BF\u30F3\u30B9 ID \u306E\u72B6\u614B\u5909\u6570\u540D\u3002\n       
-      local InstanceIDStateName = '__CYTANB_INSTANCE_ID'\n\n        --- **\u5C06\u6765\u7684\u306B\u306F\u5EC3\u6B62\u3059\u308B\u4E88\u5B9A**\n       
-      local InstanceIDStatePatching = true\n        local initialInstanceIDQueried
-      = false\n\n        --- \u65E2\u5B9A\u306E\u30DB\u30EF\u30A4\u30C8\u30B9\u30DA\u30FC\u30B9\u306E\u691C\u7D22\u30D1\u30BF\u30FC\u30F3\u3002\n       
+      3)\n        end\n\n        --- \u65E2\u5B9A\u306E\u30DB\u30EF\u30A4\u30C8\u30B9\u30DA\u30FC\u30B9\u306E\u691C\u7D22\u30D1\u30BF\u30FC\u30F3\u3002\n       
       local defaultWhiteSpaceSearchPattern\n\n        --- TMP Sprite \u306E\u30CE\u30FC\u30C9\u540D\u306E\u691C\u7D22\u30D1\u30BF\u30FC\u30F3\u3002\n       
       local tmpSpriteNodeNamePattern\n\n        --- TMP Sprite \u306E\u30A4\u30F3\u30C7\u30C3\u30AF\u30B9\u306E\u691C\u7D22\u30D1\u30BF\u30FC\u30F3\u3002\n       
       local tmpSpriteIndexPattern\n\n        --- 16 \u9032\u6570\u306E\u691C\u7D22\u30D1\u30BF\u30FC\u30F3\u3002\n       
@@ -1127,16 +1124,14 @@ MonoBehaviour:
       local parameterValueReplacementMap\n\n        --- \u51FA\u529B\u3059\u308B\u30ED\u30B0\u30EC\u30D9\u30EB\u3002\n       
       local logLevel\n\n        --- \u30ED\u30B0\u51FA\u529B\u3059\u308B\u6642\u306B\u3001\u30ED\u30B0\u30EC\u30D9\u30EB\u306E\u6587\u5B57\u5217\u3092\u51FA\u529B\u3059\u308B\u304B\u3002\n       
       local outputLogLevelEnabled = false\n\n        --- \u30ED\u30B0\u30EC\u30D9\u30EB\u306E\u6587\u5B57\u5217\u30DE\u30C3\u30D7\u3002\n       
-      local logLevelStringMap\n\n        --- \u30A4\u30F3\u30B9\u30BF\u30F3\u30B9
-      ID \u306E\u6587\u5B57\u5217\u3002\n        local instanceID\n\n        ---
-      \u30AF\u30E9\u30A4\u30A2\u30F3\u30C8 ID \u306E\u6587\u5B57\u5217\u3002\n       
-      local clientID\n\n        local cytanb\n\n        local SearchStartsWithPred
-      = function (position, searchLen)\n            local ni = position + searchLen
-      - 1\n            return position, ni, ni + 1\n        end\n\n        local
-      SearchEndsWithPred = function (position, searchLen)\n            local ni =
-      position - searchLen + 1\n            return ni, position, ni - 1\n       
-      end\n\n        local SearchPatternClass = function (str, strLen, searchPattern,
-      position, pred)\n            local searchMap = searchPattern.searchMap\n           
+      local logLevelStringMap\n\n        --- \u30AF\u30E9\u30A4\u30A2\u30F3\u30C8
+      ID \u306E\u6587\u5B57\u5217\u3002\n        local clientID\n\n        local
+      cytanb\n\n        local SearchStartsWithPred = function (position, searchLen)\n           
+      local ni = position + searchLen - 1\n            return position, ni, ni +
+      1\n        end\n\n        local SearchEndsWithPred = function (position, searchLen)\n           
+      local ni = position - searchLen + 1\n            return ni, position, ni -
+      1\n        end\n\n        local SearchPatternClass = function (str, strLen,
+      searchPattern, position, pred)\n            local searchMap = searchPattern.searchMap\n           
       for _idx, searchLen in pairs(searchPattern.lengthList) do\n               
       if searchLen <= 0 then\n                    error('SearchPattern: Invalid parameter:
       searchLen <= 0')\n                else\n                    local si, ei, ni
@@ -1372,17 +1367,13 @@ MonoBehaviour:
       end)()\n            return {\n                Off = function ()\n                   
       r1.Off()\n                    r2.Off()\n                end\n            }\n       
       end\n\n        cytanb = {\n            InstanceID = function ()\n               
-      if instanceID == '' then\n                    instanceID = vci.state.Get(InstanceIDStateName)
-      or ''\n                    if InstanceIDStatePatching and not initialInstanceIDQueried
-      and instanceID == '' then\n                        -- InstanceID \u304C\u540C\u671F\u3055\u308C\u3066\u3044\u306A\u3044\u5834\u5408\u306E\u5BFE\u7B56\n                       
-      initialInstanceIDQueried = true\n                        vci.message.Emit(cytanb.InstanceIDStatePatchingMessageName,
-      '')\n                    end\n                end\n                return instanceID\n           
-      end,\n\n            ClientID = function ()\n                return clientID\n           
-      end,\n\n            NillableHasValue = function (nillable)\n               
-      return nillable ~= nil\n            end,\n\n            NillableValue = function
-      (nillable)\n                if nillable == nil then\n                    error('nillable:
-      value is nil', 2)\n                end\n                return nillable\n           
-      end,\n\n            NillableValueOrDefault = function (nillable, defaultValue)\n               
+      return vci.assets.GetInstanceId() or ''\n            end,\n\n            ClientID
+      = function ()\n                return clientID\n            end,\n\n           
+      NillableHasValue = function (nillable)\n                return nillable ~=
+      nil\n            end,\n\n            NillableValue = function (nillable)\n               
+      if nillable == nil then\n                    error('nillable: value is nil',
+      2)\n                end\n                return nillable\n            end,\n\n           
+      NillableValueOrDefault = function (nillable, defaultValue)\n               
       if nillable == nil then\n                    if defaultValue == nil then\n                       
       error('nillable: defaultValue is nil', 2)\n                    end\n                   
       return defaultValue\n                else\n                    return nillable\n               
@@ -1687,7 +1678,7 @@ MonoBehaviour:
       end,\n\n            Random32 = function ()\n                -- MoonSharp \u3067\u306F\u6574\u6570\u5024\u306E\u5834\u5408
       32bit int \u578B\u306B\u30AD\u30E3\u30B9\u30C8\u3055\u308C\u30012147483646
       \u304C\u6E21\u3059\u3053\u3068\u306E\u3067\u304D\u308B\u6700\u5927\u5024\u3002\n               
-      return bit32.band(math.random(-2147483648, 2147483646), 0xFFFFFFFF)\n           
+      return bit32.band(math.random(-2147483648, 2147483646) + 2147483648, 0xFFFFFFFF)\n           
       end,\n\n            RandomUUID = function ()\n                return cytanb.UUIDFromNumbers(\n                   
       cytanb.Random32(),\n                    bit32.bor(0x4000, bit32.band(cytanb.Random32(),
       0xFFFF0FFF)),\n                    bit32.bor(0x80000000, bit32.band(cytanb.Random32(),
@@ -2557,29 +2548,17 @@ MonoBehaviour:
       [cytanb.LogLevelFatal] = 'FATAL',\n            [cytanb.LogLevelError] = 'ERROR',\n           
       [cytanb.LogLevelWarn] = 'WARN',\n            [cytanb.LogLevelInfo] = 'INFO',\n           
       [cytanb.LogLevelDebug] = 'DEBUG',\n            [cytanb.LogLevelTrace] = 'TRACE'\n       
-      }\n\n        instanceID, clientID = (function ()\n            local lspid =
-      'eff3a188-bfc7-4b0e-93cb-90fd1adc508c'\n            local pmap = _G[lspid]\n           
-      if not pmap then\n                pmap = {}\n                _G[lspid] = pmap\n           
-      end\n\n            -- set random seed\n            local seed = pmap.randomSeedValue\n           
-      if not seed then\n                seed = cytanb.PosixTime() - os.clock() *
-      10000\n                pmap.randomSeedValue = seed\n                math.randomseed(seed)\n           
-      end\n\n            local rClientID = pmap.clientID\n            if type(rClientID)
-      ~= 'string' then\n                rClientID = tostring(cytanb.RandomUUID())\n               
-      pmap.clientID = rClientID\n            end\n\n            local rInstanceID
-      = vci.state.Get(InstanceIDStateName) or ''\n            if rInstanceID == ''
-      and vci.assets.IsMine then\n                -- vci.state \u306B ID \u304C\u8A2D\u5B9A\u3055\u308C\u3066\u3044\u306A\u3044\u5834\u5408\u306F\u751F\u6210\u3059\u308B\u3002\n               
-      rInstanceID = tostring(cytanb.RandomUUID())\n                vci.state.Set(InstanceIDStateName,
-      rInstanceID)\n            end\n\n            return rInstanceID, rClientID\n       
-      end)()\n\n        if InstanceIDStatePatching then\n            -- InstanceID
-      \u304C\u540C\u671F\u3055\u308C\u3066\u3044\u306A\u3044\u5834\u5408\u306E\u5BFE\u7B56\n           
-      vci.message.On(cytanb.InstanceIDStatePatchingMessageName, function (sender,
-      messageName, message)\n                if vci.assets.IsMine and instanceID
-      ~= '' then\n                    vci.state.Set(InstanceIDStateName, instanceID)\n               
-      end\n            end)\n        end\n\n        return cytanb\n    end\n\n   
-      if __CYTANB_EXPORT_MODULE then\n        return setmetatable({}, {\n           
-      __call = function (self, main_env)\n                return makeImpl(main_env)\n           
-      end\n        })\n    else\n        return makeImpl(_ENV)\n    end\nend)()\n\nif
-      __CYTANB_EXPORT_MODULE then\n    return cytanb\nend\n"
+      }\n\n        clientID = (function ()\n            local lspid = 'eff3a188-bfc7-4b0e-93cb-90fd1adc508c'\n           
+      local pmap = _G[lspid]\n            if not pmap then\n                pmap
+      = {}\n                _G[lspid] = pmap\n            end\n\n            local
+      rClientID = pmap.clientID\n            if type(rClientID) ~= 'string' then\n               
+      rClientID = tostring(cytanb.RandomUUID())\n                pmap.clientID =
+      rClientID\n            end\n\n            return rClientID\n        end)()\n\n       
+      return cytanb\n    end\n\n    if __CYTANB_EXPORT_MODULE then\n        return
+      setmetatable({}, {\n            __call = function (self, main_env)\n               
+      return makeImpl(main_env)\n            end\n        })\n    else\n        return
+      makeImpl(_ENV)\n    end\nend)()\n\nif __CYTANB_EXPORT_MODULE then\n    return
+      cytanb\nend\n"
 --- !u!4 &357394972
 Transform:
   m_ObjectHideFlags: 0
