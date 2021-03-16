@@ -80,8 +80,8 @@ return {
                     baseName = 'cball-settings-gravity-knob-pos',
                     knobName = 'cball-settings-gravity-knob',
                     propertyName = 'ballGravityAdjustment',
-                    minScaleValue = -9.5,
-                    maxScaleValue = 9.5
+                    minScaleValue = -9.2,
+                    maxScaleValue = 9.2
                 },
                 -- エフェクトレベル
                 {
@@ -122,7 +122,13 @@ return {
                 }
             end),
 
-            --- 重力加速度の規定値
+            --- TimestepEstimater のパラメーター。
+            timestepEstimaterParameter = {
+                minCalcInterval = TimeSpan.FromMinutes(3),
+                maxCalcInterval = TimeSpan.FromMinutes(30)
+            },
+
+            --- 重力加速度の規定値。
             defaultGravity = -9.81,
 
             --- 力を加える時の、最大タイムレート。
@@ -176,23 +182,26 @@ return {
             --- ボールのリスポーン位置のオフセット。
             ballRespawnOffsetY = 0.75,
 
-            --- ボールがアクティブであることを判定する距離の閾値。
-            ballActiveDistanceThreshold = 0.25,
+            --- ボールがインアクティブであることを判定する時間の閾値。
+            ballInactiveTimeThreshold = TimeSpan.FromSeconds(1),
 
             --- ボールがリスポーンするまでの待ち時間。
             ballWaitingTime = TimeSpan.FromMinutes(30),
 
-            --- ボールのプレイエリアの半径。これを超えたら軌道計算などを行わない。
-            ballPlayAreaRadius = 500,
+            --- ボールのプレイエリアの半径の 2 乗。
+            ballPlayAreaSqrRadius = 1000 ^ 2,
 
-            --- ボールが近距離にあると判定する距離。
-            ballNearDistance = 5,
+            --- ボールが近距離にあると判定する距離の 2 乗。
+            ballNearSqrDistance = 5 ^ 2,
 
-            --- ボールが遠距離にあると判定する距離。
-            ballFarDistance = 20,
+            --- ボールが遠距離にあると判定する距離の 2 乗。
+            ballFarSqrDistance = 20 ^ 2,
 
             --- ボールの軌跡を表示する速度の閾値。
             ballTrailVelocityThreshold = 1.25,
+
+            --- ボールの軌跡を表示する速度の閾値。
+            ballTrailVelocityElaborateThreshold = 0.125,
 
             --- ボールの軌跡を補間する距離の係数。
             ballTrailInterpolationDistanceFactor = 0.5,
@@ -270,7 +279,7 @@ return {
             ballTag = ballTag,
 
             --- ボールのオブジェクト名。
-            ballName = 'cball#' .. throwableTag .. '#' .. ballTag .. '#' .. colorPickerTag,
+            ballName = 'cball#' .. throwableTag .. '#' .. ballTag .. '#' .. colorPickerTag .. '#',
 
             --- ボールのエフェクトのコンテナー名。
             ballEfkContainerName = 'ball-efk',
@@ -284,11 +293,17 @@ return {
             --- ボールのエフェクト名(フェード+ムーブ有り)。
             ballEfkFadeMoveName = 'cball-trail-fade-move',
 
+            --- ボールのエフェクト名(フェード+Fly)。
+            ballEfkFadeFlyName = 'cball-trail-fade-fly',
+
             --- ボールのエフェクト名(生成数1)。
             ballEfkOneName = 'cball-trail-one',
 
             --- ボールのエフェクト名(生成数1,大)。
             ballEfkOneLargeName = 'cball-trail-one-large',
+
+            --- ボールのインアクティブエフェクトの最小再生周期。
+            ballEfkInactiveMinPeriod = TimeSpan.FromSeconds(60),
 
             --- ボールの投球音のクリップ名。
             ballThrowingAudioName = 'throwing-wind-se',
@@ -305,11 +320,17 @@ return {
             --- カラーインデックスオブジェクトのプレフィックス。
             colorIndexNamePrefix = 'cytanb-color-index-',
 
+            --- 識別エフェクトを有効にするか。
+            discernibleEfkEnabled = false,
+
             --- 識別エフェクトの最小再生周期。
             discernibleEfkMinPeriod = TimeSpan.FromSeconds(4.5),
 
             --- 識別エフェクトの最大再生周期。
             discernibleEfkMaxPeriod = TimeSpan.FromSeconds(10),
+
+            --- 識別カラーの輝度の係数。
+            discernibleColorValueFactor = 2.0,
 
             --- ターゲットのタグ名。
             targetTag = targetTag,

@@ -53,8 +53,11 @@ local avatarColliderMap = cytanb.ListToMap(settings.avatarColliders, true)
 local timestepEstimater
 local fixedTimestep
 
+-- VCAS の GetPosition() などは、前のフレームの値を返すため、時間も合わせる。
+local prevTime
+
 local ball, ballCup
-local ballEfkContainer, ballEfk, ballEfkFade, ballEfkFadeMove, ballEfkOne, ballEfkOneLarge, ballDiscernibleEfkPlayer
+local ballEfkContainer, ballEfk, ballEfkFade, ballEfkFadeMove, ballEfkFadeFly, ballEfkOne, ballEfkOneLarge, ballDiscernibleEfkPlayer
 local standLights, standLightEfkContainer, standLightHitEfk, standLightDirectHitEfk
 local colorPickers, currentColorPicker
 local impactForceGauge, impactSpinGauge
@@ -70,6 +73,15 @@ local ballStatus = {
 
     --- ボールがグリップされた時間。
     gripStartTime = TimeSpan.Zero,
+
+    --- ボールを投げた時間。
+    throwTime = vci.me.Time,
+
+    --- ボールがアクティブになった時間。
+    activeTime = vci.me.Time,
+
+    --- インアクティブのエフェクトを再生した時間。
+    inactiveEfkPlayTime = TimeSpan.Zero,
 
     --- ボールがリスポーンした時間。
     respawnTime = vci.me.Time,
@@ -172,7 +184,7 @@ local settingsPanelStatus = {
 --- 統計情報のキャッシュ
 local statsCache = {
     --- 最後に統計情報を出力した時間。
-    lastOutputTime = vci.me.Time,
+    lastOutputTime = vci.me.UnscaledTime,
 
     --- 投球をキャッシュしている数。この値がゼロより大きければ、適当なタイミングで統計情報を出力する。
     throwingCache = 0,
@@ -232,7 +244,11 @@ local StatsToString = function (stats)
         predictedFlyingDistanceString = 'N/A'
     end
 
-    local frameTimeLine = stats.throwingFrameSeconds <= 0 and '' or indent .. 'frameTime: ' .. cytanb.Round(stats.throwingFrameSeconds * 1000) .. ' [ms] (' .. cytanb.Round(1.0 / stats.throwingFrameSeconds, 2) .. ')\n'
+    local frameTimeLine = stats.throwingFrameSeconds <= 0
+        and ''
+        or indent .. 'frameTime: ' .. cytanb.Round(stats.throwingFrameSeconds * 1000)
+            .. ' [ms] (' .. cytanb.Round(1.0 / stats.throwingFrameSeconds, 2) .. '), timestep: '
+            .. cytanb.Round(timestepEstimater.Timestep().TotalMilliseconds, 2) .. ' [ms]\n'
 
     return indent .. 'settings: ' .. settingsString
         .. '\n' .. frameTimeLine
@@ -242,12 +258,12 @@ local StatsToString = function (stats)
         .. '\n' .. indent .. 'predictedFlyingDistance: ' .. predictedFlyingDistanceString
 end
 
-local TreatStatsCache = function ()
+local ProcessStatsCache = function ()
     if statsCache.throwingCache <= 0 then
         return
     end
 
-    local now = vci.me.Time
+    local now = vci.me.UnscaledTime
     if now - settings.resetOperationTime <= statsCache.lastOutputTime then
         return
     end
@@ -366,14 +382,20 @@ local CreateDiscernibleEfkPlayer = function (efk, periodTime)
 end
 
 local SetDiscernibleColor = function (color)
-    cytanb.LogDebug('SetDiscernibleColor: color = ', color)
+    local h, s, v = cytanb.ColorRGBToHSV(color)
+    cytanb.LogDebug('SetDiscernibleColor: color = ', color, ', h = ', h, ', s = ', s, ', v = ', v)
     ballDiscernibleEfkPlayer.SetColor(color)
-    vci.assets.SetMaterialColorFromName(settings.ballCoveredLightMat, color)
-    -- vci.assets.SetMaterialEmissionColorFromName(settings.ballCoveredLightMat, Color.__new(color.r * 1.5, color.g * 1.5, color.b * 1.5, 1.0))
+
+    local efkLevel = efkLevelSwitch.GetValue()
+    local mc = (efkLevel <= 7 or v <= 0.75)
+        and color
+        or Color.HSVToRGB(h, s, v * settings.discernibleColorValueFactor * math.min(10, efkLevel) / 10)
+
+    vci.assets.SetMaterialColorFromName(settings.ballCoveredLightMat, mc)
 end
 
 local OfferBallTransform = function (position, rotation, time)
-    ballStatus.transformQueue.Offer({position = position, rotation = rotation, time = time or vci.me.Time})
+    ballStatus.transformQueue.Offer({position = position, rotation = rotation, time = time})
 end
 
 local CreateDiscernibleColorParameter = function ()
@@ -574,6 +596,8 @@ local RespawnBall = function ()
     ResetGauge()
     ResetBallCup()
 
+    ballStatus.throwTime = prevTime
+
     if ball.IsMine then
         ball.SetVelocity(Vector3.zero)
         ball.SetAngularVelocity(Vector3.zero)
@@ -582,9 +606,11 @@ local RespawnBall = function ()
         local ballRot = Quaternion.identity
         ball.SetPosition(ballPos)
         ball.SetRotation(ballRot)
+
+        local now = vci.me.Time
         ballStatus.transformQueue.Clear()
-        OfferBallTransform(ballPos, ballRot)
-        ballStatus.respawnTime = vci.me.Time
+        OfferBallTransform(ballPos, ballRot, now)
+        ballStatus.respawnTime = now
         cytanb.LogDebug('on respawn ball: position = ', ballPos)
     end
 end
@@ -647,7 +673,7 @@ local IsInThrowingMotion = function ()
 end
 
 --- コントローラーの運動による投球。
-local ThrowBallByKinematic = function ()
+local ThrowBallByKinematic = function (trsTime)
     -- 物理運動の正しさではなく、簡単に投げられて楽しめるものを目指して、計算を行う。
     -- 理由は、機器、投げ方、操作の慣れなどは、人それぞれ違うので、なるべく多くの人に楽しんでほしいから。
 
@@ -661,13 +687,14 @@ local ThrowBallByKinematic = function ()
         return
     end
 
-    if ballStatus.transformQueue.Size() <= 2 then
+    local queue = ballStatus.transformQueue
+    if queue.Size() <= 2 then
         return
     end
 
     ballStatus.gravityFactor = CalcGravityFactor()
 
-    local headTransform = ballStatus.transformQueue.PollLast()
+    local headTransform = queue.PollLast()
     local headTime = headTransform.time
     local ballPos = headTransform.position
     local ballRot = headTransform.rotation
@@ -690,8 +717,8 @@ local ThrowBallByKinematic = function ()
     -- 補正時間を計算
     local ft = headTime
     local frameCount = 0
-    for i = ballStatus.transformQueue.Size(), 1, -1 do
-        local element = ballStatus.transformQueue.Get(i)
+    for i = queue.Size(), 1, -1 do
+        local element = queue.Get(i)
         -- 重複しているタイムは除く
         if element.time ~= ft then
             frameCount = frameCount + 1
@@ -716,7 +743,7 @@ local ThrowBallByKinematic = function ()
     cytanb.LogTrace('adjustmentSec: ', adjustmentSec)
 
     while true do
-        local element = ballStatus.transformQueue.PollLast()
+        local element = queue.PollLast()
         if not element then
             break
         end
@@ -774,10 +801,10 @@ local ThrowBallByKinematic = function ()
         sp = element.position
         sr = element.rotation
     end
-    ballStatus.transformQueue.Clear()
+    queue.Clear()
 
     local kinematicVelocityMagnitude = totalWeightSec > Vector3.kEpsilon and totalVelocityMagnitude / totalWeightSec or 0
-    -- cytanb.LogTrace('kinematicVelocityMagnitude: ', kinematicVelocityMagnitude)
+    cytanb.LogTrace('>> kinematicVelocityMagnitude: ', kinematicVelocityMagnitude)
 
     if kinematicVelocityMagnitude > settings.ballThrowingVelocityThreshold then
         local velocityMagnitude = CalcAdjustmentValue(velocitySwitch, false) * kinematicVelocityMagnitude
@@ -788,21 +815,20 @@ local ThrowBallByKinematic = function ()
 
         ballStatus.simAngularVelocity = angularVelocity
         cytanb.LogTrace('Throw ball by kinematic: velocity: ', velocity, ', velocityMagnitude: ', velocityMagnitude, ', angularVelocity: ', angularVelocity, ', angularVelocity.magnitude: ', angularVelocity.magnitude, ', fixedTimestep: ', fixedTimestep.TotalSeconds)
-        local curBallPos = ball.GetPosition()
         ball.SetVelocity(velocity)
         ball.SetAngularVelocity(angularVelocity)
 
         -- update stats
-        statsCache.lastOutputTime = vci.me.Time
+        statsCache.lastOutputTime = vci.me.UnscaledTime
         statsCache.throwingCache = statsCache.throwingCache + 1
         statsCache.throwingVelocity = velocity
         statsCache.throwingAngularVelocity = angularVelocity
-        statsCache.throwingPosition = curBallPos
+        statsCache.throwingPosition = ballPos
         statsCache.throwingFrameSeconds = frameSec
         statsCache.gravity = settings.defaultGravity + ballStatus.gravityFactor
 
         -- 体のコライダーに接触しないように、オフセットを足す
-        ballPos = curBallPos + forwardOffset
+        ballPos = ballPos + forwardOffset
         ball.SetPosition(ballPos)
 
         PlayThrowingAudio(velocityMagnitude)
@@ -810,11 +836,11 @@ local ThrowBallByKinematic = function ()
         ballStatus.simAngularVelocity = Vector3.zero
     end
 
-    OfferBallTransform(ballPos, ballRot)
+    OfferBallTransform(ballPos, ballRot, trsTime)
 end
 
 --- タイミング入力による投球
-local ThrowBallByInputTiming = function ()
+local ThrowBallByInputTiming = function (trsTime)
     if not ball.IsMine then
         return
     end
@@ -835,7 +861,7 @@ local ThrowBallByInputTiming = function ()
     ball.SetAngularVelocity(ballStatus.simAngularVelocity)
 
     -- update stats
-    statsCache.lastOutputTime = vci.me.Time
+    statsCache.lastOutputTime = vci.me.UnscaledTime
     statsCache.throwingCache = statsCache.throwingCache + 1
     statsCache.throwingVelocity = velocity
     statsCache.throwingAngularVelocity = ballStatus.simAngularVelocity
@@ -850,11 +876,11 @@ local ThrowBallByInputTiming = function ()
     PlayThrowingAudio(velocityMagnitude)
 
     ballStatus.transformQueue.Clear()
-    OfferBallTransform(ballPos, ball.GetRotation())
+    OfferBallTransform(ballPos, ball.GetRotation(), trsTime)
 end
 
 --- 識別エフェクトの処理をする。
-local OnUpdateDiscernibleEfk = function (deltaTime, unscaledDeltaTime)
+local OnUpdateDiscernibleEfk = function (trsTime)
     if vci.assets.IsMine and not discernibleColorStatus.initialized and vci.me.UnscaledTime > discernibleColorStatus.checkRequestedTime + settings.requestIntervalTime then
         -- 他のインスタンスの識別色と重複しないように、色を選択する
         local lots = {}
@@ -883,7 +909,7 @@ local OnUpdateDiscernibleEfk = function (deltaTime, unscaledDeltaTime)
         cytanb.EmitMessage(statusChangedMessageName, CreateDiscernibleColorParameter())
     end
 
-    if not ballStatus.grabbed then
+    if settings.discernibleEfkEnabled and not ballStatus.grabbed then
         if not ballStatus.transformQueue.IsEmpty() and (ball.GetPosition() - ballStatus.transformQueue.PeekLast().position).sqrMagnitude > 0.0001 then
             -- ボールが動いている時は、識別エフェクトを停止する。
             ballDiscernibleEfkPlayer.Stop()
@@ -895,7 +921,7 @@ local OnUpdateDiscernibleEfk = function (deltaTime, unscaledDeltaTime)
 end
 
 --- ゲージの表示を更新する。
-local OnUpdateImpactGauge = function (deltaTime, unscaledDeltaTime)
+local OnUpdateImpactGauge = function (trsTime, deltaTime)
     if impactStatus.phase < 1 then
         local now = vci.me.Time
         if ballStatus.grabbed and ballStatus.gripPressed and now - settings.impactModeTransitionTime > ballStatus.gripStartTime and not IsInThrowingMotion() then
@@ -969,127 +995,156 @@ local OnUpdateImpactGauge = function (deltaTime, unscaledDeltaTime)
     end
 end
 
---- ボールの更新処理をする。カーブさせるための計算をする。
-local OnUpdateBall = function (deltaTime, unscaledDeltaTime)
-    local ballPos = ball.GetPosition()
-    local ballRot = ball.GetRotation()
-    local respawned = false
-
-    if not ballStatus.grabbed and not ballStatus.transformQueue.IsEmpty() then
-        local now = vci.me.Time
-        local lastTransform = ballStatus.transformQueue.PeekLast()
-        local lastPos = lastTransform.position
-
-        -- カップとの距離が離れていたら、ボールが転がっているものとして処理する
-        local cupSqrDistance = (ballPos - ballCup.GetPosition()).sqrMagnitude
-        if now > ballStatus.respawnTime + settings.ballRespawnCoolTime and cupSqrDistance > settings.ballActiveDistanceThreshold ^ 2 then
-            if now <= impactStatus.gaugeStartTime + settings.ballWaitingTime and cupSqrDistance <= settings.ballPlayAreaRadius ^ 2 then
-                -- ボールの前回位置と現在位置から速度を計算する
-                local deltaSec = deltaTime.TotalSeconds
-                local velocity = (ballPos - lastPos) / deltaSec
-
-                if ball.IsMine then
-                    -- 角速度を計算する
-                    ballStatus.simAngularVelocity = ballStatus.simAngularVelocity * (1.0 - math.min(1.0, settings.ballSimAngularDrag * deltaSec))
-                    local angularVelocitySqrMagnitude = ballStatus.simAngularVelocity.sqrMagnitude
-                    if angularVelocitySqrMagnitude <= 0.0025 then
-                        ballStatus.simAngularVelocity = Vector3.zero
-                        angularVelocitySqrMagnitude = 0
-                    end
-
-                    -- スピンを適用する処理
-                    local horzVelocity = Vector3.__new(velocity.x, 0, velocity.z)
-                    local velocityMagnitude = horzVelocity.magnitude
-                    if velocityMagnitude > 0.0025 and angularVelocitySqrMagnitude ~= 0 then
-                        -- 水平方向の力を計算する
-                        local rf = settings.ballSimAngularFactor * settings.ballSimMass * ballStatus.simAngularVelocity.y * math.min(settings.maxForceTimeRate, deltaSec / fixedTimestep.TotalSeconds)
-                        local vo = Vector3.Cross(Vector3.__new(0, rf, 0), horzVelocity / velocityMagnitude)
-                        local vca = Vector3.__new(vo.x, 0, vo.z)
-                        ball.AddForce(vca)
-                        -- cytanb.LogTrace('vca: ', vca, ', vo: ', vo, ', velocity: ', velocity)
-                    end
-
-                    if ballPos.y < -0.25 and ballPos.y < lastPos.y then
-                        -- 床抜けの対策。
-                        local leapY = 0.125
-                        local minY = 0.25 - ballPos.y
-                        local dy = lastPos.y - ballPos.y
-                        local vy = dy * 0.5 + math.min(minY - leapY, dy * 0.25)
-                        local forceY = settings.ballSimMass * vy / deltaSec / fixedTimestep.TotalSeconds
-                        cytanb.LogDebug('leap ball: position = ', ballPos, ', vy = ', vy, ', forceY = ', forceY)
-                        ball.SetPosition(Vector3.__new(ballPos.x, leapY, ballPos.z))
-                        ball.AddForce(Vector3.__new(0, forceY, 0))
-                    elseif ballPos.y > settings.ballSimLongSide and math.abs(ballStatus.gravityFactor) > Vector3.kEpsilon then
-                        -- 重力処理
-                        local fixedSec = fixedTimestep.TotalSeconds
-                        local timeRate = deltaSec / fixedSec
-                        local accY
-                        if ballStatus.gravityFactor > 0.0 and timeRate > 1.0 and velocity.y <= 0.0 then
-                            -- 上向きに力を加える場合は、下向きに落下するはずが、フレームレートの減少による浮き上がりをなるべく抑える
-                            accY = math.min(ballStatus.gravityFactor - velocity.y / fixedSec, ballStatus.gravityFactor * timeRate)
-                        else
-                            accY = ballStatus.gravityFactor * math.min(settings.maxForceTimeRate, timeRate)
-                        end
-                        ball.AddForce(Vector3.__new(0, settings.ballSimMass * accY, 0))
-                    end
-                end
-
-                local efkLevel = efkLevelSwitch.GetValue()
-                if efkLevel == 5 and ball.IsMine then
-                    -- レベル 5 で、ボールの操作権があるときは、レベル 6 のエフェクトを表示する
-                    efkLevel = 6
-                end
-
-                if efkLevel >= 8 or (efkLevel >= 6 and not ballStatus.grabbed) then
-                    local vm = velocity.magnitude
-                    if vm >= settings.ballTrailVelocityThreshold then
-                        local near = cupSqrDistance <= settings.ballNearDistance ^ 2
-                        local vmNodes = math.max(1, math.ceil(vm / (settings.ballSimLongSide * settings.ballTrailInterpolationDistanceFactor * (near and 0.5 or 1.0) / deltaSec)))
-                        local nodes = math.min(vmNodes, settings.ballTrailInterpolationNodesPerFrame + cytanb.Clamp(math.floor((efkLevel - 6 + (near and 1 or 0)) * 2), 0, 4))
-                        local iNodes = 1.0 / nodes
-                        local efk
-                        if near then
-                            -- 近距離の場合は、エフェクトレベルに合わせる
-                            if efkLevel >= 8 then
-                                efk = ballEfkFadeMove
-                            elseif efkLevel == 7 then
-                                efk = ballEfkFade
-                            else
-                                efk = ballEfk
-                            end
-                        elseif cupSqrDistance >= settings.ballFarDistance ^ 2 then
-                            -- 遠距離の場合は、簡易エフェクト
-                            efk = ballEfkOne
-                        else
-                            -- それ以外の場合は、通常エフェクト
-                            efk = ballEfk
-                        end
-
-                        -- cytanb.LogTrace('ballEfk: nodes = ', nodes, ', vmNodes = ', vmNodes, ', near = ', near, ', efkName = ', efk.EffectName)
-                        for i = 1, nodes do
-                            local trailPos = Vector3.Lerp(lastPos, ballPos, i * iNodes)
-                            -- cytanb.LogTrace('  ballEfk lerp: velocity.sqrMagnitude = ', vm, ', lerp nodes = ', nodes, ', trailPos = ', trailPos)
-                            ballEfkContainer.SetPosition(trailPos)
-                            efk.Play()
-                        end
-                    end
-                end
-            elseif ball.IsMine and not ballCupStatus.grabbed then
-                -- タイムアウトしたかエリア外に出たボールをカップへ戻す。
-                cytanb.LogTrace('elapsed: ' , (now - impactStatus.gaugeStartTime).TotalSeconds, ', sqrDistance: ', cupSqrDistance)
-                RespawnBall()
-                respawned = true
-            end
-        end
+local OnUpdateBallTrajectory = function (ballPos, lastPos, deltaSec, velocity)
+    -- 角速度を計算する
+    ballStatus.simAngularVelocity = ballStatus.simAngularVelocity * (1.0 - math.min(1.0, settings.ballSimAngularDrag * deltaSec))
+    local angularVelocitySqrMagnitude = ballStatus.simAngularVelocity.sqrMagnitude
+    if angularVelocitySqrMagnitude <= 0.0025 then
+        ballStatus.simAngularVelocity = Vector3.zero
+        angularVelocitySqrMagnitude = 0
     end
 
-    if not respawned then
-        OfferBallTransform(ballPos, ballRot)
+    -- スピンを適用する処理
+    local horzVelocity = Vector3.__new(velocity.x, 0, velocity.z)
+    local velocityMagnitude = horzVelocity.magnitude
+    if velocityMagnitude > 0.0025 and angularVelocitySqrMagnitude ~= 0 then
+        -- 水平方向の力を計算する
+        local rf = settings.ballSimAngularFactor * settings.ballSimMass * ballStatus.simAngularVelocity.y * math.min(settings.maxForceTimeRate, deltaSec / fixedTimestep.TotalSeconds)
+        local vo = Vector3.Cross(Vector3.__new(0, rf, 0), horzVelocity / velocityMagnitude)
+        local vca = Vector3.__new(vo.x, 0, vo.z)
+        ball.AddForce(vca)
+        -- cytanb.LogTrace('vca: ', vca, ', vo: ', vo, ', velocity: ', velocity)
+    end
+
+    if ballPos.y < -0.25 and ballPos.y < lastPos.y then
+        -- 床抜けの対策。
+        local leapY = 0.125
+        local minY = 0.25 - ballPos.y
+        local dy = lastPos.y - ballPos.y
+        local vy = dy * 0.5 + math.min(minY - leapY, dy * 0.25)
+        local forceY = settings.ballSimMass * vy / deltaSec / fixedTimestep.TotalSeconds
+        cytanb.LogDebug('leap ball: position = ', ballPos, ', vy = ', vy, ', forceY = ', forceY)
+        ball.SetPosition(Vector3.__new(ballPos.x, leapY, ballPos.z))
+        ball.AddForce(Vector3.__new(0, forceY, 0))
+    elseif ballPos.y > settings.ballSimLongSide and math.abs(ballStatus.gravityFactor) > Vector3.kEpsilon then
+        -- 重力処理
+        local fixedSec = fixedTimestep.TotalSeconds
+        local timeRate = deltaSec / fixedSec
+        local accY
+        if ballStatus.gravityFactor > 0.0 and timeRate > 1.0 and velocity.y <= 0.0 then
+            -- 上向きに力を加える場合は、下向きに落下するはずが、フレームレートの減少による浮き上がりをなるべく抑える
+            accY = math.min(ballStatus.gravityFactor - velocity.y / fixedSec, ballStatus.gravityFactor * timeRate)
+        else
+            accY = ballStatus.gravityFactor * math.min(settings.maxForceTimeRate, timeRate)
+        end
+        ball.AddForce(Vector3.__new(0, settings.ballSimMass * accY, 0))
     end
 end
 
+local OnUpdateBallEfk = function (trsTime, ballPos, lastPos, deltaSec, velocity, cupSqrDistance, inactive)
+    local efkLevel = efkLevelSwitch.GetValue()
+    if efkLevel == 5 and ball.IsMine then
+        -- レベル 5 で、ボールの操作権があるときは、レベル 6 のエフェクトを表示する
+        efkLevel = 6
+    end
+
+    if efkLevel >= 9 or (efkLevel >= 6 and not ballStatus.grabbed) then
+        local vm = velocity.magnitude
+        local vmThreshold = efkLevel >= 9 and settings.ballTrailVelocityElaborateThreshold or settings.ballTrailVelocityThreshold
+        if vm >= vmThreshold then
+            local near = cupSqrDistance <= settings.ballNearSqrDistance
+            local vmNodes = math.max(1, math.ceil(vm / (settings.ballSimLongSide * settings.ballTrailInterpolationDistanceFactor * (near and 0.5 or 1.0) / deltaSec)))
+            local nodes = math.min(vmNodes, settings.ballTrailInterpolationNodesPerFrame + cytanb.Clamp(math.floor((efkLevel - 6 + (near and 1 or 0)) * 2), 0, 4))
+            local iNodes = 1.0 / nodes
+            local efk
+            if ballStatus.grabbed then
+                efk = ballEfkFadeFly
+                ballEfkContainer.SetRotation(Quaternion.FromToRotation(Vector3.forward, velocity))
+            elseif near then
+                -- 近距離の場合は、エフェクトレベルに合わせる
+                if efkLevel >= 8 then
+                    efk = ballEfkFadeMove
+                elseif efkLevel == 7 then
+                    efk = ballEfkFade
+                else
+                    efk = ballEfk
+                end
+            elseif cupSqrDistance >= settings.ballFarSqrDistance then
+                -- 遠距離の場合は、簡易エフェクト
+                efk = ballEfkOne
+            else
+                -- それ以外の場合は、通常エフェクト
+                efk = ballEfk
+            end
+
+            -- cytanb.LogTrace('ballEfk: nodes = ', nodes, ', vmNodes = ', vmNodes, ', near = ', near, ', efkName = ', efk.EffectName)
+            for i = 1, nodes do
+                local trailPos = Vector3.Lerp(lastPos, ballPos, i * iNodes)
+                -- cytanb.LogTrace('  ballEfk lerp: velocity.sqrMagnitude = ', vm, ', lerp nodes = ', nodes, ', trailPos = ', trailPos)
+                ballEfkContainer.SetPosition(trailPos)
+                efk.Play()
+            end
+        elseif efkLevel >= 10 and inactive then
+            local tp = trsTime - settings.ballEfkInactiveMinPeriod
+            if tp >= ballStatus.activeTime and tp >= ballStatus.inactiveEfkPlayTime then
+                ballStatus.inactiveEfkPlayTime = trsTime
+
+                local dp = Vector3.__new(0, 0, settings.ballSimLongSide * 0.2)
+                for i = 1, 20 do
+                    local rot = Quaternion.AngleAxis(math.random() * 360, Vector3.__new(math.random(), math.random(), math.random()))
+                    ballEfkContainer.SetPosition(ballPos + rot * dp)
+                    ballEfkContainer.SetRotation(rot)
+                    ballEfkFadeMove.Play()
+                end
+            end
+        end
+    end
+end
+
+--- ボールの更新処理をする。カーブさせるための計算をする。
+local OnUpdateBall = function (trsTime)
+    local ballPos = ball.GetPosition()
+    local ballRot = ball.GetRotation()
+
+    if not ballStatus.transformQueue.IsEmpty() then
+        local lastTransform = ballStatus.transformQueue.PeekLast()
+        local lastPos = lastTransform.position
+        local deltaSec = (trsTime - lastTransform.time).TotalSeconds
+        local cupSqrDistance = (ballPos - ballCup.GetPosition()).sqrMagnitude
+
+        local outbound = trsTime - settings.ballWaitingTime > ballStatus.throwTime or cupSqrDistance > settings.ballPlayAreaSqrRadius
+        if outbound and ball.IsMine and not ballStatus.grabbed and not ballCupStatus.grabbed then
+            -- タイムアウトしたかエリア外に出たボールをカップへ戻す。
+            cytanb.LogTrace('elapsed: ' , (trsTime - ballStatus.throwTime).TotalSeconds, ', sqrDistance: ', cupSqrDistance)
+            RespawnBall()
+            return
+        end
+
+        local inactive
+        if (ballPos - lastPos).sqrMagnitude <= 1E-06 then
+            inactive = trsTime - settings.ballInactiveTimeThreshold >= ballStatus.activeTime
+        else
+            ballStatus.activeTime = trsTime
+            inactive = false
+        end
+
+        if not outbound and deltaSec > 0 and trsTime - settings.ballRespawnCoolTime > ballStatus.respawnTime then
+            -- ボールの前回位置と現在位置から速度を計算する
+            local velocity = (ballPos - lastPos) / deltaSec
+
+            if ball.IsMine and not ballStatus.grabbed and not inactive then
+                OnUpdateBallTrajectory(ballPos, lastPos, deltaSec, velocity)
+            end
+
+            OnUpdateBallEfk(trsTime, ballPos, lastPos, deltaSec, velocity, cupSqrDistance, inactive)
+        end
+    end
+
+    OfferBallTransform(ballPos, ballRot, trsTime)
+end
+
 --- ライトが倒れた判定、復活処理を行う。
-local OnUpdateStandLight = function (deltaTime, unscaledDeltaTime)
+local OnUpdateStandLight = function (trsTime)
     local needBuilding = false
     local targets = {}
     for lightName, light in pairs(standLights) do
@@ -1139,7 +1194,9 @@ local OnUpdateStandLight = function (deltaTime, unscaledDeltaTime)
 end
 
 local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
-    function (deltaTime, unscaledDeltaTime)
+    function (deltaTime)
+        local trsTime = prevTime
+        prevTime = vci.me.Time
         settings.lsp.UpdateAlive()
         settings.statsLsp.UpdateAlive()
         settingsPanelGlue.Update()
@@ -1154,19 +1211,20 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
 
         fixedTimestep = timestepEstimater.Update()
 
-        if settingsPanelStatus.gripPressed and vci.me.Time - settings.resetOperationTime > settingsPanelStatus.gripStartTime then
+        if settingsPanelStatus.gripPressed and trsTime - settings.resetOperationTime > settingsPanelStatus.gripStartTime then
             -- 連続して呼び出されないようにしておく
             settingsPanelStatus.gripStartTime = TimeSpan.MaxValue
 
             -- 設定パネルのグリップ長押しで、統計情報をリセットする
             ResetStats()
         end
-        TreatStatsCache()
 
-        OnUpdateDiscernibleEfk(deltaTime, unscaledDeltaTime)
-        OnUpdateImpactGauge(deltaTime, unscaledDeltaTime)
-        OnUpdateBall(deltaTime, unscaledDeltaTime)
-        OnUpdateStandLight(deltaTime, unscaledDeltaTime)
+        ProcessStatsCache()
+
+        OnUpdateDiscernibleEfk(trsTime)
+        OnUpdateImpactGauge(trsTime, deltaTime)
+        OnUpdateBall(trsTime)
+        OnUpdateStandLight(trsTime)
     end,
 
     function ()
@@ -1179,8 +1237,13 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
         hiddenPosition = Vector3.__new(uuid[1] / 0x100000, 0x1000, uuid[2] / 0x100000)
         cytanb.LogTrace('hiddenPosition: ', hiddenPosition)
 
-        timestepEstimater = cytanb.EstimateFixedTimestep(cytanb.NillableValue(vci.assets.GetTransform('timestep-estimater')))
+        timestepEstimater = cytanb.EstimateFixedTimestep(
+            cytanb.NillableValue(vci.assets.GetTransform('timestep-estimater')),
+            settings.timestepEstimaterParameter
+        )
         fixedTimestep = timestepEstimater.Timestep()
+        prevTime = vci.me.Time
+        local trsTime = prevTime
 
         ball = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballName))
 
@@ -1190,6 +1253,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
         ballEfk = cytanb.NillableValue(ballEfkMap[settings.ballEfkName])
         ballEfkFade = cytanb.NillableValue(ballEfkMap[settings.ballEfkFadeName])
         ballEfkFadeMove = cytanb.NillableValue(ballEfkMap[settings.ballEfkFadeMoveName])
+        ballEfkFadeFly = cytanb.NillableValue(ballEfkMap[settings.ballEfkFadeFlyName])
         ballEfkOne = cytanb.NillableValue(ballEfkMap[settings.ballEfkOneName])
         ballEfkOneLarge = cytanb.NillableValue(ballEfkMap[settings.ballEfkOneLargeName])
 
@@ -1212,7 +1276,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
         standLights = {}
         for i = 1, settings.standLightCount do
             local index = i - 1
-            local name = settings.standLightPrefix .. index
+            local name = settings.standLightPrefix .. index .. '#'
             local item = cytanb.NillableValue(vci.assets.GetSubItem(name))
             local pos = item.GetPosition()
             local entry = {
@@ -1220,7 +1284,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
                 index = index,
                 status = cytanb.Extend(cytanb.Extend({}, standLightInitialStatus), {
                     respawnPosition = Vector3.__new(pos.x, math.max(pos.y, settings.standLightSimLongSide), pos.z),
-                    respawnTime = vci.me.Time,
+                    respawnTime = trsTime,
                     grabbed = false,
                 })
             }
@@ -1274,6 +1338,10 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
         efkLevelSwitch = cytanb.NillableValue(slideSwitchMap[settings.efkLevelSwitchName])
         audioVolumeSwitch = cytanb.NillableValue(slideSwitchMap[settings.audioVolumeSwitchName])
 
+        efkLevelSwitch.AddListener(function (source, value)
+            SetDiscernibleColor(ballDiscernibleEfkPlayer.GetColor())
+        end)
+
         ballStatus.gravityFactor = CalcGravityFactor()
 
         settings.statsLsp.AddListener(function (source, key, value, oldValue)
@@ -1295,7 +1363,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
                         if lightParameter.respawnPosition then
                             cytanb.Extend(ls, standLightInitialStatus)
                             ls.respawnPosition = lightParameter.respawnPosition
-                            ls.respawnTime = vci.me.Time
+                            ls.respawnTime = trsTime
                         end
                     end)
                 end
@@ -1534,14 +1602,16 @@ onUngrab = function (target)
         if ballStatus.grabbed then
             ballStatus.grabbed = false
             if ball.IsMine then
+                ballStatus.throwTime = prevTime
+                ballStatus.boundCount = 0
+
                 if impactStatus.phase == 3 then
                     -- タイミング入力の最終フェーズのときに、ボールを離した場合は、タイミング入力による投球を行う。
-                    ThrowBallByInputTiming()
+                    ThrowBallByInputTiming(prevTime)
                 else
                     -- それ以外の場合は、腕を振って投球する。タイミング入力の途中のフェーズで手を離した場合は、キャンセルしたとみなす。
-                    ThrowBallByKinematic()
+                    ThrowBallByKinematic(prevTime)
                 end
-                ballStatus.boundCount = 0
             end
             impactStatus.gaugeStartTime = vci.me.Time
         end

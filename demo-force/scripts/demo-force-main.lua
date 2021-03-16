@@ -94,6 +94,11 @@ local lastStatusTime = TimeSpan.Zero
 local messagePeriod = TimeSpan.FromSeconds(3)
 local lastMessageTime = TimeSpan.Zero
 
+local timestepEstimaterOptions = {
+    minCalcInterval = TimeSpan.FromMinutes(3),
+    maxCalcInterval = TimeSpan.FromMinutes(20)
+}
+
 local timestepEstimater
 local fixedTimestep
 local timestepPrecision
@@ -159,7 +164,7 @@ end
 local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
     function (deltaTime, unscaledDeltaTime)
         if startEstimateFlag then
-            timestepEstimater = cytanb.EstimateFixedTimestep(estimaterObject.item)
+            timestepEstimater = cytanb.EstimateFixedTimestep(estimaterObject.item, timestepEstimaterOptions)
             startEstimateFlag = false
         else
             timestepEstimater.Update()
@@ -167,6 +172,10 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
                 fixedTimestep = timestepEstimater.Timestep()
                 timestepPrecision = timestepEstimater.Precision()
             end
+
+            -- if not timestepEstimater.IsFinished() then
+            --     cytanb.LogTrace('timestep: ', timestepEstimater.Timestep().TotalSeconds, ' | percision: ', timestepEstimater.Precision())
+            -- end
         end
 
         if resetSwitch.IsMine then
@@ -256,7 +265,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
 
         mdgList = {m1d0g0, m1d0g1, m1d0gf, m5d0g0, m5d0g1, m5d0gf, m5d9g0, m5d9g1, m5d9gf}
 
-        timestepEstimater = cytanb.EstimateFixedTimestep(estimaterObject.item)
+        timestepEstimater = cytanb.EstimateFixedTimestep(estimaterObject.item, timestepEstimaterOptions)
         fixedTimestep = timestepEstimater.Timestep()
         timestepPrecision = timestepEstimater.Precision()
 
