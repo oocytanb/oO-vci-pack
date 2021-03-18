@@ -1048,43 +1048,8 @@ local OnUpdateBallEfk = function (trsTime, ballPos, lastPos, deltaSec, velocity,
         efkLevel = 6
     end
 
-    if efkLevel >= 9 or (efkLevel >= 6 and not ballStatus.grabbed) then
-        local vm = velocity.magnitude
-        local vmThreshold = efkLevel >= 9 and settings.ballTrailVelocityElaborateThreshold or settings.ballTrailVelocityThreshold
-        if vm >= vmThreshold then
-            local near = cupSqrDistance <= settings.ballNearSqrDistance
-            local vmNodes = math.max(1, math.ceil(vm / (settings.ballSimLongSide * settings.ballTrailInterpolationDistanceFactor * (near and 0.5 or 1.0) / deltaSec)))
-            local nodes = math.min(vmNodes, settings.ballTrailInterpolationNodesPerFrame + cytanb.Clamp(math.floor((efkLevel - 6 + (near and 1 or 0)) * 2), 0, 4))
-            local iNodes = 1.0 / nodes
-            local efk
-            if ballStatus.grabbed then
-                efk = ballEfkFadeFly
-                ballEfkContainer.SetRotation(Quaternion.FromToRotation(Vector3.forward, velocity))
-            elseif near then
-                -- 近距離の場合は、エフェクトレベルに合わせる
-                if efkLevel >= 8 then
-                    efk = ballEfkFadeMove
-                elseif efkLevel == 7 then
-                    efk = ballEfkFade
-                else
-                    efk = ballEfk
-                end
-            elseif cupSqrDistance >= settings.ballFarSqrDistance then
-                -- 遠距離の場合は、簡易エフェクト
-                efk = ballEfkOne
-            else
-                -- それ以外の場合は、通常エフェクト
-                efk = ballEfk
-            end
-
-            -- cytanb.LogTrace('ballEfk: nodes = ', nodes, ', vmNodes = ', vmNodes, ', near = ', near, ', efkName = ', efk.EffectName)
-            for i = 1, nodes do
-                local trailPos = Vector3.Lerp(lastPos, ballPos, i * iNodes)
-                -- cytanb.LogTrace('  ballEfk lerp: velocity.sqrMagnitude = ', vm, ', lerp nodes = ', nodes, ', trailPos = ', trailPos)
-                ballEfkContainer.SetPosition(trailPos)
-                efk.Play()
-            end
-        elseif efkLevel >= 10 and inactive then
+    if inactive then
+        if efkLevel >= 10 then
             local tp = trsTime - settings.ballEfkInactiveMinPeriod
             if tp >= ballStatus.activeTime and tp >= ballStatus.inactiveEfkPlayTime then
                 ballStatus.inactiveEfkPlayTime = trsTime
@@ -1095,6 +1060,45 @@ local OnUpdateBallEfk = function (trsTime, ballPos, lastPos, deltaSec, velocity,
                     ballEfkContainer.SetPosition(ballPos + rot * dp)
                     ballEfkContainer.SetRotation(rot)
                     ballEfkFadeMove.Play()
+                end
+            end
+        end
+    else
+        if efkLevel >= 9 or (efkLevel >= 6 and not ballStatus.grabbed) then
+            local vm = velocity.magnitude
+            local vmThreshold = efkLevel >= 9 and settings.ballTrailVelocityElaborateThreshold or settings.ballTrailVelocityThreshold
+            if vm >= vmThreshold then
+                local near = cupSqrDistance <= settings.ballNearSqrDistance
+                local vmNodes = math.max(1, math.ceil(vm / (settings.ballSimLongSide * settings.ballTrailInterpolationDistanceFactor * (near and 0.5 or 1.0) / deltaSec)))
+                local nodes = math.min(vmNodes, settings.ballTrailInterpolationNodesPerFrame + cytanb.Clamp(math.floor((efkLevel - 6 + (near and 1 or 0)) * 2), 0, 4))
+                local iNodes = 1.0 / nodes
+                local efk
+                if ballStatus.grabbed then
+                    efk = ballEfkFadeFly
+                    ballEfkContainer.SetRotation(Quaternion.FromToRotation(Vector3.forward, velocity))
+                elseif near then
+                    -- 近距離の場合は、エフェクトレベルに合わせる
+                    if efkLevel >= 8 then
+                        efk = ballEfkFadeMove
+                    elseif efkLevel == 7 then
+                        efk = ballEfkFade
+                    else
+                        efk = ballEfk
+                    end
+                elseif cupSqrDistance >= settings.ballFarSqrDistance then
+                    -- 遠距離の場合は、簡易エフェクト
+                    efk = ballEfkOne
+                else
+                    -- それ以外の場合は、通常エフェクト
+                    efk = ballEfk
+                end
+
+                -- cytanb.LogTrace('ballEfk: nodes = ', nodes, ', vmNodes = ', vmNodes, ', near = ', near, ', efkName = ', efk.EffectName)
+                for i = 1, nodes do
+                    local trailPos = Vector3.Lerp(lastPos, ballPos, i * iNodes)
+                    -- cytanb.LogTrace('  ballEfk lerp: velocity.sqrMagnitude = ', vm, ', lerp nodes = ', nodes, ', trailPos = ', trailPos)
+                    ballEfkContainer.SetPosition(trailPos)
+                    efk.Play()
                 end
             end
         end

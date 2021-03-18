@@ -201,7 +201,7 @@ return {
             ballTrailVelocityThreshold = 1.25,
 
             --- ボールの軌跡を表示する速度の閾値。
-            ballTrailVelocityElaborateThreshold = 0.125,
+            ballTrailVelocityElaborateThreshold = 0.25,
 
             --- ボールの軌跡を補間する距離の係数。
             ballTrailInterpolationDistanceFactor = 0.5,
