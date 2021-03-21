@@ -281,7 +281,7 @@ local ProcessStatsCache = function ()
         settingsValues[parameter.propertyName] = slideSwitchMap[switchName].GetValue()
     end
 
-    cytanb.EmitMessage(throwingStatsMessageName, {
+    cytanb.EmitInstanceMessage(throwingStatsMessageName, {
         clientID = cytanb.ClientID(),
         stats = {
             throwingCount = settings.statsLsp.GetProperty(settings.statsThrowingCountPropertyName, 0),
@@ -906,7 +906,7 @@ local OnUpdateDiscernibleEfk = function (trsTime)
         discernibleColorStatus.checkRequestedTime = TimeSpan.Zero
         discernibleColorStatus.initialized = true
 
-        cytanb.EmitMessage(statusChangedMessageName, CreateDiscernibleColorParameter())
+        cytanb.EmitInstanceMessage(statusChangedMessageName, CreateDiscernibleColorParameter())
     end
 
     if settings.discernibleEfkEnabled and not ballStatus.grabbed then
@@ -1192,7 +1192,7 @@ local OnUpdateStandLight = function (trsTime)
         standLightsLastRequestTime = unow
         if needBuilding then
             cytanb.LogTrace('request buildStandLight')
-            cytanb.EmitMessage(buildStandLightMessageName, {targets = targets})
+            cytanb.EmitInstanceMessage(buildStandLightMessageName, {targets = targets})
         end
     end
 end
@@ -1534,7 +1534,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
                 if currentColorPicker.status.grabbed and vci.me.UnscaledTime <= discernibleColorStatus.paletteCollisionTime + settings.requestIntervalTime then
                     discernibleColorStatus.paletteCollisionCount = discernibleColorStatus.paletteCollisionCount - 1
                     SetDiscernibleColor(cytanb.ColorFromARGB32(parameterMap.argb32))
-                    cytanb.EmitMessage(statusChangedMessageName, CreateDiscernibleColorParameter())
+                    cytanb.EmitInstanceMessage(statusChangedMessageName, CreateDiscernibleColorParameter())
                 else
                     discernibleColorStatus.paletteCollisionCount = 0
                 end
@@ -1542,7 +1542,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
         end)
 
         if vci.assets.IsMine then
-            cytanb.EmitMessage(showSettingsPanelMessageName)
+            cytanb.EmitInstanceMessage(showSettingsPanelMessageName)
             discernibleColorStatus.checkRequestedTime = vci.me.UnscaledTime
         end
         cytanb.EmitMessage(queryStatusMessageName)
@@ -1568,11 +1568,11 @@ onGrab = function (target)
         ballStatus.gravityFactor = CalcGravityFactor()
         ballCupStatus.grabClickCount, ballCupStatus.grabClickTime = cytanb.DetectClicks(ballCupStatus.grabClickCount, ballCupStatus.grabClickTime)
         if ballCupStatus.grabClickCount == 2 then
-            cytanb.EmitMessage(respawnBallMessageName)
+            cytanb.EmitInstanceMessage(respawnBallMessageName)
         elseif ballCupStatus.grabClickCount == 3 then
             cytanb.EmitMessage(buildAllStandLightsMessageName)
         elseif ballCupStatus.grabClickCount == 4 then
-            cytanb.EmitMessage(showSettingsPanelMessageName)
+            cytanb.EmitInstanceMessage(showSettingsPanelMessageName)
         end
     elseif target == ball.GetName() then
         ballStatus.grabbed = true
@@ -1638,7 +1638,7 @@ onUngrab = function (target)
                 ls.respawnPosition = pos.y >= ry and pos or Vector3.__new(pos.x, ry, pos.z)
 
                 cytanb.LogTrace('emit StatusChanged: ', li.GetName(), ': respawnPosition = ', ls.respawnPosition)
-                cytanb.EmitMessage(statusChangedMessageName, {
+                cytanb.EmitInstanceMessage(statusChangedMessageName, {
                     clientID = cytanb.ClientID(),
                     standLights = {
                         [light.index] = {
@@ -1674,11 +1674,11 @@ onUse = function (use)
         cytanb.LogTrace('cupClickCount = ', ballCupStatus.clickCount)
 
         if ballCupStatus.clickCount == 1 then
-            cytanb.EmitMessage(respawnBallMessageName)
+            cytanb.EmitInstanceMessage(respawnBallMessageName)
         elseif ballCupStatus.clickCount == 2 then
             cytanb.EmitMessage(buildAllStandLightsMessageName)
         elseif ballCupStatus.clickCount == 3 then
-            cytanb.EmitMessage(showSettingsPanelMessageName)
+            cytanb.EmitInstanceMessage(showSettingsPanelMessageName)
         end
     elseif use == closeSwitch.GetName() then
         if not settingsPanelStatus.grabbed and settingsPanel.IsMine then

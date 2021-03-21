@@ -1853,7 +1853,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 753107a3c841da84eb4bd95304b50ca6, type: 3}
-    version: 0.19.1
+    version: 0.19.2
     description: "- \u30DC\u30FC\u30EB\u3092\u3064\u304B\u3093\u3067\u6295\u3052\u308B\u3060\u3051\u3002\u6C17\u8EFD\u306B\u904A\u3093\u3067\u697D\u3057\u3093\u3067\u304F\u3060\u3055\u3044\u3002\n-
       \u30AB\u30C3\u30D7\u3092\u30B0\u30EA\u30C3\u30D7\u3059\u308B\u3068\u3001\u30DC\u30FC\u30EB\u304C\u623B\u3063\u3066\u304D\u307E\u3059\u3002\n-
       \u5B89\u5168\u306B\u6CE8\u610F\u3092\u6255\u3063\u3066\u3054\u5229\u7528\u304F\u3060\u3055\u3044\u3002\n[\u8A73\u7D30](https://github.com/oocytanb/oO-vci-pack
@@ -1991,9 +1991,10 @@ MonoBehaviour:
       statsCache.throwingCache\n    )\n\n    statsCache.throwingCache = 0\n\n   
       local settingsValues = {}\n    for switchName, parameter in pairs(settings.switchParameters)
       do\n        settingsValues[parameter.propertyName] = slideSwitchMap[switchName].GetValue()\n   
-      end\n\n    cytanb.EmitMessage(throwingStatsMessageName, {\n        clientID
-      = cytanb.ClientID(),\n        stats = {\n            throwingCount = settings.statsLsp.GetProperty(settings.statsThrowingCountPropertyName,
-      0),\n            throwingVelocity = cytanb.Vector3ToTable(statsCache.throwingVelocity),\n           
+      end\n\n    cytanb.EmitInstanceMessage(throwingStatsMessageName, {\n       
+      clientID = cytanb.ClientID(),\n        stats = {\n            throwingCount
+      = settings.statsLsp.GetProperty(settings.statsThrowingCountPropertyName, 0),\n           
+      throwingVelocity = cytanb.Vector3ToTable(statsCache.throwingVelocity),\n           
       throwingAngularVelocity = cytanb.Vector3ToTable(statsCache.throwingAngularVelocity),\n           
       throwingPosition = cytanb.Vector3ToTable(statsCache.throwingPosition),\n           
       throwingFrameSeconds = statsCache.throwingFrameSeconds,\n            gravity
@@ -2263,7 +2264,7 @@ MonoBehaviour:
       cytanb.ColorHueSamples - 1) or lots[math.random(0, count - 1)]\n        cytanb.LogDebug('discernibleColor
       initialized: colorIndex = ', colorIndex)\n        SetDiscernibleColor(cytanb.ColorFromIndex(colorIndex))\n\n       
       discernibleColorStatus.checkRequestedTime = TimeSpan.Zero\n        discernibleColorStatus.initialized
-      = true\n\n        cytanb.EmitMessage(statusChangedMessageName, CreateDiscernibleColorParameter())\n   
+      = true\n\n        cytanb.EmitInstanceMessage(statusChangedMessageName, CreateDiscernibleColorParameter())\n   
       end\n\n    if settings.discernibleEfkEnabled and not ballStatus.grabbed then\n       
       if not ballStatus.transformQueue.IsEmpty() and (ball.GetPosition() - ballStatus.transformQueue.PeekLast().position).sqrMagnitude
       > 0.0001 then\n            -- \u30DC\u30FC\u30EB\u304C\u52D5\u3044\u3066\u3044\u308B\u6642\u306F\u3001\u8B58\u5225\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u505C\u6B62\u3059\u308B\u3002\n           
@@ -2424,7 +2425,7 @@ MonoBehaviour:
       end\n        end\n    end\n\n    local unow = vci.me.UnscaledTime\n    if unow
       > standLightsLastRequestTime + settings.requestIntervalTime then\n        standLightsLastRequestTime
       = unow\n        if needBuilding then\n            cytanb.LogTrace('request
-      buildStandLight')\n            cytanb.EmitMessage(buildStandLightMessageName,
+      buildStandLight')\n            cytanb.EmitInstanceMessage(buildStandLightMessageName,
       {targets = targets})\n        end\n    end\nend\n\nlocal UpdateCw; UpdateCw
       = cytanb.CreateUpdateRoutine(\n    function (deltaTime)\n        local trsTime
       = prevTime\n        prevTime = vci.me.Time\n        settings.lsp.UpdateAlive()\n       
@@ -2611,10 +2612,10 @@ MonoBehaviour:
       if currentColorPicker.status.grabbed and vci.me.UnscaledTime <= discernibleColorStatus.paletteCollisionTime
       + settings.requestIntervalTime then\n                    discernibleColorStatus.paletteCollisionCount
       = discernibleColorStatus.paletteCollisionCount - 1\n                    SetDiscernibleColor(cytanb.ColorFromARGB32(parameterMap.argb32))\n                   
-      cytanb.EmitMessage(statusChangedMessageName, CreateDiscernibleColorParameter())\n               
+      cytanb.EmitInstanceMessage(statusChangedMessageName, CreateDiscernibleColorParameter())\n               
       else\n                    discernibleColorStatus.paletteCollisionCount = 0\n               
       end\n            end\n        end)\n\n        if vci.assets.IsMine then\n           
-      cytanb.EmitMessage(showSettingsPanelMessageName)\n            discernibleColorStatus.checkRequestedTime
+      cytanb.EmitInstanceMessage(showSettingsPanelMessageName)\n            discernibleColorStatus.checkRequestedTime
       = vci.me.UnscaledTime\n        end\n        cytanb.EmitMessage(queryStatusMessageName)\n   
       end,\n\n    function (reason)\n        cytanb.LogError('Error on update routine:
       ', reason)\n        UpdateCw = function () end\n    end\n)\n\nupdateAll = function
@@ -2623,9 +2624,9 @@ MonoBehaviour:
       ballCupStatus.grabbed = true\n        ballStatus.gravityFactor = CalcGravityFactor()\n       
       ballCupStatus.grabClickCount, ballCupStatus.grabClickTime = cytanb.DetectClicks(ballCupStatus.grabClickCount,
       ballCupStatus.grabClickTime)\n        if ballCupStatus.grabClickCount == 2
-      then\n            cytanb.EmitMessage(respawnBallMessageName)\n        elseif
-      ballCupStatus.grabClickCount == 3 then\n            cytanb.EmitMessage(buildAllStandLightsMessageName)\n       
-      elseif ballCupStatus.grabClickCount == 4 then\n            cytanb.EmitMessage(showSettingsPanelMessageName)\n       
+      then\n            cytanb.EmitInstanceMessage(respawnBallMessageName)\n       
+      elseif ballCupStatus.grabClickCount == 3 then\n            cytanb.EmitMessage(buildAllStandLightsMessageName)\n       
+      elseif ballCupStatus.grabClickCount == 4 then\n            cytanb.EmitInstanceMessage(showSettingsPanelMessageName)\n       
       end\n    elseif target == ball.GetName() then\n        ballStatus.grabbed =
       true\n        ball.SetVelocity(Vector3.zero)\n        ball.SetAngularVelocity(Vector3.zero)\n       
       ResetGauge()\n        ballStatus.transformQueue.Clear()\n        ballDiscernibleEfkPlayer.Stop()\n   
@@ -2653,7 +2654,7 @@ MonoBehaviour:
       * 0.5 + math.random(settings.standLightSimLongSide * 1.5)\n               
       ls.respawnPosition = pos.y >= ry and pos or Vector3.__new(pos.x, ry, pos.z)\n\n               
       cytanb.LogTrace('emit StatusChanged: ', li.GetName(), ': respawnPosition =
-      ', ls.respawnPosition)\n                cytanb.EmitMessage(statusChangedMessageName,
+      ', ls.respawnPosition)\n                cytanb.EmitInstanceMessage(statusChangedMessageName,
       {\n                    clientID = cytanb.ClientID(),\n                    standLights
       = {\n                        [light.index] = {\n                           
       name = li.GetName(),\n                            respawnPosition = cytanb.Vector3ToTable(ls.respawnPosition)\n                       
@@ -2668,9 +2669,9 @@ MonoBehaviour:
       = vci.me.Time\n        end\n    elseif use == ballCup.GetName() then\n       
       ballCupStatus.clickCount, ballCupStatus.clickTime = cytanb.DetectClicks(ballCupStatus.clickCount,
       ballCupStatus.clickTime)\n        cytanb.LogTrace('cupClickCount = ', ballCupStatus.clickCount)\n\n       
-      if ballCupStatus.clickCount == 1 then\n            cytanb.EmitMessage(respawnBallMessageName)\n       
+      if ballCupStatus.clickCount == 1 then\n            cytanb.EmitInstanceMessage(respawnBallMessageName)\n       
       elseif ballCupStatus.clickCount == 2 then\n            cytanb.EmitMessage(buildAllStandLightsMessageName)\n       
-      elseif ballCupStatus.clickCount == 3 then\n            cytanb.EmitMessage(showSettingsPanelMessageName)\n       
+      elseif ballCupStatus.clickCount == 3 then\n            cytanb.EmitInstanceMessage(showSettingsPanelMessageName)\n       
       end\n    elseif use == closeSwitch.GetName() then\n        if not settingsPanelStatus.grabbed
       and settingsPanel.IsMine then\n            settingsPanel.SetPosition(hiddenPosition)\n       
       end\n    elseif use == settingsPanel.GetName() then\n        settingsPanelStatus.gripPressed
@@ -3146,8 +3147,17 @@ MonoBehaviour:
       newSender[key] = newVal\n                end\n\n                -- \u9001\u4FE1\u8005\u60C5\u5831\u7F6E\u63DB\u51E6\u7406\u3092\u884C\u3063\u305F\u5834\u5408\u306F\u3001\u30AA\u30EA\u30B8\u30CA\u30EB\u306E\u9001\u4FE1\u8005\u60C5\u5831\u3092\u6B8B\u3057\u3066\u304A\u304F\n               
       newSender[cytanb.MessageOriginalSender] = sender\n                return newSender\n           
       else\n                -- senderOverride \u304C\u6307\u5B9A\u3055\u308C\u3066\u3044\u306A\u3044\u5834\u5408\u306F\u3001\u305D\u306E\u307E\u307E\u8FD4\u3059\n               
-      return sender\n            end\n        end\n\n        local EmitDedicatedMessage
-      = function (name, message, senderOverride, defaultSenderType)\n           
+      return sender\n            end\n        end\n\n        local MakeMessageData
+      = function (parameterMap)\n            local serData = cytanb.NillableIfHasValueOrElse(\n               
+      parameterMap,\n                function (data)\n                    if type(data)
+      ~= 'table' then\n                        error('MakeMessageData: Invalid argument:
+      table expected', 4)\n                    end\n                    return cytanb.TableToSerializable(data)\n               
+      end,\n                function ()\n                    return {}\n               
+      end\n            )\n            local id = cytanb.InstanceID()\n           
+      if id == '' then\n                cytanb.LogWarn('MakeMessageData: InstanceID
+      is empty.')\n            end\n            serData[cytanb.InstanceIDParameterName]
+      = id\n            return json.serialize(serData)\n        end\n\n        local
+      EmitDedicatedMessage = function (name, message, senderOverride, defaultSenderType)\n           
       local defaultSender = {type = defaultSenderType, name = '', commentSource =
       ''}\n            local parameterMap = {\n                [cytanb.MessageValueParameterName]
       = tostring(message),\n                [cytanb.MessageSenderOverride] = type(senderOverride)
@@ -3658,18 +3668,19 @@ MonoBehaviour:
       end,\n\n            -- @deprecated use TableFromSerializable\n            TableFromSerialiable
       = function (serData, noValueConversion)\n                return InternalTableFromSerializable(serData,
       noValueConversion)\n            end,\n\n            EmitMessage = function
-      (name, parameterMap)\n                local serData = cytanb.NillableIfHasValueOrElse(\n                   
-      parameterMap,\n                    function (data)\n                       
-      if type(data) ~= 'table' then\n                            error('EmitMessage:
-      Invalid argument: table expected', 3)\n                        end\n                       
-      return cytanb.TableToSerializable(data)\n                    end,\n                   
-      function ()\n                        return {}\n                    end\n               
-      )\n                local id = cytanb.InstanceID()\n                if id ==
-      '' then\n                    cytanb.LogWarn('EmitMessage: InstanceID is empty.
-      Consider using the CreateUpdateRoutine function.')\n                end\n               
-      serData[cytanb.InstanceIDParameterName] = id\n                vci.message.Emit(name,
-      json.serialize(serData))\n            end,\n\n            OnMessage = function
-      (name, callback)\n                local f = function (sender, messageName,
+      (name, parameterMap)\n                vci.message.Emit(name, MakeMessageData(parameterMap))\n           
+      end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002`targetID`
+      \u3067\u6307\u5B9A\u3055\u308C\u305F ID \u3067 `vci.message.EmitWithId` \u3092\u547C\u3073\u51FA\u3059\u3002\u305D\u306E\u4ED6\u306E\u4E8B\u9805\u306B\u3064\u3044\u3066\u306F
+      `EmitMessage` \u3092\u53C2\u7167\u3002\n            EmitMessageTo = function
+      (name, parameterMap, targetID)\n                if targetID ~= nil and targetID
+      ~= '' then\n                    vci.message.EmitWithId(name, MakeMessageData(parameterMap),
+      targetID)\n                else\n                    cytanb.LogWarn('EmitMessageTo:
+      targetID is not specified: ' .. tostring(targetID))\n                end\n           
+      end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002`cytanb.EmitMessageTo(name,
+      parameterMap, cytanb.InstanceID())` \u3068\u7B49\u4FA1\u3002\n            EmitInstanceMessage
+      = function (name, parameterMap)\n                cytanb.EmitMessageTo(name,
+      parameterMap, cytanb.InstanceID())\n            end,\n\n            OnMessage
+      = function (name, callback)\n                local f = function (sender, messageName,
       message)\n                    if type(message) == 'string' and string.startsWith(message,
       '{') then\n                        -- JSON \u30C7\u30B3\u30FC\u30C9\u3092\u8A66\u307F\u308B\n                       
       local pcallStatus, serData = pcall(json.parse, message)\n                       

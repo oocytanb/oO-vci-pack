@@ -201,7 +201,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
                     timestepTicks = statusMap.timestep.Ticks,
                     timestepTicksBeingCalculated = timestepEstimater.Timestep().Ticks
                 }, statusMap)
-                cytanb.EmitMessage(statusMessageName, parameterMap)
+                cytanb.EmitInstanceMessage(statusMessageName, parameterMap)
                 lastMessageTime = unscaledTime
                 cytanb.LogTrace('emit status: timestep = ', cytanb.Round(parameterMap.timestep.TotalSeconds, 4), ', rate: ', cytanb.Round(parameterMap.fps > 0 and 1 / parameterMap.fps or 0, 4), ' (', cytanb.Round(parameterMap.fps, 4), ')')
             end

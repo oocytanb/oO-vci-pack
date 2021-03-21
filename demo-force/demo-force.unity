@@ -938,7 +938,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 47630206be542564fa00392669462c60, type: 3}
-    version: 0.2.0
+    version: 0.2.1
     description: 
     exporterVersion: 0.31
     specVersion: 
@@ -988,8 +988,10 @@ MonoBehaviour:
       estimaterObject\n\nlocal timeQueue = cytanb.CreateCircularQueue(120)\nlocal
       statusPeriod = TimeSpan.FromMilliseconds(200)\nlocal lastStatusTime = TimeSpan.Zero\nlocal
       messagePeriod = TimeSpan.FromSeconds(3)\nlocal lastMessageTime = TimeSpan.Zero\n\nlocal
-      timestepEstimater\nlocal fixedTimestep\nlocal timestepPrecision\nlocal initialEstimater
-      = true\nlocal startEstimateFlag = false\n\nlocal vciLoaded = false\n\ncytanb.SetLogLevel(cytanb.LogLevelAll)\ncytanb.SetOutputLogLevelEnabled(true)\n\nlocal
+      timestepEstimaterOptions = {\n    minCalcInterval = TimeSpan.FromMinutes(3),\n   
+      maxCalcInterval = TimeSpan.FromMinutes(20)\n}\n\nlocal timestepEstimater\nlocal
+      fixedTimestep\nlocal timestepPrecision\nlocal initialEstimater = true\nlocal
+      startEstimateFlag = false\n\nlocal vciLoaded = false\n\ncytanb.SetLogLevel(cytanb.LogLevelAll)\ncytanb.SetOutputLogLevelEnabled(true)\n\nlocal
       CalcFrameRate = function (queue)\n    local frameCount = queue.Size()\n   
       if frameCount < 2 then\n        return 0, 0\n    end\n\n    local s = queue.Peek()\n   
       local e = queue.PeekLast()\n    local dt = (e.time - s.time).TotalSeconds\n   
@@ -1018,13 +1020,15 @@ MonoBehaviour:
       item.SetVelocity(Vector3.zero)\n        item.SetAngularVelocity(Vector3.zero)\n       
       mdg.impactor.Reset()\n    end\nend\n\nlocal UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(\n   
       function (deltaTime, unscaledDeltaTime)\n        if startEstimateFlag then\n           
-      timestepEstimater = cytanb.EstimateFixedTimestep(estimaterObject.item)\n           
+      timestepEstimater = cytanb.EstimateFixedTimestep(estimaterObject.item, timestepEstimaterOptions)\n           
       startEstimateFlag = false\n        else\n            timestepEstimater.Update()\n           
       if initialEstimater then\n                fixedTimestep = timestepEstimater.Timestep()\n               
-      timestepPrecision = timestepEstimater.Precision()\n            end\n       
-      end\n\n        if resetSwitch.IsMine then\n            local unscaledTime =
-      vci.me.UnscaledTime\n            timeQueue.Offer({time = vci.me.Time, unscaledTime
-      = unscaledTime})\n            local fps, unscaledFps = CalcFrameRate(timeQueue)\n           
+      timestepPrecision = timestepEstimater.Precision()\n            end\n\n           
+      -- if not timestepEstimater.IsFinished() then\n            --     cytanb.LogTrace('timestep:
+      ', timestepEstimater.Timestep().TotalSeconds, ' | percision: ', timestepEstimater.Precision())\n           
+      -- end\n        end\n\n        if resetSwitch.IsMine then\n            local
+      unscaledTime = vci.me.UnscaledTime\n            timeQueue.Offer({time = vci.me.Time,
+      unscaledTime = unscaledTime})\n            local fps, unscaledFps = CalcFrameRate(timeQueue)\n           
       local statusMap = {\n                timestep = fixedTimestep,\n               
       timestepPrecision = timestepPrecision,\n                timestepBeingCalculated
       = timestepEstimater.Timestep(),\n                timestepPrecisionBeingCalculated
@@ -1035,13 +1039,13 @@ MonoBehaviour:
       > lastMessageTime + messagePeriod then\n                local parameterMap
       = cytanb.Extend({\n                    timestepTicks = statusMap.timestep.Ticks,\n                   
       timestepTicksBeingCalculated = timestepEstimater.Timestep().Ticks\n               
-      }, statusMap)\n                cytanb.EmitMessage(statusMessageName, parameterMap)\n               
-      lastMessageTime = unscaledTime\n                cytanb.LogTrace('emit status:
-      timestep = ', cytanb.Round(parameterMap.timestep.TotalSeconds, 4), ', rate:
-      ', cytanb.Round(parameterMap.fps > 0 and 1 / parameterMap.fps or 0, 4), ' (',
-      cytanb.Round(parameterMap.fps, 4), ')')\n            end\n\n            --
-      Unity \u306E\u91CD\u529B\u52A0\u901F\u5EA6\u306E\u898F\u5B9A\u5024\u306F 9.81
-      \u3060\u304C\u3001update \u3067 AddForce \u3059\u308B\u5206\u306B\u306F\u3001\u5B8C\u5168\u306B\u9759\u6B62\u3059\u308B\u3053\u3068\u306F\u306A\u3044\u3002\n           
+      }, statusMap)\n                cytanb.EmitInstanceMessage(statusMessageName,
+      parameterMap)\n                lastMessageTime = unscaledTime\n               
+      cytanb.LogTrace('emit status: timestep = ', cytanb.Round(parameterMap.timestep.TotalSeconds,
+      4), ', rate: ', cytanb.Round(parameterMap.fps > 0 and 1 / parameterMap.fps
+      or 0, 4), ' (', cytanb.Round(parameterMap.fps, 4), ')')\n            end\n\n           
+      -- Unity \u306E\u91CD\u529B\u52A0\u901F\u5EA6\u306E\u898F\u5B9A\u5024\u306F
+      9.81 \u3060\u304C\u3001update \u3067 AddForce \u3059\u308B\u5206\u306B\u306F\u3001\u5B8C\u5168\u306B\u9759\u6B62\u3059\u308B\u3053\u3068\u306F\u306A\u3044\u3002\n           
       if impactorEnabled then\n                local acc = 9.81\n               
       m1d0g0.impactor.AccumulateForce(Vector3.up * (m1d0g1.mass * -acc), deltaTime,
       fixedTimestep)\n                m1d0gf.impactor.AccumulateForce(Vector3.up
@@ -1075,11 +1079,11 @@ MonoBehaviour:
       5.0, 9.0, true)\n        m5d9gf = CreateMdg('m5d9gf', 5.0, 9.0, true)\n       
       estimaterObject = CreateMdg('timestep-estimater', 1.0, 0.0, false)\n\n       
       mdgList = {m1d0g0, m1d0g1, m1d0gf, m5d0g0, m5d0g1, m5d0gf, m5d9g0, m5d9g1,
-      m5d9gf}\n\n        timestepEstimater = cytanb.EstimateFixedTimestep(estimaterObject.item)\n       
-      fixedTimestep = timestepEstimater.Timestep()\n        timestepPrecision = timestepEstimater.Precision()\n\n       
-      cytanb.OnInstanceMessage(statusMessageName, function (sender, name, parameterMap)\n           
-      if not resetSwitch.IsMine then\n                cytanb.LogTrace('on status:
-      timestep = ', cytanb.Round(TimeSpan.FromTicks(parameterMap.timestepTicks).TotalSeconds,
+      m5d9gf}\n\n        timestepEstimater = cytanb.EstimateFixedTimestep(estimaterObject.item,
+      timestepEstimaterOptions)\n        fixedTimestep = timestepEstimater.Timestep()\n       
+      timestepPrecision = timestepEstimater.Precision()\n\n        cytanb.OnInstanceMessage(statusMessageName,
+      function (sender, name, parameterMap)\n            if not resetSwitch.IsMine
+      then\n                cytanb.LogTrace('on status: timestep = ', cytanb.Round(TimeSpan.FromTicks(parameterMap.timestepTicks).TotalSeconds,
       4), ', rate: ', cytanb.Round(parameterMap.fps > 0 and 1 / parameterMap.fps
       or 0, 4), ' (', cytanb.Round(parameterMap.fps, 4), ')')\n                UpdateStatusText(cytanb.Extend({\n                   
       timestep = TimeSpan.FromTicks(parameterMap.timestepTicks),\n                   
@@ -1108,8 +1112,8 @@ MonoBehaviour:
       \u3068\u3057\u3066\u8FFD\u52A0\u8A2D\u5B9A\u3059\u308B\u3002\n--   3. VCI \u306E
       `require` \u95A2\u6570\u3092 `main.lua` \u30B9\u30AF\u30EA\u30D7\u30C8\u304B\u3089
       `cytanb = cytanb or require('cytanb')(_ENV)` \u3068\u3057\u3066\u547C\u3073\u51FA\u3059\u3002\n\n--
-      **`cytanb.lua` \u3092\u30E2\u30B8\u30E5\u30FC\u30EB\u3068\u3057\u3066\u5229\u7528\u3059\u308B\u5834\u5408\u306F\u3001\u6B21\u306E\u884C\u3092\u6709\u52B9\u306B\u3059\u308B\u3053\u3068\u3002**\n--
-      local __CYTANB_EXPORT_MODULE = true\n\n---@type cytanb @See `cytanb_annotations.lua`\nlocal
+      **`cytanb.lua` \u3092\u30E2\u30B8\u30E5\u30FC\u30EB\u3068\u3057\u3066\u5229\u7528\u3059\u308B\u5834\u5408\u306F\u3001\u6B21\u306E\u884C\u3092\u6709\u52B9\u306B\u3059\u308B\u3053\u3068\u3002**\nlocal
+      __CYTANB_EXPORT_MODULE = true\n\n---@type cytanb @See `cytanb_annotations.lua`\nlocal
       cytanb = (function ()\n    local makeImpl = function (_ENV)\n        if not
       require or not vci then\n            error('Invalid _ENV: Enable `__CYTANB_EXPORT_MODULE
       = true` line and pass valid _ENV of VCI-main if use cytanb.lua as module.',
@@ -1351,8 +1355,17 @@ MonoBehaviour:
       newSender[key] = newVal\n                end\n\n                -- \u9001\u4FE1\u8005\u60C5\u5831\u7F6E\u63DB\u51E6\u7406\u3092\u884C\u3063\u305F\u5834\u5408\u306F\u3001\u30AA\u30EA\u30B8\u30CA\u30EB\u306E\u9001\u4FE1\u8005\u60C5\u5831\u3092\u6B8B\u3057\u3066\u304A\u304F\n               
       newSender[cytanb.MessageOriginalSender] = sender\n                return newSender\n           
       else\n                -- senderOverride \u304C\u6307\u5B9A\u3055\u308C\u3066\u3044\u306A\u3044\u5834\u5408\u306F\u3001\u305D\u306E\u307E\u307E\u8FD4\u3059\n               
-      return sender\n            end\n        end\n\n        local EmitDedicatedMessage
-      = function (name, message, senderOverride, defaultSenderType)\n           
+      return sender\n            end\n        end\n\n        local MakeMessageData
+      = function (parameterMap)\n            local serData = cytanb.NillableIfHasValueOrElse(\n               
+      parameterMap,\n                function (data)\n                    if type(data)
+      ~= 'table' then\n                        error('MakeMessageData: Invalid argument:
+      table expected', 4)\n                    end\n                    return cytanb.TableToSerializable(data)\n               
+      end,\n                function ()\n                    return {}\n               
+      end\n            )\n            local id = cytanb.InstanceID()\n           
+      if id == '' then\n                cytanb.LogWarn('MakeMessageData: InstanceID
+      is empty.')\n            end\n            serData[cytanb.InstanceIDParameterName]
+      = id\n            return json.serialize(serData)\n        end\n\n        local
+      EmitDedicatedMessage = function (name, message, senderOverride, defaultSenderType)\n           
       local defaultSender = {type = defaultSenderType, name = '', commentSource =
       ''}\n            local parameterMap = {\n                [cytanb.MessageValueParameterName]
       = tostring(message),\n                [cytanb.MessageSenderOverride] = type(senderOverride)
@@ -1777,25 +1790,15 @@ MonoBehaviour:
       local now = vci.me.Time\n                local result = (lastTime and now >
       lastTime + timing) and 1 or count + 1\n                return result, now\n           
       end,\n\n            ColorRGBToHSV = function (color)\n                local
-      r = math.max(0.0, math.min(color.r, 1.0))\n                local g = math.max(0.0,
-      math.min(color.g, 1.0))\n                local b = math.max(0.0, math.min(color.b,
-      1.0))\n                local max = math.max(r, g, b)\n                local
-      min = math.min(r, g, b)\n\n                local d = max - min\n               
-      local h\n                if d == 0.0 then\n                    h = 0.0\n               
-      elseif max == r then\n                    h = (g - b) / d / 6.0\n               
-      elseif max == g then\n                    h = (2.0 + (b - r) / d) / 6.0\n               
-      else\n                    h = (4.0 + (r - g) / d) / 6.0\n                end\n\n               
-      if h < 0.0 then\n                    h = h + 1.0\n                end\n\n               
-      local s = max == 0.0 and d or d / max\n                local v = max\n               
-      return h, s, v\n            end,\n\n            ColorFromARGB32 = function
-      (argb32)\n                local n = (type(argb32) == 'number') and argb32 or
-      0xFF000000\n                return Color.__new(\n                    bit32.band(bit32.rshift(n,
-      16), 0xFF) / 0xFF,\n                    bit32.band(bit32.rshift(n, 8), 0xFF)
-      / 0xFF,\n                    bit32.band(n, 0xFF) / 0xFF,\n                   
-      bit32.band(bit32.rshift(n, 24), 0xFF) / 0xFF\n                )\n           
-      end,\n\n            ColorToARGB32 = function (color)\n                return
-      bit32.bor(\n                    bit32.lshift(bit32.band(cytanb.Round(0xFF *
-      color.a), 0xFF), 24),\n                    bit32.lshift(bit32.band(cytanb.Round(0xFF
+      _, h, s, v = Color.RGBToHSV(color)\n                return h, s, v\n           
+      end,\n\n            ColorFromARGB32 = function (argb32)\n                local
+      n = (type(argb32) == 'number') and argb32 or 0xFF000000\n                return
+      Color.__new(\n                    bit32.band(bit32.rshift(n, 16), 0xFF) / 0xFF,\n                   
+      bit32.band(bit32.rshift(n, 8), 0xFF) / 0xFF,\n                    bit32.band(n,
+      0xFF) / 0xFF,\n                    bit32.band(bit32.rshift(n, 24), 0xFF) /
+      0xFF\n                )\n            end,\n\n            ColorToARGB32 = function
+      (color)\n                return bit32.bor(\n                    bit32.lshift(bit32.band(cytanb.Round(0xFF
+      * color.a), 0xFF), 24),\n                    bit32.lshift(bit32.band(cytanb.Round(0xFF
       * color.r), 0xFF), 16),\n                    bit32.lshift(bit32.band(cytanb.Round(0xFF
       * color.g), 0xFF), 8),\n                    bit32.band(cytanb.Round(0xFF *
       color.b), 0xFF)\n                )\n            end,\n\n            ColorFromIndex
@@ -1873,18 +1876,19 @@ MonoBehaviour:
       end,\n\n            -- @deprecated use TableFromSerializable\n            TableFromSerialiable
       = function (serData, noValueConversion)\n                return InternalTableFromSerializable(serData,
       noValueConversion)\n            end,\n\n            EmitMessage = function
-      (name, parameterMap)\n                local serData = cytanb.NillableIfHasValueOrElse(\n                   
-      parameterMap,\n                    function (data)\n                       
-      if type(data) ~= 'table' then\n                            error('EmitMessage:
-      Invalid argument: table expected', 3)\n                        end\n                       
-      return cytanb.TableToSerializable(data)\n                    end,\n                   
-      function ()\n                        return {}\n                    end\n               
-      )\n                local id = cytanb.InstanceID()\n                if id ==
-      '' then\n                    cytanb.LogWarn('EmitMessage: InstanceID is empty.
-      Consider using the CreateUpdateRoutine function.')\n                end\n               
-      serData[cytanb.InstanceIDParameterName] = id\n                vci.message.Emit(name,
-      json.serialize(serData))\n            end,\n\n            OnMessage = function
-      (name, callback)\n                local f = function (sender, messageName,
+      (name, parameterMap)\n                vci.message.Emit(name, MakeMessageData(parameterMap))\n           
+      end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002`targetID`
+      \u3067\u6307\u5B9A\u3055\u308C\u305F ID \u3067 `vci.message.EmitWithId` \u3092\u547C\u3073\u51FA\u3059\u3002\u305D\u306E\u4ED6\u306E\u4E8B\u9805\u306B\u3064\u3044\u3066\u306F
+      `EmitMessage` \u3092\u53C2\u7167\u3002\n            EmitMessageTo = function
+      (name, parameterMap, targetID)\n                if targetID ~= nil and targetID
+      ~= '' then\n                    vci.message.EmitWithId(name, MakeMessageData(parameterMap),
+      targetID)\n                else\n                    cytanb.LogWarn('EmitMessageTo:
+      targetID is not specified: ' .. tostring(targetID))\n                end\n           
+      end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002`cytanb.EmitMessageTo(name,
+      parameterMap, cytanb.InstanceID())` \u3068\u7B49\u4FA1\u3002\n            EmitInstanceMessage
+      = function (name, parameterMap)\n                cytanb.EmitMessageTo(name,
+      parameterMap, cytanb.InstanceID())\n            end,\n\n            OnMessage
+      = function (name, callback)\n                local f = function (sender, messageName,
       message)\n                    if type(message) == 'string' and string.startsWith(message,
       '{') then\n                        -- JSON \u30C7\u30B3\u30FC\u30C9\u3092\u8A66\u307F\u308B\n                       
       local pcallStatus, serData = pcall(json.parse, message)\n                       
@@ -2037,7 +2041,18 @@ MonoBehaviour:
       `cytanb.LOCAL_SHARED_PROPERTY_EXPIRED_KEY` \u3068\u3057\u3066\u30EA\u30B9\u30CA\u30FC\u306B\u901A\u77E5\u3057\u3001\u30EA\u30B9\u30CA\u30FC\u306E\u767B\u9332\u3092\u89E3\u9664\u3059\u308B\u3002\n                   
       UpdateAlive = function ()\n                        aliveMap[loadid] = vci.me.UnscaledTime\n                   
       end\n                }\n\n                return self\n            end,\n\n           
-      --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u306E\u305F\u3081\u5909\u66F4\u3055\u308C\u308B\u53EF\u80FD\u6027\u304C\u3042\u308B\u3002**
+      ---@class cytanb_estimate_fixed_timestep_parameters_t `EstimateFixedTimestep`
+      \u306E\u30AA\u30D7\u30B7\u30E7\u30F3\u306E\u30D1\u30E9\u30E1\u30FC\u30BF\u30FC\u30C6\u30FC\u30D6\u30EB\u3002\n           
+      ---@field mass number @\u8CEA\u91CF\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F
+      `1`\u3002\n            ---@field acceleration number @\u52A0\u901F\u5EA6\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F
+      `1000`\u3002\n            ---@field startCalcTime TimeSpan @\u8A08\u7B97\u3092\u958B\u59CB\u3059\u308B\u6642\u9593\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F
+      5 \u79D2\u3002\n            ---@field stopCalcTime TimeSpan @\u8A08\u7B97\u3092\u7D42\u4E86\u3059\u308B\u6642\u9593\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F
+      30 \u79D2\u3002\n            ---@field minCalcInterval TimeSpan @\u8A08\u7B97\u3092\u884C\u3046\u6700\u5C0F\u30A4\u30F3\u30BF\u30FC\u30D0\u30FC\u30EB\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F
+      `TimeSpan.MaxValue`\u3002\n            ---@field maxCalcInterval TimeSpan @\u8A08\u7B97\u3092\u884C\u3046\u6700\u5927\u30A4\u30F3\u30BF\u30FC\u30D0\u30FC\u30EB\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F
+      `TimeSpan.MaxValue`\u3002\n            ---@field defaultTimestep number @\u65E2\u5B9A\u306E
+      Timestep\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F `0.02`\u3002\n           
+      ---@field queueSize number @\u65E2\u5B9A\u306E\u30AD\u30E5\u30FC\u306E\u30B5\u30A4\u30BA\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F
+      `64`\u3002\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u306E\u305F\u3081\u5909\u66F4\u3055\u308C\u308B\u53EF\u80FD\u6027\u304C\u3042\u308B\u3002**
       \u7269\u7406\u6F14\u7B97\u306E\u5B9F\u884C\u9593\u9694\u3092\u63A8\u5B9A\u3059\u308B\u3002`updateAll`
       \u95A2\u6570\u304B\u3089\u547C\u3073\u51FA\u3057\u3066\u4F7F\u3046\u3002`physicalObject`
       \u306B `AddForce` \u3057\u3001\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u306E\u6642\u9593\u5F53\u305F\u308A\u306E\u79FB\u52D5\u91CF\u304B\u3089\u8A08\u7B97\u3092\u884C\u3046\u3002`physicalObject`
@@ -2045,61 +2060,110 @@ MonoBehaviour:
       (`Mass: 1`, `Drag: 0`, `Use Gravity: OFF`, `Is Kinematic: OFF`, `Interpolate:
       None`, `Freeze Position: OFF`) \u3057\u305F\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3002`Collider`
       \u3084 `VCI Sub Item` \u30B3\u30F3\u30DD\u30FC\u30CD\u30F3\u30C8\u3092\u30BB\u30C3\u30C8\u3057\u3066\u306F\u3044\u3051\u306A\u3044\u3002\n           
-      EstimateFixedTimestep = function (physicalObject)\n                -- mass
-      \u306F 1.0 \u56FA\u5B9A\u3068\u3059\u308B\u3002\n                local mass
-      = 1.0\n\n                local acceleration = 1000.0\n\n                --
-      \u65E2\u5B9A\u5024\u306F 0.02 sec \u3068\u3059\u308B\u3002\n               
-      local timestep = TimeSpan.FromSeconds(0.02)\n\n                local timestepPrecision
-      = 0xFFFF\n                local timestepQueue = cytanb.CreateCircularQueue(64)\n\n               
-      -- \u30AD\u30E5\u30FC\u3092\u4F7F\u3063\u305F\u8A08\u7B97\u3092\u958B\u59CB\u3059\u308B\u6642\u9593\u3002\n               
-      local minTime = TimeSpan.FromSeconds(5)\n\n                -- \u30AD\u30E5\u30FC\u3092\u4F7F\u3063\u305F\u8A08\u7B97\u3092\u7D42\u4E86\u3059\u308B\u6642\u9593\u3002\n               
-      local maxTime = TimeSpan.FromSeconds(30)\n\n                local finished
-      = false\n\n                local startTime = vci.me.Time\n\n               
+      ---@param options cytanb_estimate_fixed_timestep_parameters_t \u30AA\u30D7\u30B7\u30E7\u30F3\u306E\u30D1\u30E9\u30E1\u30FC\u30BF\u30FC\u3002\u7701\u7565\u53EF\u80FD\u3002\n           
+      EstimateFixedTimestep = function (physicalObject, options)\n               
+      local opt = options or {}\n\n                local mass = opt.mass or 1\n               
+      if mass <= 0 then\n                    error('EstimateFixedTimestep: Invalid
+      argument: mass <= 0', 2)\n                end\n\n                local acceleration
+      = opt.acceleration or 1000\n                if acceleration <= 0 then\n                   
+      error('EstimateFixedTimestep: Invalid argument: acceleration <= 0', 2)\n               
+      end\n\n                local startCalcTime = opt.startCalcTime or TimeSpan.FromSeconds(5)\n\n               
+      local stopCalcTime = opt.stopCalcTime or TimeSpan.FromSeconds(30)\n               
+      if startCalcTime < TimeSpan.Zero or startCalcTime > stopCalcTime then\n                   
+      error('EstimateFixedTimestep: Invalid argument: startCalcTime < Zero or startCalcTime
+      > stopCalcTime', 2)\n                end\n\n                local minCalcInterval
+      = opt.minCalcInterval or TimeSpan.MaxValue\n\n                local maxCalcInterval
+      = opt.maxCalcInterval or TimeSpan.MaxValue\n                if minCalcInterval
+      <= TimeSpan.Zero or minCalcInterval > maxCalcInterval then\n                   
+      error('EstimateFixedTimestep: Invalid argument: minCalcInterval <= Zero or
+      minCalcInterval > maxCalcInterval', 2)\n                end\n\n               
+      local calcInterval = minCalcInterval\n                local calcIntervalEnabled
+      = minCalcInterval < TimeSpan.MaxValue\n\n                local timestep = opt.defaultTimestep
+      or TimeSpan.FromSeconds(0.02)\n                local interimTimestep = timestep\n               
+      if timestep <= TimeSpan.Zero then\n                    error('EstimateFixedTimestep:
+      Invalid argument: timestep <= Zero', 2)\n                end\n\n               
+      local defaultTimestepPrecision = 0xFFFF\n                local timestepPrecision
+      = defaultTimestepPrecision\n                local interimTimestepPrecision
+      = defaultTimestepPrecision\n\n                local timestepQueue = cytanb.CreateCircularQueue(opt.queueSize
+      or 64)\n                if timestepQueue.MaxSize() <= 1 then\n                   
+      error('EstimateFixedTimestep: Invalid argument: queueSize <= 1', 2)\n               
+      end\n\n                local startTime = vci.me.Time\n                local
+      updateTime = startTime\n\n                local prevTime = startTime\n\n               
       -- \u958B\u59CB\u4F4D\u7F6E\u306E X, Y \u5EA7\u6A19\u306F\u30E9\u30F3\u30C0\u30E0\u306B\u3001Z
       \u5EA7\u6A19\u306F\u30BC\u30ED\u3068\u3059\u308B\u3002\n                local
       rnd32 = cytanb.Random32()\n                local startPosition = Vector3.__new(\n                   
-      bit32.bor(0x400, bit32.band(rnd32, 0x1FFF)),\n                    bit32.bor(0x400,
-      bit32.band(bit32.rshift(rnd32, 16), 0x1FFF)),\n                    0.0\n               
-      )\n\n                physicalObject.SetPosition(startPosition)\n               
-      physicalObject.SetRotation(Quaternion.identity)\n                physicalObject.SetVelocity(Vector3.zero)\n               
-      physicalObject.SetAngularVelocity(Vector3.zero)\n\n                -- Z \u8EF8\u65B9\u5411\u306B\u529B\u3092\u52A0\u3048\u308B\u3002\n               
-      physicalObject.AddForce(Vector3.__new(0.0, 0.0, mass * acceleration))\n\n               
-      local self = {\n                    --- \u63A8\u5B9A\u3057\u305F\u7269\u7406\u6F14\u7B97\u306E\u5B9F\u884C\u9593\u9694\u3092\u8FD4\u3059\u3002\n                   
-      Timestep = function ()\n                        return timestep\n                   
-      end,\n\n                    --- \u63A8\u5B9A\u3057\u305F timestep \u306E\u7CBE\u5EA6\u3092\u8FD4\u3059\u3002\n                   
-      Precision = function ()\n                        return timestepPrecision\n                   
-      end,\n\n                    --- \u8A08\u7B97\u304C\u5B8C\u4E86\u3057\u305F\u304B\u3092\u8FD4\u3059\u3002\n                   
-      IsFinished = function ()\n                        return finished\n                   
-      end,\n\n                    --- `updateAll` \u95A2\u6570\u3067\u3001\u3053\u306E\u95A2\u6570\u3092\u547C\u3073\u51FA\u3059\u3053\u3068\u3002timestep
-      \u3092\u8A08\u7B97\u3057\u3001\u305D\u306E\u5024\u3092\u8FD4\u3059\u3002`IsFinish`
-      \u304C `true` \u3092\u8FD4\u3057\u305F\u3089\u3001\u305D\u308C\u4EE5\u4E0A\u306F\u547C\u3073\u51FA\u3059\u5FC5\u8981\u306F\u306A\u3044\u3002\n                   
-      Update = function ()\n                        if finished then\n                           
+      bit32.bor(0x100, bit32.band(rnd32, 0x3F)),\n                    bit32.bor(0x100,
+      bit32.band(bit32.rshift(rnd32, 8), 0x3F)),\n                    0\n               
+      )\n\n                local stage = 1\n\n                local nextCalcInterval
+      = function (min, max)\n                    local mr = min == minCalcInterval
+      and 120 or 1200\n                    local st = min.TotalSeconds\n                   
+      return TimeSpan.FromSeconds(\n                        math.min(\n                           
+      st + math.random() * math.min(mr, max.TotalSeconds - st),\n                           
+      TimeSpan.MaxValue.TotalSeconds - 1\n                        )\n                   
+      )\n                end\n\n                local stageFunctions = {\n                   
+      function ()\n                        timestepQueue.Clear()\n                       
+      physicalObject.SetPosition(startPosition)\n                        physicalObject.SetRotation(Quaternion.identity)\n                       
+      physicalObject.SetVelocity(Vector3.zero)\n                        physicalObject.SetAngularVelocity(Vector3.zero)\n                       
+      stage = stage + 1\n                        return timestep\n                   
+      end,\n\n                    function ()\n                        -- Z \u8EF8\u65B9\u5411\u306B\u529B\u3092\u52A0\u3048\u308B\u3002\n                       
+      physicalObject.AddForce(Vector3.__new(0.0, 0.0, mass * acceleration))\n                       
+      startTime = vci.me.Time\n                        prevTime = startTime\n                       
+      stage = stage + 1\n                        return timestep\n                   
+      end,\n\n                    function ()\n                        local currTime
+      = prevTime\n                        prevTime = vci.me.Time\n                       
+      local elapsedTime = currTime - startTime\n                        local dt
+      = elapsedTime.TotalSeconds\n                        if dt <= 1E-10 then\n                           
       return timestep\n                        end\n\n                        local
-      elapsedTime = vci.me.Time - startTime\n                        local dt = elapsedTime.TotalSeconds\n                       
-      if dt <= Vector3.kEpsilon then\n                            return timestep\n                       
-      end\n\n                        local dz = physicalObject.GetPosition().z -
-      startPosition.z\n                        local vz = dz / dt\n                       
-      local ts = vz / acceleration\n                        if ts <= Vector3.kEpsilon
-      then\n                            return timestep\n                       
-      end\n\n                        timestepQueue.Offer(ts)\n                       
+      dz = physicalObject.GetPosition().z - startPosition.z\n                       
+      local ts = dz / dt / acceleration\n                        if ts <= 1E-10 then\n                           
+      return timestep\n                        end\n\n                        timestepQueue.Offer(ts)\n                       
       local queueSize = timestepQueue.Size()\n                        if queueSize
-      >= 2 and elapsedTime >= minTime then\n                            -- \u5E73\u5747\u3068\u5206\u6563\u3092\u8A08\u7B97\u3059\u308B\n                           
+      >= 2 and elapsedTime >= startCalcTime then\n                            --
+      \u5E73\u5747\u3068\u5206\u6563\u3092\u8A08\u7B97\u3059\u308B\n                           
       local sum = 0.0\n                            for i = 1, queueSize do\n                               
       sum = sum + timestepQueue.Get(i)\n                            end\n                           
       local average = sum / queueSize\n\n                            local vSum =
       0.0\n                            for i = 1, queueSize do\n                               
       vSum = vSum + (timestepQueue.Get(i) - average) ^ 2\n                           
       end\n                            local variance = vSum / queueSize\n\n                           
-      if variance < timestepPrecision then\n                                -- \u5206\u6563\u304C\u5C0F\u3055\u3051\u308C\u3070\u63A1\u7528\u3059\u308B\n                               
-      timestepPrecision = variance\n                                timestep = TimeSpan.FromSeconds(average)\n                           
-      end\n\n                            if elapsedTime > maxTime then\n                               
-      -- \u6700\u5927\u6642\u9593\u3092\u8D85\u3048\u305F\u3089\u8A08\u7B97\u7D42\u4E86\n                               
-      finished = true\n\n                                physicalObject.SetPosition(startPosition)\n                               
+      if variance < interimTimestepPrecision then\n                               
+      -- \u5206\u6563\u304C\u5C0F\u3055\u3051\u308C\u3070\u63A1\u7528\u3059\u308B\n                               
+      interimTimestepPrecision = variance\n                                interimTimestep
+      = TimeSpan.FromSeconds(average)\n                                updateTime
+      = currTime\n                            end\n\n                           
+      if elapsedTime > stopCalcTime then\n                                -- \u8A08\u7B97\u7D42\u4E86\n                               
+      if math.abs((interimTimestep - timestep).TotalSeconds) >= 0.001 or interimTimestepPrecision
+      < timestepPrecision then\n                                    -- timestep \u306E\u5909\u5316\u304C\u5927\u304D\u3044\u304B\u3001\u65B0\u3057\u3044\u5024\u306E\u307B\u3046\u304C\u7CBE\u5EA6\u304C\u9AD8\u3044\u5834\u5408\u306F\u66F4\u65B0\u3059\u308B\n                                   
+      timestep = interimTimestep\n                                    timestepPrecision
+      = interimTimestepPrecision\n                                end\n\n                               
+      updateTime = currTime\n                                if calcInterval < TimeSpan.MaxValue
+      then\n                                    calcInterval = nextCalcInterval(calcInterval,
+      maxCalcInterval)\n                                end\n\n                               
+      physicalObject.SetPosition(startPosition)\n                               
       physicalObject.SetRotation(Quaternion.identity)\n                               
-      physicalObject.SetVelocity(Vector3.zero)\n                                physicalObject.SetAngularVelocity(Vector3.zero)\n                           
-      end\n                        else\n                            timestep = TimeSpan.FromSeconds(ts)\n                       
-      end\n\n                        return timestep\n                    end\n               
-      }\n                return self\n            end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u306E\u305F\u3081\u5909\u66F4\u3055\u308C\u308B\u53EF\u80FD\u6027\u304C\u3042\u308B\u3002**
+      physicalObject.SetVelocity(Vector3.zero)\n                                physicalObject.SetAngularVelocity(Vector3.zero)\n                               
+      stage = stage + 1\n                            end\n                       
+      else\n                            interimTimestep = TimeSpan.FromSeconds(ts)\n                           
+      updateTime = currTime\n                        end\n\n                       
+      if timestepPrecision >= defaultTimestepPrecision then\n                           
+      timestepPrecision = interimTimestepPrecision\n                            timestep
+      = interimTimestep\n                        end\n\n                        return
+      timestep\n                    end,\n\n                    function ()\n                       
+      prevTime = vci.me.Time\n                        return timestep\n                   
+      end,\n                }\n\n                local stageSize = #stageFunctions\n\n               
+      local self = {\n                    --- \u63A8\u5B9A\u3057\u305F\u7269\u7406\u6F14\u7B97\u306E\u5B9F\u884C\u9593\u9694\u3092\u8FD4\u3059\u3002\n                   
+      Timestep = function ()\n                        return timestep\n                   
+      end,\n\n                    --- \u63A8\u5B9A\u3057\u305F timestep \u306E\u7CBE\u5EA6\u3092\u8FD4\u3059\u3002\n                   
+      Precision = function ()\n                        return timestepPrecision\n                   
+      end,\n\n                    -- @deprecated \u975E\u63A8\u5968\u3002\u8A08\u7B97\u304C\u5B8C\u4E86\u3057\u305F\u304B\u3092\u8FD4\u3059\u3002\n                   
+      IsFinished = function ()\n                        return stage == stageSize\n                   
+      end,\n\n                    --- `updateAll` \u95A2\u6570\u3067\u3001\u3053\u306E\u95A2\u6570\u3092\u547C\u3073\u51FA\u3059\u3053\u3068\u3002timestep
+      \u3092\u8A08\u7B97\u3057\u3001\u305D\u306E\u5024\u3092\u8FD4\u3059\u3002\n                   
+      Update = function ()\n                        if calcIntervalEnabled and stage
+      == stageSize and prevTime - calcInterval >= updateTime then\n                           
+      stage = 1\n                        end\n                        return stageFunctions[stage]()\n                   
+      end\n                }\n                return self\n            end,\n\n           
+      --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u306E\u305F\u3081\u5909\u66F4\u3055\u308C\u308B\u53EF\u80FD\u6027\u304C\u3042\u308B\u3002**
       \u30B5\u30D6\u30A2\u30A4\u30C6\u30E0\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u306E\u4F4D\u7F6E\u3068\u56DE\u8EE2\u3092\u3001\u57FA\u6E96\u3068\u306A\u308B\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u306B\u5408\u308F\u305B\u308B\u3002`velocityReset`
       \u306B `true` \u304C\u6307\u5B9A\u3055\u308C\u3066\u3044\u305F\u5834\u5408\u306F\u3001`SetVelocity`
       \u3068 `SetAngularVelocity` \u3082\u5B9F\u884C\u3055\u308C\u3001\u30BC\u30ED\u30D9\u30AF\u30C8\u30EB\u306B\u30EA\u30BB\u30C3\u30C8\u3055\u308C\u308B\u3002\n           

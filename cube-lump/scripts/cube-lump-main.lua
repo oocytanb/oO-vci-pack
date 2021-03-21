@@ -778,7 +778,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
                     if keyHSV.h ~= h or keyHSV.s ~= s or keyHSV.v ~= v then
                         cytanb.LogDebug('on palette color: ', color)
                         CubeColorWavelet.SetKeyHSV(routine.colorWavelet, h, s, v)
-                        cytanb.EmitMessage(statusMessageName, MakeStatusParameters(routine))
+                        cytanb.EmitInstanceMessage(statusMessageName, MakeStatusParameters(routine))
                     end
                 end
             end)
@@ -786,7 +786,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
             cytanb.OnInstanceMessage(queryStatusMessageName, function (sender, name, parameterMap)
                 if vci.assets.IsMine then
                     -- マスターのみ応答する
-                    cytanb.EmitMessage(statusMessageName, MakeStatusParameters(routine))
+                    cytanb.EmitInstanceMessage(statusMessageName, MakeStatusParameters(routine))
                 end
             end)
 
@@ -801,7 +801,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
             end)
 
             -- 現在のステータスを問い合わせる。
-            cytanb.EmitMessage(queryStatusMessageName)
+            cytanb.EmitInstanceMessage(queryStatusMessageName)
         end)
     end,
 

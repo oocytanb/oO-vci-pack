@@ -610,7 +610,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 1ba3248c8ec5ada44914b19a9703b183, type: 3}
-    version: 1.5.0
+    version: 1.5.1
     description: "- \u7684\u5F53\u3066\u7528\u306E\u30D1\u30CD\u30EB\u3067\u3059\u3002\n-
       \u30DC\u30FC\u30EB\u306A\u3069\u3092\u5F53\u3066\u3066\u904A\u3073\u307E\u3059\u3002\n-
       \u30EA\u30BB\u30C3\u30C8\u30DC\u30BF\u30F3\u304B\u30D5\u30EC\u30FC\u30E0\u3092\u30B0\u30EA\u30C3\u30D7\u3059\u308B\u3068\u3001\u30D1\u30CD\u30EB\u3092\u30EA\u30BB\u30C3\u30C8\u3057\u307E\u3059\u3002\n-
@@ -712,7 +712,7 @@ MonoBehaviour:
       end\n\n    return true\nend\n\nlocal PanelCollided = function (panel)\n   
       if not panel.item.IsMine then\n        return false\n    end\n\n    if not
       BreakPanel(panel) then\n        return false\n    end\n\n    cytanb.LogTrace('emit
-      break-panel: ', panel.name)\n    cytanb.EmitMessage(breakPanelMessageName,
+      break-panel: ', panel.name)\n    cytanb.EmitInstanceMessage(breakPanelMessageName,
       {\n        senderID = cytanb.ClientID(),\n        target = CreatePanelStatusParameter(panel)\n   
       })\n    return true\nend\n\nlocal MendPanel = function (panel)\n    if not
       panel.active then\n        return\n    end\n\n    local item = panel.item\n   
@@ -747,7 +747,7 @@ MonoBehaviour:
       if panelBaseStatus.tiltChanged and now >= panelBaseStatus.tiltSentTime + settings.minRequestIntervalTime
       then\n                    panelBaseStatus.tiltChanged = false\n                   
       panelBaseStatus.tiltSentTime = now\n\n                    if panelBase.IsMine
-      then\n                        cytanb.EmitMessage(changePanelBaseMessageName,
+      then\n                        cytanb.EmitInstanceMessage(changePanelBaseMessageName,
       {\n                            senderID = cytanb.ClientID(),\n                           
       panelBase = CreatePanelBaseStatusParameter()\n                        })\n                   
       end\n                end\n\n                -- \u30D1\u30CD\u30EB\u306E\u4F4D\u7F6E\u95A2\u4FC2\u3092\u3001\u30A4\u30F3\u30BF\u30FC\u30D0\u30EB\u3092\u8A2D\u3051\u3066\u76F4\u3059\n               
@@ -834,7 +834,7 @@ MonoBehaviour:
       then\n                -- \u30DE\u30B9\u30BF\u30FC\u3067\u306A\u3051\u308C\u3070\u30EA\u30BF\u30FC\u30F3\u3059\u308B\u3002\n               
       return\n            end\n\n            local panelStatusList = {}\n           
       for key, panel in pairs(panelMap) do\n                panelStatusList[panel.index]
-      = CreatePanelStatusParameter(panel)\n            end\n\n            cytanb.EmitMessage(statusMessageName,
+      = CreatePanelStatusParameter(panel)\n            end\n\n            cytanb.EmitInstanceMessage(statusMessageName,
       {\n                senderID = cytanb.ClientID(),\n                panelBase
       = CreatePanelBaseStatusParameter(),\n                panels = panelStatusList\n           
       })\n        end)\n\n        cytanb.OnInstanceMessage(statusMessageName, function
@@ -863,9 +863,9 @@ MonoBehaviour:
       end)\n            end)\n        end)\n\n        ResetAll()\n        SetPanelBaseTilt(tiltSwitch.GetValue())\n\n       
       -- \u73FE\u5728\u306E\u30B9\u30C6\u30FC\u30BF\u30B9\u3092\u554F\u3044\u5408\u308F\u305B\u308B\u3002\n       
       -- \u8A2D\u7F6E\u8005\u3088\u308A\u3082\u3001\u30B2\u30B9\u30C8\u306E\u30ED\u30FC\u30C9\u304C\u65E9\u3044\u30B1\u30FC\u30B9\u3092\u8003\u616E\u3057\u3066\u3001\u5168\u30E6\u30FC\u30B6\u30FC\u304C\u30AF\u30A8\u30EA\u30FC\u30E1\u30C3\u30BB\u30FC\u30B8\u3092\u9001\u308B\u3002\n       
-      cytanb.EmitMessage(queryStatusMessageName)\n    end,\n\n    function (reason)\n       
-      cytanb.LogError('Error on update routine: ', reason)\n        UpdateCw = function
-      () end\n    end\n)\n\nupdateAll = function ()\n    UpdateCw()\nend\n\nonGrab
+      cytanb.EmitInstanceMessage(queryStatusMessageName)\n    end,\n\n    function
+      (reason)\n        cytanb.LogError('Error on update routine: ', reason)\n       
+      UpdateCw = function () end\n    end\n)\n\nupdateAll = function ()\n    UpdateCw()\nend\n\nonGrab
       = function (target)\n    if not vciLoaded then\n        return\n    end\n\n   
       if target == panelBase.GetName() then\n        panelBaseStatus.grabbed = true\n   
       elseif target == resetSwitch.GetName() then\n        resetSwitchStatus.clickCount,
@@ -1156,8 +1156,17 @@ MonoBehaviour:
       newSender[key] = newVal\n                end\n\n                -- \u9001\u4FE1\u8005\u60C5\u5831\u7F6E\u63DB\u51E6\u7406\u3092\u884C\u3063\u305F\u5834\u5408\u306F\u3001\u30AA\u30EA\u30B8\u30CA\u30EB\u306E\u9001\u4FE1\u8005\u60C5\u5831\u3092\u6B8B\u3057\u3066\u304A\u304F\n               
       newSender[cytanb.MessageOriginalSender] = sender\n                return newSender\n           
       else\n                -- senderOverride \u304C\u6307\u5B9A\u3055\u308C\u3066\u3044\u306A\u3044\u5834\u5408\u306F\u3001\u305D\u306E\u307E\u307E\u8FD4\u3059\n               
-      return sender\n            end\n        end\n\n        local EmitDedicatedMessage
-      = function (name, message, senderOverride, defaultSenderType)\n           
+      return sender\n            end\n        end\n\n        local MakeMessageData
+      = function (parameterMap)\n            local serData = cytanb.NillableIfHasValueOrElse(\n               
+      parameterMap,\n                function (data)\n                    if type(data)
+      ~= 'table' then\n                        error('MakeMessageData: Invalid argument:
+      table expected', 4)\n                    end\n                    return cytanb.TableToSerializable(data)\n               
+      end,\n                function ()\n                    return {}\n               
+      end\n            )\n            local id = cytanb.InstanceID()\n           
+      if id == '' then\n                cytanb.LogWarn('MakeMessageData: InstanceID
+      is empty.')\n            end\n            serData[cytanb.InstanceIDParameterName]
+      = id\n            return json.serialize(serData)\n        end\n\n        local
+      EmitDedicatedMessage = function (name, message, senderOverride, defaultSenderType)\n           
       local defaultSender = {type = defaultSenderType, name = '', commentSource =
       ''}\n            local parameterMap = {\n                [cytanb.MessageValueParameterName]
       = tostring(message),\n                [cytanb.MessageSenderOverride] = type(senderOverride)
@@ -1668,18 +1677,19 @@ MonoBehaviour:
       end,\n\n            -- @deprecated use TableFromSerializable\n            TableFromSerialiable
       = function (serData, noValueConversion)\n                return InternalTableFromSerializable(serData,
       noValueConversion)\n            end,\n\n            EmitMessage = function
-      (name, parameterMap)\n                local serData = cytanb.NillableIfHasValueOrElse(\n                   
-      parameterMap,\n                    function (data)\n                       
-      if type(data) ~= 'table' then\n                            error('EmitMessage:
-      Invalid argument: table expected', 3)\n                        end\n                       
-      return cytanb.TableToSerializable(data)\n                    end,\n                   
-      function ()\n                        return {}\n                    end\n               
-      )\n                local id = cytanb.InstanceID()\n                if id ==
-      '' then\n                    cytanb.LogWarn('EmitMessage: InstanceID is empty.
-      Consider using the CreateUpdateRoutine function.')\n                end\n               
-      serData[cytanb.InstanceIDParameterName] = id\n                vci.message.Emit(name,
-      json.serialize(serData))\n            end,\n\n            OnMessage = function
-      (name, callback)\n                local f = function (sender, messageName,
+      (name, parameterMap)\n                vci.message.Emit(name, MakeMessageData(parameterMap))\n           
+      end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002`targetID`
+      \u3067\u6307\u5B9A\u3055\u308C\u305F ID \u3067 `vci.message.EmitWithId` \u3092\u547C\u3073\u51FA\u3059\u3002\u305D\u306E\u4ED6\u306E\u4E8B\u9805\u306B\u3064\u3044\u3066\u306F
+      `EmitMessage` \u3092\u53C2\u7167\u3002\n            EmitMessageTo = function
+      (name, parameterMap, targetID)\n                if targetID ~= nil and targetID
+      ~= '' then\n                    vci.message.EmitWithId(name, MakeMessageData(parameterMap),
+      targetID)\n                else\n                    cytanb.LogWarn('EmitMessageTo:
+      targetID is not specified: ' .. tostring(targetID))\n                end\n           
+      end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002`cytanb.EmitMessageTo(name,
+      parameterMap, cytanb.InstanceID())` \u3068\u7B49\u4FA1\u3002\n            EmitInstanceMessage
+      = function (name, parameterMap)\n                cytanb.EmitMessageTo(name,
+      parameterMap, cytanb.InstanceID())\n            end,\n\n            OnMessage
+      = function (name, callback)\n                local f = function (sender, messageName,
       message)\n                    if type(message) == 'string' and string.startsWith(message,
       '{') then\n                        -- JSON \u30C7\u30B3\u30FC\u30C9\u3092\u8A66\u307F\u308B\n                       
       local pcallStatus, serData = pcall(json.parse, message)\n                       

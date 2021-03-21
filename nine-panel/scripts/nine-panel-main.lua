@@ -196,7 +196,7 @@ local PanelCollided = function (panel)
     end
 
     cytanb.LogTrace('emit break-panel: ', panel.name)
-    cytanb.EmitMessage(breakPanelMessageName, {
+    cytanb.EmitInstanceMessage(breakPanelMessageName, {
         senderID = cytanb.ClientID(),
         target = CreatePanelStatusParameter(panel)
     })
@@ -296,7 +296,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
                     panelBaseStatus.tiltSentTime = now
 
                     if panelBase.IsMine then
-                        cytanb.EmitMessage(changePanelBaseMessageName, {
+                        cytanb.EmitInstanceMessage(changePanelBaseMessageName, {
                             senderID = cytanb.ClientID(),
                             panelBase = CreatePanelBaseStatusParameter()
                         })
@@ -460,7 +460,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
                 panelStatusList[panel.index] = CreatePanelStatusParameter(panel)
             end
 
-            cytanb.EmitMessage(statusMessageName, {
+            cytanb.EmitInstanceMessage(statusMessageName, {
                 senderID = cytanb.ClientID(),
                 panelBase = CreatePanelBaseStatusParameter(),
                 panels = panelStatusList
@@ -513,7 +513,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
 
         -- 現在のステータスを問い合わせる。
         -- 設置者よりも、ゲストのロードが早いケースを考慮して、全ユーザーがクエリーメッセージを送る。
-        cytanb.EmitMessage(queryStatusMessageName)
+        cytanb.EmitInstanceMessage(queryStatusMessageName)
     end,
 
     function (reason)

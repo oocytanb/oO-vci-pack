@@ -91,7 +91,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
                 if cream.color ~= color then
                     cytanb.LogDebug('on item status: color = ', color)
                     TalkativeCream.SetColor(cream, color)
-                    cytanb.EmitMessage(statusMessageName, TalkativeCream.MakeStatusParameters(cream))
+                    cytanb.EmitInstanceMessage(statusMessageName, TalkativeCream.MakeStatusParameters(cream))
                 end
             end
         end)
@@ -99,7 +99,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
         cytanb.OnInstanceMessage(queryStatusMessageName, function (sender, name, parameterMap)
             if vci.assets.IsMine then
                 -- マスターのみ応答する
-                cytanb.EmitMessage(statusMessageName, TalkativeCream.MakeStatusParameters(cream))
+                cytanb.EmitInstanceMessage(statusMessageName, TalkativeCream.MakeStatusParameters(cream))
             end
         end)
 
@@ -135,7 +135,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
         end)
 
         TalkativeCream.SetColor(cream, cream.color)
-        cytanb.EmitMessage(queryStatusMessageName)
+        cytanb.EmitInstanceMessage(queryStatusMessageName)
     end,
 
     function (reason)
