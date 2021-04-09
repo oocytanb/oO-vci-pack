@@ -157,7 +157,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -0.07}
-  m_SizeDelta: {x: 0.45, y: 0.07}
+  m_SizeDelta: {x: 0.52, y: 0.07}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &492286004
 MonoBehaviour:
@@ -332,7 +332,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: a8896f0e48921224c90b5a2c0732f242, type: 3}
-    version: 0.1.0
+    version: 0.1.1
     description: "- \u90E8\u5C4B\u306B\u5C45\u308B\u30E1\u30F3\u30D0\u30FC\u306E\u4E00\u89A7\u3092\u8868\u793A\u3059\u308B
       VCI \u306E\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n- \u30E1\u30F3\u30D0\u30FC\u306E\u5165\u9000\u5BA4\u6642\u306B\u3001\u52B9\u679C\u97F3\u304C\u9CF4\u308A\u307E\u3059\u3002"
     exporterVersion: 0.32
@@ -351,12 +351,13 @@ MonoBehaviour:
     textAsset: {fileID: 1042094116111776886, guid: 0f352e5182b5edc4eaa1a48f3ef210a7,
       type: 3}
     source: "-- SPDX-License-Identifier: MIT\n-- Copyright (c) 2021 oO (https://github.com/oocytanb)\n\nlocal
-      settings = {\n  list_name = 'member_list',\n  list_text_name = 'list_text',\n 
-      list_body_name = 'list_body',\n  list_body_offset = Vector3.__new(0, -0.035,
-      0),\n  list_body_row_height = 0.0565,\n  list_body_row_margin = 0.015,\n  notification_se_map
-      = {\n    ['joined'] = 'entering_se',\n    ['left'] = 'leaving_se',\n  },\n 
-      se_interval = TimeSpan.FromSeconds(1),\n  output_debug_log = true,\n}\n\nlocal
-      message_ns = 'com.github.oocytanb.oO-vci-pack.member_list'\nlocal user_loaded_message_name
+      settings = {\n  vci_title = 'cykhu_member_list',\n  title_text_name = 'title_text',\n 
+      list_name = 'member_list',\n  list_text_name = 'list_text',\n  list_body_name
+      = 'list_body',\n  list_body_offset = Vector3.__new(0, -0.035, 0),\n  list_body_row_height
+      = 0.0565,\n  list_body_row_margin = 0.015,\n  notification_se_map = {\n   
+      ['joined'] = 'entering_se',\n    ['left'] = 'leaving_se',\n  },\n  se_interval
+      = TimeSpan.FromSeconds(1),\n  output_debug_log = true,\n}\n\nlocal message_ns
+      = 'com.github.oocytanb.oO-vci-pack.member_list'\nlocal user_loaded_message_name
       = message_ns .. '.user_loaded'\n\nlocal get_game_object_transform = function
       (name) return assert(vci.assets.GetTransform(name)) end\n\nlocal dlog = function
       (msg)\n  if settings.output_debug_log then\n    print(msg)\n  end\nend\n\nlocal
@@ -375,14 +376,9 @@ MonoBehaviour:
       scale = Vector3.__new(\n    initial_list_body_scale.x,\n    settings.list_body_row_height
       * math.max(1, member_status.size) +\n      settings.list_body_row_margin,\n   
       initial_list_body_scale.z\n  )\n  list_body.SetLocalScale(scale)\n  vci.assets.SetText(settings.list_text_name,
-      member_status.member_text)\nend\n\nfunction updateAll()\n  if not initial_update_complete
-      then\n    local own_ava = vci.studio.GetLocalAvatar()\n    if own_ava then\n     
-      initial_update_complete = true\n\n      vci.message.EmitWithId(user_loaded_message_name,
-      {\n        avatar_id = own_ava.GetId() or '',\n        avatar_name = own_ava.GetName()
-      or '',\n      }, vci.assets.GetInstanceId() or '')\n    end\n  end\n\n  if
-      pending_avatar_list_ then\n    update_display(make_member_status(pending_avatar_list_))\n   
-      pending_avatar_list_ = nil\n  end\nend\n\nvci.message.On('notification', function
-      (sender, messageName, message)\n    dlog('# on notification: \"' ..\n     
+      member_status.member_text)\n  vci.assets.SetText(\n    settings.title_text_name,\n   
+      string.format('%s [%d]', settings.vci_title, member_status.size)\n  )\nend\n\nvci.message.On('notification',
+      function (sender, messageName, message)\n    dlog('# on notification: \"' ..\n     
       tostring(sender.name) .. '\" ' ..\n      tostring(message))\n\n    local se_name
       = settings.notification_se_map[message]\n    if se_name then\n      local avatars_
       = vci.studio.GetAvatars()\n      if avatars_ then\n        pending_avatar_list_
@@ -391,7 +387,15 @@ MonoBehaviour:
       = now\n          vci.assets.audio.PlayOneShot(se_name, 1)\n        end\n     
       end\n    end\nend)\n\nvci.message.On(user_loaded_message_name, function (sender,
       messageName, data)\n  dlog('# on user_loaded: ' .. tostring(data.avatar_name))\n 
-      pending_avatar_list_ = vci.studio.GetAvatars() or pending_avatar_list_\nend)\n"
+      pending_avatar_list_ = vci.studio.GetAvatars() or pending_avatar_list_\nend)\n\nfunction
+      updateAll()\n  if not initial_update_complete then\n    local own_ava = vci.studio.GetLocalAvatar()\n   
+      if own_ava then\n      initial_update_complete = true\n\n      vci.message.EmitWithId(user_loaded_message_name,
+      {\n        avatar_id = own_ava.GetId() or '',\n        avatar_name = own_ava.GetName()
+      or '',\n      }, vci.assets.GetInstanceId() or '')\n    end\n  end\n\n  if
+      pending_avatar_list_ then\n    update_display(make_member_status(pending_avatar_list_))\n   
+      pending_avatar_list_ = nil\n  end\nend\n\nfunction onUse(use)\n  if use ==
+      settings.list_name then\n    pending_avatar_list_ = vci.studio.GetAvatars()
+      or pending_avatar_list_\n  end\nend\n"
 --- !u!4 &866287064
 Transform:
   m_ObjectHideFlags: 0
@@ -874,7 +878,7 @@ Transform:
   m_GameObject: {fileID: 1486129587}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.45, y: 0.07, z: 0.001}
+  m_LocalScale: {x: 0.52, y: 0.07, z: 0.001}
   m_Children: []
   m_Father: {fileID: 1139708056}
   m_RootOrder: 0
@@ -964,7 +968,7 @@ Transform:
   m_GameObject: {fileID: 1619300554}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.035, z: 0}
-  m_LocalScale: {x: 0.45, y: 0.07, z: 1}
+  m_LocalScale: {x: 0.52, y: 0.07, z: 1}
   m_Children:
   - {fileID: 1836496033}
   m_Father: {fileID: 1139708056}
@@ -1006,7 +1010,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0.45, y: 0.07}
+  m_SizeDelta: {x: 0.52, y: 0.07}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1714627615
 MonoBehaviour:

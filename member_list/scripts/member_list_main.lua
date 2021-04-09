@@ -2,6 +2,8 @@
 -- Copyright (c) 2021 oO (https://github.com/oocytanb)
 
 local settings = {
+  vci_title = 'cykhu_member_list',
+  title_text_name = 'title_text',
   list_name = 'member_list',
   list_text_name = 'list_text',
   list_body_name = 'list_body',
@@ -13,19 +15,21 @@ local settings = {
     ['left'] = 'leaving_se',
   },
   se_interval = TimeSpan.FromSeconds(1),
-  output_debug_log = true,
+  output_debug_log = (function (ava_)
+    return not not (ava_ and ava_.IsOwner())
+  end)(vci.studio.GetLocalAvatar()),
 }
 
 local message_ns = 'com.github.oocytanb.oO-vci-pack.member_list'
 local user_loaded_message_name = message_ns .. '.user_loaded'
 
+local function noop(msg)
+  -- noop
+end
+
 local get_game_object_transform = function (name) return assert(vci.assets.GetTransform(name)) end
 
-local dlog = function (msg)
-  if settings.output_debug_log then
-    print(msg)
-  end
-end
+local dlog = settings.output_debug_log and print or noop
 
 local list_body = get_game_object_transform(settings.list_body_name)
 local initial_list_body_scale = list_body.GetLocalScale()
@@ -75,25 +79,10 @@ local function update_display(member_status)
   )
   list_body.SetLocalScale(scale)
   vci.assets.SetText(settings.list_text_name, member_status.member_text)
-end
-
-function updateAll()
-  if not initial_update_complete then
-    local own_ava = vci.studio.GetLocalAvatar()
-    if own_ava then
-      initial_update_complete = true
-
-      vci.message.EmitWithId(user_loaded_message_name, {
-        avatar_id = own_ava.GetId() or '',
-        avatar_name = own_ava.GetName() or '',
-      }, vci.assets.GetInstanceId() or '')
-    end
-  end
-
-  if pending_avatar_list_ then
-    update_display(make_member_status(pending_avatar_list_))
-    pending_avatar_list_ = nil
-  end
+  vci.assets.SetText(
+    settings.title_text_name,
+    string.format('%s [%d]', settings.vci_title, member_status.size)
+  )
 end
 
 vci.message.On('notification', function (sender, messageName, message)
@@ -117,6 +106,33 @@ vci.message.On('notification', function (sender, messageName, message)
 end)
 
 vci.message.On(user_loaded_message_name, function (sender, messageName, data)
-  dlog('# on user_loaded: ' .. tostring(data.avatar_name))
+  dlog('# on user_loaded: ' ..
+    tostring(data.avatar_name) .. ' | ' ..
+    tostring(data.avatar_id))
   pending_avatar_list_ = vci.studio.GetAvatars() or pending_avatar_list_
 end)
+
+function updateAll()
+  if not initial_update_complete then
+    local own_ava = vci.studio.GetLocalAvatar()
+    if own_ava then
+      initial_update_complete = true
+
+      vci.message.EmitWithId(user_loaded_message_name, {
+        avatar_id = own_ava.GetId() or '',
+        avatar_name = own_ava.GetName() or '',
+      }, vci.assets.GetInstanceId() or '')
+    end
+  end
+
+  if pending_avatar_list_ then
+    update_display(make_member_status(pending_avatar_list_))
+    pending_avatar_list_ = nil
+  end
+end
+
+function onUse(use)
+  if use == settings.list_name then
+    pending_avatar_list_ = vci.studio.GetAvatars() or pending_avatar_list_
+  end
+end
