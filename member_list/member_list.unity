@@ -152,12 +152,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1139708056}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.07}
-  m_SizeDelta: {x: 0.52, y: 0.07}
+  m_AnchoredPosition: {x: 0, y: -0.08}
+  m_SizeDelta: {x: 0.45, y: 0.07}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &492286004
 MonoBehaviour:
@@ -332,9 +332,9 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: a8896f0e48921224c90b5a2c0732f242, type: 3}
-    version: 0.1.1
-    description: "- \u90E8\u5C4B\u306B\u5C45\u308B\u30E1\u30F3\u30D0\u30FC\u306E\u4E00\u89A7\u3092\u8868\u793A\u3059\u308B
-      VCI \u306E\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n- \u30E1\u30F3\u30D0\u30FC\u306E\u5165\u9000\u5BA4\u6642\u306B\u3001\u52B9\u679C\u97F3\u304C\u9CF4\u308A\u307E\u3059\u3002"
+    version: 0.3.0
+    description: "- \u90E8\u5C4B\u306B\u5C45\u308B\u30E1\u30F3\u30D0\u30FC\u306E\u4E00\u89A7\u3092\u3059\u308B\u305F\u3081\u306E\u3001VCI
+      \u306E\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n- \u30E1\u30F3\u30D0\u30FC\u306E\u5165\u9000\u5BA4\u6642\u306B\u3001\u52B9\u679C\u97F3\u304C\u9CF4\u308A\u307E\u3059\u3002"
     exporterVersion: 0.32
     specVersion: 
     modelDataLicenseType: 8
@@ -351,33 +351,87 @@ MonoBehaviour:
     textAsset: {fileID: 1042094116111776886, guid: 0f352e5182b5edc4eaa1a48f3ef210a7,
       type: 3}
     source: "-- SPDX-License-Identifier: MIT\n-- Copyright (c) 2021 oO (https://github.com/oocytanb)\n\nlocal
-      settings = {\n  vci_title = 'cykhu_member_list',\n  title_text_name = 'title_text',\n 
-      list_name = 'member_list',\n  list_text_name = 'list_text',\n  list_body_name
-      = 'list_body',\n  list_body_offset = Vector3.__new(0, -0.035, 0),\n  list_body_row_height
-      = 0.0565,\n  list_body_row_margin = 0.015,\n  notification_se_map = {\n   
-      ['joined'] = 'entering_se',\n    ['left'] = 'leaving_se',\n  },\n  se_interval
-      = TimeSpan.FromSeconds(1),\n  output_debug_log = true,\n}\n\nlocal message_ns
-      = 'com.github.oocytanb.oO-vci-pack.member_list'\nlocal user_loaded_message_name
-      = message_ns .. '.user_loaded'\n\nlocal get_game_object_transform = function
-      (name) return assert(vci.assets.GetTransform(name)) end\n\nlocal dlog = function
-      (msg)\n  if settings.output_debug_log then\n    print(msg)\n  end\nend\n\nlocal
-      list_body = get_game_object_transform(settings.list_body_name)\nlocal initial_list_body_scale
-      = list_body.GetLocalScale()\n\nlocal initial_update_complete = false\nlocal
-      pending_avatar_list_ = nil\nlocal last_play_notification_se_time = TimeSpan.Zero\n\nlocal
-      function make_member_status(avatars)\n  local size = 0\n  local text = ''\n 
-      local members = {}\n\n  for _k, ava in ipairs(avatars) do\n    local id = ava.GetId()\n   
-      local name = ava.GetName()\n    if id and name then\n      local has_avatar_body
-      = ava.GetPosition() ~= nil\n\n      size = size + 1\n      members[size] =
-      {\n        id = id,\n        name = name,\n        avatar = ava,\n        has_avatar_body
-      = has_avatar_body,\n      }\n\n      text = text ..\n        (size == 1 and
-      '' or '\\n') ..\n        (has_avatar_body and '* ' or '- ') .. name\n    end\n 
-      end\n\n  return {\n    members = members,\n    size = size,\n    member_text
-      = text,\n  }\nend\n\nlocal function update_display(member_status)\n  local
-      scale = Vector3.__new(\n    initial_list_body_scale.x,\n    settings.list_body_row_height
-      * math.max(1, member_status.size) +\n      settings.list_body_row_margin,\n   
-      initial_list_body_scale.z\n  )\n  list_body.SetLocalScale(scale)\n  vci.assets.SetText(settings.list_text_name,
-      member_status.member_text)\n  vci.assets.SetText(\n    settings.title_text_name,\n   
-      string.format('%s [%d]', settings.vci_title, member_status.size)\n  )\nend\n\nvci.message.On('notification',
+      settings = {\n  status_text_name = 'status_text',\n  list_name = 'member_list',\n 
+      list_text_name = 'list_text',\n  list_body_name = 'list_body',\n  list_body_row_height
+      = 0.0565,\n  list_body_row_margin = 0.015,\n  visible_symbol = '*',\n  invisible_symbol
+      = '~',\n  avatar_detection_interval = TimeSpan.FromSeconds(20),\n  avatar_detection_max_time
+      = TimeSpan.FromMinutes(10),\n  notification_se_map = {\n    ['joined'] = 'entering_se',\n   
+      ['left'] = 'leaving_se',\n  },\n  se_interval = TimeSpan.FromSeconds(1),\n 
+      output_debug_log = (function (ava_)\n    return not not (ava_ and ava_.IsOwner())\n 
+      end)(vci.studio.GetLocalAvatar()),\n}\n\nlocal message_ns = 'com.github.oocytanb.oO-vci-pack.member_list'\nlocal
+      user_loaded_message_name = message_ns .. '.user_loaded'\n\nlocal function get_game_object_transform(name)\n 
+      return assert(vci.assets.GetTransform(name))\nend\n\nlocal function noop()\n 
+      -- Do nothing\nend\n\n---@type fun(msg: string)\nlocal dlog = settings.output_debug_log
+      and print or noop\n\n---@alias WorldTypeIndex number\n\n---@class WorldType\n---@field
+      studio WorldTypeIndex\n---@field room WorldTypeIndex\nlocal WorldType = {\n 
+      studio = 1,\n  room = 2,\n}\n\nlocal world_type_string_list = { 'Studio', 'Room'
+      }\n\nlocal world_type = (function ()\n  local studio_item_detected = false\n\n 
+      return function ()\n    if not studio_item_detected then\n      studio_item_detected
+      = vci.studio.HasWindowCamera()\n    end\n\n    return studio_item_detected
+      and WorldType.studio or WorldType.room\n  end\nend)()\n\n---@param world_type_index
+      WorldTypeIndex\nlocal function world_type_to_string(world_type_index)\n  return
+      world_type_string_list[world_type_index] or 'Unknown'\nend\n\n---@class Member\n---@field
+      id string\n---@field name string\n---@field visible boolean\n\n---@alias MemberMap
+      table<string, Member>\n\n---@param avatar ExportAvatar\n---@return boolean\nlocal
+      function avatar_is_visible(avatar)\n  return avatar.GetPosition() ~= nil\nend\n\n---@param
+      avatar ExportAvatar\n---@return Member\nlocal function member_from_avatar(avatar)\n 
+      return {\n    id = avatar.GetId() or '',\n    name = avatar.GetName() or '',\n   
+      visible = avatar_is_visible(avatar),\n  }\nend\n\nlocal own_member = (function
+      ()\n  local own_ava_ = vci.studio.GetLocalAvatar()\n\n  local om = own_ava_
+      and\n    member_from_avatar(own_ava_) or\n    { id = '', name = '', visible
+      = false }\n\n  local last_time = vci.me.UnscaledTime\n  local max_time = last_time
+      + settings.avatar_detection_max_time\n  local timeout = om.visible\n\n  return
+      function ()\n    if not timeout then\n      local now = vci.me.UnscaledTime\n     
+      if now <= max_time then\n        if now - last_time >= settings.avatar_detection_interval
+      then\n          if not own_ava_ then\n            own_ava_ = vci.studio.GetLocalAvatar()\n           
+      if own_ava_ then\n              om = member_from_avatar(own_ava_)\n           
+      end\n          else\n            om.visible = avatar_is_visible(own_ava_)\n         
+      end\n\n          if om.visible then\n            timeout = true\n         
+      end\n        end\n      else\n        timeout = true\n      end\n    end\n\n   
+      return om\n  end\nend)()\n\n---@class MemberStatus\n---@field world_type_index
+      WorldTypeIndex\n---@field members MemberMap\n---@field count number\n---@field
+      visible_count number\n\n---@param member Member\n---@param status MemberStatus\n---@return
+      MemberStatus\nlocal function merge_member(member, status)\n  local id = member.id\n 
+      local m_ = status.members[id]\n  if m_ then\n    if not m_.visible then\n     
+      m_.visible = member.visible\n      if member.visible then\n        status.visible_count
+      = status.visible_count + 1\n      end\n    end\n  else\n    status.members[id]
+      = member\n    status.count = status.count + 1\n    if member.visible then\n     
+      status.visible_count = status.visible_count + 1\n    end\n  end\n\n  return
+      status\nend\n\n---@param world_type_index WorldTypeIndex\n---@param avatars
+      ExportAvatar[]\n---@param prev_members MemberMap\n---@return MemberStatus\nlocal
+      function make_member_status(world_type_index, avatars, prev_members)\n  local
+      s = {\n    world_type_index = world_type_index,\n    members = {},\n    count
+      = 0,\n    visible_count = 0,\n  }\n\n  for _, ava in ipairs(avatars) do\n   
+      local m = member_from_avatar(ava)\n    local id = m.id\n\n    if not m.visible
+      then\n      local pm = prev_members[id]\n      if pm and pm.visible then\n       
+      m.visible = true\n      end\n    end\n\n    s = merge_member(m, s)\n  end\n\n 
+      return s\nend\n\n---@param member Member\n---@return string\nlocal function
+      member_to_string(member)\n  return (\n    member.visible and\n    settings.visible_symbol
+      or\n    settings.invisible_symbol\n  ) .. ' ' .. member.name\nend\n\n---@param
+      member Member\n---@param str string\n---@return string\nlocal function append_member_string(member,
+      str)\n  return str == '' and\n    member_to_string(member) or\n    (str ..
+      '\\n' .. member_to_string(member))\nend\n\nlocal list_body = get_game_object_transform(settings.list_body_name)\nlocal
+      initial_list_body_scale = list_body.GetLocalScale()\n\nlocal user_loaded =
+      false\nlocal pending_avatar_list_ = nil\nlocal last_play_notification_se_time
+      = TimeSpan.Zero\n\nlocal member_status = make_member_status(world_type(), {},
+      {})\n\n---@param status MemberStatus\nlocal function update_display(status)\n 
+      local visible_buffer = ''\n  local invisible_buffer = ''\n\n  for _, m in pairs(status.members)
+      do\n    if m.visible then\n      visible_buffer = append_member_string(m, visible_buffer)\n   
+      else\n      invisible_buffer = append_member_string(m, invisible_buffer)\n   
+      end\n  end\n\n  local buffer = visible_buffer ..\n    ((visible_buffer == ''
+      or invisible_buffer == '') and '' or '\\n') ..\n    invisible_buffer\n\n  local
+      status_buffer = '[' ..\n    world_type_to_string(status.world_type_index) ..\n   
+      ', ' .. status.count ..\n    (\n      status.visible_count < status.count and\n     
+      ' (' .. settings.visible_symbol .. ' ' .. status.visible_count .. ')' or\n     
+      ''\n    ) .. ']'\n\n  local scale = Vector3.__new(\n    initial_list_body_scale.x,\n   
+      settings.list_body_row_height * math.max(1, status.count) +\n      settings.list_body_row_margin,\n   
+      initial_list_body_scale.z\n  )\n  list_body.SetLocalScale(scale)\n\n  vci.assets.SetText(settings.list_text_name,
+      buffer)\n  vci.assets.SetText(settings.status_text_name, status_buffer)\nend\n\n---@param
+      avatars ExportAvatar[]\nlocal function dlog_avatars(avatars)\n  if settings.output_debug_log
+      then\n    local buffer = 'member_list @ ' .. world_type_to_string(world_type())\n   
+      for i, ava in ipairs(avatars) do\n      local m = member_from_avatar(ava)\n     
+      buffer = buffer .. '\\n' ..\n        '[' .. i .. '] ' .. member_to_string(m)
+      ..\n        ' | ' .. m.id\n    end\n\n    dlog(buffer)\n  end\nend\n\nvci.message.On('notification',
       function (sender, messageName, message)\n    dlog('# on notification: \"' ..\n     
       tostring(sender.name) .. '\" ' ..\n      tostring(message))\n\n    local se_name
       = settings.notification_se_map[message]\n    if se_name then\n      local avatars_
@@ -386,16 +440,18 @@ MonoBehaviour:
       >= last_play_notification_se_time then\n          last_play_notification_se_time
       = now\n          vci.assets.audio.PlayOneShot(se_name, 1)\n        end\n     
       end\n    end\nend)\n\nvci.message.On(user_loaded_message_name, function (sender,
-      messageName, data)\n  dlog('# on user_loaded: ' .. tostring(data.avatar_name))\n 
-      pending_avatar_list_ = vci.studio.GetAvatars() or pending_avatar_list_\nend)\n\nfunction
-      updateAll()\n  if not initial_update_complete then\n    local own_ava = vci.studio.GetLocalAvatar()\n   
-      if own_ava then\n      initial_update_complete = true\n\n      vci.message.EmitWithId(user_loaded_message_name,
-      {\n        avatar_id = own_ava.GetId() or '',\n        avatar_name = own_ava.GetName()
-      or '',\n      }, vci.assets.GetInstanceId() or '')\n    end\n  end\n\n  if
-      pending_avatar_list_ then\n    update_display(make_member_status(pending_avatar_list_))\n   
-      pending_avatar_list_ = nil\n  end\nend\n\nfunction onUse(use)\n  if use ==
-      settings.list_name then\n    pending_avatar_list_ = vci.studio.GetAvatars()
-      or pending_avatar_list_\n  end\nend\n"
+      messageName, data)\n  local m_ = data.member\n  if m_ then\n    dlog('# on
+      user_loaded: ' ..\n          member_to_string(m_) .. ' | ' ..\n          tostring(m_.id))\n\n   
+      pending_avatar_list_ = vci.studio.GetAvatars() or pending_avatar_list_\n  end\nend)\n\nfunction
+      updateAll()\n  if not user_loaded then\n    local om = own_member()\n    if
+      om.visible then\n      user_loaded = true\n\n      vci.message.EmitWithId(user_loaded_message_name,
+      {\n        member = om,\n      }, vci.assets.GetInstanceId() or '')\n    end\n 
+      end\n\n  if pending_avatar_list_ then\n    member_status = make_member_status(\n     
+      world_type(),\n      pending_avatar_list_,\n      member_status.members\n   
+      )\n    pending_avatar_list_ = nil\n    update_display(member_status)\n  end\nend\n\nfunction
+      onUse(use)\n  if use == settings.list_name then\n    pending_avatar_list_ =
+      vci.studio.GetAvatars() or pending_avatar_list_\n\n    if pending_avatar_list_
+      then\n      dlog_avatars(pending_avatar_list_)\n    end\n  end\nend\n"
 --- !u!4 &866287064
 Transform:
   m_ObjectHideFlags: 0
@@ -522,11 +578,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1139708055}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.2, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1486129588}
   - {fileID: 1714627614}
+  - {fileID: 1161567949}
   - {fileID: 492286003}
   - {fileID: 1619300555}
   m_Father: {fileID: 866287064}
@@ -758,6 +815,182 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &1161567948
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1161567949}
+  - component: {fileID: 1161567952}
+  - component: {fileID: 1161567951}
+  - component: {fileID: 1161567950}
+  m_Layer: 0
+  m_Name: status_text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1161567949
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1161567948}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.006}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1139708056}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -0.02}
+  m_SizeDelta: {x: 0.45, y: 0.07}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1161567950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1161567948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: 
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 0.4
+  m_fontSizeBase: 0.4
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 4
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 0
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 0
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0.01, y: 0.01, z: 0.01, w: 0.01}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_renderer: {fileID: 1161567952}
+  m_maskType: 0
+  _SortingLayer: 0
+  _SortingLayerID: 0
+  _SortingOrder: 0
+--- !u!222 &1161567951
+CanvasRenderer:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1161567948}
+  m_CullTransparentMesh: 0
+--- !u!23 &1161567952
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1161567948}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &1388485382
 GameObject:
   m_ObjectHideFlags: 0
@@ -878,7 +1111,7 @@ Transform:
   m_GameObject: {fileID: 1486129587}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.52, y: 0.07, z: 0.001}
+  m_LocalScale: {x: 0.45, y: 0.1, z: 0.001}
   m_Children: []
   m_Father: {fileID: 1139708056}
   m_RootOrder: 0
@@ -895,7 +1128,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.001, z: 0}
 --- !u!23 &1486129590
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -967,12 +1200,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1619300554}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.035, z: 0}
-  m_LocalScale: {x: 0.52, y: 0.07, z: 1}
+  m_LocalPosition: {x: 0, y: -0.05, z: 0}
+  m_LocalScale: {x: 0.45, y: 0.07, z: 1}
   m_Children:
   - {fileID: 1836496033}
   m_Father: {fileID: 1139708056}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1714627613
 GameObject:
@@ -1009,8 +1242,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0.52, y: 0.07}
+  m_AnchoredPosition: {x: 0, y: 0.025}
+  m_SizeDelta: {x: 0.45, y: 0.07}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1714627615
 MonoBehaviour:
@@ -1161,7 +1394,8 @@ GameObject:
   - component: {fileID: 1836496033}
   - component: {fileID: 1836496036}
   - component: {fileID: 1836496035}
-  m_Layer: 0
+  - component: {fileID: 1836496034}
+  m_Layer: 25
   m_Name: list_body_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1182,6 +1416,19 @@ Transform:
   m_Father: {fileID: 1619300555}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!65 &1836496034
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836496032}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 10, y: 9.103829e-15, z: 10.000002}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1836496035
 MeshRenderer:
   m_ObjectHideFlags: 0
