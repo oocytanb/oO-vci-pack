@@ -332,7 +332,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: a8896f0e48921224c90b5a2c0732f242, type: 3}
-    version: 0.3.0
+    version: 0.3.1
     description: "- \u90E8\u5C4B\u306B\u5C45\u308B\u30E1\u30F3\u30D0\u30FC\u306E\u4E00\u89A7\u3092\u3059\u308B\u305F\u3081\u306E\u3001VCI
       \u306E\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n- \u30E1\u30F3\u30D0\u30FC\u306E\u5165\u9000\u5BA4\u6642\u306B\u3001\u52B9\u679C\u97F3\u304C\u9CF4\u308A\u307E\u3059\u3002"
     exporterVersion: 0.32
@@ -359,14 +359,18 @@ MonoBehaviour:
       ['left'] = 'leaving_se',\n  },\n  se_interval = TimeSpan.FromSeconds(1),\n 
       output_debug_log = (function (ava_)\n    return not not (ava_ and ava_.IsOwner())\n 
       end)(vci.studio.GetLocalAvatar()),\n}\n\nlocal message_ns = 'com.github.oocytanb.oO-vci-pack.member_list'\nlocal
-      user_loaded_message_name = message_ns .. '.user_loaded'\n\nlocal function get_game_object_transform(name)\n 
-      return assert(vci.assets.GetTransform(name))\nend\n\nlocal function noop()\n 
-      -- Do nothing\nend\n\n---@type fun(msg: string)\nlocal dlog = settings.output_debug_log
-      and print or noop\n\n---@alias WorldTypeIndex number\n\n---@class WorldType\n---@field
-      studio WorldTypeIndex\n---@field room WorldTypeIndex\nlocal WorldType = {\n 
-      studio = 1,\n  room = 2,\n}\n\nlocal world_type_string_list = { 'Studio', 'Room'
-      }\n\nlocal world_type = (function ()\n  local studio_item_detected = false\n\n 
-      return function ()\n    if not studio_item_detected then\n      studio_item_detected
+      user_loaded_message_name = message_ns .. '.user_loaded'\nlocal member_status_message_name
+      = message_ns .. '.member_status'\n\n---@param name string\n---@return ExportTransform\nlocal
+      function get_game_object_transform(name)\n  return assert(vci.assets.GetTransform(name))\nend\n\n---@param
+      messageName string\n---@param value any\nlocal function emit_instance_message(messageName,
+      value)\n  vci.message.EmitWithId(messageName, value, vci.assets.GetInstanceId()
+      or '')\nend\n\nlocal function noop()\n  -- Do nothing\nend\n\n---@type fun(msg:
+      string)\nlocal dlog = settings.output_debug_log and print or noop\n\n---@alias
+      WorldTypeIndex number\n\n---@class WorldType\n---@field studio WorldTypeIndex\n---@field
+      room WorldTypeIndex\nlocal WorldType = {\n  studio = 1,\n  room = 2,\n}\n\nlocal
+      world_type_string_list = { 'Studio', 'Room' }\n\n---@return WorldTypeIndex\nlocal
+      world_type = (function ()\n  local studio_item_detected = false\n\n  return
+      function ()\n    if not studio_item_detected then\n      studio_item_detected
       = vci.studio.HasWindowCamera()\n    end\n\n    return studio_item_detected
       and WorldType.studio or WorldType.room\n  end\nend)()\n\n---@param world_type_index
       WorldTypeIndex\nlocal function world_type_to_string(world_type_index)\n  return
@@ -376,25 +380,29 @@ MonoBehaviour:
       function avatar_is_visible(avatar)\n  return avatar.GetPosition() ~= nil\nend\n\n---@param
       avatar ExportAvatar\n---@return Member\nlocal function member_from_avatar(avatar)\n 
       return {\n    id = avatar.GetId() or '',\n    name = avatar.GetName() or '',\n   
-      visible = avatar_is_visible(avatar),\n  }\nend\n\nlocal own_member = (function
-      ()\n  local own_ava_ = vci.studio.GetLocalAvatar()\n\n  local om = own_ava_
-      and\n    member_from_avatar(own_ava_) or\n    { id = '', name = '', visible
-      = false }\n\n  local last_time = vci.me.UnscaledTime\n  local max_time = last_time
-      + settings.avatar_detection_max_time\n  local timeout = om.visible\n\n  return
-      function ()\n    if not timeout then\n      local now = vci.me.UnscaledTime\n     
-      if now <= max_time then\n        if now - last_time >= settings.avatar_detection_interval
-      then\n          if not own_ava_ then\n            own_ava_ = vci.studio.GetLocalAvatar()\n           
-      if own_ava_ then\n              om = member_from_avatar(own_ava_)\n           
-      end\n          else\n            om.visible = avatar_is_visible(own_ava_)\n         
-      end\n\n          if om.visible then\n            timeout = true\n         
-      end\n        end\n      else\n        timeout = true\n      end\n    end\n\n   
-      return om\n  end\nend)()\n\n---@class MemberStatus\n---@field world_type_index
-      WorldTypeIndex\n---@field members MemberMap\n---@field count number\n---@field
-      visible_count number\n\n---@param member Member\n---@param status MemberStatus\n---@return
-      MemberStatus\nlocal function merge_member(member, status)\n  local id = member.id\n 
-      local m_ = status.members[id]\n  if m_ then\n    if not m_.visible then\n     
-      m_.visible = member.visible\n      if member.visible then\n        status.visible_count
-      = status.visible_count + 1\n      end\n    end\n  else\n    status.members[id]
+      visible = avatar_is_visible(avatar),\n  }\nend\n\n---@return Member\nlocal
+      own_member = (function ()\n  local own_ava_ = vci.studio.GetLocalAvatar()\n\n 
+      local om = own_ava_ and\n    member_from_avatar(own_ava_) or\n    { id = '',
+      name = '', visible = false }\n\n  local last_time = vci.me.UnscaledTime\n 
+      local max_time = last_time + settings.avatar_detection_max_time\n  local timeout
+      = om.visible\n\n  return function ()\n    if not timeout then\n      local
+      now = vci.me.UnscaledTime\n      if now <= max_time then\n        if now -
+      last_time >= settings.avatar_detection_interval then\n          if not own_ava_
+      then\n            own_ava_ = vci.studio.GetLocalAvatar()\n            if own_ava_
+      then\n              om = member_from_avatar(own_ava_)\n            end\n         
+      else\n            om.visible = avatar_is_visible(own_ava_)\n          end\n\n         
+      if om.visible then\n            timeout = true\n          end\n        end\n     
+      else\n        timeout = true\n      end\n    end\n\n    return om\n  end\nend)()\n\n---@class
+      MemberStatus\n---@field world_type_index WorldTypeIndex\n---@field members
+      MemberMap\n---@field count number\n---@field visible_count number\n\n---@param
+      visible_id string\n---@param status MemberStatus\n---@return MemberStatus\nlocal
+      function merge_visible_id(visible_id, status)\n  local m_ = status.members[visible_id]\n 
+      if m_ then\n    if not m_.visible then\n      m_.visible = true\n      status.visible_count
+      = status.visible_count + 1\n    end\n  end\n  return status\nend\n\n---@param
+      member Member\n---@param status MemberStatus\n---@return MemberStatus\nlocal
+      function merge_member(member, status)\n  local id = member.id\n  local m_ =
+      status.members[id]\n  if m_ then\n    if not m_.visible and member.visible
+      then\n      status = merge_visible_id(id, status)\n    end\n  else\n    status.members[id]
       = member\n    status.count = status.count + 1\n    if member.visible then\n     
       status.visible_count = status.visible_count + 1\n    end\n  end\n\n  return
       status\nend\n\n---@param world_type_index WorldTypeIndex\n---@param avatars
@@ -405,16 +413,33 @@ MonoBehaviour:
       local m = member_from_avatar(ava)\n    local id = m.id\n\n    if not m.visible
       then\n      local pm = prev_members[id]\n      if pm and pm.visible then\n       
       m.visible = true\n      end\n    end\n\n    s = merge_member(m, s)\n  end\n\n 
-      return s\nend\n\n---@param member Member\n---@return string\nlocal function
-      member_to_string(member)\n  return (\n    member.visible and\n    settings.visible_symbol
-      or\n    settings.invisible_symbol\n  ) .. ' ' .. member.name\nend\n\n---@param
-      member Member\n---@param str string\n---@return string\nlocal function append_member_string(member,
-      str)\n  return str == '' and\n    member_to_string(member) or\n    (str ..
-      '\\n' .. member_to_string(member))\nend\n\nlocal list_body = get_game_object_transform(settings.list_body_name)\nlocal
-      initial_list_body_scale = list_body.GetLocalScale()\n\nlocal user_loaded =
-      false\nlocal pending_avatar_list_ = nil\nlocal last_play_notification_se_time
-      = TimeSpan.Zero\n\nlocal member_status = make_member_status(world_type(), {},
-      {})\n\n---@param status MemberStatus\nlocal function update_display(status)\n 
+      return s\nend\n\n---@param status MemberStatus\n---@return string[]\nlocal
+      function visible_member_id_list(status)\n  local j = 1\n  local ls = {}\n 
+      for _, m in pairs(status.members) do\n    if m.visible then\n      ls[j] =
+      m.id\n      j = j + 1\n    end\n  end\n  return ls\nend\n\n---@param member
+      Member\n---@return string\nlocal function member_to_string(member)\n  return
+      (\n    member.visible and\n    settings.visible_symbol or\n    settings.invisible_symbol\n 
+      ) .. ' ' .. member.name\nend\n\n---@param member Member\n---@param str string\n---@return
+      string\nlocal function append_member_string(member, str)\n  return str == ''
+      and\n    member_to_string(member) or\n    (str .. '\\n' .. member_to_string(member))\nend\n\n---@param
+      status MemberStatus\nlocal function member_status_to_display_string(status)\n 
+      local visible_buffer = ''\n  local invisible_buffer = ''\n\n  for _, m in pairs(status.members)
+      do\n    if m.visible then\n      visible_buffer = append_member_string(m, visible_buffer)\n   
+      else\n      invisible_buffer = append_member_string(m, invisible_buffer)\n   
+      end\n  end\n\n  local buffer = visible_buffer ..\n    ((visible_buffer == ''
+      or invisible_buffer == '') and '' or '\\n') ..\n    invisible_buffer\n\n  local
+      status_buffer = '[' ..\n    world_type_to_string(status.world_type_index) ..\n   
+      ', ' .. status.count ..\n    (\n      status.visible_count < status.count and\n     
+      ' (' .. settings.visible_symbol .. ' ' .. status.visible_count .. ')' or\n     
+      ''\n    ) .. ']'\n\n  local scale = Vector3.__new(\n    initial_list_body_scale.x,\n   
+      settings.list_body_row_height * math.max(1, status.count) +\n      settings.list_body_row_margin,\n   
+      initial_list_body_scale.z\n  )\n  list_body.SetLocalScale(scale)\n\n  vci.assets.SetText(settings.list_text_name,
+      buffer)\n  vci.assets.SetText(settings.status_text_name, status_buffer)\nend\n\nlocal
+      list_body = get_game_object_transform(settings.list_body_name)\nlocal initial_list_body_scale
+      = list_body.GetLocalScale()\n\nlocal user_loaded = false\nlocal pending_avatar_list_
+      = nil\nlocal last_play_notification_se_time = TimeSpan.Zero\n\nlocal member_status
+      = make_member_status(\n  world_type(),\n  vci.studio.GetAvatars() or {},\n 
+      {}\n)\n\n---@param status MemberStatus\nlocal function update_display(status)\n 
       local visible_buffer = ''\n  local invisible_buffer = ''\n\n  for _, m in pairs(status.members)
       do\n    if m.visible then\n      visible_buffer = append_member_string(m, visible_buffer)\n   
       else\n      invisible_buffer = append_member_string(m, invisible_buffer)\n   
@@ -440,17 +465,26 @@ MonoBehaviour:
       >= last_play_notification_se_time then\n          last_play_notification_se_time
       = now\n          vci.assets.audio.PlayOneShot(se_name, 1)\n        end\n     
       end\n    end\nend)\n\nvci.message.On(user_loaded_message_name, function (sender,
-      messageName, data)\n  local m_ = data.member\n  if m_ then\n    dlog('# on
+      messageName, value)\n  local m_ = value.member\n  if m_ then\n    dlog('# on
       user_loaded: ' ..\n          member_to_string(m_) .. ' | ' ..\n          tostring(m_.id))\n\n   
-      pending_avatar_list_ = vci.studio.GetAvatars() or pending_avatar_list_\n  end\nend)\n\nfunction
-      updateAll()\n  if not user_loaded then\n    local om = own_member()\n    if
-      om.visible then\n      user_loaded = true\n\n      vci.message.EmitWithId(user_loaded_message_name,
-      {\n        member = om,\n      }, vci.assets.GetInstanceId() or '')\n    end\n 
-      end\n\n  if pending_avatar_list_ then\n    member_status = make_member_status(\n     
-      world_type(),\n      pending_avatar_list_,\n      member_status.members\n   
-      )\n    pending_avatar_list_ = nil\n    update_display(member_status)\n  end\nend\n\nfunction
-      onUse(use)\n  if use == settings.list_name then\n    pending_avatar_list_ =
-      vci.studio.GetAvatars() or pending_avatar_list_\n\n    if pending_avatar_list_
+      member_status = merge_member(m_, member_status)\n    update_display(member_status)\n\n   
+      if vci.assets.IsMine and value.visible_count < member_status.visible_count\n   
+      then\n      emit_instance_message(member_status_message_name, {\n        visible_member_ids
+      = visible_member_id_list(member_status),\n        count = member_status.count,\n       
+      visible_count = member_status.visible_count,\n      })\n    end\n  end\nend)\n\nvci.message.On(member_status_message_name,
+      function (sender, messageName, value)\n  if not vci.assets.IsMine and member_status.visible_count
+      < value.visible_count\n  then\n    dlog('# on member_status: visible_count
+      = ' .. value.visible_count)\n    for _, id in pairs(value.visible_member_ids)
+      do\n      member_status = merge_visible_id(id, member_status)\n    end\n   
+      update_display(member_status)\n  end\nend)\n\nfunction updateAll()\n  if not
+      user_loaded then\n    local om = own_member()\n    if om.visible then\n     
+      user_loaded = true\n\n      emit_instance_message(user_loaded_message_name,
+      {\n        member = om,\n        count = member_status.count,\n        visible_count
+      = member_status.visible_count,\n      })\n    end\n  end\n\n  if pending_avatar_list_
+      then\n    member_status = make_member_status(\n      world_type(),\n      pending_avatar_list_,\n     
+      member_status.members\n    )\n    pending_avatar_list_ = nil\n    update_display(member_status)\n 
+      end\nend\n\nfunction onUse(use)\n  if use == settings.list_name then\n    pending_avatar_list_
+      = vci.studio.GetAvatars() or pending_avatar_list_\n\n    if pending_avatar_list_
       then\n      dlog_avatars(pending_avatar_list_)\n    end\n  end\nend\n"
 --- !u!4 &866287064
 Transform:
@@ -620,7 +654,7 @@ MonoBehaviour:
   Grabbable: 1
   Scalable: 1
   UniformScaling: 1
-  Attractable: 0
+  Attractable: 1
   GroupId: 0
   NodeIndex: 0
 --- !u!82 &1139708059

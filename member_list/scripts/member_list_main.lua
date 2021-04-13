@@ -26,10 +26,14 @@ local message_ns = 'com.github.oocytanb.oO-vci-pack.member_list'
 local user_loaded_message_name = message_ns .. '.user_loaded'
 local member_status_message_name = message_ns .. '.member_status'
 
+---@param name string
+---@return ExportTransform
 local function get_game_object_transform(name)
   return assert(vci.assets.GetTransform(name))
 end
 
+---@param messageName string
+---@param value any
 local function emit_instance_message(messageName, value)
   vci.message.EmitWithId(messageName, value, vci.assets.GetInstanceId() or '')
 end
@@ -53,6 +57,7 @@ local WorldType = {
 
 local world_type_string_list = { 'Studio', 'Room' }
 
+---@return WorldTypeIndex
 local world_type = (function ()
   local studio_item_detected = false
 
@@ -93,6 +98,7 @@ local function member_from_avatar(avatar)
   }
 end
 
+---@return Member
 local own_member = (function ()
   local own_ava_ = vci.studio.GetLocalAvatar()
 
@@ -234,21 +240,13 @@ local function append_member_string(member, str)
     (str .. '\n' .. member_to_string(member))
 end
 
-local list_body = get_game_object_transform(settings.list_body_name)
-local initial_list_body_scale = list_body.GetLocalScale()
-
-local user_loaded = false
-local pending_avatar_list_ = nil
-local last_play_notification_se_time = TimeSpan.Zero
-
-local member_status = make_member_status(
-  world_type(),
-  vci.studio.GetAvatars() or {},
-  {}
-)
+---@class MemberStatusStrings
+---@field status string
+---@field body string
 
 ---@param status MemberStatus
-local function update_display(status)
+---@return MemberStatusStrings
+local function member_status_to_strings(status)
   local visible_buffer = ''
   local invisible_buffer = ''
 
@@ -273,6 +271,27 @@ local function update_display(status)
       ''
     ) .. ']'
 
+  return {
+    status = status_buffer,
+    body = buffer,
+  }
+end
+
+local list_body = get_game_object_transform(settings.list_body_name)
+local initial_list_body_scale = list_body.GetLocalScale()
+
+local user_loaded = false
+local pending_avatar_list_ = nil
+local last_play_notification_se_time = TimeSpan.Zero
+
+local member_status = make_member_status(
+  world_type(),
+  vci.studio.GetAvatars() or {},
+  {}
+)
+
+---@param status MemberStatus
+local function update_display(status)
   local scale = Vector3.__new(
     initial_list_body_scale.x,
     settings.list_body_row_height * math.max(1, status.count) +
@@ -281,8 +300,9 @@ local function update_display(status)
   )
   list_body.SetLocalScale(scale)
 
-  vci.assets.SetText(settings.list_text_name, buffer)
-  vci.assets.SetText(settings.status_text_name, status_buffer)
+  local s = member_status_to_strings(status)
+  vci.assets.SetText(settings.list_text_name, s.body)
+  vci.assets.SetText(settings.status_text_name, s.status)
 end
 
 ---@param avatars ExportAvatar[]
