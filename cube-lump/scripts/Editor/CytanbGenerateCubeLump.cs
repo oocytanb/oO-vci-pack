@@ -5,7 +5,6 @@
 // 1. Select VCI Object.
 // 2. Run this script from `Cytanb/Generate cube-lump` menu.
 
-using NAudio.Wave;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;

@@ -19,6 +19,8 @@ namespace cytanb
 
         const string LUA_DIR = "Assets/oO-vci-pack/lua-modules";
 
+        const string COLLIDER_BOUNDS_SCRIPT_DIR = "Assets/oO-vci-pack/utility-scripts/ColliderBounds";
+
         static readonly Dictionary<string, string> EXCLUDE_EXTENSIONS = (new string[]{".blend", ".blend1", ".xcf", ".cwp"}).ToDictionary(ext => ext);
 
         [MenuItem(MENU_ITEM_KEY, true)]
@@ -41,7 +43,7 @@ namespace cytanb
             string targetPath = Directory.Exists(activePath) ? activePath : Path.GetDirectoryName(activePath);
             var outputPath = EditorUtility.SaveFilePanel("Save " + PACKAGE_SUFFIX, null, Path.GetFileName(targetPath) + "." + PACKAGE_SUFFIX, PACKAGE_SUFFIX);
             if (!string.IsNullOrWhiteSpace(outputPath)) {
-                var assetPathList = AssetDatabase.FindAssets("", new string[]{targetPath, LUA_DIR})
+                var assetPathList = AssetDatabase.FindAssets("", new string[]{targetPath, LUA_DIR, COLLIDER_BOUNDS_SCRIPT_DIR})
                     .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
                     .Distinct()
                     .Where(path => FilterAsset(path))

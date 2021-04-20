@@ -938,7 +938,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 47630206be542564fa00392669462c60, type: 3}
-    version: 0.2.1
+    version: 0.2.2
     description: 
     exporterVersion: 0.31
     specVersion: 
@@ -1128,14 +1128,15 @@ MonoBehaviour:
       local parameterValueReplacementMap\n\n        --- \u51FA\u529B\u3059\u308B\u30ED\u30B0\u30EC\u30D9\u30EB\u3002\n       
       local logLevel\n\n        --- \u30ED\u30B0\u51FA\u529B\u3059\u308B\u6642\u306B\u3001\u30ED\u30B0\u30EC\u30D9\u30EB\u306E\u6587\u5B57\u5217\u3092\u51FA\u529B\u3059\u308B\u304B\u3002\n       
       local outputLogLevelEnabled = false\n\n        --- \u30ED\u30B0\u30EC\u30D9\u30EB\u306E\u6587\u5B57\u5217\u30DE\u30C3\u30D7\u3002\n       
-      local logLevelStringMap\n\n        --- \u30AF\u30E9\u30A4\u30A2\u30F3\u30C8
-      ID \u306E\u6587\u5B57\u5217\u3002\n        local clientID\n\n        local
-      cytanb\n\n        local SearchStartsWithPred = function (position, searchLen)\n           
-      local ni = position + searchLen - 1\n            return position, ni, ni +
-      1\n        end\n\n        local SearchEndsWithPred = function (position, searchLen)\n           
-      local ni = position - searchLen + 1\n            return ni, position, ni -
-      1\n        end\n\n        local SearchPatternClass = function (str, strLen,
-      searchPattern, position, pred)\n            local searchMap = searchPattern.searchMap\n           
+      local logLevelStringMap\n\n        --- \u81EA\u8EAB\u306E ID \u306E\u6587\u5B57\u5217\u3002\n       
+      local ownID = ''\n\n        --- \u30AF\u30E9\u30A4\u30A2\u30F3\u30C8 ID \u306E\u6587\u5B57\u5217\u3002\n       
+      local clientID\n\n        local cytanb\n\n        local SearchStartsWithPred
+      = function (position, searchLen)\n            local ni = position + searchLen
+      - 1\n            return position, ni, ni + 1\n        end\n\n        local
+      SearchEndsWithPred = function (position, searchLen)\n            local ni =
+      position - searchLen + 1\n            return ni, position, ni - 1\n       
+      end\n\n        local SearchPatternClass = function (str, strLen, searchPattern,
+      position, pred)\n            local searchMap = searchPattern.searchMap\n           
       for _idx, searchLen in pairs(searchPattern.lengthList) do\n               
       if searchLen <= 0 then\n                    error('SearchPattern: Invalid parameter:
       searchLen <= 0')\n                else\n                    local si, ei, ni
@@ -1380,13 +1381,21 @@ MonoBehaviour:
       end)()\n            return {\n                Off = function ()\n                   
       r1.Off()\n                    r2.Off()\n                end\n            }\n       
       end\n\n        cytanb = {\n            InstanceID = function ()\n               
-      return vci.assets.GetInstanceId() or ''\n            end,\n\n            ClientID
-      = function ()\n                return clientID\n            end,\n\n           
-      NillableHasValue = function (nillable)\n                return nillable ~=
-      nil\n            end,\n\n            NillableValue = function (nillable)\n               
-      if nillable == nil then\n                    error('nillable: value is nil',
-      2)\n                end\n                return nillable\n            end,\n\n           
-      NillableValueOrDefault = function (nillable, defaultValue)\n               
+      return vci.assets.GetInstanceId() or ''\n            end,\n\n            ---
+      **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002`vci.studio.GetLocalAvatar()`
+      \u3067\u5F97\u3089\u308C\u308B\u30A2\u30D0\u30BF\u30FC\u306E ID \u3092\u53D6\u5F97\u3059\u308B\u3002ID
+      \u3092\u5F97\u3089\u308C\u306A\u3044\u5834\u5408\u306F\u3001\u7A7A\u6587\u5B57\u5217\u3092\u8FD4\u3059\u3002\n           
+      ---@return string\n            OwnID = function ()\n                if ownID
+      == '' then\n                    local ava_ = vci.studio.GetLocalAvatar()\n                   
+      if ava_ then\n                        ownID = ava_.GetId() or ''\n                   
+      end\n                end\n                return ownID\n            end,\n\n           
+      --- \u30AF\u30E9\u30A4\u30A2\u30F3\u30C8 ID \u3092\u53D6\u5F97\u3059\u308B\u3002\u30E6\u30FC\u30B6\u30FC\u30ED\u30FC\u30AB\u30EB\u3067\u751F\u6210\u3055\u308C\u308B\u3002\n           
+      -- @deprecated\n            ClientID = function ()\n                return
+      clientID\n            end,\n\n            NillableHasValue = function (nillable)\n               
+      return nillable ~= nil\n            end,\n\n            NillableValue = function
+      (nillable)\n                if nillable == nil then\n                    error('nillable:
+      value is nil', 2)\n                end\n                return nillable\n           
+      end,\n\n            NillableValueOrDefault = function (nillable, defaultValue)\n               
       if nillable == nil then\n                    if defaultValue == nil then\n                       
       error('nillable: defaultValue is nil', 2)\n                    end\n                   
       return defaultValue\n                else\n                    return nillable\n               
@@ -2262,18 +2271,20 @@ MonoBehaviour:
       ---@param optMaxWaitTime TimeSpan @\u540C\u671F\u304C\u5B8C\u4E86\u3059\u308B\u307E\u3067\u306E\u3001\u6700\u5927\u306E\u5F85\u3061\u6642\u9593\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306E\u65E2\u5B9A\u5024\u306F
       60 \u79D2\u3002\n            CreateUpdateRoutine = function (updateCallback,
       optFirstTimeCallback, optErrorCallback, optMaxWaitTime)\n                return
-      coroutine.wrap(function ()\n                    -- InstanceID \u3092\u53D6\u5F97\u3067\u304D\u308B\u307E\u3067\u5F85\u3064\u3002\n                   
+      coroutine.wrap(function ()\n                    -- InstanceID \u3068 OwnID
+      \u3092\u53D6\u5F97\u3067\u304D\u308B\u307E\u3067\u5F85\u3064\u3002\n                   
       local maxWaitTime = optMaxWaitTime or TimeSpan.FromSeconds(60)\n                   
       local unscaledStartTime = vci.me.UnscaledTime\n                    local unscaledLastTime
       = unscaledStartTime\n                    local lastTime = vci.me.Time\n                   
       local needWaiting = true\n                    while cytanb.InstanceID() ==
-      '' do\n                        local unscaledNow = vci.me.UnscaledTime\n                       
-      if unscaledNow - maxWaitTime > unscaledStartTime then\n                           
-      local reason = 'TIMEOUT: Could not receive Instance ID.'\n                           
-      cytanb.LogError(reason)\n                            if optErrorCallback then\n                               
-      optErrorCallback(reason)\n                            end\n                           
-      return -1\n                        end\n\n                        unscaledLastTime
-      = unscaledNow\n                        lastTime = vci.me.Time\n                       
+      '' or cytanb.OwnID() == '' do\n                        local unscaledNow =
+      vci.me.UnscaledTime\n                        if unscaledNow - maxWaitTime >
+      unscaledStartTime then\n                            local reason = 'TIMEOUT:
+      Could not get ' ..\n                                (cytanb.InstanceID() ==
+      '' and 'Instance ID' or 'Own ID')\n                            cytanb.LogError(reason)\n                           
+      if optErrorCallback then\n                                optErrorCallback(reason)\n                           
+      end\n                            return -1\n                        end\n\n                       
+      unscaledLastTime = unscaledNow\n                        lastTime = vci.me.Time\n                       
       needWaiting = false\n                        coroutine.yield(100)\n                   
       end\n\n                    if needWaiting then\n                        --
       VCI \u30A2\u30A4\u30C6\u30E0\u3092\u51FA\u3057\u3066 1 \u30D5\u30EC\u30FC\u30E0\u76EE\u306E
@@ -2441,26 +2452,31 @@ MonoBehaviour:
       DoUngrab = function ()\n                        grabbed = false\n                   
       end,\n\n                    --- `updateAll` \u95A2\u6570\u3067\u3001\u3053\u306E\u95A2\u6570\u3092\u547C\u3073\u51FA\u3059\u3053\u3068\u3002\n                   
       Update = function ()\n                        if grabbed then\n                           
-      local dp = colliderItem.GetPosition() - baseItem.GetPosition()\n                           
-      local tv = knobItem.GetRotation() * tickVector\n                           
-      local pv = Vector3.Project(dp, tv)\n                            local mv =
-      (Vector3.Dot(tv, pv) >= 0 and 1 or -1) * (pv.magnitude / tickMagnitude) + grabbedDeltaTicks\n                           
-      -- \u4E2D\u592E\u5024\u3092\u57FA\u6E96\u4F4D\u7F6E\u306E\u539F\u70B9\u3068\u3057\u3066\u8A08\u7B97\u3059\u308B\n                           
-      local fv = (snapToTick and cytanb.Round(mv) or mv) * tickFrequency + halfValue\n                           
-      local newValue = cytanb.Clamp(fv, minValue, maxValue)\n                           
+      if colliderItem.IsMine then\n                                local dp = colliderItem.GetPosition()
+      - baseItem.GetPosition()\n                                local tv = knobItem.GetRotation()
+      * tickVector\n                                local pv = Vector3.Project(dp,
+      tv)\n                                local mv = (Vector3.Dot(tv, pv) >= 0 and
+      1 or -1) * (pv.magnitude / tickMagnitude) + grabbedDeltaTicks\n                               
+      -- \u4E2D\u592E\u5024\u3092\u57FA\u6E96\u4F4D\u7F6E\u306E\u539F\u70B9\u3068\u3057\u3066\u8A08\u7B97\u3059\u308B\n                               
+      local mhv = mv + halfValue / tickFrequency\n                               
+      local fv = (snapToTick and cytanb.Round(mhv) or mhv) * tickFrequency\n                               
+      local newValue = cytanb.Clamp(fv, minValue, maxValue)\n                               
       -- cytanb.LogTrace('SlideSwitch: ', colliderItem.GetName() , ': newValue =
-      ', newValue, ', mv = ', mv, ', fv = ', fv)\n                            if
-      newValue ~= value then\n                                propertySetter(newValue)\n                           
-      end\n                        elseif gripPressed then\n                           
-      -- \u9577\u62BC\u3057\u72B6\u614B\u3067\u3042\u308C\u3070\u3001\u5024\u3092\u9032\u3081\u308B\u3002\n                           
-      local unow = vci.me.UnscaledTime\n                            if unow >= gripStartTime
-      + gripWaitTime and unow >= gripChangeTime + gripTickPeriod then\n                               
-      NextTickByUse()\n                            end\n                        elseif
-      colliderItem.IsMine then\n                            cytanb.AlignSubItemOrigin(baseItem,
-      colliderItem)\n                        end\n                    end\n               
-      }\n\n                UpdateValue(CalcValue(propertyGetter()), false)\n               
-      return self\n            end,\n\n            -- @deprecated \u975E\u63A8\u5968\u3002
-      \u30B5\u30D6\u30A2\u30A4\u30C6\u30E0\u9593\u306E\u4F4D\u7F6E\u3068\u56DE\u8EE2\u3092\u76F8\u4E92\u306B\u4F5C\u7528\u3055\u305B\u308B\u305F\u3081\u306E\u30B3\u30CD\u30AF\u30BF\u30FC\u3092\u4F5C\u6210\u3059\u308B\u3002\u30B9\u30B1\u30FC\u30EB\u306F\u975E\u5BFE\u5FDC\u3002\u30B5\u30D6\u30A2\u30A4\u30C6\u30E0\u306E\u30B0\u30EB\u30FC\u30D7ID\u306F\u3001\u30BC\u30ED\u4EE5\u5916\u306E\u540C\u3058\u5024\u3092\u8A2D\u5B9A\u3057\u3066\u304A\u304F\u5FC5\u8981\u304C\u3042\u308B\u3002\n           
+      ', newValue, ', mv = ', mv, ', fv = ', fv)\n                               
+      if newValue ~= value then\n                                    propertySetter(newValue)\n                               
+      end\n                            else\n                                grabbed
+      = false\n                            end\n                        elseif gripPressed
+      then\n                            if colliderItem.IsMine then\n                               
+      -- \u9577\u62BC\u3057\u72B6\u614B\u3067\u3042\u308C\u3070\u3001\u5024\u3092\u9032\u3081\u308B\u3002\n                               
+      local unow = vci.me.UnscaledTime\n                                if unow >=
+      gripStartTime + gripWaitTime and unow >= gripChangeTime + gripTickPeriod then\n                                   
+      NextTickByUse()\n                                end\n                           
+      else\n                                gripPressed = false\n                           
+      end\n                        elseif colliderItem.IsMine then\n                           
+      cytanb.AlignSubItemOrigin(baseItem, colliderItem)\n                       
+      end\n                    end\n                }\n\n                UpdateValue(CalcValue(propertyGetter()),
+      false)\n                return self\n            end,\n\n            -- @deprecated
+      \u975E\u63A8\u5968\u3002 \u30B5\u30D6\u30A2\u30A4\u30C6\u30E0\u9593\u306E\u4F4D\u7F6E\u3068\u56DE\u8EE2\u3092\u76F8\u4E92\u306B\u4F5C\u7528\u3055\u305B\u308B\u305F\u3081\u306E\u30B3\u30CD\u30AF\u30BF\u30FC\u3092\u4F5C\u6210\u3059\u308B\u3002\u30B9\u30B1\u30FC\u30EB\u306F\u975E\u5BFE\u5FDC\u3002\u30B5\u30D6\u30A2\u30A4\u30C6\u30E0\u306E\u30B0\u30EB\u30FC\u30D7ID\u306F\u3001\u30BC\u30ED\u4EE5\u5916\u306E\u540C\u3058\u5024\u3092\u8A2D\u5B9A\u3057\u3066\u304A\u304F\u5FC5\u8981\u304C\u3042\u308B\u3002\n           
       CreateSubItemConnector = function ()\n                local SetItemStatus =
       function (status, item, propagation)\n                    status.item = item\n\n                   
       status.position = item.GetPosition()\n                    status.rotation =
