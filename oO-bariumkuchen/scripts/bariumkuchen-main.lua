@@ -3,8 +3,11 @@
 ---@type cytanb @See `cytanb_annotations.lua`
 local cytanb = require('cytanb')(_ENV)
 
-onUse = function (use)
-    vci.assets._ALL_PlayAudioFromIndex(0)
+local item = assert(vci.assets.GetSubItem('SubItem-normal'))
+local se_clip = assert(item.GetAudioSources()[1])
+
+function onUse(use)
+    se_clip._ALL_PlayOneShot(1)
 end
 
 cytanb.OnMessage('cytanb.color-palette.item-status', function (sender, name, parameterMap)

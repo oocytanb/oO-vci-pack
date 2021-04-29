@@ -1765,6 +1765,14 @@ MonoBehaviour:
       local map = {}\n                for i, efk in pairs(efkList) do\n                   
       map[efk.EffectName] = efk\n                end\n                return map\n           
       end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002**
+      `ExportTransform.GetAudioSources` \u3067\u53D6\u5F97\u3057\u305F\u30EA\u30B9\u30C8\u3092\u3001`ClipName`
+      \u3092\u30AD\u30FC\u3068\u3059\u308B\u30DE\u30C3\u30D7\u306B\u3057\u3066\u8FD4\u3059\u3002\n           
+      ---@param item ExportTransform @`AudioSource` \u30B3\u30F3\u30DD\u30FC\u30CD\u30F3\u30C8\u304C\u8A2D\u5B9A\u3055\u308C\u3066\u3044\u308B\u3001\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u6307\u5B9A\u3059\u308B\u3002\n           
+      ---@return table<string, ExportAudioSource> @\u623B\u308A\u5024\u306E1\u756A\u76EE\u306B\u30BF\u30B0\u306E\u30DE\u30C3\u30D7\u3092\u30012\u756A\u76EE\u306B\u30D9\u30FC\u30B9\u540D\u3092\u8FD4\u3059\u3002\n           
+      GetAudioSourceMap = function (item)\n                local map = {}\n               
+      for _, audio in pairs(item.GetAudioSources() or {}) do\n                   
+      map[audio.ClipName or ''] = audio\n                end\n                return
+      map\n            end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002**
       \u30BF\u30B0\u6587\u5B57\u5217\u3092\u30D1\u30FC\u30B9\u3059\u308B\u3002\u6587\u5B57\u5217\u5168\u4F53\u306E\u66F8\u5F0F\u306F\u3001\u30D9\u30FC\u30B9\u540D\u306B
       0 \u500B\u4EE5\u4E0A\u306E\u30BF\u30B0\u304C\u7D9A\u304F\u3002`basename#tag1#tag2...#tagN`
       \u30BF\u30B0\u306E\u66F8\u5F0F\u306F\u3001\u30CF\u30C3\u30B7\u30E5\u8A18\u53F7
@@ -3206,7 +3214,7 @@ AudioSource:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 290695245}
+  m_GameObject: {fileID: 290695270}
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
@@ -3256,7 +3264,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0

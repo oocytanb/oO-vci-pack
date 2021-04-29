@@ -258,6 +258,102 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!82 &887016989
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 887016984}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 627111923d277d8439ead7278ae67abb, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &950759161
 GameObject:
   m_ObjectHideFlags: 0
@@ -566,190 +662,13 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!1 &1898780600
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1898780602}
-  - component: {fileID: 1898780601}
-  - component: {fileID: 1898780604}
-  - component: {fileID: 1898780603}
-  m_Layer: 0
-  m_Name: cytanb-sound-effect-stone
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1898780601
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1898780600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66b0828df2674da449a4ede7b8596dd5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Meta:
-    title: cytanb-sound-effect-stone
-    author: oO
-    contactInformation: 
-    reference: 
-    thumbnail: {fileID: 2800000, guid: 32fcd1e3fab49464f8a3a4ac7a7a91f3, type: 3}
-    version: 0.3.1
-    description: "- \u97F3\u58F0\u3068\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u518D\u751F\u3059\u308B
-      VCI \u306E\u7C21\u5358\u306A\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n- \u9752\u3068\u7DD1\u306E\u3001\u305D\u308C\u305E\u308C\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u30B0\u30EA\u30C3\u30D7\u3057\u3066\u4F7F\u7528\u3059\u308B\u3068\u3001\u518D\u751F\u304C\u958B\u59CB\u3055\u308C\u307E\u3059\u3002\r\n-
-      [\u30BD\u30FC\u30B9\u30B3\u30FC\u30C9\u3068\u8A73\u7D30](https://github.com/oocytanb/oO-vci-pack
-      )"
-    exporterVersion: 0.31
-    specVersion: 
-    modelDataLicenseType: 8
-    modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
-    scriptLicenseType: 8
-    scriptOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
-    scriptWriteProtected: 0
-    scriptEnableDebugging: 1
-    scriptFormat: 0
-  Scripts:
-  - name: main
-    mimeType: 0
-    targetEngine: 0
-    textAsset: {fileID: 1042094116111776886, guid: 9fb9ff9c05a387e43a70f3fad0793469,
-      type: 3}
-    source: "-- SPDX-License-Identifier: MIT\n-- Copyright (c) 2019 oO (https://github.com/oocytanb)\n\nlocal
-      locus_efk = vci.assets.GetEffekseerEmitter(\"green-stone\")\nlocal ripple_efk
-      = vci.assets.GetEffekseerEmitter(\"blue-stone\")\n\nonUse = function (use)\n   
-      if use == \"green-stone\" then\n        -- \"green-stone\" \u306E\u30A2\u30A4\u30C6\u30E0\u304C\u30B0\u30EA\u30C3\u30D7\u3055\u308C\u305F\u3089\u3001\u97F3\u58F0\u3068\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u518D\u751F\u3059\u308B\n       
-      vci.assets.audio._ALL_Play(\"sound-locus-se\", 1, false)\n        locus_efk._ALL_Play()\n   
-      elseif use == \"blue-stone\" then\n        -- \"blue-stone\" \u306E\u30A2\u30A4\u30C6\u30E0\u304C\u30B0\u30EA\u30C3\u30D7\u3055\u308C\u305F\u3089\u3001\u97F3\u58F0\u3068\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u518D\u751F\u3059\u308B\n       
-      vci.assets.audio._ALL_Play(\"sound-ripple-se\", 1, false)\n        ripple_efk._ALL_PlayOneShot()\n   
-      end\nend\n"
---- !u!4 &1898780602
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1898780600}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1367738984}
-  - {fileID: 887016983}
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!82 &1898780603
+--- !u!82 &1367738990
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1898780600}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 627111923d277d8439ead7278ae67abb, type: 3}
-  m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
---- !u!82 &1898780604
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1898780600}
+  m_GameObject: {fileID: 1367738985}
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
@@ -799,7 +718,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -839,3 +758,82 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &1898780600
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1898780602}
+  - component: {fileID: 1898780601}
+  m_Layer: 0
+  m_Name: cytanb-sound-effect-stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1898780601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898780600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66b0828df2674da449a4ede7b8596dd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Meta:
+    title: cytanb-sound-effect-stone
+    author: oO
+    contactInformation: 
+    reference: 
+    thumbnail: {fileID: 2800000, guid: 32fcd1e3fab49464f8a3a4ac7a7a91f3, type: 3}
+    version: 0.4.0
+    description: "- \u97F3\u58F0\u3068\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u518D\u751F\u3059\u308B
+      VCI \u306E\u7C21\u5358\u306A\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n- \u9752\u3068\u7DD1\u306E\u3001\u305D\u308C\u305E\u308C\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u30B0\u30EA\u30C3\u30D7\u3057\u3066\u4F7F\u7528\u3059\u308B\u3068\u3001\u518D\u751F\u304C\u958B\u59CB\u3055\u308C\u307E\u3059\u3002\r\n-
+      [\u30BD\u30FC\u30B9\u30B3\u30FC\u30C9\u3068\u8A73\u7D30](https://github.com/oocytanb/oO-vci-pack
+      )"
+    exporterVersion: 0.31
+    specVersion: 
+    modelDataLicenseType: 8
+    modelDataOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
+    scriptLicenseType: 8
+    scriptOtherLicenseUrl: https://github.com/oocytanb/oO-vci-pack
+    scriptWriteProtected: 0
+    scriptEnableDebugging: 1
+    scriptFormat: 0
+  Scripts:
+  - name: main
+    mimeType: 0
+    targetEngine: 0
+    textAsset: {fileID: 1042094116111776886, guid: 9fb9ff9c05a387e43a70f3fad0793469,
+      type: 3}
+    source: "-- SPDX-License-Identifier: MIT\n-- Copyright (c) 2019 oO (https://github.com/oocytanb)\n\nlocal
+      locus_efk = vci.assets.GetEffekseerEmitter(\"green-stone\")\nlocal ripple_efk
+      = vci.assets.GetEffekseerEmitter(\"blue-stone\")\n\nonUse = function (use)\n   
+      if use == \"green-stone\" then\n        -- \"green-stone\" \u306E\u30A2\u30A4\u30C6\u30E0\u304C\u30B0\u30EA\u30C3\u30D7\u3055\u308C\u305F\u3089\u3001\u97F3\u58F0\u3068\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u518D\u751F\u3059\u308B\n       
+      vci.assets.audio._ALL_Play(\"sound-locus-se\", 1, false)\n        locus_efk._ALL_Play()\n   
+      elseif use == \"blue-stone\" then\n        -- \"blue-stone\" \u306E\u30A2\u30A4\u30C6\u30E0\u304C\u30B0\u30EA\u30C3\u30D7\u3055\u308C\u305F\u3089\u3001\u97F3\u58F0\u3068\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u518D\u751F\u3059\u308B\n       
+      vci.assets.audio._ALL_Play(\"sound-ripple-se\", 1, false)\n        ripple_efk._ALL_PlayOneShot()\n   
+      end\nend\n"
+--- !u!4 &1898780602
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898780600}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1367738984}
+  - {fileID: 887016983}
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

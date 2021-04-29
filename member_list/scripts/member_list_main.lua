@@ -28,6 +28,12 @@ local member_status_message_name = message_ns .. '.member_status'
 
 ---@param name string
 ---@return ExportTransform
+local function get_sub_item(name)
+  return assert(vci.assets.GetSubItem(name))
+end
+
+---@param name string
+---@return ExportTransform
 local function get_game_object_transform(name)
   return assert(vci.assets.GetTransform(name))
 end
@@ -277,6 +283,21 @@ local function member_status_to_strings(status)
   }
 end
 
+local member_list_item = get_sub_item(settings.list_name)
+
+local notification_se_map = (function ()
+  local audio_sources = {}
+  for _, audio in pairs(member_list_item.GetAudioSources() or {}) do
+    audio_sources[audio.ClipName or ''] = audio
+  end
+
+  local se_map = {}
+  for k, clip_name in pairs(settings.notification_se_map) do
+    se_map[k] = assert(audio_sources[clip_name])
+  end
+  return se_map
+end)()
+
 local list_body = get_game_object_transform(settings.list_body_name)
 local initial_list_body_scale = list_body.GetLocalScale()
 
@@ -325,8 +346,8 @@ vci.message.On('notification', function (sender, messageName, message)
       tostring(sender.name) .. '" ' ..
       tostring(message))
 
-    local se_name = settings.notification_se_map[message]
-    if se_name then
+    local se_ = notification_se_map[message]
+    if se_ then
       local avatars_ = vci.studio.GetAvatars()
       if avatars_ then
         pending_avatar_list_ = avatars_
@@ -334,7 +355,7 @@ vci.message.On('notification', function (sender, messageName, message)
         local now = vci.me.UnscaledTime
         if now - settings.se_interval >= last_play_notification_se_time then
           last_play_notification_se_time = now
-          vci.assets.audio.PlayOneShot(se_name, 1)
+          se_.PlayOneShot(1)
         end
       end
     end

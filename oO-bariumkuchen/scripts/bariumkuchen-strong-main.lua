@@ -17,11 +17,14 @@ end
 -- カラーパレットが存在しない場合のデフォルト色。
 local DefaultARGB32 = 0xFF5573BE
 
+local item = assert(vci.assets.GetSubItem('SubItem-strong'))
+local se_clip = assert(item.GetAudioSources()[1])
+
 onUse = function (use)
     -- カラーパレットの共有変数から値を取得する。
     local color = ColorFromARGB32(vci.studio.shared.Get('com.github.oocytanb.cytanb-tso-collab.color-palette.argb32') or DefaultARGB32)
 
     print('onUse: ' .. use .. ',  color = ' .. tostring(color))
     vci.assets._ALL_SetMaterialColorFromIndex(0, color)
-    vci.assets._ALL_PlayAudioFromIndex(0)
+    se_clip._ALL_PlayOneShot(1)
 end

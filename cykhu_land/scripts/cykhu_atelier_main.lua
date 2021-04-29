@@ -149,7 +149,7 @@ end
 ---@return TransformStatus
 local function transform_bounds_to_mesh(status)
   local scale = status.mesh.GetLocalScale() * settings.bounds_scale_factor
-  if not cytanb.VectorApproximatelyEquals(scale, status.mesh.GetLocalScale())
+  if not cytanb.VectorApproximatelyEquals(scale, status.bounds_item.GetLocalScale())
   then
     status.bounds_item.SetLocalScale(scale)
   end

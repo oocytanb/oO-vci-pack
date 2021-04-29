@@ -56,7 +56,7 @@ local fixedTimestep
 -- VCAS の GetPosition() などは、前のフレームの値を返すため、時間も合わせる。
 local prevTime
 
-local ball, ballCup
+local ball, ballSeMap, ballCup
 local ballEfkContainer, ballEfk, ballEfkFade, ballEfkFadeMove, ballEfkFadeFly, ballEfkOne, ballEfkOneLarge, ballDiscernibleEfkPlayer
 local standLights, standLightEfkContainer, standLightHitEfk, standLightDirectHitEfk
 local colorPickers, currentColorPicker
@@ -282,7 +282,7 @@ local ProcessStatsCache = function ()
     end
 
     cytanb.EmitInstanceMessage(throwingStatsMessageName, {
-        clientID = cytanb.ClientID(),
+        clientID = cytanb.OwnID(),
         stats = {
             throwingCount = settings.statsLsp.GetProperty(settings.statsThrowingCountPropertyName, 0),
             throwingVelocity = cytanb.Vector3ToTable(statsCache.throwingVelocity),
@@ -400,7 +400,7 @@ end
 
 local CreateDiscernibleColorParameter = function ()
     return {
-        clientID = cytanb.ClientID(),
+        clientID = cytanb.OwnID(),
         discernibleColor = cytanb.ColorToTable(ballDiscernibleEfkPlayer.GetColor())
     }
 end
@@ -457,7 +457,7 @@ local EmitHitBall = function (targetName, hitBaseName)
     cytanb.EmitMessage(hitMessageName, {
         source = cytanb.Extend(CreateBallStatusParameter(), {
             velocity = cytanb.Vector3ToTable(velocity),
-            hitSourceID = cytanb.ClientID()
+            hitSourceID = cytanb.OwnID()
         }),
         target = {
             name = targetName
@@ -534,7 +534,7 @@ local HitStandLight = function (light)
     local now = vci.me.Time
     -- ライトが倒れた直後ならヒットしたものとして判定する
     if not ls.active and now <= ls.inactiveTime + settings.requestIntervalTime then
-        if ls.hitSourceID == cytanb.ClientID() then
+        if ls.hitSourceID == cytanb.OwnID() then
             IncrementStatsHitCount(settings.standLightBaseName)
         end
 
@@ -561,7 +561,7 @@ local HitStandLight = function (light)
                 clipName = settings.standLightHitAudioPrefix .. light.index
             end
             cytanb.LogTrace('play audio: ', clipName, ', volume = ', volume)
-            vci.assets.audio.PlayOneShot(clipName, volume)
+            light.seMap[clipName].PlayOneShot(volume)
         end
 
         ls.readyInactiveTime = TimeSpan.Zero
@@ -647,7 +647,7 @@ local PlayThrowingAudio = function (velocityMagnitude)
         local max = settings.ballMaxThrowingAudioVelocity
         local mvol = volume * (cytanb.Clamp(velocityMagnitude, min, max) - min) / (max - min)
         -- cytanb.LogTrace('play throwing audio: mvol = ', mvol)
-        vci.assets.audio.PlayOneShot(settings.ballThrowingAudioName, mvol)
+        ballSeMap[settings.ballThrowingAudioName].PlayOneShot(mvol)
     end
 end
 
@@ -1250,6 +1250,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
         local trsTime = prevTime
 
         ball = cytanb.NillableValue(vci.assets.GetSubItem(settings.ballName))
+        ballSeMap = cytanb.GetAudioSourceMap(ball)
 
         ballEfkContainer = cytanb.NillableValue(vci.assets.GetTransform(settings.ballEfkContainerName))
 
@@ -1286,6 +1287,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
             local entry = {
                 item = item,
                 index = index,
+                seMap = cytanb.GetAudioSourceMap(item),
                 status = cytanb.Extend(cytanb.Extend({}, standLightInitialStatus), {
                     respawnPosition = Vector3.__new(pos.x, math.max(pos.y, settings.standLightSimLongSide), pos.z),
                     respawnTime = trsTime,
@@ -1390,7 +1392,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
             end
 
             cytanb.EmitMessage(statusMessageName, {
-                clientID = cytanb.ClientID(),
+                clientID = cytanb.OwnID(),
                 discernibleColor = cytanb.ColorToTable(ballDiscernibleEfkPlayer.GetColor()),
                 ball = CreateBallStatusParameter(),
                 standLights = standLightsParameter
@@ -1399,7 +1401,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
 
         cytanb.OnMessage(statusMessageName, function (sender, name, parameterMap)
             if parameterMap[cytanb.InstanceIDParameterName] == cytanb.InstanceID() then
-                if parameterMap.clientID ~= cytanb.ClientID() then
+                if parameterMap.clientID ~= cytanb.OwnID() then
                     -- インスタンスの設置者から状態通知が来たので、ローカルの値を更新する
                     cytanb.LogDebug('onStatus @instance')
                     updateStatus(parameterMap)
@@ -1417,7 +1419,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
         end)
 
         cytanb.OnInstanceMessage(statusChangedMessageName, function (sender, name, parameterMap)
-            if parameterMap.clientID ~= cytanb.ClientID() then
+            if parameterMap.clientID ~= cytanb.OwnID() then
                 cytanb.LogDebug('onStatusChanged')
                 updateStatus(parameterMap)
             end
@@ -1471,7 +1473,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
                         cytanb.LogTrace('ready inactive: ', li.GetName(), ', directHit = ', ls.directHit)
                         ls.readyInactiveTime = now
 
-                        if li.IsMine and not ls.grabbed and parameterMap.hitSourceID ~= cytanb.ClientID() then
+                        if li.IsMine and not ls.grabbed and parameterMap.hitSourceID ~= cytanb.OwnID() then
                             -- ライトの操作権があり、メッセージのクライアントIDが自身のIDと異なる場合は、ソースの操作権が別ユーザーであるため、自力で倒れる
                             local hitVelocity
                             local sourceVelocity = source.velocity or Vector3.zero
@@ -1639,7 +1641,7 @@ onUngrab = function (target)
 
                 cytanb.LogTrace('emit StatusChanged: ', li.GetName(), ': respawnPosition = ', ls.respawnPosition)
                 cytanb.EmitInstanceMessage(statusChangedMessageName, {
-                    clientID = cytanb.ClientID(),
+                    clientID = cytanb.OwnID(),
                     standLights = {
                         [light.index] = {
                             name = li.GetName(),

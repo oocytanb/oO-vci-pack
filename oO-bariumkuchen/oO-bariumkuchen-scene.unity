@@ -222,7 +222,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 522739036}
-  - component: {fileID: 522739037}
   - component: {fileID: 522739035}
   m_Layer: 0
   m_Name: oO-bariumkuchen
@@ -249,7 +248,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 0d3e463dab056f340887491b71820a34, type: 3}
-    version: 1.4.1
+    version: 1.5.0
     description: "\u5225\u30A2\u30A4\u30C6\u30E0\u306E cytanb-color-palette \u3068\u9023\u52D5\u3055\u305B\u308B
       VCI \u306E\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n[\u8A73\u7D30](https://github.com/oocytanb/oO-vci-pack
       )"
@@ -269,8 +268,9 @@ MonoBehaviour:
     textAsset: {fileID: 1042094116111776886, guid: bd6c331e07ef5a24a8452009ad987917,
       type: 3}
     source: "-- SPDX-License-Identifier: MIT\n-- Copyright (c) 2019 oO (https://github.com/oocytanb)\n---@type
-      cytanb @See `cytanb_annotations.lua`\nlocal cytanb = require('cytanb')(_ENV)\n\nonUse
-      = function (use)\n    vci.assets._ALL_PlayAudioFromIndex(0)\nend\n\ncytanb.OnMessage('cytanb.color-palette.item-status',
+      cytanb @See `cytanb_annotations.lua`\nlocal cytanb = require('cytanb')(_ENV)\n\nlocal
+      item = assert(vci.assets.GetSubItem('SubItem-normal'))\nlocal se_clip = assert(item.GetAudioSources()[1])\n\nfunction
+      onUse(use)\n    se_clip._ALL_PlayOneShot(1)\nend\n\ncytanb.OnMessage('cytanb.color-palette.item-status',
       function (sender, name, parameterMap)\n    -- `parameterMap.color` \u306B\u30D1\u30EC\u30C3\u30C8\u3067\u9078\u629E\u3057\u305F\u8272\u60C5\u5831\u304C\u6E21\u3055\u308C\u307E\u3059\u3002\n   
       -- \u30ED\u30B0\u51FA\u529B\u3057\u3066\u78BA\u8A8D\u3057\u307E\u3059\u3002\n   
       print(tostring(parameterMap.color))\n\n    -- \u30DE\u30C6\u30EA\u30A2\u30EB\u306E\u8272\u3092\u5909\u66F4\u3057\u307E\u3059\u3002\n   
@@ -1109,6 +1109,14 @@ MonoBehaviour:
       local map = {}\n                for i, efk in pairs(efkList) do\n                   
       map[efk.EffectName] = efk\n                end\n                return map\n           
       end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002**
+      `ExportTransform.GetAudioSources` \u3067\u53D6\u5F97\u3057\u305F\u30EA\u30B9\u30C8\u3092\u3001`ClipName`
+      \u3092\u30AD\u30FC\u3068\u3059\u308B\u30DE\u30C3\u30D7\u306B\u3057\u3066\u8FD4\u3059\u3002\n           
+      ---@param item ExportTransform @`AudioSource` \u30B3\u30F3\u30DD\u30FC\u30CD\u30F3\u30C8\u304C\u8A2D\u5B9A\u3055\u308C\u3066\u3044\u308B\u3001\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u6307\u5B9A\u3059\u308B\u3002\n           
+      ---@return table<string, ExportAudioSource> @\u623B\u308A\u5024\u306E1\u756A\u76EE\u306B\u30BF\u30B0\u306E\u30DE\u30C3\u30D7\u3092\u30012\u756A\u76EE\u306B\u30D9\u30FC\u30B9\u540D\u3092\u8FD4\u3059\u3002\n           
+      GetAudioSourceMap = function (item)\n                local map = {}\n               
+      for _, audio in pairs(item.GetAudioSources() or {}) do\n                   
+      map[audio.ClipName or ''] = audio\n                end\n                return
+      map\n            end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002**
       \u30BF\u30B0\u6587\u5B57\u5217\u3092\u30D1\u30FC\u30B9\u3059\u308B\u3002\u6587\u5B57\u5217\u5168\u4F53\u306E\u66F8\u5F0F\u306F\u3001\u30D9\u30FC\u30B9\u540D\u306B
       0 \u500B\u4EE5\u4E0A\u306E\u30BF\u30B0\u304C\u7D9A\u304F\u3002`basename#tag1#tag2...#tagN`
       \u30BF\u30B0\u306E\u66F8\u5F0F\u306F\u3001\u30CF\u30C3\u30B7\u30E5\u8A18\u53F7
@@ -1831,102 +1839,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!82 &522739037
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 522739034}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 520b02e7a127d064a89ba219667cc75d, type: 3}
-  m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -2022,8 +1934,9 @@ GameObject:
   - component: {fileID: 917527398}
   - component: {fileID: 917527397}
   - component: {fileID: 917527396}
-  - component: {fileID: 917527395}
   - component: {fileID: 917527394}
+  - component: {fileID: 917527395}
+  - component: {fileID: 917527399}
   m_Layer: 0
   m_Name: SubItem-normal
   m_TagString: Untagged
@@ -2140,3 +2053,99 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 917527392}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!82 &917527399
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 917527392}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 520b02e7a127d064a89ba219667cc75d, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

@@ -332,7 +332,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: a8896f0e48921224c90b5a2c0732f242, type: 3}
-    version: 0.3.1
+    version: 0.4.0
     description: "- \u90E8\u5C4B\u306B\u5C45\u308B\u30E1\u30F3\u30D0\u30FC\u306E\u4E00\u89A7\u3092\u3059\u308B\u305F\u3081\u306E\u3001VCI
       \u306E\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n- \u30E1\u30F3\u30D0\u30FC\u306E\u5165\u9000\u5BA4\u6642\u306B\u3001\u52B9\u679C\u97F3\u304C\u9CF4\u308A\u307E\u3059\u3002"
     exporterVersion: 0.32
@@ -361,8 +361,10 @@ MonoBehaviour:
       end)(vci.studio.GetLocalAvatar()),\n}\n\nlocal message_ns = 'com.github.oocytanb.oO-vci-pack.member_list'\nlocal
       user_loaded_message_name = message_ns .. '.user_loaded'\nlocal member_status_message_name
       = message_ns .. '.member_status'\n\n---@param name string\n---@return ExportTransform\nlocal
-      function get_game_object_transform(name)\n  return assert(vci.assets.GetTransform(name))\nend\n\n---@param
-      messageName string\n---@param value any\nlocal function emit_instance_message(messageName,
+      function get_sub_item(name)\n  return assert(vci.assets.GetSubItem(name))\nend\n\n---@param
+      name string\n---@return ExportTransform\nlocal function get_game_object_transform(name)\n 
+      return assert(vci.assets.GetTransform(name))\nend\n\n---@param messageName
+      string\n---@param value any\nlocal function emit_instance_message(messageName,
       value)\n  vci.message.EmitWithId(messageName, value, vci.assets.GetInstanceId()
       or '')\nend\n\nlocal function noop()\n  -- Do nothing\nend\n\n---@type fun(msg:
       string)\nlocal dlog = settings.output_debug_log and print or noop\n\n---@alias
@@ -421,8 +423,9 @@ MonoBehaviour:
       (\n    member.visible and\n    settings.visible_symbol or\n    settings.invisible_symbol\n 
       ) .. ' ' .. member.name\nend\n\n---@param member Member\n---@param str string\n---@return
       string\nlocal function append_member_string(member, str)\n  return str == ''
-      and\n    member_to_string(member) or\n    (str .. '\\n' .. member_to_string(member))\nend\n\n---@param
-      status MemberStatus\nlocal function member_status_to_display_string(status)\n 
+      and\n    member_to_string(member) or\n    (str .. '\\n' .. member_to_string(member))\nend\n\n---@class
+      MemberStatusStrings\n---@field status string\n---@field body string\n\n---@param
+      status MemberStatus\n---@return MemberStatusStrings\nlocal function member_status_to_strings(status)\n 
       local visible_buffer = ''\n  local invisible_buffer = ''\n\n  for _, m in pairs(status.members)
       do\n    if m.visible then\n      visible_buffer = append_member_string(m, visible_buffer)\n   
       else\n      invisible_buffer = append_member_string(m, invisible_buffer)\n   
@@ -431,48 +434,42 @@ MonoBehaviour:
       status_buffer = '[' ..\n    world_type_to_string(status.world_type_index) ..\n   
       ', ' .. status.count ..\n    (\n      status.visible_count < status.count and\n     
       ' (' .. settings.visible_symbol .. ' ' .. status.visible_count .. ')' or\n     
-      ''\n    ) .. ']'\n\n  local scale = Vector3.__new(\n    initial_list_body_scale.x,\n   
-      settings.list_body_row_height * math.max(1, status.count) +\n      settings.list_body_row_margin,\n   
-      initial_list_body_scale.z\n  )\n  list_body.SetLocalScale(scale)\n\n  vci.assets.SetText(settings.list_text_name,
-      buffer)\n  vci.assets.SetText(settings.status_text_name, status_buffer)\nend\n\nlocal
+      ''\n    ) .. ']'\n\n  return {\n    status = status_buffer,\n    body = buffer,\n 
+      }\nend\n\nlocal member_list_item = get_sub_item(settings.list_name)\n\nlocal
+      notification_se_map = (function ()\n  local audio_sources = {}\n  for _, audio
+      in pairs(member_list_item.GetAudioSources() or {}) do\n    audio_sources[audio.ClipName
+      or ''] = audio\n  end\n\n  local se_map = {}\n  for k, clip_name in pairs(settings.notification_se_map)
+      do\n    se_map[k] = assert(audio_sources[clip_name])\n  end\n  return se_map\nend)()\n\nlocal
       list_body = get_game_object_transform(settings.list_body_name)\nlocal initial_list_body_scale
       = list_body.GetLocalScale()\n\nlocal user_loaded = false\nlocal pending_avatar_list_
       = nil\nlocal last_play_notification_se_time = TimeSpan.Zero\n\nlocal member_status
       = make_member_status(\n  world_type(),\n  vci.studio.GetAvatars() or {},\n 
       {}\n)\n\n---@param status MemberStatus\nlocal function update_display(status)\n 
-      local visible_buffer = ''\n  local invisible_buffer = ''\n\n  for _, m in pairs(status.members)
-      do\n    if m.visible then\n      visible_buffer = append_member_string(m, visible_buffer)\n   
-      else\n      invisible_buffer = append_member_string(m, invisible_buffer)\n   
-      end\n  end\n\n  local buffer = visible_buffer ..\n    ((visible_buffer == ''
-      or invisible_buffer == '') and '' or '\\n') ..\n    invisible_buffer\n\n  local
-      status_buffer = '[' ..\n    world_type_to_string(status.world_type_index) ..\n   
-      ', ' .. status.count ..\n    (\n      status.visible_count < status.count and\n     
-      ' (' .. settings.visible_symbol .. ' ' .. status.visible_count .. ')' or\n     
-      ''\n    ) .. ']'\n\n  local scale = Vector3.__new(\n    initial_list_body_scale.x,\n   
-      settings.list_body_row_height * math.max(1, status.count) +\n      settings.list_body_row_margin,\n   
-      initial_list_body_scale.z\n  )\n  list_body.SetLocalScale(scale)\n\n  vci.assets.SetText(settings.list_text_name,
-      buffer)\n  vci.assets.SetText(settings.status_text_name, status_buffer)\nend\n\n---@param
-      avatars ExportAvatar[]\nlocal function dlog_avatars(avatars)\n  if settings.output_debug_log
-      then\n    local buffer = 'member_list @ ' .. world_type_to_string(world_type())\n   
+      local scale = Vector3.__new(\n    initial_list_body_scale.x,\n    settings.list_body_row_height
+      * math.max(1, status.count) +\n      settings.list_body_row_margin,\n    initial_list_body_scale.z\n 
+      )\n  list_body.SetLocalScale(scale)\n\n  local s = member_status_to_strings(status)\n 
+      vci.assets.SetText(settings.list_text_name, s.body)\n  vci.assets.SetText(settings.status_text_name,
+      s.status)\nend\n\n---@param avatars ExportAvatar[]\nlocal function dlog_avatars(avatars)\n 
+      if settings.output_debug_log then\n    local buffer = 'member_list @ ' .. world_type_to_string(world_type())\n   
       for i, ava in ipairs(avatars) do\n      local m = member_from_avatar(ava)\n     
       buffer = buffer .. '\\n' ..\n        '[' .. i .. '] ' .. member_to_string(m)
       ..\n        ' | ' .. m.id\n    end\n\n    dlog(buffer)\n  end\nend\n\nvci.message.On('notification',
       function (sender, messageName, message)\n    dlog('# on notification: \"' ..\n     
-      tostring(sender.name) .. '\" ' ..\n      tostring(message))\n\n    local se_name
-      = settings.notification_se_map[message]\n    if se_name then\n      local avatars_
-      = vci.studio.GetAvatars()\n      if avatars_ then\n        pending_avatar_list_
-      = avatars_\n\n        local now = vci.me.UnscaledTime\n        if now - settings.se_interval
-      >= last_play_notification_se_time then\n          last_play_notification_se_time
-      = now\n          vci.assets.audio.PlayOneShot(se_name, 1)\n        end\n     
-      end\n    end\nend)\n\nvci.message.On(user_loaded_message_name, function (sender,
-      messageName, value)\n  local m_ = value.member\n  if m_ then\n    dlog('# on
-      user_loaded: ' ..\n          member_to_string(m_) .. ' | ' ..\n          tostring(m_.id))\n\n   
-      member_status = merge_member(m_, member_status)\n    update_display(member_status)\n\n   
-      if vci.assets.IsMine and value.visible_count < member_status.visible_count\n   
-      then\n      emit_instance_message(member_status_message_name, {\n        visible_member_ids
-      = visible_member_id_list(member_status),\n        count = member_status.count,\n       
-      visible_count = member_status.visible_count,\n      })\n    end\n  end\nend)\n\nvci.message.On(member_status_message_name,
-      function (sender, messageName, value)\n  if not vci.assets.IsMine and member_status.visible_count
+      tostring(sender.name) .. '\" ' ..\n      tostring(message))\n\n    local se_
+      = notification_se_map[message]\n    if se_ then\n      local avatars_ = vci.studio.GetAvatars()\n     
+      if avatars_ then\n        pending_avatar_list_ = avatars_\n\n        local
+      now = vci.me.UnscaledTime\n        if now - settings.se_interval >= last_play_notification_se_time
+      then\n          last_play_notification_se_time = now\n          se_.PlayOneShot(1)\n       
+      end\n      end\n    end\nend)\n\nvci.message.On(user_loaded_message_name, function
+      (sender, messageName, value)\n  local m_ = value.member\n  if m_ then\n   
+      dlog('# on user_loaded: ' ..\n          member_to_string(m_) .. ' | ' ..\n         
+      tostring(m_.id))\n\n    member_status = merge_member(m_, member_status)\n   
+      update_display(member_status)\n\n    if vci.assets.IsMine and value.visible_count
+      < member_status.visible_count\n    then\n      emit_instance_message(member_status_message_name,
+      {\n        visible_member_ids = visible_member_id_list(member_status),\n       
+      count = member_status.count,\n        visible_count = member_status.visible_count,\n     
+      })\n    end\n  end\nend)\n\nvci.message.On(member_status_message_name, function
+      (sender, messageName, value)\n  if not vci.assets.IsMine and member_status.visible_count
       < value.visible_count\n  then\n    dlog('# on member_status: visible_count
       = ' .. value.visible_count)\n    for _, id in pairs(value.visible_member_ids)
       do\n      member_status = merge_visible_id(id, member_status)\n    end\n   

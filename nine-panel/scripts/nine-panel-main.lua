@@ -67,7 +67,7 @@ local vciLoaded = false
 local hiddenPosition
 
 local ignoredColliderMap
-local panelBase, panelTilt, panelFrameOperatorLamp, panelMap
+local panelBase, panelSeMap, panelTilt, panelFrameOperatorLamp, panelMap
 local panelController, panelControllerOperatorLamp, panelControllerGlue
 local slideSwitchMap, audioVolumeSwitch, tiltSwitch
 local resetSwitch
@@ -170,7 +170,8 @@ local BreakPanel = function (panel)
 
     local audioVolume = audioVolumeSwitch.GetValue()
     if audioVolume > 0 then
-        vci.assets.audio.Play(settings.breakPanelAudioName, audioVolume / settings.audioVolumeMaxValue, false)
+        local mvol = audioVolume / settings.audioVolumeMaxValue
+        panelSeMap[settings.breakPanelAudioName].Play(mvol, false)
     end
 
     ShowPanelMesh(panel, false)
@@ -197,7 +198,7 @@ local PanelCollided = function (panel)
 
     cytanb.LogTrace('emit break-panel: ', panel.name)
     cytanb.EmitInstanceMessage(breakPanelMessageName, {
-        senderID = cytanb.ClientID(),
+        senderID = cytanb.OwnID(),
         target = CreatePanelStatusParameter(panel)
     })
     return true
@@ -267,7 +268,7 @@ local EmitResetMessage = function (broadcast, reason)
     cytanb.EmitMessage(resetMessageName, {
         resetAll = true,
         broadcast = not not broadcast,
-        senderID = cytanb.ClientID(),
+        senderID = cytanb.OwnID(), -- not used
         itemOperator = panelBase.IsMine,
         itemLayouter = vci.assets.IsMine,
         reason = reason or ''
@@ -297,7 +298,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
 
                     if panelBase.IsMine then
                         cytanb.EmitInstanceMessage(changePanelBaseMessageName, {
-                            senderID = cytanb.ClientID(),
+                            senderID = cytanb.OwnID(),
                             panelBase = CreatePanelBaseStatusParameter()
                         })
                     end
@@ -345,6 +346,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
         )
 
         panelBase = cytanb.NillableValue(vci.assets.GetSubItem(settings.panelBaseName))
+        panelSeMap = cytanb.GetAudioSourceMap(panelBase)
         panelTilt = cytanb.NillableValue(vci.assets.GetTransform(settings.panelTiltName))
 
         panelMap = {}
@@ -443,7 +445,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
         end)
 
         cytanb.OnInstanceMessage(changePanelBaseMessageName, function (sender, name, parameterMap)
-            if parameterMap.senderID ~= cytanb.ClientID() then
+            if parameterMap.senderID ~= cytanb.OwnID() then
                 OnChangePanelBase(parameterMap)
             end
         end)
@@ -461,14 +463,14 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
             end
 
             cytanb.EmitInstanceMessage(statusMessageName, {
-                senderID = cytanb.ClientID(),
+                senderID = cytanb.OwnID(),
                 panelBase = CreatePanelBaseStatusParameter(),
                 panels = panelStatusList
             })
         end)
 
         cytanb.OnInstanceMessage(statusMessageName, function (sender, name, parameterMap)
-            if parameterMap.senderID ~= cytanb.ClientID() then
+            if parameterMap.senderID ~= cytanb.OwnID() then
                 cytanb.LogTrace('on statusMessage')
                 OnChangePanelBase(parameterMap)
 
