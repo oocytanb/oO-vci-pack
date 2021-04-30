@@ -1,19 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!136 &1644842087
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6283377354719646085}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.05464102
-  m_Height: 0.575
-  m_Direction: 1
-  m_Center: {x: 0.0000000037252903, y: 0.28750005, z: -0.0000000018626451}
 --- !u!54 &1644842088
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -30,24 +16,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!114 &1644842086
-MonoBehaviour:
+--- !u!136 &1644842087
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6283377354719646085}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed42f86ebdb20ba4597c4e753b47ee4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Grabbable: 1
-  Scalable: 0
-  UniformScaling: 0
-  Attractable: 1
-  GroupId: 0
-  NodeIndex: 0
+  m_Radius: 0.05464102
+  m_Height: 0.575
+  m_Direction: 1
+  m_Center: {x: 0.0000000037252903, y: 0.28750005, z: -0.0000000018626451}
 --- !u!82 &1644842089
 AudioSource:
   m_ObjectHideFlags: 0
@@ -104,7 +86,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0.98
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -200,7 +182,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0.98
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -296,7 +278,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0.98
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -392,7 +374,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0.98
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -432,6 +414,24 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1644842086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6283377354719646085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed42f86ebdb20ba4597c4e753b47ee4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Grabbable: 1
+  Scalable: 0
+  UniformScaling: 0
+  Attractable: 1
+  GroupId: 0
+  NodeIndex: 0
 --- !u!1001 &6283377354719745831
 PrefabInstance:
   m_ObjectHideFlags: 0

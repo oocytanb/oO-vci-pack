@@ -570,7 +570,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 4e67f7acde0eab644ab2d6fefce9cbd9, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 4e67f7acde0eab644ab2d6fefce9cbd9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -662,13 +662,44 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!82 &1367738990
+--- !u!1 &1444922452
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1444922453}
+  - component: {fileID: 1444922454}
+  m_Layer: 0
+  m_Name: green-stone-audio-source
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1444922453
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1444922452}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1367738984}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1444922454
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1367738985}
+  m_GameObject: {fileID: 1444922452}
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
@@ -793,9 +824,10 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 32fcd1e3fab49464f8a3a4ac7a7a91f3, type: 3}
-    version: 0.4.0
+    version: 0.5.0
     description: "- \u97F3\u58F0\u3068\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u518D\u751F\u3059\u308B
-      VCI \u306E\u7C21\u5358\u306A\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n- \u9752\u3068\u7DD1\u306E\u3001\u305D\u308C\u305E\u308C\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u30B0\u30EA\u30C3\u30D7\u3057\u3066\u4F7F\u7528\u3059\u308B\u3068\u3001\u518D\u751F\u304C\u958B\u59CB\u3055\u308C\u307E\u3059\u3002\r\n-
+      VCI \u306E\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n- \u9752\u3068\u7DD1\u306E\u3001\u305D\u308C\u305E\u308C\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u30B0\u30EA\u30C3\u30D7\u3057\u3066\u4F7F\u7528\u3059\u308B\u3068\u3001\u518D\u751F\u304C\u958B\u59CB\u3055\u308C\u307E\u3059\u3002\r\n-
+      \u7DD1\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u306E\u97F3\u58F0\u306F\u3001\u30A8\u30D5\u30A7\u30AF\u30C8\u306E\u8ECC\u8DE1\u306B\u6CBF\u3063\u3066\u3001\u97F3\u306E\u767A\u751F\u6E90\u304C\u79FB\u52D5\u3057\u307E\u3059\u3002\n-
       [\u30BD\u30FC\u30B9\u30B3\u30FC\u30C9\u3068\u8A73\u7D30](https://github.com/oocytanb/oO-vci-pack
       )"
     exporterVersion: 0.31
@@ -814,13 +846,40 @@ MonoBehaviour:
     textAsset: {fileID: 1042094116111776886, guid: 9fb9ff9c05a387e43a70f3fad0793469,
       type: 3}
     source: "-- SPDX-License-Identifier: MIT\n-- Copyright (c) 2019 oO (https://github.com/oocytanb)\n\nlocal
-      locus_efk = vci.assets.GetEffekseerEmitter(\"green-stone\")\nlocal ripple_efk
-      = vci.assets.GetEffekseerEmitter(\"blue-stone\")\n\nonUse = function (use)\n   
-      if use == \"green-stone\" then\n        -- \"green-stone\" \u306E\u30A2\u30A4\u30C6\u30E0\u304C\u30B0\u30EA\u30C3\u30D7\u3055\u308C\u305F\u3089\u3001\u97F3\u58F0\u3068\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u518D\u751F\u3059\u308B\n       
-      vci.assets.audio._ALL_Play(\"sound-locus-se\", 1, false)\n        locus_efk._ALL_Play()\n   
-      elseif use == \"blue-stone\" then\n        -- \"blue-stone\" \u306E\u30A2\u30A4\u30C6\u30E0\u304C\u30B0\u30EA\u30C3\u30D7\u3055\u308C\u305F\u3089\u3001\u97F3\u58F0\u3068\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u518D\u751F\u3059\u308B\n       
-      vci.assets.audio._ALL_Play(\"sound-ripple-se\", 1, false)\n        ripple_efk._ALL_PlayOneShot()\n   
-      end\nend\n"
+      blue_stone_name = 'blue-stone'\nlocal green_stone_name = 'green-stone'\nlocal
+      green_audio_source_name = 'green-stone-audio-source'\nlocal green_audio_total_time
+      = TimeSpan.FromSeconds(6)\nlocal green_audio_throttle_time = TimeSpan.FromMilliseconds(100)\n\nlocal
+      locus_velocity = Vector3.__new(0, 1.2, 0)\nlocal locus_rotation_axis = Vector3.down\nlocal
+      locus_rotation_angle_per_sec = math.deg(5.25)\nlocal locus_head_position =
+      Vector3.__new(1, 0, 0)\n\nlocal blue_stone = assert(vci.assets.GetSubItem(blue_stone_name))\nlocal
+      green_stone = assert(vci.assets.GetSubItem(green_stone_name))\nlocal green_audio_source
+      = assert(\n    vci.assets.GetTransform(green_audio_source_name)\n)\n\nlocal
+      ripple_se = assert(blue_stone.GetAudioSources()[1])\nlocal locus_se = assert(green_audio_source.GetAudioSources()[1])\n\nlocal
+      ripple_efk = vci.assets.GetEffekseerEmitter(blue_stone_name)\nlocal locus_efk
+      = vci.assets.GetEffekseerEmitter(green_stone_name)\n\nlocal message_ns = 'com.github.oocytanb.oO-vci-pack.cytanb-sound-effect-stone'\nlocal
+      play_locus_message_name = message_ns .. '.play_locus'\n\nlocal green_start_time
+      = TimeSpan.Zero\nlocal green_start_position = Vector3.zero\nlocal green_start_rotation
+      = Quaternion.identity\n\n-- 'blue-stone' \u306E\u97F3\u3068\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u518D\u751F\u3059\u308B\nlocal
+      function play_ripple()\n    ripple_se._ALL_Play(1, false)\n    ripple_efk._ALL_PlayOneShot()\nend\n\nlocal
+      function calc_green_audio_source_position(position, rotation, t)\n    local
+      head_rot = Quaternion.AngleAxis(\n        locus_rotation_angle_per_sec * t,\n       
+      locus_rotation_axis\n    )\n\n    local head_pos = locus_velocity * t + head_rot
+      * locus_head_position\n\n    return position + rotation * head_pos\nend\n\nlocal
+      function move_green_audio_source(t)\n    local pos = calc_green_audio_source_position(\n       
+      green_start_position,\n        green_start_rotation,\n        t\n    )\n\n   
+      green_audio_source.SetPosition(pos)\nend\n\n-- 'green-stone' \u306E\u97F3\u3068\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u518D\u751F\u3059\u308B\n--
+      \u518D\u751F\u4F4D\u7F6E\u3068\u30A8\u30D5\u30A7\u30AF\u30C8\u306E\u30BF\u30A4\u30DF\u30F3\u30B0\u3092\u5408\u308F\u305B\u308B\u305F\u3081\u306B\u3001\u30E1\u30C3\u30BB\u30FC\u30B8\u3067\u53D7\u4FE1\u3059\u308B\nvci.message.On(play_locus_message_name,
+      function (name, sender, value)\n    green_start_time = vci.me.UnscaledTime\n   
+      green_start_position = green_stone.GetPosition()\n    green_start_rotation
+      = green_stone.GetRotation()\n    green_audio_source.SetRotation(green_start_rotation)\n   
+      move_green_audio_source(0)\n\n    locus_se.Play(1, false)\n    locus_efk.Play()\nend)\n\nfunction
+      updateAll()\n    local dt = vci.me.UnscaledTime - green_start_time\n    if
+      dt <= green_audio_total_time then\n        move_green_audio_source(dt.TotalSeconds)\n   
+      end\nend\n\nfunction onUse(use)\n    if use == 'blue-stone' then\n        play_ripple()\n   
+      elseif use == 'green-stone' then\n        if vci.me.UnscaledTime - green_audio_throttle_time
+      >= green_start_time\n        then\n            vci.message.EmitWithId(\n               
+      play_locus_message_name,\n                '',\n                vci.assets.GetInstanceId()\n           
+      )\n        end\n    end\nend\n"
 --- !u!4 &1898780602
 Transform:
   m_ObjectHideFlags: 0

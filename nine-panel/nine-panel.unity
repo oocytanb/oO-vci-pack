@@ -703,7 +703,7 @@ MonoBehaviour:
       .. '.break-panel'\nlocal changePanelBaseMessageName = panelNS .. '.change-panel-base'\n\nlocal
       cballNS = 'com.github.oocytanb.oO-vci-pack.cball'\nlocal hitMessageName = cballNS
       .. '.hit'\n\nlocal vciLoaded = false\n\nlocal hiddenPosition\n\nlocal ignoredColliderMap\nlocal
-      panelBase, panelTilt, panelFrameOperatorLamp, panelMap\nlocal panelController,
+      panelBase, panelSeMap, panelTilt, panelFrameOperatorLamp, panelMap\nlocal panelController,
       panelControllerOperatorLamp, panelControllerGlue\nlocal slideSwitchMap, audioVolumeSwitch,
       tiltSwitch\nlocal resetSwitch\n\nlocal breakEfkContainer, breakEfk\n\nlocal
       panelBaseStatus = {\n    --- \u30D5\u30EC\u30FC\u30E0\u304C\u3064\u304B\u307E\u308C\u3066\u3044\u308B\u304B\u3002\n   
@@ -736,27 +736,27 @@ MonoBehaviour:
       return false\n    end\n\n    cytanb.LogTrace('break-panel: ', panel.name)\n\n   
       panel.active = false\n    panel.inactiveTime = vci.me.UnscaledTime\n\n    cytanb.AlignSubItemOrigin(panel.posItem,
       breakEfkContainer)\n    breakEfk.Play()\n\n    local audioVolume = audioVolumeSwitch.GetValue()\n   
-      if audioVolume > 0 then\n        vci.assets.audio.Play(settings.breakPanelAudioName,
-      audioVolume / settings.audioVolumeMaxValue, false)\n    end\n\n    ShowPanelMesh(panel,
-      false)\n\n    local item = panel.item\n    if item.IsMine then\n        item.SetPosition(hiddenPosition
-      + panel.posItem.GetLocalPosition())\n        item.SetRotation(Quaternion.identity)\n       
-      item.SetVelocity(Vector3.zero)\n        item.SetAngularVelocity(Vector3.zero)\n   
-      end\n\n    return true\nend\n\nlocal PanelCollided = function (panel)\n   
-      if not panel.item.IsMine then\n        return false\n    end\n\n    if not
-      BreakPanel(panel) then\n        return false\n    end\n\n    cytanb.LogTrace('emit
-      break-panel: ', panel.name)\n    cytanb.EmitInstanceMessage(breakPanelMessageName,
-      {\n        senderID = cytanb.ClientID(),\n        target = CreatePanelStatusParameter(panel)\n   
-      })\n    return true\nend\n\nlocal MendPanel = function (panel)\n    if not
-      panel.active then\n        return\n    end\n\n    local item = panel.item\n   
-      if item.IsMine then\n        cytanb.AlignSubItemOrigin(panel.posItem, item,
-      true)\n    end\nend\n\nlocal MendAllPanels = function ()\n    local alive =
-      false\n    for name, panel in pairs(panelMap) do\n        if panel.active then\n           
-      alive = true\n        end\n        MendPanel(panel)\n    end\n\n    local now
-      = vci.me.UnscaledTime\n    panelBaseStatus.lastMendedTime = now\n\n    if panelBase.IsMine
-      and not alive and panelBaseStatus.gameCompletedTime <= TimeSpan.Zero then\n       
-      cytanb.LogTrace('Game Completed!!')\n        panelBaseStatus.gameCompletedTime
-      = now\n    end\nend\n\nlocal NormalizePanelBaseRotation = function ()\n   
-      if panelBase.IsMine then\n        local baseAngles = panelBase.GetRotation().eulerAngles\n       
+      if audioVolume > 0 then\n        local mvol = audioVolume / settings.audioVolumeMaxValue\n       
+      panelSeMap[settings.breakPanelAudioName].Play(mvol, false)\n    end\n\n   
+      ShowPanelMesh(panel, false)\n\n    local item = panel.item\n    if item.IsMine
+      then\n        item.SetPosition(hiddenPosition + panel.posItem.GetLocalPosition())\n       
+      item.SetRotation(Quaternion.identity)\n        item.SetVelocity(Vector3.zero)\n       
+      item.SetAngularVelocity(Vector3.zero)\n    end\n\n    return true\nend\n\nlocal
+      PanelCollided = function (panel)\n    if not panel.item.IsMine then\n       
+      return false\n    end\n\n    if not BreakPanel(panel) then\n        return
+      false\n    end\n\n    cytanb.LogTrace('emit break-panel: ', panel.name)\n   
+      cytanb.EmitInstanceMessage(breakPanelMessageName, {\n        senderID = cytanb.OwnID(),\n       
+      target = CreatePanelStatusParameter(panel)\n    })\n    return true\nend\n\nlocal
+      MendPanel = function (panel)\n    if not panel.active then\n        return\n   
+      end\n\n    local item = panel.item\n    if item.IsMine then\n        cytanb.AlignSubItemOrigin(panel.posItem,
+      item, true)\n    end\nend\n\nlocal MendAllPanels = function ()\n    local alive
+      = false\n    for name, panel in pairs(panelMap) do\n        if panel.active
+      then\n            alive = true\n        end\n        MendPanel(panel)\n   
+      end\n\n    local now = vci.me.UnscaledTime\n    panelBaseStatus.lastMendedTime
+      = now\n\n    if panelBase.IsMine and not alive and panelBaseStatus.gameCompletedTime
+      <= TimeSpan.Zero then\n        cytanb.LogTrace('Game Completed!!')\n       
+      panelBaseStatus.gameCompletedTime = now\n    end\nend\n\nlocal NormalizePanelBaseRotation
+      = function ()\n    if panelBase.IsMine then\n        local baseAngles = panelBase.GetRotation().eulerAngles\n       
       if baseAngles.x ^ 2 + baseAngles.z ^ 2 >= 1E-10 then\n            -- cytanb.LogTrace('panel
       base rotation Y: ', baseAngles.y)\n            panelBase.SetRotation(Quaternion.AngleAxis(baseAngles.y,
       Vector3.up))\n        end\n    end\nend\n\nlocal SetPanelBaseTilt = function
@@ -768,7 +768,7 @@ MonoBehaviour:
       = vci.me.UnscaledTime\n    panelBaseStatus.gameCompletedTime = TimeSpan.Zero\nend\n\nlocal
       EmitResetMessage = function (broadcast, reason)\n    cytanb.EmitMessage(resetMessageName,
       {\n        resetAll = true,\n        broadcast = not not broadcast,\n       
-      senderID = cytanb.ClientID(),\n        itemOperator = panelBase.IsMine,\n       
+      senderID = cytanb.OwnID(), -- not used\n        itemOperator = panelBase.IsMine,\n       
       itemLayouter = vci.assets.IsMine,\n        reason = reason or ''\n    })\nend\n\nlocal
       UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(\n    function (deltaTime,
       unscaledDeltaTime)\n        settings.lsp.UpdateAlive()\n        panelControllerGlue.Update()\n\n       
@@ -780,7 +780,7 @@ MonoBehaviour:
       then\n                    panelBaseStatus.tiltChanged = false\n                   
       panelBaseStatus.tiltSentTime = now\n\n                    if panelBase.IsMine
       then\n                        cytanb.EmitInstanceMessage(changePanelBaseMessageName,
-      {\n                            senderID = cytanb.ClientID(),\n                           
+      {\n                            senderID = cytanb.OwnID(),\n                           
       panelBase = CreatePanelBaseStatusParameter()\n                        })\n                   
       end\n                end\n\n                -- \u30D1\u30CD\u30EB\u306E\u4F4D\u7F6E\u95A2\u4FC2\u3092\u3001\u30A4\u30F3\u30BF\u30FC\u30D0\u30EB\u3092\u8A2D\u3051\u3066\u76F4\u3059\n               
       if now >= panelBaseStatus.lastMendedTime + settings.panelMendIntervalTime then\n                   
@@ -806,7 +806,7 @@ MonoBehaviour:
       = cytanb.Extend(\n            cytanb.ListToMap(settings.avatarColliders, true),\n           
       cytanb.ListToMap(settings.envColliders, true),\n            false, false\n       
       )\n\n        panelBase = cytanb.NillableValue(vci.assets.GetSubItem(settings.panelBaseName))\n       
-      panelTilt = cytanb.NillableValue(vci.assets.GetTransform(settings.panelTiltName))\n\n       
+      panelSeMap = cytanb.GetAudioSourceMap(panelBase)\n        panelTilt = cytanb.NillableValue(vci.assets.GetTransform(settings.panelTiltName))\n\n       
       panelMap = {}\n\n        for i = 1, settings.panelCount do\n            local
       name = settings.panelColliderPrefix .. i\n\n            ignoredColliderMap[name]
       = true\n\n            local panel = {\n                index = i,\n               
@@ -859,7 +859,7 @@ MonoBehaviour:
       function (panel)\n                    BreakPanel(panel)\n                end)\n           
       end)\n        end)\n\n        cytanb.OnInstanceMessage(changePanelBaseMessageName,
       function (sender, name, parameterMap)\n            if parameterMap.senderID
-      ~= cytanb.ClientID() then\n                OnChangePanelBase(parameterMap)\n           
+      ~= cytanb.OwnID() then\n                OnChangePanelBase(parameterMap)\n           
       end\n        end)\n\n        -- \u30DE\u30B9\u30BF\u30FC\u304C\u4EA4\u4EE3\u3057\u305F\u3068\u304D\u306E\u3053\u3068\u3092\u8003\u616E\u3057\u3066\u3001\u5168\u30E6\u30FC\u30B6\u30FC\u304C
       OnMessage \u3067\u767B\u9332\u3059\u308B\u3002\n        cytanb.OnInstanceMessage(queryStatusMessageName,
       function (sender, name, parameterMap)\n            if not vci.assets.IsMine
@@ -867,10 +867,10 @@ MonoBehaviour:
       return\n            end\n\n            local panelStatusList = {}\n           
       for key, panel in pairs(panelMap) do\n                panelStatusList[panel.index]
       = CreatePanelStatusParameter(panel)\n            end\n\n            cytanb.EmitInstanceMessage(statusMessageName,
-      {\n                senderID = cytanb.ClientID(),\n                panelBase
-      = CreatePanelBaseStatusParameter(),\n                panels = panelStatusList\n           
+      {\n                senderID = cytanb.OwnID(),\n                panelBase =
+      CreatePanelBaseStatusParameter(),\n                panels = panelStatusList\n           
       })\n        end)\n\n        cytanb.OnInstanceMessage(statusMessageName, function
-      (sender, name, parameterMap)\n            if parameterMap.senderID ~= cytanb.ClientID()
+      (sender, name, parameterMap)\n            if parameterMap.senderID ~= cytanb.OwnID()
       then\n                cytanb.LogTrace('on statusMessage')\n               
       OnChangePanelBase(parameterMap)\n\n                for key, panelParameters
       in pairs(parameterMap.panels) do\n                    cytanb.NillableIfHasValue(panelMap[panelParameters.name],
@@ -3264,7 +3264,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0.98
       inSlope: 0
       outSlope: 0
       tangentMode: 0
