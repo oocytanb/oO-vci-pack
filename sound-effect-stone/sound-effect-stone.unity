@@ -464,7 +464,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -605,7 +605,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1351073866}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.19, z: -10}
+  m_LocalPosition: {x: 0, y: 1.66, z: -1.71}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -906,7 +906,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 32fcd1e3fab49464f8a3a4ac7a7a91f3, type: 3}
-    version: 0.6.0
+    version: 0.6.1
     description: "- \u97F3\u58F0\u3068\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u518D\u751F\u3059\u308B
       VCI \u306E\u30B5\u30F3\u30D7\u30EB\u3067\u3059\u3002\n- \u9752\u3068\u7DD1\u306E\u3001\u305D\u308C\u305E\u308C\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u30B0\u30EA\u30C3\u30D7\u3057\u3066\u4F7F\u7528\u3059\u308B\u3068\u3001\u518D\u751F\u304C\u958B\u59CB\u3055\u308C\u307E\u3059\u3002\r\n-
       \u7DD1\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u306E\u97F3\u58F0\u306F\u3001\u30A8\u30D5\u30A7\u30AF\u30C8\u306E\u8ECC\u8DE1\u306B\u6CBF\u3063\u3066\u3001\u97F3\u306E\u767A\u751F\u6E90\u304C\u79FB\u52D5\u3057\u307E\u3059\u3002\n-
@@ -949,10 +949,11 @@ MonoBehaviour:
       \u30A8\u30D5\u30A7\u30AF\u30C8\u3068\u97F3\u6E90\u306E\u4F4D\u7F6E\u3092\u5408\u308F\u305B\u308B\u305F\u3081\u306B\u3001\u30E1\u30C3\u30BB\u30FC\u30B8\u3092\u53D7\u4FE1\u3057\u305F\u30BF\u30A4\u30DF\u30F3\u30B0\u3067\u3001\n--
       \u30E6\u30FC\u30B6\u30FC\u30ED\u30FC\u30AB\u30EB\u3067\u518D\u751F\u3092\u884C\u3044\u307E\u3059\u3002\nvci.message.On(play_locus_message_name,
       function (name, sender, value)\n    green_audio_source_anim_root.SetPosition(green_stone.GetPosition())\n   
-      green_audio_source_anim_root.SetRotation(green_stone.GetRotation())\n    green_animator.PlayFromName(green_audio_source_anim_name,
-      false)\n    locus_se.Play(1, false)\n    locus_efk.Play()\nend)\n\nfunction
-      onUse(use)\n    if use == 'blue-stone' then\n        play_ripple()\n    elseif
-      use == 'green-stone' then\n        vci.message.EmitWithId(\n            play_locus_message_name,\n           
+      green_audio_source_anim_root.SetRotation(green_stone.GetRotation())\n    green_animator.Stop()\n   
+      green_animator.PlayFromName(green_audio_source_anim_name, false)\n    locus_se.Play(1,
+      false)\n    locus_efk.Play()\nend)\n\nfunction onUse(use)\n    if use == 'blue-stone'
+      then\n        play_ripple()\n    elseif use == 'green-stone' then\n       
+      vci.message.EmitWithId(\n            play_locus_message_name,\n           
       '',\n            vci.assets.GetInstanceId()\n        )\n    end\nend\n"
 --- !u!4 &1898780602
 Transform:

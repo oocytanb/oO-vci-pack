@@ -1834,7 +1834,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 753107a3c841da84eb4bd95304b50ca6, type: 3}
-    version: 0.20.0
+    version: 0.20.1
     description: "- \u30DC\u30FC\u30EB\u3092\u3064\u304B\u3093\u3067\u6295\u3052\u308B\u3060\u3051\u3002\u6C17\u8EFD\u306B\u904A\u3093\u3067\u697D\u3057\u3093\u3067\u304F\u3060\u3055\u3044\u3002\n-
       \u30AB\u30C3\u30D7\u3092\u30B0\u30EA\u30C3\u30D7\u3059\u308B\u3068\u3001\u30DC\u30FC\u30EB\u304C\u623B\u3063\u3066\u304D\u307E\u3059\u3002\n-
       \u5B89\u5168\u306B\u6CE8\u610F\u3092\u6255\u3063\u3066\u3054\u5229\u7528\u304F\u3060\u3055\u3044\u3002\n[\u8A73\u7D30](https://github.com/oocytanb/oO-vci-pack
@@ -1880,13 +1880,14 @@ MonoBehaviour:
       = false\n\nlocal hiddenPosition\n\nlocal avatarColliderMap = cytanb.ListToMap(settings.avatarColliders,
       true)\nlocal timestepEstimater\nlocal fixedTimestep\n\n-- VCAS \u306E GetPosition()
       \u306A\u3069\u306F\u3001\u524D\u306E\u30D5\u30EC\u30FC\u30E0\u306E\u5024\u3092\u8FD4\u3059\u305F\u3081\u3001\u6642\u9593\u3082\u5408\u308F\u305B\u308B\u3002\nlocal
-      prevTime\n\nlocal ball, ballCup\nlocal ballEfkContainer, ballEfk, ballEfkFade,
-      ballEfkFadeMove, ballEfkFadeFly, ballEfkOne, ballEfkOneLarge, ballDiscernibleEfkPlayer\nlocal
-      standLights, standLightEfkContainer, standLightHitEfk, standLightDirectHitEfk\nlocal
-      colorPickers, currentColorPicker\nlocal impactForceGauge, impactSpinGauge\nlocal
-      settingsPanel, settingsPanelGlue, closeSwitch\nlocal slideSwitchMap, velocitySwitch,
-      angularVelocitySwitch, altitudeSwitch, throwingAdjustmentSwitch, gravitySwitch,
-      efkLevelSwitch, audioVolumeSwitch\n\nlocal ballStatus = {\n    --- \u30DC\u30FC\u30EB\u304C\u3064\u304B\u307E\u308C\u3066\u3044\u308B\u304B\u3002\n   
+      prevTime\n\nlocal ball, ballSeMap, ballCup\nlocal ballEfkContainer, ballEfk,
+      ballEfkFade, ballEfkFadeMove, ballEfkFadeFly, ballEfkOne, ballEfkOneLarge,
+      ballDiscernibleEfkPlayer\nlocal standLights, standLightEfkContainer, standLightHitEfk,
+      standLightDirectHitEfk\nlocal colorPickers, currentColorPicker\nlocal impactForceGauge,
+      impactSpinGauge\nlocal settingsPanel, settingsPanelGlue, closeSwitch\nlocal
+      slideSwitchMap, velocitySwitch, angularVelocitySwitch, altitudeSwitch, throwingAdjustmentSwitch,
+      gravitySwitch, efkLevelSwitch, audioVolumeSwitch\n\nlocal ballStatus = {\n   
+      --- \u30DC\u30FC\u30EB\u304C\u3064\u304B\u307E\u308C\u3066\u3044\u308B\u304B\u3002\n   
       grabbed = false,\n\n    --- \u30DC\u30FC\u30EB\u304C\u30B0\u30EA\u30C3\u30D7\u3055\u308C\u305F\u304B\u3002\n   
       gripPressed = false,\n\n    --- \u30DC\u30FC\u30EB\u304C\u30B0\u30EA\u30C3\u30D7\u3055\u308C\u305F\u6642\u9593\u3002\n   
       gripStartTime = TimeSpan.Zero,\n\n    --- \u30DC\u30FC\u30EB\u3092\u6295\u3052\u305F\u6642\u9593\u3002\n   
@@ -1973,8 +1974,8 @@ MonoBehaviour:
       local settingsValues = {}\n    for switchName, parameter in pairs(settings.switchParameters)
       do\n        settingsValues[parameter.propertyName] = slideSwitchMap[switchName].GetValue()\n   
       end\n\n    cytanb.EmitInstanceMessage(throwingStatsMessageName, {\n       
-      clientID = cytanb.ClientID(),\n        stats = {\n            throwingCount
-      = settings.statsLsp.GetProperty(settings.statsThrowingCountPropertyName, 0),\n           
+      clientID = cytanb.OwnID(),\n        stats = {\n            throwingCount =
+      settings.statsLsp.GetProperty(settings.statsThrowingCountPropertyName, 0),\n           
       throwingVelocity = cytanb.Vector3ToTable(statsCache.throwingVelocity),\n           
       throwingAngularVelocity = cytanb.Vector3ToTable(statsCache.throwingAngularVelocity),\n           
       throwingPosition = cytanb.Vector3ToTable(statsCache.throwingPosition),\n           
@@ -2020,11 +2021,11 @@ MonoBehaviour:
       mc)\nend\n\nlocal OfferBallTransform = function (position, rotation, time)\n   
       ballStatus.transformQueue.Offer({position = position, rotation = rotation,
       time = time})\nend\n\nlocal CreateDiscernibleColorParameter = function ()\n   
-      return {\n        clientID = cytanb.ClientID(),\n        discernibleColor =
-      cytanb.ColorToTable(ballDiscernibleEfkPlayer.GetColor())\n    }\nend\n\nlocal
-      CreateBallStatusParameter = function ()\n    return {\n        name = ball.GetName(),\n       
-      position = cytanb.Vector3ToTable(ball.GetPosition()),\n        rotation = cytanb.QuaternionToTable(ball.GetRotation()),\n       
-      longSide = settings.ballSimLongSide,\n        mass = settings.ballSimMass,\n       
+      return {\n        clientID = cytanb.OwnID(),\n        discernibleColor = cytanb.ColorToTable(ballDiscernibleEfkPlayer.GetColor())\n   
+      }\nend\n\nlocal CreateBallStatusParameter = function ()\n    return {\n       
+      name = ball.GetName(),\n        position = cytanb.Vector3ToTable(ball.GetPosition()),\n       
+      rotation = cytanb.QuaternionToTable(ball.GetRotation()),\n        longSide
+      = settings.ballSimLongSide,\n        mass = settings.ballSimMass,\n       
       grabbed = ballStatus.grabbed,\n        operator = ball.IsMine\n    }\nend\n\nlocal
       CreateStandLightStatusParameter = function (light)\n    local li = light.item\n   
       local ls = light.status\n    return {\n        name = li.GetName(),\n       
@@ -2045,7 +2046,7 @@ MonoBehaviour:
       cytanb.LogTrace('  emit ', hitMessageName, ': target = ', targetName, ', velocity
       = ', velocity, ', boundCount = ', ballStatus.boundCount)\n    cytanb.EmitMessage(hitMessageName,
       {\n        source = cytanb.Extend(CreateBallStatusParameter(), {\n           
-      velocity = cytanb.Vector3ToTable(velocity),\n            hitSourceID = cytanb.ClientID()\n       
+      velocity = cytanb.Vector3ToTable(velocity),\n            hitSourceID = cytanb.OwnID()\n       
       }),\n        target = {\n            name = targetName\n        },\n       
       directHit = ballStatus.boundCount == 0\n    })\n\n    -- \u30E9\u30A4\u30C8\u4EE5\u5916\u306E\u30BF\u30FC\u30B2\u30C3\u30C8\u306B\u5F53\u305F\u3063\u305F\u3089\u3001\u30D2\u30C3\u30C8\u30AB\u30A6\u30F3\u30C8\u3092\u66F4\u65B0\u3059\u308B\u3002\n   
       -- \u30E9\u30A4\u30C8\u306F\u81EA\u524D\u3067\u5012\u308C\u305F\u51E6\u7406\u3092\u3057\u3066\u3044\u308B\u306E\u3067\u3001\u305D\u3061\u3089\u3067\u30AB\u30A6\u30F3\u30C8\u3059\u308B\u3002\n   
@@ -2078,7 +2079,7 @@ MonoBehaviour:
       function (light)\n    local li = light.item\n    local ls = light.status\n   
       local now = vci.me.Time\n    -- \u30E9\u30A4\u30C8\u304C\u5012\u308C\u305F\u76F4\u5F8C\u306A\u3089\u30D2\u30C3\u30C8\u3057\u305F\u3082\u306E\u3068\u3057\u3066\u5224\u5B9A\u3059\u308B\n   
       if not ls.active and now <= ls.inactiveTime + settings.requestIntervalTime
-      then\n        if ls.hitSourceID == cytanb.ClientID() then\n            IncrementStatsHitCount(settings.standLightBaseName)\n       
+      then\n        if ls.hitSourceID == cytanb.OwnID() then\n            IncrementStatsHitCount(settings.standLightBaseName)\n       
       end\n\n        local efkLevel = efkLevelSwitch.GetValue()\n        if efkLevel
       == 5 and ball.IsMine then\n            -- \u30EC\u30D9\u30EB 5 \u3067\u3001\u30DC\u30FC\u30EB\u306E\u64CD\u4F5C\u6A29\u304C\u3042\u308B\u3068\u304D\u306F\u3001\u30EC\u30D9\u30EB
       6 \u306E\u30A8\u30D5\u30A7\u30AF\u30C8\u3092\u8868\u793A\u3059\u308B\n           
@@ -2091,7 +2092,7 @@ MonoBehaviour:
       clipName\n            if ls.directHit then\n                clipName = settings.standLightDirectHitAudioName\n           
       else\n                clipName = settings.standLightHitAudioPrefix .. light.index\n           
       end\n            cytanb.LogTrace('play audio: ', clipName, ', volume = ', volume)\n           
-      vci.assets.audio.PlayOneShot(clipName, volume)\n        end\n\n        ls.readyInactiveTime
+      light.seMap[clipName].PlayOneShot(volume)\n        end\n\n        ls.readyInactiveTime
       = TimeSpan.Zero\n    end\nend\n\n--- \u30B2\u30FC\u30B8\u3092\u30EA\u30BB\u30C3\u30C8\u3059\u308B\u3002\nlocal
       ResetGauge = function ()\n    impactStatus.phase = 0\n    impactStatus.spinGaugeRatio
       = 0\n    impactStatus.forceGaugeRatio = 0\n    impactStatus.gaugeStartTime
@@ -2123,7 +2124,7 @@ MonoBehaviour:
       > min then\n        local max = settings.ballMaxThrowingAudioVelocity\n       
       local mvol = volume * (cytanb.Clamp(velocityMagnitude, min, max) - min) / (max
       - min)\n        -- cytanb.LogTrace('play throwing audio: mvol = ', mvol)\n       
-      vci.assets.audio.PlayOneShot(settings.ballThrowingAudioName, mvol)\n    end\nend\n\nlocal
+      ballSeMap[settings.ballThrowingAudioName].PlayOneShot(mvol)\n    end\nend\n\nlocal
       IsInThrowingMotion = function ()\n    local queueSize = ballStatus.transformQueue.Size()\n   
       if not ball.IsMine or queueSize < 2 then\n        return false\n    end\n\n   
       local head = ballStatus.transformQueue.Get(queueSize)\n    local prev = ballStatus.transformQueue.Get(queueSize
@@ -2427,8 +2428,8 @@ MonoBehaviour:
       = cytanb.EstimateFixedTimestep(\n            cytanb.NillableValue(vci.assets.GetTransform('timestep-estimater')),\n           
       settings.timestepEstimaterParameter\n        )\n        fixedTimestep = timestepEstimater.Timestep()\n       
       prevTime = vci.me.Time\n        local trsTime = prevTime\n\n        ball =
-      cytanb.NillableValue(vci.assets.GetSubItem(settings.ballName))\n\n        ballEfkContainer
-      = cytanb.NillableValue(vci.assets.GetTransform(settings.ballEfkContainerName))\n\n       
+      cytanb.NillableValue(vci.assets.GetSubItem(settings.ballName))\n        ballSeMap
+      = cytanb.GetAudioSourceMap(ball)\n\n        ballEfkContainer = cytanb.NillableValue(vci.assets.GetTransform(settings.ballEfkContainerName))\n\n       
       local ballEfkMap = cytanb.GetEffekseerEmitterMap(settings.ballEfkContainerName)\n       
       ballEfk = cytanb.NillableValue(ballEfkMap[settings.ballEfkName])\n        ballEfkFade
       = cytanb.NillableValue(ballEfkMap[settings.ballEfkFadeName])\n        ballEfkFadeMove
@@ -2445,12 +2446,13 @@ MonoBehaviour:
       local name = settings.standLightPrefix .. index .. '#'\n            local item
       = cytanb.NillableValue(vci.assets.GetSubItem(name))\n            local pos
       = item.GetPosition()\n            local entry = {\n                item = item,\n               
-      index = index,\n                status = cytanb.Extend(cytanb.Extend({}, standLightInitialStatus),
-      {\n                    respawnPosition = Vector3.__new(pos.x, math.max(pos.y,
-      settings.standLightSimLongSide), pos.z),\n                    respawnTime =
-      trsTime,\n                    grabbed = false,\n                })\n           
-      }\n            standLights[name] = entry\n            colorPickers[name] =
-      entry\n        end\n\n        standLightEfkContainer = cytanb.NillableValue(vci.assets.GetTransform(settings.standLightEfkContainerName))\n\n       
+      index = index,\n                seMap = cytanb.GetAudioSourceMap(item),\n               
+      status = cytanb.Extend(cytanb.Extend({}, standLightInitialStatus), {\n                   
+      respawnPosition = Vector3.__new(pos.x, math.max(pos.y, settings.standLightSimLongSide),
+      pos.z),\n                    respawnTime = trsTime,\n                    grabbed
+      = false,\n                })\n            }\n            standLights[name]
+      = entry\n            colorPickers[name] = entry\n        end\n\n        standLightEfkContainer
+      = cytanb.NillableValue(vci.assets.GetTransform(settings.standLightEfkContainerName))\n\n       
       local standLightEfkMap = cytanb.GetEffekseerEmitterMap(settings.standLightEfkContainerName)\n       
       standLightHitEfk = cytanb.NillableValue(standLightEfkMap[settings.standLightHitEfkName])\n       
       standLightDirectHitEfk = cytanb.NillableValue(standLightEfkMap[settings.standLightDirectHitEfkName])\n\n       
@@ -2499,11 +2501,11 @@ MonoBehaviour:
       local standLightsParameter = {}\n            for lightName, light in pairs(standLights)
       do\n                standLightsParameter[light.index] = CreateStandLightStatusParameter(light)\n           
       end\n\n            cytanb.EmitMessage(statusMessageName, {\n               
-      clientID = cytanb.ClientID(),\n                discernibleColor = cytanb.ColorToTable(ballDiscernibleEfkPlayer.GetColor()),\n               
+      clientID = cytanb.OwnID(),\n                discernibleColor = cytanb.ColorToTable(ballDiscernibleEfkPlayer.GetColor()),\n               
       ball = CreateBallStatusParameter(),\n                standLights = standLightsParameter\n           
       })\n        end)\n\n        cytanb.OnMessage(statusMessageName, function (sender,
       name, parameterMap)\n            if parameterMap[cytanb.InstanceIDParameterName]
-      == cytanb.InstanceID() then\n                if parameterMap.clientID ~= cytanb.ClientID()
+      == cytanb.InstanceID() then\n                if parameterMap.clientID ~= cytanb.OwnID()
       then\n                    -- \u30A4\u30F3\u30B9\u30BF\u30F3\u30B9\u306E\u8A2D\u7F6E\u8005\u304B\u3089\u72B6\u614B\u901A\u77E5\u304C\u6765\u305F\u306E\u3067\u3001\u30ED\u30FC\u30AB\u30EB\u306E\u5024\u3092\u66F4\u65B0\u3059\u308B\n                   
       cytanb.LogDebug('onStatus @instance')\n                    updateStatus(parameterMap)\n               
       end\n            else\n                -- \u4ED6\u306E\u30A4\u30F3\u30B9\u30BF\u30F3\u30B9\u306E\u8B58\u5225\u8272\u3092\u53CE\u96C6\u3059\u308B\n               
@@ -2515,7 +2517,7 @@ MonoBehaviour:
       = ', parameterMap.discernibleColor)\n                        discernibleColorStatus.existentIndexTable[colorIndex]
       = true\n                    end\n                end\n            end\n       
       end)\n\n        cytanb.OnInstanceMessage(statusChangedMessageName, function
-      (sender, name, parameterMap)\n            if parameterMap.clientID ~= cytanb.ClientID()
+      (sender, name, parameterMap)\n            if parameterMap.clientID ~= cytanb.OwnID()
       then\n                cytanb.LogDebug('onStatusChanged')\n                updateStatus(parameterMap)\n           
       end\n        end)\n\n        cytanb.OnInstanceMessage(respawnBallMessageName,
       function (sender, name, parameterMap)\n            RespawnBall()\n        end)\n\n       
@@ -2544,7 +2546,7 @@ MonoBehaviour:
       -- \u30E9\u30A4\u30C8\u304C\u5012\u308C\u3066\u3044\u306A\u3044\u306E\u3067\u3001\u30EC\u30C7\u30A3\u72B6\u614B\u3092\u30BB\u30C3\u30C8\u3059\u308B\n                       
       cytanb.LogTrace('ready inactive: ', li.GetName(), ', directHit = ', ls.directHit)\n                       
       ls.readyInactiveTime = now\n\n                        if li.IsMine and not
-      ls.grabbed and parameterMap.hitSourceID ~= cytanb.ClientID() then\n                           
+      ls.grabbed and parameterMap.hitSourceID ~= cytanb.OwnID() then\n                           
       -- \u30E9\u30A4\u30C8\u306E\u64CD\u4F5C\u6A29\u304C\u3042\u308A\u3001\u30E1\u30C3\u30BB\u30FC\u30B8\u306E\u30AF\u30E9\u30A4\u30A2\u30F3\u30C8ID\u304C\u81EA\u8EAB\u306EID\u3068\u7570\u306A\u308B\u5834\u5408\u306F\u3001\u30BD\u30FC\u30B9\u306E\u64CD\u4F5C\u6A29\u304C\u5225\u30E6\u30FC\u30B6\u30FC\u3067\u3042\u308B\u305F\u3081\u3001\u81EA\u529B\u3067\u5012\u308C\u308B\n                           
       local hitVelocity\n                            local sourceVelocity = source.velocity
       or Vector3.zero\n                            local horzSqrMagnitude = sourceVelocity.x
@@ -2636,7 +2638,7 @@ MonoBehaviour:
       ls.respawnPosition = pos.y >= ry and pos or Vector3.__new(pos.x, ry, pos.z)\n\n               
       cytanb.LogTrace('emit StatusChanged: ', li.GetName(), ': respawnPosition =
       ', ls.respawnPosition)\n                cytanb.EmitInstanceMessage(statusChangedMessageName,
-      {\n                    clientID = cytanb.ClientID(),\n                    standLights
+      {\n                    clientID = cytanb.OwnID(),\n                    standLights
       = {\n                        [light.index] = {\n                           
       name = li.GetName(),\n                            respawnPosition = cytanb.Vector3ToTable(ls.respawnPosition)\n                       
       }\n                    }\n                })\n            end\n        end)\n\n       
@@ -2886,7 +2888,7 @@ MonoBehaviour:
       `require` \u95A2\u6570\u3092 `main.lua` \u30B9\u30AF\u30EA\u30D7\u30C8\u304B\u3089
       `cytanb = cytanb or require('cytanb')(_ENV)` \u3068\u3057\u3066\u547C\u3073\u51FA\u3059\u3002\n\n--
       **`cytanb.lua` \u3092\u30E2\u30B8\u30E5\u30FC\u30EB\u3068\u3057\u3066\u5229\u7528\u3059\u308B\u5834\u5408\u306F\u3001\u6B21\u306E\u884C\u3092\u6709\u52B9\u306B\u3059\u308B\u3053\u3068\u3002**\nlocal
-      __CYTANB_EXPORT_MODULE = true\n\n---@type cytanb @See `cytanb_annotations.lua`\nlocal
+      __CYTANB_EXPORT_MODULE = true\n\n---@type cytanb @Final Version. See `cytanb_annotations.lua`\nlocal
       cytanb = (function ()\n    local makeImpl = function (_ENV)\n        if not
       require or not vci then\n            error('Invalid _ENV: Enable `__CYTANB_EXPORT_MODULE
       = true` line and pass valid _ENV of VCI-main if use cytanb.lua as module.',
@@ -4105,8 +4107,9 @@ MonoBehaviour:
       ---@field valueTextName string @\u5024\u3092\u30C6\u30AD\u30B9\u30C8\u8868\u793A\u3059\u308B\u5834\u5408\u306F\u3001`TextMesh
       Pro` \u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u540D\u3092\u6307\u5B9A\u3059\u308B\u3002\u7701\u7565\u53EF\u80FD\u3002\n           
       ---@field valueToText fun(source: cytanb_slide_switch_t, value: string): string
-      @ \u5024\u3092\u30C6\u30AD\u30B9\u30C8\u8868\u793A\u3059\u308B\u969B\u306B\u3001\u5024\u3092\u6587\u5B57\u5217\u3078\u5909\u63DB\u3059\u308B\u305F\u3081\u306E\u95A2\u6570\u3092\u6307\u5B9A\u3059\u308B\u3053\u3068\u304C\u3067\u304D\u308B\u3002\u4F7F\u7528\u3057\u306A\u3044\u5834\u5408\u306F\u7701\u7565\u53EF\u80FD\u3002\n\n           
-      --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u306E\u305F\u3081\u5909\u66F4\u3055\u308C\u308B\u53EF\u80FD\u6027\u304C\u3042\u308B\u3002**
+      @\u5024\u3092\u30C6\u30AD\u30B9\u30C8\u8868\u793A\u3059\u308B\u969B\u306B\u3001\u5024\u3092\u6587\u5B57\u5217\u3078\u5909\u63DB\u3059\u308B\u305F\u3081\u306E\u95A2\u6570\u3092\u6307\u5B9A\u3059\u308B\u3053\u3068\u304C\u3067\u304D\u308B\u3002\u4F7F\u7528\u3057\u306A\u3044\u5834\u5408\u306F\u7701\u7565\u53EF\u80FD\u3002\n           
+      ---@field alignPeriod TimeSpan @\u30B9\u30A4\u30C3\u30C1\u306E\u30B3\u30E9\u30A4\u30C0\u30FC\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u6574\u5217\u3059\u308B\u9593\u9694\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F
+      500 \u30DF\u30EA\u79D2\u3002\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u306E\u305F\u3081\u5909\u66F4\u3055\u308C\u308B\u53EF\u80FD\u6027\u304C\u3042\u308B\u3002**
       \u30B9\u30E9\u30A4\u30C9\u30B9\u30A4\u30C3\u30C1\u3092\u4F5C\u6210\u3059\u308B\u3002\u30C8\u30EA\u30AC\u30FC\u3067\u3064\u307E\u307F\u3092\u3064\u304B\u3093\u3067\u5024\u306E\u5909\u66F4\u3001\u304A\u3088\u3073\u3001\u30B0\u30EA\u30C3\u30D7\u306B\u3088\u308B\u5024\u306E\u5909\u66F4\u304C\u3067\u304D\u308B\u3002\u30E6\u30FC\u30B6\u30FC\u9593\u3067\u306E\u5024\u306E\u540C\u671F\u51E6\u7406\u306F\u884C\u308F\u306A\u3044\u305F\u3081\u3001\u5FC5\u8981\u3067\u3042\u308C\u3070\u5225\u9014\u5B9F\u88C5\u3059\u308B\u3053\u3068\u3002\n           
       ---@param parameters cytanb_slide_switch_parameters_t @\u30B9\u30E9\u30A4\u30C9\u30B9\u30A4\u30C3\u30C1\u3092\u4F5C\u6210\u3059\u308B\u305F\u3081\u306E\u30D1\u30E9\u30E1\u30FC\u30BF\u30FC\u30C6\u30FC\u30D6\u30EB\u3092\u6307\u5B9A\u3059\u308B\u3002\n           
       CreateSlideSwitch = function (parameters)\n                local colliderItem
@@ -4138,11 +4141,13 @@ MonoBehaviour:
       local nillableValueTextName = parameters.valueTextName\n                local
       valueToText = cytanb.NillableValueOrDefault(parameters.valueToText, tostring)\n\n               
       local gripWaitTime = TimeSpan.FromMilliseconds(1000)\n                local
-      gripTickPeriod = TimeSpan.FromMilliseconds(50)\n\n                local propertyGetter,
-      propertySetter\n                local listenerMap = {}\n\n                local
-      self\n\n                local grabbed = false\n                local grabbedDeltaTicks
-      = 0\n                local gripPressed = false\n                local gripStartTime
-      = TimeSpan.Zero\n                local gripChangeTime = TimeSpan.Zero\n\n               
+      gripTickPeriod = TimeSpan.FromMilliseconds(50)\n                local alignPeriod
+      = cytanb.NillableValueOrDefault(parameters.alignPeriod, TimeSpan.FromMilliseconds(500))\n\n               
+      local propertyGetter, propertySetter\n                local listenerMap = {}\n\n               
+      local self\n\n                local grabbed = false\n                local
+      grabbedDeltaTicks = 0\n                local gripPressed = false\n               
+      local gripStartTime = TimeSpan.Zero\n                local gripChangeTime =
+      TimeSpan.Zero\n                local prevAlignTime = TimeSpan.Zero\n\n               
       local UpdateValue = function (newValue, forceNotification)\n                   
       if forceNotification or newValue ~= value then\n                        local
       oldValue = value\n                        value = newValue\n                       
@@ -4254,10 +4259,13 @@ MonoBehaviour:
       NextTickByUse()\n                                end\n                           
       else\n                                gripPressed = false\n                           
       end\n                        elseif colliderItem.IsMine then\n                           
-      cytanb.AlignSubItemOrigin(baseItem, colliderItem)\n                       
-      end\n                    end\n                }\n\n                UpdateValue(CalcValue(propertyGetter()),
-      false)\n                return self\n            end,\n\n            -- @deprecated
-      \u975E\u63A8\u5968\u3002 \u30B5\u30D6\u30A2\u30A4\u30C6\u30E0\u9593\u306E\u4F4D\u7F6E\u3068\u56DE\u8EE2\u3092\u76F8\u4E92\u306B\u4F5C\u7528\u3055\u305B\u308B\u305F\u3081\u306E\u30B3\u30CD\u30AF\u30BF\u30FC\u3092\u4F5C\u6210\u3059\u308B\u3002\u30B9\u30B1\u30FC\u30EB\u306F\u975E\u5BFE\u5FDC\u3002\u30B5\u30D6\u30A2\u30A4\u30C6\u30E0\u306E\u30B0\u30EB\u30FC\u30D7ID\u306F\u3001\u30BC\u30ED\u4EE5\u5916\u306E\u540C\u3058\u5024\u3092\u8A2D\u5B9A\u3057\u3066\u304A\u304F\u5FC5\u8981\u304C\u3042\u308B\u3002\n           
+      local unow = vci.me.UnscaledTime\n                            if unow - alignPeriod
+      >= prevAlignTime then\n                                prevAlignTime = unow\n                               
+      cytanb.AlignSubItemOrigin(baseItem, colliderItem)\n                           
+      end\n                        end\n                    end\n               
+      }\n\n                UpdateValue(CalcValue(propertyGetter()), false)\n               
+      return self\n            end,\n\n            -- @deprecated \u975E\u63A8\u5968\u3002
+      \u30B5\u30D6\u30A2\u30A4\u30C6\u30E0\u9593\u306E\u4F4D\u7F6E\u3068\u56DE\u8EE2\u3092\u76F8\u4E92\u306B\u4F5C\u7528\u3055\u305B\u308B\u305F\u3081\u306E\u30B3\u30CD\u30AF\u30BF\u30FC\u3092\u4F5C\u6210\u3059\u308B\u3002\u30B9\u30B1\u30FC\u30EB\u306F\u975E\u5BFE\u5FDC\u3002\u30B5\u30D6\u30A2\u30A4\u30C6\u30E0\u306E\u30B0\u30EB\u30FC\u30D7ID\u306F\u3001\u30BC\u30ED\u4EE5\u5916\u306E\u540C\u3058\u5024\u3092\u8A2D\u5B9A\u3057\u3066\u304A\u304F\u5FC5\u8981\u304C\u3042\u308B\u3002\n           
       CreateSubItemConnector = function ()\n                local SetItemStatus =
       function (status, item, propagation)\n                    status.item = item\n\n                   
       status.position = item.GetPosition()\n                    status.rotation =

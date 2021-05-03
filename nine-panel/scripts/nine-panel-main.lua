@@ -211,7 +211,7 @@ local MendPanel = function (panel)
 
     local item = panel.item
     if item.IsMine then
-        cytanb.AlignSubItemOrigin(panel.posItem, item, true)
+        cytanb.AlignSubItemOrigin(panel.posItem, item)
     end
 end
 

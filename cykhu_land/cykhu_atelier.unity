@@ -490,6 +490,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 6258763562050334735, guid: df7430df63bb4eb418bd53bc34fa7bf9,
+        type: 3}
+      propertyPath: m_Layer
+      value: 24
+      objectReference: {fileID: 0}
     - target: {fileID: 6301930206219116639, guid: df7430df63bb4eb418bd53bc34fa7bf9,
         type: 3}
       propertyPath: m_Materials.Array.size
@@ -578,7 +583,7 @@ PrefabInstance:
     - target: {fileID: 8459756460752725135, guid: df7430df63bb4eb418bd53bc34fa7bf9,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1024
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 8484605804596559341, guid: df7430df63bb4eb418bd53bc34fa7bf9,
         type: 3}
@@ -617,12 +622,12 @@ PrefabInstance:
     - {fileID: 9135362527076441094, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
     - {fileID: 6301930206219116639, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
     - {fileID: -4042602355182924257, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
-    - {fileID: -2770437817213602531, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
-    - {fileID: -5706491112920021583, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
-    - {fileID: -4640091710013929542, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
-    - {fileID: 4657058045617390092, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
     - {fileID: 5768686636374547076, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
+    - {fileID: 4657058045617390092, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
+    - {fileID: -4640091710013929542, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
     - {fileID: -895598177154598079, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
+    - {fileID: -5706491112920021583, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
+    - {fileID: -2770437817213602531, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
 --- !u!1 &2091445008 stripped
 GameObject:
@@ -632,118 +637,122 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &2091445009 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: -180336388872395678, guid: df7430df63bb4eb418bd53bc34fa7bf9,
+  m_CorrespondingSourceObject: {fileID: 6258763562050334735, guid: df7430df63bb4eb418bd53bc34fa7bf9,
     type: 3}
   m_PrefabInstance: {fileID: 2091445007}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2091445010 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2282312125913180529, guid: df7430df63bb4eb418bd53bc34fa7bf9,
-    type: 3}
-  m_PrefabInstance: {fileID: 2091445007}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &2091445011 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -8517108062900081650, guid: df7430df63bb4eb418bd53bc34fa7bf9,
-    type: 3}
-  m_PrefabInstance: {fileID: 2091445007}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &2091445012 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7111430598630045974, guid: df7430df63bb4eb418bd53bc34fa7bf9,
-    type: 3}
-  m_PrefabInstance: {fileID: 2091445007}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &2091445013 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -6316657405425012312, guid: df7430df63bb4eb418bd53bc34fa7bf9,
-    type: 3}
-  m_PrefabInstance: {fileID: 2091445007}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &2091445014 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3561327678154932517, guid: df7430df63bb4eb418bd53bc34fa7bf9,
-    type: 3}
-  m_PrefabInstance: {fileID: 2091445007}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &2091445015
-BoxCollider:
+--- !u!54 &2091445010
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2091445009}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.1, y: 0.20000039, z: 2.2203152}
-  m_Center: {x: 3.352659e-30, y: -0.0000006556511, z: 0.00000017881392}
---- !u!65 &2091445016
-BoxCollider:
+  m_Mass: 65536
+  m_Drag: 65536
+  m_AngularDrag: 65536
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &2091445011
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091445010}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_GameObject: {fileID: 2091445009}
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.1000003, y: 0.20000044, z: 2.4960868}
-  m_Center: {x: -2.9582284e-30, y: -0.00000029802322, z: 0.00000017881392}
---- !u!65 &2091445017
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed42f86ebdb20ba4597c4e753b47ee4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Grabbable: 0
+  Scalable: 0
+  UniformScaling: 0
+  Attractable: 0
+  GroupId: 100
+  NodeIndex: 0
+--- !u!1 &2091445012 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -180336388872395678, guid: df7430df63bb4eb418bd53bc34fa7bf9,
+    type: 3}
+  m_PrefabInstance: {fileID: 2091445007}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091445011}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.1999998, y: 0.20000039, z: 1.3300002}
-  m_Center: {x: -0.000000059604645, y: -0.00000011920929, z: 0.00000047683716}
---- !u!65 &2091445018
-BoxCollider:
+--- !u!1 &2091445013 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2282312125913180529, guid: df7430df63bb4eb418bd53bc34fa7bf9,
+    type: 3}
+  m_PrefabInstance: {fileID: 2091445007}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2091445014 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -8517108062900081650, guid: df7430df63bb4eb418bd53bc34fa7bf9,
+    type: 3}
+  m_PrefabInstance: {fileID: 2091445007}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2091445015 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7111430598630045974, guid: df7430df63bb4eb418bd53bc34fa7bf9,
+    type: 3}
+  m_PrefabInstance: {fileID: 2091445007}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2091445016 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -6316657405425012312, guid: df7430df63bb4eb418bd53bc34fa7bf9,
+    type: 3}
+  m_PrefabInstance: {fileID: 2091445007}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2091445017 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3561327678154932517, guid: df7430df63bb4eb418bd53bc34fa7bf9,
+    type: 3}
+  m_PrefabInstance: {fileID: 2091445007}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2091445018
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2091445012}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.0699995, y: 0.08000149, z: 8}
-  m_Center: {x: 0, y: 0.0000000018626451, z: 0}
---- !u!65 &2091445019
-BoxCollider:
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79c62233a29dc734f99def1e2e768d6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mesh: {fileID: 3994655209364735989, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
+  colliderType: 0
+--- !u!114 &2091445019
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2091445013}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 5.72, y: 0.08000046, z: 1.6999998}
-  m_Center: {x: -0.00000023841858, y: 0.0000000018626451, z: 0.0000010728836}
---- !u!65 &2091445020
-BoxCollider:
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79c62233a29dc734f99def1e2e768d6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mesh: {fileID: 2121805437259186924, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
+  colliderType: 0
+--- !u!114 &2091445020
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2091445014}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.1999998, y: 0.08000079, z: 5.16}
-  m_Center: {x: -0.000000059604645, y: -0.00000029988587, z: 0.0000019073486}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79c62233a29dc734f99def1e2e768d6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mesh: {fileID: 3946083191566361250, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
+  colliderType: 0
 --- !u!114 &2091445021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -781,96 +790,110 @@ MonoBehaviour:
       type: 3}
     source: "-- SPDX-License-Identifier: MIT\n-- Copyright (c) 2021 oO (https://github.com/oocytanb)\n---@type
       cytanb @See `cytanb_annotations.lua`\nlocal cytanb = require('cytanb')(_ENV)\n\nlocal
-      settings = (function ()\n  local transform_switch_name = 'atelier_transform_switch'\n\n 
-      return {\n    long_press_time = TimeSpan.FromSeconds(1),\n    atelier_mesh_name
-      = 'atelier_mesh',\n    bounds_name = 'atelier_bounds',\n    bounds_scale_factor
-      = 10.0,\n    transform_switch_name = transform_switch_name,\n\n    switch_parameters
-      = cytanb.ListToMap(\n      {\n        {\n            colliderName = transform_switch_name,\n           
-      baseName = 'transform_knob_position',\n            knobName = 'transform_knob',\n           
-      minValue = 0,\n            maxValue = 1,\n            value = 0,\n        },\n     
-      },\n      function (entry)\n        local minValue = entry.minValue or 0\n       
-      local maxValue = entry.maxValue or 100\n\n        return entry.colliderName,
-      {\n          colliderName = entry.colliderName,\n          baseName = entry.baseName,\n         
-      knobName = entry.knobName,\n          minValue = minValue,\n          maxValue
-      = maxValue,\n          value = entry.value or 0,\n          tickFrequency =
-      1,\n          tickVector = Vector3.__new(0.0, 0.06 / (maxValue - minValue),
-      0.0),\n        }\n      end\n    ),\n    output_debug_log = true,\n  }\nend)()\n\nlocal
-      message_ns = 'com.github.oocytanb.oO-vci-pack.cykhu_atelier'\nlocal status_message_name
+      settings = (function ()\n   local transform_switch_name = 'atelier_transform_switch'\n\n  
+      return {\n      atelier_mesh_name = 'atelier_mesh',\n      bounds_name = 'atelier_bounds',\n     
+      bounds_scale_factor = 10.0,\n      flag_potential = 2048,\n      controller_name
+      = 'atelier_controller',\n      transform_switch_name = transform_switch_name,\n     
+      controller_attention_name = 'controller_guest_attention',\n      controller_attention_offset
+      = Vector3.__new(0, 0, -0.011),\n\n      switch_parameters = cytanb.ListToMap(\n        
+      {\n            {\n               colliderName = transform_switch_name,\n              
+      baseName = 'transform_knob_position',\n               knobName = 'transform_knob',\n              
+      minValue = 0,\n               maxValue = 1,\n               value = 0,\n           
+      },\n         },\n         function (entry)\n            local minValue = entry.minValue
+      or 0\n            local maxValue = entry.maxValue or 100\n\n            return
+      entry.colliderName, {\n               colliderName = entry.colliderName,\n              
+      baseName = entry.baseName,\n               knobName = entry.knobName,\n              
+      minValue = minValue,\n               maxValue = maxValue,\n               value
+      = entry.value or 0,\n               tickFrequency = 1,\n               tickVector
+      =\n                  Vector3.__new(0.0, 0.06 / (maxValue - minValue), 0.0),\n           
+      }\n         end\n      ),\n      initial_transform = false,\n      initial_offset
+      = Vector3.__new(0, 1, 6),\n      initial_scale = Vector3.__new(0.05, 0.05,
+      0.05),\n      output_debug_log = true,\n   }\nend)()\n\nlocal message_ns =
+      'com.github.oocytanb.oO-vci-pack.cykhu_atelier'\nlocal status_message_name
       = message_ns .. '.status'\nlocal query_status_message_name = message_ns ..
-      '.query_status'\n\nlocal function noop()\n  -- do nothing\nend\n\n---@param
-      name string\n---@return ExportTransform\nlocal function get_game_object_transform(name)\n 
+      '.query_status'\n\nlocal function noop()\n   -- do nothing\nend\n\n---@param
+      name string\n---@return ExportTransform\nlocal function get_game_object_transform(name)\n  
       return assert(vci.assets.GetTransform(name))\nend\n\n---@param name string\n---@return
-      ExportTransform\nlocal function get_sub_item(name)\n  return assert(vci.assets.GetSubItem(name))\nend\n\ncytanb.SetOutputLogLevelEnabled(true)\nif
-      settings.output_debug_log then\n  cytanb.SetLogLevel(cytanb.LogLevelAll)\nend\n\nlocal
-      vci_loaded = false\nlocal hidden_position\n\nlocal slide_switch_map\nlocal
-      transform_switch\n\nlocal function is_switch_value_on(value)\n  return value
-      >= 1\nend\n\n---@class TransformStatus\n---@field mesh ExportTransform\n---@field
-      bounds_item ExportTransform\n---@field enabled boolean\n---@field grabbed boolean\nlocal
-      transform_status = {\n  mesh = get_game_object_transform(settings.atelier_mesh_name),\n 
-      bounds_item = get_sub_item(settings.bounds_name),\n  enabled = false,\n  grabbed
-      = false,\n}\n\n---@param status TransformStatus\nlocal function emit_status(status)\n 
-      cytanb.EmitInstanceMessage(status_message_name, {\n    sender_id = cytanb.OwnID(),\n   
-      transform_enabled = status.enabled,\n  })\nend\n\n---@param enabled boolean\n---@param
-      status TransformStatus\n---@return TransformStatus\nlocal function set_transform_enabled(enabled,
-      status)\n  status.enabled = enabled\n\n  if enabled then\n    status.bounds_item.SetActive(true)\n 
-      end\n\n  if status.bounds_item.IsMine then\n    if enabled then\n      status.bounds_item.SetLocalScale(\n       
-      status.mesh.GetLocalScale() * settings.bounds_scale_factor\n      )\n     
-      cytanb.AlignSubItemOrigin(status.mesh, status.bounds_item)\n    else\n     
-      status.bounds_item.SetLocalScale(\n        Vector3.one * settings.bounds_scale_factor\n     
-      )\n      status.bounds_item.SetPosition(hidden_position)\n    end\n  end\n\n 
-      if not enabled then\n    status.bounds_item.SetActive(false)\n  end\n\n  return
-      status\nend\n\n---@param status TransformStatus\n---@return TransformStatus\nlocal
-      function transform_mesh_to_bounds(status)\n  local scale = status.bounds_item.GetLocalScale()
-      /\n    settings.bounds_scale_factor\n  if not cytanb.VectorApproximatelyEquals(scale,
-      status.mesh.GetLocalScale())\n  then\n    status.mesh.SetLocalScale(scale)\n 
-      end\n\n  cytanb.AlignSubItemOrigin(status.bounds_item, status.mesh)\n\n  return
-      status\nend\n\n---@param status TransformStatus\n---@return TransformStatus\nlocal
-      function transform_bounds_to_mesh(status)\n  local scale = status.mesh.GetLocalScale()
-      * settings.bounds_scale_factor\n  if not cytanb.VectorApproximatelyEquals(scale,
-      status.mesh.GetLocalScale())\n  then\n    status.bounds_item.SetLocalScale(scale)\n 
-      end\n\n  cytanb.AlignSubItemOrigin(status.mesh, status.bounds_item)\n\n  return
-      status\nend\n\n---@param status TransformStatus\n---@return TransformStatus\nlocal
-      function update_transform(status)\n  if status.grabbed then\n    if status.bounds_item.IsMine
-      then\n      return transform_mesh_to_bounds(status)\n    else\n      status.grabbed
-      = false\n      return status\n    end\n  elseif status.bounds_item.IsMine then\n   
-      return transform_bounds_to_mesh(status)\n  else\n    return transform_mesh_to_bounds(status)\n 
-      end\nend\n\nlocal update_cw; update_cw = cytanb.CreateUpdateRoutine(\n  function
-      (deltaTime, unscaledDeltaTime)\n    for name, switch in pairs(slide_switch_map)
-      do\n      switch.Update()\n    end\n\n    transform_status = update_transform(transform_status)\n 
-      end,\n\n  function ()\n    cytanb.LogTrace('on load')\n    vci_loaded = true\n\n   
-      local uuid = cytanb.UUIDFromString(cytanb.InstanceID())\n    hidden_position
-      = Vector3.__new(\n      uuid[1] / 0x100000,\n      0x1000,\n      uuid[2] /
-      0x100000\n    )\n\n    slide_switch_map = {}\n    for k, parameters in pairs(settings.switch_parameters)
-      do\n      local switch = cytanb.CreateSlideSwitch(\n        cytanb.Extend({\n         
-      colliderItem = get_sub_item(parameters.colliderName),\n          baseItem =
-      get_game_object_transform(parameters.baseName),\n          knobItem = get_game_object_transform(parameters.knobName),\n       
-      }, parameters, false, true)\n      )\n\n      slide_switch_map[parameters.colliderName]
-      = switch\n    end\n\n    transform_switch = assert(slide_switch_map[settings.transform_switch_name])\n\n   
-      transform_switch.AddListener(function (source, value)\n      cytanb.LogTrace('switch[',\n       
-      source.GetColliderItem().GetName(),\n        '] value changed: ',\n       
-      value)\n\n      transform_status = set_transform_enabled(\n        is_switch_value_on(value),\n       
-      transform_status\n      )\n\n      if transform_switch.GetColliderItem().IsMine
-      then\n        emit_status(transform_status)\n      end\n    end)\n\n    cytanb.OnInstanceMessage(\n     
-      status_message_name,\n      function (sender, name, parameterMap)\n       
-      if parameterMap.sender_id ~= cytanb.OwnID() then\n          transform_switch.SetValue(parameterMap.transform_enabled
-      and 1 or 0)\n        end\n      end\n    )\n\n    cytanb.OnInstanceMessage(\n     
-      query_status_message_name,\n      function (sender, name, parameterMap)\n       
-      if vci.assets.IsMine then\n          emit_status(transform_status)\n       
-      end\n    end)\n\n    transform_status = set_transform_enabled(\n      is_switch_value_on(transform_switch.GetValue()),\n     
-      transform_status\n    )\n\n    cytanb.EmitInstanceMessage(query_status_message_name,
-      {})\n  end,\n\n  function (reason)\n    cytanb.LogError('Error on update routine:
-      ', reason)\n    update_cw = noop\n  end\n)\n\nfunction updateAll()\n  update_cw()\nend\n\nfunction
-      onGrab(target)\n  if not vci_loaded then\n      return\n  end\n\n  local switch_
-      = slide_switch_map[target]\n  if switch_ then\n    switch_.DoGrab()\n  elseif
-      target == settings.bounds_name then\n    transform_status.grabbed = true\n 
-      end\nend\n\nfunction onUngrab(target)\n  if not vci_loaded then\n      return\n 
-      end\n\n  local switch_ = slide_switch_map[target]\n  if switch_ then\n    switch_.DoUngrab()\n 
-      elseif target == settings.bounds_name then\n    transform_status.grabbed =
-      false\n  end\nend\n\nfunction onUse(use)\n  if not vci_loaded then\n    return\n 
-      end\n\n  local switch_ = slide_switch_map[use]\n  if switch_ then\n    switch_.DoUse()\n 
-      end\nend\n\nfunction onUnuse(use)\n  if not vci_loaded then\n    return\n 
-      end\n\n  local switch_ = slide_switch_map[use]\n  if switch_ then\n    switch_.DoUnuse()\n 
-      end\nend\n"
+      ExportTransform\nlocal function get_sub_item(name)\n   return assert(vci.assets.GetSubItem(name))\nend\n\n---@return
+      boolean\nlocal function is_vci_owner()\n   local ava = vci.studio.GetLocalAvatar()\n  
+      return ava and ava.IsOwner()\nend\n\ncytanb.SetOutputLogLevelEnabled(true)\nif
+      settings.output_debug_log then\n   cytanb.SetLogLevel(cytanb.LogLevelAll)\nend\n\nlocal
+      vci_loaded = false\n\nlocal slide_switch_map\nlocal transform_switch\n\nlocal
+      function is_switch_value_on(value)\n   return value >= 1\nend\n\n---@class
+      TransformStatus\n---@field mesh ExportTransform\n---@field bounds_item ExportTransform\n---@field
+      enabled boolean\n---@field grabbed boolean\nlocal transform_status = {\n  
+      mesh = get_sub_item(settings.atelier_mesh_name),\n   bounds_item = get_sub_item(settings.bounds_name),\n  
+      enabled = false,\n   grabbed = false,\n}\n\n---@param status TransformStatus\nlocal
+      function emit_status(status)\n   cytanb.EmitInstanceMessage(status_message_name,
+      {\n      sender_id = cytanb.OwnID(),\n      transform_enabled = status.enabled,\n  
+      })\nend\n\n---@param enabled boolean\n---@param status TransformStatus\n---@return
+      TransformStatus\nlocal function set_transform_enabled(enabled, status)\n  
+      status.enabled = enabled\n\n   if enabled then\n      status.bounds_item.SetActive(true)\n  
+      end\n\n   if status.bounds_item.IsMine then\n      if enabled then\n        
+      status.bounds_item.SetLocalScale(\n            status.mesh.GetLocalScale()
+      * settings.bounds_scale_factor\n         )\n         cytanb.AlignSubItemOrigin(status.mesh,
+      status.bounds_item)\n      else\n         local m = settings.bounds_scale_factor\n        
+      status.bounds_item.SetLocalScale(Vector3.__new(m, m, m))\n         status.bounds_item.SetPosition(\n           
+      status.mesh.GetPosition() +\n            Vector3.__new(0, settings.flag_potential,
+      0)\n         )\n      end\n   end\n\n   if not enabled then\n      status.bounds_item.SetActive(false)\n  
+      end\n\n   return status\nend\n\n---@param status TransformStatus\n---@return
+      TransformStatus\nlocal function transform_mesh_to_bounds(status)\n   local
+      scale = status.bounds_item.GetLocalScale() /\n      settings.bounds_scale_factor\n  
+      if not cytanb.VectorApproximatelyEquals(scale, status.mesh.GetLocalScale())\n  
+      then\n      status.mesh.SetLocalScale(scale)\n   end\n\n   cytanb.AlignSubItemOrigin(status.bounds_item,
+      status.mesh)\n\n   return status\nend\n\n---@param status TransformStatus\n---@return
+      TransformStatus\nlocal function transform_bounds_to_mesh(status)\n   local
+      scale = status.mesh.GetLocalScale() * settings.bounds_scale_factor\n   if not
+      cytanb.VectorApproximatelyEquals(\n      scale,\n      status.bounds_item.GetLocalScale())\n  
+      then\n      status.bounds_item.SetLocalScale(scale)\n   end\n\n   cytanb.AlignSubItemOrigin(status.mesh,
+      status.bounds_item)\n\n   return status\nend\n\n---@param status TransformStatus\n---@return
+      TransformStatus\nlocal function update_transform(status)\n   if status.grabbed
+      then\n      if status.bounds_item.IsMine then\n         return transform_mesh_to_bounds(status)\n     
+      else\n         status.grabbed = false\n         return status\n      end\n  
+      elseif status.bounds_item.IsMine then\n      return transform_bounds_to_mesh(status)\n  
+      else\n      return transform_mesh_to_bounds(status)\n   end\nend\n\nlocal update_cw;
+      update_cw = cytanb.CreateUpdateRoutine(\n   function (deltaTime, unscaledDeltaTime)\n     
+      for name, switch in pairs(slide_switch_map) do\n         switch.Update()\n     
+      end\n\n      transform_status = update_transform(transform_status)\n   end,\n\n  
+      function ()\n      cytanb.LogTrace('on load')\n      vci_loaded = true\n\n     
+      if vci.assets.IsMine and is_vci_owner() and settings.initial_transform\n     
+      then\n         local mesh = transform_status.mesh\n         mesh.SetLocalScale(settings.initial_scale)\n        
+      mesh.SetLocalPosition(\n            mesh.GetLocalPosition() +\n           
+      mesh.GetLocalRotation() * settings.initial_offset\n         )\n      end\n\n     
+      slide_switch_map = {}\n      for k, parameters in pairs(settings.switch_parameters)
+      do\n         local switch = cytanb.CreateSlideSwitch(\n            cytanb.Extend({\n              
+      colliderItem = get_sub_item(parameters.colliderName),\n               baseItem
+      = get_game_object_transform(parameters.baseName),\n               knobItem
+      = get_game_object_transform(parameters.knobName),\n            }, parameters,
+      false, true)\n         )\n\n         slide_switch_map[parameters.colliderName]
+      = switch\n      end\n\n      transform_switch = assert(\n         slide_switch_map[settings.transform_switch_name]\n     
+      )\n\n      transform_switch.AddListener(function (source, value)\n        
+      cytanb.LogTrace('switch[',\n            source.GetColliderItem().GetName(),\n           
+      '] value changed: ',\n            value)\n\n         transform_status = set_transform_enabled(\n           
+      is_switch_value_on(value),\n            transform_status\n         )\n\n        
+      if transform_switch.GetColliderItem().IsMine then\n            emit_status(transform_status)\n        
+      end\n      end)\n\n      cytanb.OnInstanceMessage(\n         status_message_name,\n        
+      function (sender, name, parameterMap)\n            if parameterMap.sender_id
+      ~= cytanb.OwnID() then\n               transform_switch.SetValue(\n                 
+      parameterMap.transform_enabled and 1 or 0\n               )\n            end\n        
+      end\n      )\n\n      cytanb.OnInstanceMessage(\n         query_status_message_name,\n        
+      function (sender, name, parameterMap)\n            if vci.assets.IsMine then\n              
+      emit_status(transform_status)\n            end\n      end)\n\n      transform_status
+      = set_transform_enabled(\n         is_switch_value_on(transform_switch.GetValue()),\n        
+      transform_status\n      )\n\n      cytanb.EmitInstanceMessage(query_status_message_name,
+      {})\n   end,\n\n   function (reason)\n      cytanb.LogError('Error on update
+      routine: ', reason)\n      update_cw = noop\n   end\n)\n\nfunction updateAll()\n  
+      update_cw()\nend\n\nfunction onGrab(target)\n   if not vci_loaded then\n        
+      return\n   end\n\n   local switch_ = slide_switch_map[target]\n   if switch_
+      then\n      switch_.DoGrab()\n   elseif target == settings.bounds_name then\n     
+      transform_status.grabbed = true\n   end\nend\n\nfunction onUngrab(target)\n  
+      if not vci_loaded then\n         return\n   end\n\n   local switch_ = slide_switch_map[target]\n  
+      if switch_ then\n      switch_.DoUngrab()\n   elseif target == settings.bounds_name
+      then\n      transform_status.grabbed = false\n   end\nend\n\nfunction onUse(use)\n  
+      if not vci_loaded then\n      return\n   end\n\n   local switch_ = slide_switch_map[use]\n  
+      if switch_ then\n      switch_.DoUse()\n   end\nend\n\nfunction onUnuse(use)\n  
+      if not vci_loaded then\n      return\n   end\n\n   local switch_ = slide_switch_map[use]\n  
+      if switch_ then\n      switch_.DoUnuse()\n   end\nend\n"
   - name: cytanb
     mimeType: 0
     targetEngine: 0
@@ -1705,6 +1728,14 @@ MonoBehaviour:
       local map = {}\n                for i, efk in pairs(efkList) do\n                   
       map[efk.EffectName] = efk\n                end\n                return map\n           
       end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002**
+      `ExportTransform.GetAudioSources` \u3067\u53D6\u5F97\u3057\u305F\u30EA\u30B9\u30C8\u3092\u3001`ClipName`
+      \u3092\u30AD\u30FC\u3068\u3059\u308B\u30DE\u30C3\u30D7\u306B\u3057\u3066\u8FD4\u3059\u3002\n           
+      ---@param item ExportTransform @`AudioSource` \u30B3\u30F3\u30DD\u30FC\u30CD\u30F3\u30C8\u304C\u8A2D\u5B9A\u3055\u308C\u3066\u3044\u308B\u3001\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u6307\u5B9A\u3059\u308B\u3002\n           
+      ---@return table<string, ExportAudioSource> @\u623B\u308A\u5024\u306E1\u756A\u76EE\u306B\u30BF\u30B0\u306E\u30DE\u30C3\u30D7\u3092\u30012\u756A\u76EE\u306B\u30D9\u30FC\u30B9\u540D\u3092\u8FD4\u3059\u3002\n           
+      GetAudioSourceMap = function (item)\n                local map = {}\n               
+      for _, audio in pairs(item.GetAudioSources() or {}) do\n                   
+      map[audio.ClipName or ''] = audio\n                end\n                return
+      map\n            end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002**
       \u30BF\u30B0\u6587\u5B57\u5217\u3092\u30D1\u30FC\u30B9\u3059\u308B\u3002\u6587\u5B57\u5217\u5168\u4F53\u306E\u66F8\u5F0F\u306F\u3001\u30D9\u30FC\u30B9\u540D\u306B
       0 \u500B\u4EE5\u4E0A\u306E\u30BF\u30B0\u304C\u7D9A\u304F\u3002`basename#tag1#tag2...#tagN`
       \u30BF\u30B0\u306E\u66F8\u5F0F\u306F\u3001\u30CF\u30C3\u30B7\u30E5\u8A18\u53F7
@@ -2418,13 +2449,13 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091445009}
+  m_GameObject: {fileID: 2091445015}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79c62233a29dc734f99def1e2e768d6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mesh: {fileID: 3994655209364735989, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
+  mesh: {fileID: 4258054256135330459, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
   colliderType: 0
 --- !u!1 &2091445023 stripped
 GameObject:
@@ -2517,7 +2548,7 @@ MonoBehaviour:
   Scalable: 1
   UniformScaling: 1
   Attractable: 0
-  GroupId: 0
+  GroupId: 100
   NodeIndex: 0
 --- !u!65 &2091445030
 BoxCollider:
@@ -2724,49 +2755,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091445010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79c62233a29dc734f99def1e2e768d6d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mesh: {fileID: 2121805437259186924, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
-  colliderType: 0
---- !u!114 &2091445048
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091445011}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79c62233a29dc734f99def1e2e768d6d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mesh: {fileID: 3946083191566361250, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
-  colliderType: 0
---- !u!114 &2091445049
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091445012}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79c62233a29dc734f99def1e2e768d6d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mesh: {fileID: 4258054256135330459, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
-  colliderType: 0
---- !u!114 &2091445050
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091445013}
+  m_GameObject: {fileID: 2091445016}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79c62233a29dc734f99def1e2e768d6d, type: 3}
@@ -2774,13 +2763,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mesh: {fileID: 6842831556771058452, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
   colliderType: 0
---- !u!114 &2091445051
+--- !u!114 &2091445048
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091445014}
+  m_GameObject: {fileID: 2091445017}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79c62233a29dc734f99def1e2e768d6d, type: 3}
@@ -2788,6 +2777,84 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mesh: {fileID: 1701485189097081140, guid: df7430df63bb4eb418bd53bc34fa7bf9, type: 3}
   colliderType: 0
+--- !u!65 &2091445049
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2091445013}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.1000003, y: 0.20000045, z: 2.496087}
+  m_Center: {x: 0, y: -0.000000059604645, z: 0.00000017881393}
+--- !u!65 &2091445050
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2091445014}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.1999998, y: 0.20000039, z: 1.3300002}
+  m_Center: {x: -0.000000059604645, y: 0, z: 0}
+--- !u!65 &2091445051
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2091445015}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.0699995, y: 0.08000149, z: 8}
+  m_Center: {x: 0, y: 0.0000000018626451, z: 0}
+--- !u!65 &2091445052
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2091445016}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5.72, y: 0.08000046, z: 1.6999998}
+  m_Center: {x: -0.00000023841858, y: 0.0000000018626451, z: 0.00000011920929}
+--- !u!65 &2091445053
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2091445017}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.1999998, y: 0.08000079, z: 5.16}
+  m_Center: {x: -0.000000059604645, y: -0.00000006146729, z: 0.0000014305115}
+--- !u!65 &2091445054
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2091445012}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.1, y: 0.2000004, z: 2.2203155}
+  m_Center: {x: 0, y: -0.000000059604645, z: 0.00000017881393}
 --- !u!1 &2135316012
 GameObject:
   m_ObjectHideFlags: 0
