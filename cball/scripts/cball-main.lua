@@ -1117,7 +1117,8 @@ local OnUpdateBall = function (trsTime)
         local cupSqrDistance = (ballPos - ballCup.GetPosition()).sqrMagnitude
 
         local outbound = trsTime - settings.ballWaitingTime > ballStatus.throwTime or cupSqrDistance > settings.ballPlayAreaSqrRadius
-        if outbound and ball.IsMine and not ballStatus.grabbed and not ballCupStatus.grabbed then
+        local outboundAndNotGrabbed = outbound and ball.IsMine and not ballStatus.grabbed and not ballCupStatus.grabbed
+        if outboundAndNotGrabbed and cupSqrDistance > settings.ballSimLongSide ^ 2 then
             -- タイムアウトしたかエリア外に出たボールをカップへ戻す。
             cytanb.LogTrace('elapsed: ' , (trsTime - ballStatus.throwTime).TotalSeconds, ', sqrDistance: ', cupSqrDistance)
             RespawnBall()

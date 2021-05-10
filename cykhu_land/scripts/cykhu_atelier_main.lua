@@ -8,11 +8,13 @@ local settings = (function ()
 
    return {
       atelier_mesh_name = 'atelier_mesh',
+      colliders_root_name = 'atelier_colliders',
       bounds_name = 'atelier_bounds',
       bounds_scale_factor = 10.0,
       flag_potential = 2048,
       controller_name = 'atelier_controller',
       transform_switch_name = transform_switch_name,
+      switch_value_on = 1,
       controller_attention_name = 'controller_guest_attention',
       controller_attention_offset = Vector3.__new(0, 0, -0.011),
 
@@ -88,16 +90,18 @@ local slide_switch_map
 local transform_switch
 
 local function is_switch_value_on(value)
-   return value >= 1
+   return value >= settings.switch_value_on
 end
 
 ---@class TransformStatus
 ---@field mesh ExportTransform
+---@field colliders_root ExportTransform
 ---@field bounds_item ExportTransform
 ---@field enabled boolean
 ---@field grabbed boolean
 local transform_status = {
    mesh = get_sub_item(settings.atelier_mesh_name),
+   colliders_root = get_game_object_transform(settings.colliders_root_name),
    bounds_item = get_sub_item(settings.bounds_name),
    enabled = false,
    grabbed = false,
@@ -116,6 +120,8 @@ end
 ---@return TransformStatus
 local function set_transform_enabled(enabled, status)
    status.enabled = enabled
+
+   status.colliders_root.SetActive(not enabled)
 
    if enabled then
       status.bounds_item.SetActive(true)
@@ -238,13 +244,26 @@ local update_cw; update_cw = cytanb.CreateUpdateRoutine(
             '] value changed: ',
             value)
 
-         transform_status = set_transform_enabled(
-            is_switch_value_on(value),
-            transform_status
-         )
+         local value_on = is_switch_value_on(value)
 
-         if transform_switch.GetColliderItem().IsMine then
+         if transform_status.bounds_item.IsMine and
+            transform_status.grabbed and
+            not value_on
+         then
+            -- Reject if switch is grabbed
+            transform_switch.SetValue(settings.switch_value_on)
             emit_status(transform_status)
+         else
+            if value_on ~= transform_status.enabled then
+               transform_status = set_transform_enabled(
+                  value_on,
+                  transform_status
+               )
+            end
+
+            if transform_switch.GetColliderItem().IsMine then
+               emit_status(transform_status)
+            end
          end
       end)
 
