@@ -1,5 +1,5 @@
--- SPDX-License-Identifier: MIT
--- Copyright (c) 2019 oO (https://github.com/oocytanb)
+--! SPDX-License-Identifier: MIT
+--! Copyright (c) 2019 oO (https://github.com/oocytanb)
 
 -- `cytanb.lua` をモジュールとして利用する場合は、以下の通り。
 --   1. この手順の説明の下にある `local __CYTANB_EXPORT_MODULE = true` の行を有効にする。
@@ -943,10 +943,15 @@ local cytanb = (function ()
                             str = str .. '\n' .. childIndent
                         end
 
+                        local kt = type(key)
+                        local ks = (kt == 'function' or kt == 'thread' or kt == 'userdata' or kt == 'table')
+                            and '(' .. kt .. ')'
+                            or tostring(key)
+
                         if type(val) == 'table' and refTable[val] and refTable[val] > 0 then
-                            str = str .. key .. ' = (' .. tostring(val) .. ')'
+                            str = str .. ks .. ' = (' .. tostring(val) .. ')'
                         else
-                            str = str .. key .. ' = ' .. cytanb.Vars(val, padding, childIndent, refTable)
+                            str = str .. ks .. ' = ' .. cytanb.Vars(val, padding, childIndent, refTable)
                         end
                     end
 
