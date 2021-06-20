@@ -11,6 +11,7 @@ local conf = {
     ---   length: アニメーションクリップの長さを TimeSpan で指定する。省略した場合は再生を終了しない。
     ---   loop: アニメーションをループ再生するかを指定する。省略した場合はループ再生しない。(true | false)
     ---   stopOnEnd: このアニメーションクリップの再生を終えたら、停止するかを指定する。省略した場合は次のクリップを再生する。(true | false)
+    ---   fov: カメラの視野角(FOV)を数値で指定する。「ハンディカメラ」と「追従カメラ」で有効。省略した場合は FOV を変更しない。
     ---
     --- 連続してアニメーションクリップを再生する例:
     --- ```
@@ -20,7 +21,7 @@ local conf = {
     --- },
     --- ```
     directives = {
-        {type = 'play', name = 'anim-cam-clip-0', loop = true}
+        {type = 'play', name = 'anim-cam-clip-0', loop = true, fov = 60}
     },
 
     --- 全体をループ再生するかを指定する。(true | false)
@@ -171,6 +172,12 @@ local CreateDirectiveProcessor = function (directives, animator, camMarker, syst
         end
 
         if dir.type == DirectiveType.play then
+            local fov_ = dir.fov
+            if fov_ then
+                systemCam.SetFieldOfView(
+                    cytanb.Clamp(fov_, systemCam.GetMinFieldOfView(), systemCam.GetMaxFieldOfView())
+                )
+            end
             animator._ALL_PlayFromName(dir.name, not not dir.loop)
             local expectedTime = dir.length and vci.me.time + dir.length or TimeSpan.MaxValue
             return DirectiveProcessorState.processing, expectedTime
@@ -407,7 +414,7 @@ local EmitDirectiveStateMessage = function ()
     local state = directiveProcessor.GetState()
     local trackIndex = directiveProcessor.GetTrackIndex()
     cytanb.LogTrace('Emit directiveStateMessage: state = ', state, ', trackIndex = ', trackIndex)
-    cytanb.EmitMessage(directiveStateMessageName, {state = state, trackIndex = trackIndex})
+    cytanb.EmitInstanceMessage(directiveStateMessageName, {state = state, trackIndex = trackIndex})
 end
 
 local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
@@ -483,7 +490,7 @@ local UpdateCw; UpdateCw = cytanb.CreateUpdateRoutine(
         end
 
         if not vci.assets.IsMine then
-            cytanb.EmitMessage(queryDirectiveStateMessageName)
+            cytanb.EmitInstanceMessage(queryDirectiveStateMessageName)
         end
     end,
 
@@ -506,12 +513,12 @@ onUse = function (use)
 
     if camSwitchMap[use] then
         cytanb.LogTrace('Emit toggle play command')
-        cytanb.EmitMessage(commandMessageName, {command = CommandMessageParameter.togglePlay})
+        cytanb.EmitInstanceMessage(commandMessageName, {command = CommandMessageParameter.togglePlay})
     elseif camNextSwitchMap[use] then
         cytanb.LogTrace('Emit next track command')
-        cytanb.EmitMessage(commandMessageName, {command = CommandMessageParameter.nextTrack})
+        cytanb.EmitInstanceMessage(commandMessageName, {command = CommandMessageParameter.nextTrack})
     elseif camPrevSwitchMap[use] then
         cytanb.LogTrace('Emit prev track command')
-        cytanb.EmitMessage(commandMessageName, {command = CommandMessageParameter.prevTrack})
+        cytanb.EmitInstanceMessage(commandMessageName, {command = CommandMessageParameter.prevTrack})
     end
 end
