@@ -10,13 +10,16 @@ local settings = {
   list_body_row_margin = 0.015,
   visible_symbol = '*',
   invisible_symbol = '~',
+
   avatar_detection_interval = TimeSpan.FromSeconds(20),
   avatar_detection_max_time = TimeSpan.FromMinutes(10),
+
   notification_se_map = {
     ['joined'] = 'entering_se',
     ['left'] = 'leaving_se',
   },
   se_interval = TimeSpan.FromSeconds(1),
+
   output_debug_log = (function (ava_)
     return not not (ava_ and ava_.IsOwner())
   end)(vci.studio.GetLocalAvatar()),
@@ -25,6 +28,11 @@ local settings = {
 local message_ns = 'com.github.oocytanb.oO-vci-pack.member_list'
 local user_loaded_message_name = message_ns .. '.user_loaded'
 local member_status_message_name = message_ns .. '.member_status'
+
+---@class MessageSender
+---@field type string
+---@field name string
+---@field commentSource string
 
 ---@param name string
 ---@return ExportTransform
@@ -61,7 +69,11 @@ local WorldType = {
   room = 2,
 }
 
-local world_type_string_list = { 'Studio', 'Room' }
+---@type string[]
+local world_type_string_list = {
+  'Studio',
+  'Room'
+}
 
 ---@return WorldTypeIndex
 local world_type = (function ()
@@ -77,6 +89,7 @@ local world_type = (function ()
 end)()
 
 ---@param world_type_index WorldTypeIndex
+---@return string
 local function world_type_to_string(world_type_index)
   return world_type_string_list[world_type_index] or 'Unknown'
 end
@@ -104,7 +117,7 @@ local function member_from_avatar(avatar)
   }
 end
 
----@return Member
+---@return Member, boolean @first is own member info; second is state changed or not.
 local own_member = (function ()
   local own_ava_ = vci.studio.GetLocalAvatar()
 
@@ -112,15 +125,17 @@ local own_member = (function ()
     member_from_avatar(own_ava_) or
     { id = '', name = '', visible = false }
 
-  local last_time = vci.me.UnscaledTime
-  local max_time = last_time + settings.avatar_detection_max_time
-  local timeout = om.visible
+  local next_time = TimeSpan.Zero
+  local max_time = vci.me.UnscaledTime + settings.avatar_detection_max_time
+  local timeout = false
 
   return function ()
     if not timeout then
       local now = vci.me.UnscaledTime
       if now <= max_time then
-        if now - last_time >= settings.avatar_detection_interval then
+        if now >= next_time then
+          next_time = now + settings.avatar_detection_interval
+
           if not own_ava_ then
             own_ava_ = vci.studio.GetLocalAvatar()
             if own_ava_ then
@@ -133,13 +148,16 @@ local own_member = (function ()
           if om.visible then
             timeout = true
           end
+
+          return om, true
         end
       else
         timeout = true
+        return om, true
       end
     end
 
-    return om
+    return om, false
   end
 end)()
 
@@ -283,8 +301,19 @@ local function member_status_to_strings(status)
   }
 end
 
+---@class UserLoadedMessageParameters
+---@field member Member
+---@field count number
+---@field visible_count number
+
+---@class MemberStatusMessageParameters
+---@field visible_member_ids string[]
+---@field count number
+---@field visible_count number
+
 local member_list_item = get_sub_item(settings.list_name)
 
+---@type table<string, ExportAudioSource>
 local notification_se_map = (function ()
   local audio_sources = {}
   for _, audio in pairs(member_list_item.GetAudioSources() or {}) do
@@ -302,8 +331,10 @@ local list_body = get_game_object_transform(settings.list_body_name)
 local initial_list_body_scale = list_body.GetLocalScale()
 
 local user_loaded = false
+local ready_to_play_notification_se_time = vci.me.UnscaledTime
+
+---@type ExportAvatar[] | nil
 local pending_avatar_list_ = nil
-local last_play_notification_se_time = TimeSpan.Zero
 
 local member_status = make_member_status(
   world_type(),
@@ -332,78 +363,106 @@ local function dlog_avatars(avatars)
     local buffer = 'member_list @ ' .. world_type_to_string(world_type())
     for i, ava in ipairs(avatars) do
       local m = member_from_avatar(ava)
-      buffer = buffer .. '\n' ..
-        '[' .. i .. '] ' .. member_to_string(m) ..
-        ' | ' .. m.id
+      buffer = string.format(
+        '%s\n[%d] %s | %s',
+        buffer, i, member_to_string(m), m.id
+      )
     end
 
     dlog(buffer)
   end
 end
 
-vci.message.On('notification', function (sender, messageName, message)
-    dlog('# on notification: "' ..
-      tostring(sender.name) .. '" ' ..
-      tostring(message))
+---@param sender MessageSender
+---@param messageName string
+---@param message string
+local function on_notification(sender, messageName, message)
+  dlog(string.format('# on notification: "%s" %s', sender.name, message))
 
-    local se_ = notification_se_map[message]
-    if se_ then
-      local avatars_ = vci.studio.GetAvatars()
-      if avatars_ then
-        pending_avatar_list_ = avatars_
+  local se_ = notification_se_map[message]
+  if se_ then
+    local avatars_ = vci.studio.GetAvatars()
+    if avatars_ then
+      pending_avatar_list_ = avatars_
 
-        local now = vci.me.UnscaledTime
-        if now - settings.se_interval >= last_play_notification_se_time then
-          last_play_notification_se_time = now
-          se_.PlayOneShot(1)
-        end
+      local now = vci.me.UnscaledTime
+      if now >= ready_to_play_notification_se_time then
+        ready_to_play_notification_se_time = now + settings.se_interval
+        se_.PlayOneShot(1)
       end
     end
-end)
+  end
+end
 
-vci.message.On(user_loaded_message_name, function (sender, messageName, value)
-  local m_ = value.member
+vci.message.On('notification', on_notification)
+
+---@param sender MessageSender
+---@param messageName string
+---@param parameters UserLoadedMessageParameters
+local function on_user_loaded_message(sender, messageName, parameters)
+  local m_ = parameters.member
   if m_ then
-    dlog('# on user_loaded: ' ..
-          member_to_string(m_) .. ' | ' ..
-          tostring(m_.id))
+    dlog(
+      string.format('# on user_loaded: %s | %s', member_to_string(m_), m_.id)
+    )
 
     member_status = merge_member(m_, member_status)
     update_display(member_status)
 
-    if vci.assets.IsMine and value.visible_count < member_status.visible_count
+    if vci.assets.IsMine and
+        parameters.visible_count < member_status.visible_count
     then
-      emit_instance_message(member_status_message_name, {
+      ---@type MemberStatusMessageParameters
+      local status_parameters = {
         visible_member_ids = visible_member_id_list(member_status),
         count = member_status.count,
         visible_count = member_status.visible_count,
-      })
+      }
+      emit_instance_message(member_status_message_name, status_parameters)
     end
   end
-end)
+end
 
-vci.message.On(member_status_message_name, function (sender, messageName, value)
-  if not vci.assets.IsMine and member_status.visible_count < value.visible_count
+vci.message.On(user_loaded_message_name, on_user_loaded_message)
+
+---@param sender MessageSender
+---@param messageName string
+---@param parameters MemberStatusMessageParameters
+local function on_member_status_message(sender, messageName, parameters)
+  if not vci.assets.IsMine and
+      member_status.visible_count < parameters.visible_count
   then
-    dlog('# on member_status: visible_count = ' .. value.visible_count)
-    for _, id in pairs(value.visible_member_ids) do
+    dlog(string.format(
+      '# on member_status: visible_count = %s',
+      parameters.visible_count
+    ))
+
+    for _, id in pairs(parameters.visible_member_ids) do
       member_status = merge_visible_id(id, member_status)
     end
     update_display(member_status)
   end
-end)
+end
+
+vci.message.On(member_status_message_name, on_member_status_message)
 
 function updateAll()
   if not user_loaded then
-    local om = own_member()
+    local om, changed = own_member()
+    if changed then
+      pending_avatar_list_ = vci.studio.GetAvatars() or pending_avatar_list_
+    end
+
     if om.visible then
       user_loaded = true
 
-      emit_instance_message(user_loaded_message_name, {
+      ---@type UserLoadedMessageParameters
+      local parameters = {
         member = om,
         count = member_status.count,
         visible_count = member_status.visible_count,
-      })
+      }
+      emit_instance_message(user_loaded_message_name, parameters)
     end
   end
 
@@ -414,6 +473,7 @@ function updateAll()
       member_status.members
     )
     pending_avatar_list_ = nil
+
     update_display(member_status)
   end
 end
