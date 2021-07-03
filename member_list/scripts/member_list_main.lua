@@ -25,14 +25,6 @@ local message_ns = 'com.github.oocytanb.oO-vci-pack.member_list'
 local user_loaded_message_name = message_ns .. '.user_loaded'
 local member_status_message_name = message_ns .. '.member_status'
 
----@param avatar_ ExportAvatar | nil
----@return boolean
-local function avatar_is_owner(avatar_)
-  return not not (avatar_ and avatar_.IsOwner())
-end
-
-local enable_debug_log = avatar_is_owner(vci.studio.GetLocalAvatar())
-
 ---@class MessageSender
 ---@field type string
 ---@field name string
@@ -56,9 +48,28 @@ local function emit_instance_message(messageName, value)
   vci.message.EmitWithId(messageName, value, vci.assets.GetInstanceId() or '')
 end
 
+---@param avatar ExportAvatar | nil
+---@return boolean
+local function avatar_is_visible(avatar_)
+  return not not (avatar_ and avatar_.GetPosition())
+end
+
+---@param avatar_ ExportAvatar | nil
+---@return boolean
+local function avatar_is_owner(avatar_)
+  return not not (avatar_ and avatar_.IsOwner())
+end
+
+---@return ExportAvatar[]
+local function world_avatars()
+  return vci.studio.GetAvatars() or {}
+end
+
 local function noop()
   -- Do nothing
 end
+
+local enable_debug_log = avatar_is_owner(vci.studio.GetLocalAvatar())
 
 ---@type fun(msg: string)
 local dlog = enable_debug_log and print or noop
@@ -104,12 +115,6 @@ end
 ---@field visible boolean
 
 ---@alias MemberMap table<string, Member>
-
----@param avatar ExportAvatar
----@return boolean
-local function avatar_is_visible(avatar)
-  return avatar.GetPosition() ~= nil
-end
 
 ---@param avatar ExportAvatar
 ---@return Member
@@ -340,11 +345,7 @@ local ready_to_play_notification_se_time = vci.me.UnscaledTime
 ---@type ExportAvatar[]
 local pending_avatar_list = {}
 
-local member_status = make_member_status(
-  world_type(),
-  vci.studio.GetAvatars() or {},
-  {}
-)
+local member_status = make_member_status(world_type(), world_avatars(), {})
 
 ---@param status MemberStatus
 local function update_display(status)
@@ -391,15 +392,12 @@ local function on_notification(sender, messageName, message)
 
   local se_ = notification_se_map[message]
   if se_ then
-    local avatars_ = vci.studio.GetAvatars()
-    if avatars_ then
-      pending_avatar_list = avatars_
+    pending_avatar_list = world_avatars()
 
-      local now = vci.me.UnscaledTime
-      if now >= ready_to_play_notification_se_time then
-        ready_to_play_notification_se_time = now + settings.se_interval
-        se_.PlayOneShot(1)
-      end
+    local now = vci.me.UnscaledTime
+    if now >= ready_to_play_notification_se_time then
+      ready_to_play_notification_se_time = now + settings.se_interval
+      se_.PlayOneShot(1)
     end
   end
 end
@@ -460,7 +458,7 @@ function updateAll()
   if not user_loaded then
     local om, changed = own_member()
     if changed then
-      pending_avatar_list = vci.studio.GetAvatars() or pending_avatar_list
+      pending_avatar_list = world_avatars()
     end
 
     if om.visible then
@@ -490,7 +488,7 @@ end
 
 function onUse(use)
   if use == settings.list_name then
-    pending_avatar_list = vci.studio.GetAvatars() or pending_avatar_list
+    pending_avatar_list = world_avatars()
 
     if pending_avatar_list[1] then
       dlog_avatars(pending_avatar_list)
