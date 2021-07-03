@@ -19,15 +19,19 @@ local settings = {
     ['left'] = 'leaving_se',
   },
   se_interval = TimeSpan.FromSeconds(1),
-
-  output_debug_log = (function (ava_)
-    return not not (ava_ and ava_.IsOwner())
-  end)(vci.studio.GetLocalAvatar()),
 }
 
 local message_ns = 'com.github.oocytanb.oO-vci-pack.member_list'
 local user_loaded_message_name = message_ns .. '.user_loaded'
 local member_status_message_name = message_ns .. '.member_status'
+
+---@param avatar_ ExportAvatar | nil
+---@return boolean
+local function avatar_is_owner(avatar_)
+  return not not (avatar_ and avatar_.IsOwner())
+end
+
+local enable_debug_log = avatar_is_owner(vci.studio.GetLocalAvatar())
 
 ---@class MessageSender
 ---@field type string
@@ -57,7 +61,7 @@ local function noop()
 end
 
 ---@type fun(msg: string)
-local dlog = settings.output_debug_log and print or noop
+local dlog = enable_debug_log and print or noop
 
 ---@alias WorldTypeIndex number
 
@@ -333,8 +337,8 @@ local initial_list_body_scale = list_body.GetLocalScale()
 local user_loaded = false
 local ready_to_play_notification_se_time = vci.me.UnscaledTime
 
----@type ExportAvatar[] | nil
-local pending_avatar_list_ = nil
+---@type ExportAvatar[]
+local pending_avatar_list = {}
 
 local member_status = make_member_status(
   world_type(),
@@ -357,21 +361,27 @@ local function update_display(status)
   vci.assets.SetText(settings.status_text_name, s.status)
 end
 
+---@param world_type_index WorldTypeIndex
 ---@param avatars ExportAvatar[]
-local function dlog_avatars(avatars)
-  if settings.output_debug_log then
-    local buffer = 'member_list @ ' .. world_type_to_string(world_type())
-    for i, ava in ipairs(avatars) do
-      local m = member_from_avatar(ava)
-      buffer = string.format(
-        '%s\n[%d] %s | %s',
-        buffer, i, member_to_string(m), m.id
-      )
-    end
-
-    dlog(buffer)
+---@return string
+local function avatars_to_reporting_string(world_type_index, avatars)
+  local buffer = 'member_list @ ' .. world_type_to_string(world_type_index)
+  for i, ava in ipairs(avatars) do
+    local m = member_from_avatar(ava)
+    buffer = string.format(
+      '%s\n[%d] %s | %s',
+      buffer, i, member_to_string(m), m.id
+    )
   end
+  return buffer
 end
+
+---@type fun(avatars: ExportAvatar[])
+local dlog_avatars = enable_debug_log and
+  function (avatars)
+    dlog(avatars_to_reporting_string(world_type(), avatars))
+  end or
+  noop
 
 ---@param sender MessageSender
 ---@param messageName string
@@ -383,7 +393,7 @@ local function on_notification(sender, messageName, message)
   if se_ then
     local avatars_ = vci.studio.GetAvatars()
     if avatars_ then
-      pending_avatar_list_ = avatars_
+      pending_avatar_list = avatars_
 
       local now = vci.me.UnscaledTime
       if now >= ready_to_play_notification_se_time then
@@ -450,7 +460,7 @@ function updateAll()
   if not user_loaded then
     local om, changed = own_member()
     if changed then
-      pending_avatar_list_ = vci.studio.GetAvatars() or pending_avatar_list_
+      pending_avatar_list = vci.studio.GetAvatars() or pending_avatar_list
     end
 
     if om.visible then
@@ -466,13 +476,13 @@ function updateAll()
     end
   end
 
-  if pending_avatar_list_ then
+  if pending_avatar_list[1] then
     member_status = make_member_status(
       world_type(),
-      pending_avatar_list_,
+      pending_avatar_list,
       member_status.members
     )
-    pending_avatar_list_ = nil
+    pending_avatar_list = {}
 
     update_display(member_status)
   end
@@ -480,10 +490,10 @@ end
 
 function onUse(use)
   if use == settings.list_name then
-    pending_avatar_list_ = vci.studio.GetAvatars() or pending_avatar_list_
+    pending_avatar_list = vci.studio.GetAvatars() or pending_avatar_list
 
-    if pending_avatar_list_ then
-      dlog_avatars(pending_avatar_list_)
+    if pending_avatar_list[1] then
+      dlog_avatars(pending_avatar_list)
     end
   end
 end
