@@ -19966,7 +19966,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: 3f02d69f7debaa144bac446b83cf31d1, type: 3}
-    version: 0.10.0
+    version: 0.10.1
     description: "- \u591A\u6570\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u6271\u3046\u3001\u5B9F\u9A13\u30A2\u30A4\u30C6\u30E0\u3067\u3059\u3002\n-
       \u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u304C\u5F90\u3005\u306B\u5909\u5316\u3057\u307E\u3059\u3002"
     exporterVersion: 0.31
@@ -20352,7 +20352,7 @@ MonoBehaviour:
     targetEngine: 0
     textAsset: {fileID: 1042094116111776886, guid: 05762ee89c01ba24baaed06f00e6af25,
       type: 3}
-    source: "-- SPDX-License-Identifier: MIT\n-- Copyright (c) 2019 oO (https://github.com/oocytanb)\n\n--
+    source: "--! SPDX-License-Identifier: MIT\n--! Copyright (c) 2019 oO (https://github.com/oocytanb)\n\n--
       `cytanb.lua` \u3092\u30E2\u30B8\u30E5\u30FC\u30EB\u3068\u3057\u3066\u5229\u7528\u3059\u308B\u5834\u5408\u306F\u3001\u4EE5\u4E0B\u306E\u901A\u308A\u3002\n--  
       1. \u3053\u306E\u624B\u9806\u306E\u8AAC\u660E\u306E\u4E0B\u306B\u3042\u308B
       `local __CYTANB_EXPORT_MODULE = true` \u306E\u884C\u3092\u6709\u52B9\u306B\u3059\u308B\u3002\n--  
@@ -20362,7 +20362,7 @@ MonoBehaviour:
       `require` \u95A2\u6570\u3092 `main.lua` \u30B9\u30AF\u30EA\u30D7\u30C8\u304B\u3089
       `cytanb = cytanb or require('cytanb')(_ENV)` \u3068\u3057\u3066\u547C\u3073\u51FA\u3059\u3002\n\n--
       **`cytanb.lua` \u3092\u30E2\u30B8\u30E5\u30FC\u30EB\u3068\u3057\u3066\u5229\u7528\u3059\u308B\u5834\u5408\u306F\u3001\u6B21\u306E\u884C\u3092\u6709\u52B9\u306B\u3059\u308B\u3053\u3068\u3002**\nlocal
-      __CYTANB_EXPORT_MODULE = true\n\n---@type cytanb @See `cytanb_annotations.lua`\nlocal
+      __CYTANB_EXPORT_MODULE = true\n\n---@type cytanb @Final Version. See `cytanb_annotations.lua`\nlocal
       cytanb = (function ()\n    local makeImpl = function (_ENV)\n        if not
       require or not vci then\n            error('Invalid _ENV: Enable `__CYTANB_EXPORT_MODULE
       = true` line and pass valid _ENV of VCI-main if use cytanb.lua as module.',
@@ -20378,8 +20378,7 @@ MonoBehaviour:
       local logLevel\n\n        --- \u30ED\u30B0\u51FA\u529B\u3059\u308B\u6642\u306B\u3001\u30ED\u30B0\u30EC\u30D9\u30EB\u306E\u6587\u5B57\u5217\u3092\u51FA\u529B\u3059\u308B\u304B\u3002\n       
       local outputLogLevelEnabled = false\n\n        --- \u30ED\u30B0\u30EC\u30D9\u30EB\u306E\u6587\u5B57\u5217\u30DE\u30C3\u30D7\u3002\n       
       local logLevelStringMap\n\n        --- \u81EA\u8EAB\u306E ID \u306E\u6587\u5B57\u5217\u3002\n       
-      local ownID = ''\n\n        --- \u30AF\u30E9\u30A4\u30A2\u30F3\u30C8 ID \u306E\u6587\u5B57\u5217\u3002\n       
-      local clientID\n\n        local cytanb\n\n        local SearchStartsWithPred
+      local ownID = ''\n\n        local cytanb\n\n        local SearchStartsWithPred
       = function (position, searchLen)\n            local ni = position + searchLen
       - 1\n            return position, ni, ni + 1\n        end\n\n        local
       SearchEndsWithPred = function (position, searchLen)\n            local ni =
@@ -20638,23 +20637,24 @@ MonoBehaviour:
       == '' then\n                    local ava_ = vci.studio.GetLocalAvatar()\n                   
       if ava_ then\n                        ownID = ava_.GetId() or ''\n                   
       end\n                end\n                return ownID\n            end,\n\n           
-      --- \u30AF\u30E9\u30A4\u30A2\u30F3\u30C8 ID \u3092\u53D6\u5F97\u3059\u308B\u3002\u30E6\u30FC\u30B6\u30FC\u30ED\u30FC\u30AB\u30EB\u3067\u751F\u6210\u3055\u308C\u308B\u3002\n           
-      -- @deprecated\n            ClientID = function ()\n                return
-      clientID\n            end,\n\n            NillableHasValue = function (nillable)\n               
-      return nillable ~= nil\n            end,\n\n            NillableValue = function
-      (nillable)\n                if nillable == nil then\n                    error('nillable:
-      value is nil', 2)\n                end\n                return nillable\n           
-      end,\n\n            NillableValueOrDefault = function (nillable, defaultValue)\n               
-      if nillable == nil then\n                    if defaultValue == nil then\n                       
-      error('nillable: defaultValue is nil', 2)\n                    end\n                   
-      return defaultValue\n                else\n                    return nillable\n               
-      end\n            end,\n\n            NillableIfHasValue = function (nillable,
-      callback)\n                if nillable == nil then\n                    return
-      nil\n                else\n                    return callback(nillable)\n               
-      end\n            end,\n\n            NillableIfHasValueOrElse = function (nillable,
-      callback, emptyCallback)\n                if nillable == nil then\n                   
-      return emptyCallback()\n                else\n                    return callback(nillable)\n               
-      end\n            end,\n\n            ---@class cytanb_search_pattern_t \u691C\u7D22\u30D1\u30BF\u30FC\u30F3\u3002\n\n           
+      --@deprecated \u5EC3\u6B62\u4E88\u5B9A\u3002\u30AF\u30E9\u30A4\u30A2\u30F3\u30C8
+      ID \u3092\u53D6\u5F97\u3059\u308B\u3002\n            ClientID = function ()\n               
+      return cytanb.OwnID()\n            end,\n\n            NillableHasValue = function
+      (nillable)\n                return nillable ~= nil\n            end,\n\n           
+      NillableValue = function (nillable)\n                if nillable == nil then\n                   
+      error('nillable: value is nil', 2)\n                end\n                return
+      nillable\n            end,\n\n            NillableValueOrDefault = function
+      (nillable, defaultValue)\n                if nillable == nil then\n                   
+      if defaultValue == nil then\n                        error('nillable: defaultValue
+      is nil', 2)\n                    end\n                    return defaultValue\n               
+      else\n                    return nillable\n                end\n           
+      end,\n\n            NillableIfHasValue = function (nillable, callback)\n               
+      if nillable == nil then\n                    return nil\n                else\n                   
+      return callback(nillable)\n                end\n            end,\n\n           
+      NillableIfHasValueOrElse = function (nillable, callback, emptyCallback)\n               
+      if nillable == nil then\n                    return emptyCallback()\n               
+      else\n                    return callback(nillable)\n                end\n           
+      end,\n\n            ---@class cytanb_search_pattern_t \u691C\u7D22\u30D1\u30BF\u30FC\u30F3\u3002\n\n           
       --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002\u691C\u7D22\u30D1\u30BF\u30FC\u30F3\u3092\u4F5C\u6210\u3059\u308B\u3002\n           
       ---@param searchList string[] @\u691C\u7D22\u3059\u308B\u6587\u5B57\u5217\u306E\u30EA\u30B9\u30C8\u3002\n           
       ---@param optRepeatMin number @\u7E70\u308A\u8FD4\u3057\u56DE\u6570\u306E\u6700\u5C0F\u5024\u3002\u30BC\u30ED\u4EE5\u4E0A\u306E\u5024\u3092\u6307\u5B9A\u3059\u308B\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306E\u5024\u306F
@@ -20818,9 +20818,12 @@ MonoBehaviour:
       else\n                            str = str .. (feed and ',' or ', ')\n                       
       end\n\n                        if feed then\n                            str
       = str .. '\\n' .. childIndent\n                        end\n\n                       
+      local kt = type(key)\n                        local ks = (kt == 'function'
+      or kt == 'thread' or kt == 'userdata' or kt == 'table')\n                           
+      and '(' .. kt .. ')'\n                            or tostring(key)\n\n                       
       if type(val) == 'table' and refTable[val] and refTable[val] > 0 then\n                           
-      str = str .. key .. ' = (' .. tostring(val) .. ')'\n                       
-      else\n                            str = str .. key .. ' = ' .. cytanb.Vars(val,
+      str = str .. ks .. ' = (' .. tostring(val) .. ')'\n                       
+      else\n                            str = str .. ks .. ' = ' .. cytanb.Vars(val,
       padding, childIndent, refTable)\n                        end\n                   
       end\n\n                    if not firstEntry and feed then\n                       
       str = str .. '\\n' .. indent\n                    end\n                   
@@ -21181,6 +21184,14 @@ MonoBehaviour:
       local map = {}\n                for i, efk in pairs(efkList) do\n                   
       map[efk.EffectName] = efk\n                end\n                return map\n           
       end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002**
+      `ExportTransform.GetAudioSources` \u3067\u53D6\u5F97\u3057\u305F\u30EA\u30B9\u30C8\u3092\u3001`ClipName`
+      \u3092\u30AD\u30FC\u3068\u3059\u308B\u30DE\u30C3\u30D7\u306B\u3057\u3066\u8FD4\u3059\u3002\n           
+      ---@param item ExportTransform @`AudioSource` \u30B3\u30F3\u30DD\u30FC\u30CD\u30F3\u30C8\u304C\u8A2D\u5B9A\u3055\u308C\u3066\u3044\u308B\u3001\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u6307\u5B9A\u3059\u308B\u3002\n           
+      ---@return table<string, ExportAudioSource> @\u623B\u308A\u5024\u306E1\u756A\u76EE\u306B\u30BF\u30B0\u306E\u30DE\u30C3\u30D7\u3092\u30012\u756A\u76EE\u306B\u30D9\u30FC\u30B9\u540D\u3092\u8FD4\u3059\u3002\n           
+      GetAudioSourceMap = function (item)\n                local map = {}\n               
+      for _, audio in pairs(item.GetAudioSources() or {}) do\n                   
+      map[audio.ClipName or ''] = audio\n                end\n                return
+      map\n            end,\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002**
       \u30BF\u30B0\u6587\u5B57\u5217\u3092\u30D1\u30FC\u30B9\u3059\u308B\u3002\u6587\u5B57\u5217\u5168\u4F53\u306E\u66F8\u5F0F\u306F\u3001\u30D9\u30FC\u30B9\u540D\u306B
       0 \u500B\u4EE5\u4E0A\u306E\u30BF\u30B0\u304C\u7D9A\u304F\u3002`basename#tag1#tag2...#tagN`
       \u30BF\u30B0\u306E\u66F8\u5F0F\u306F\u3001\u30CF\u30C3\u30B7\u30E5\u8A18\u53F7
@@ -21224,9 +21235,8 @@ MonoBehaviour:
       1000)), 1 - baseIndex, unitLength - baseIndex)\n                    return
       (exp == 0 and num or num / (1000 ^ exp)), unitList[baseIndex + exp], exp *
       3\n                end\n            end)(),\n\n            ---@class cytanb_local_shared_properties_t
-      \u30ED\u30FC\u30AB\u30EB\u306E\u5171\u6709\u30D7\u30ED\u30D1\u30C6\u30A3\n\n           
-      --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u306E\u305F\u3081\u5909\u66F4\u3055\u308C\u308B\u53EF\u80FD\u6027\u304C\u3042\u308B\u3002**
-      \u30ED\u30FC\u30AB\u30EB\u306E\u5171\u6709\u30D7\u30ED\u30D1\u30C6\u30A3\u3092\u4F5C\u6210\u3059\u308B\u3002\n           
+      deprecated \u5EC3\u6B62\u4E88\u5B9A\u3002\u30ED\u30FC\u30AB\u30EB\u306E\u5171\u6709\u30D7\u30ED\u30D1\u30C6\u30A3\n\n           
+      --- deprecated \u5EC3\u6B62\u4E88\u5B9A\u3002\u30ED\u30FC\u30AB\u30EB\u306E\u5171\u6709\u30D7\u30ED\u30D1\u30C6\u30A3\u3092\u4F5C\u6210\u3059\u308B\u3002\n           
       ---@param lspid string @\u30D7\u30ED\u30D1\u30C6\u30A3 ID \u306E\u6587\u5B57\u5217\u3092\u6307\u5B9A\u3059\u308B\u3002\u30D7\u30ED\u30D1\u30C6\u30A3\u3092\u8B58\u5225\u3059\u308B\u305F\u3081\u306E\u56FA\u5B9A
       ID\u3002\n            ---@param loadid string @\u30ED\u30FC\u30C9 ID \u306E\u6587\u5B57\u5217\u3092\u6307\u5B9A\u3059\u308B\u3002\u30B9\u30AF\u30EA\u30D7\u30C8\u304C\u30ED\u30FC\u30C9\u3055\u308C\u308B\u3054\u3068\u306B\u751F\u6210\u3055\u308C\u308B\u4E00\u610F\u306A
       ID\u3002\n            ---@return cytanb_local_shared_properties_t\n           
@@ -21567,14 +21577,15 @@ MonoBehaviour:
       10 \u7B49\u5206\u3057\u305F\u5024\u3002\n            ---@field tickVector Vector3
       @1 \u76EE\u76DB\u308A\u306E\u30D9\u30AF\u30C8\u30EB\u3002\u30BC\u30ED\u306B\u8FD1\u3044\u30D9\u30AF\u30C8\u30EB\u3092\u6307\u5B9A\u3057\u305F\u5834\u5408\u306F\u30A8\u30E9\u30FC\u3068\u306A\u308B\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F
       `Vector3.__new(0.01, 0.0, 0.0)`\n            ---@field snapToTick boolean @\u76EE\u76DB\u308A\u306B\u30B9\u30CA\u30C3\u30D7\u3059\u308B\u304B\u3092\u6307\u5B9A\u3059\u308B\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F
-      `true`\u3002\n            ---@field lsp cytanb_local_shared_properties_t @`LocalSharedProperties`
-      \u3092\u4F7F\u7528\u3059\u308B\u5834\u5408\u306F\u6307\u5B9A\u3059\u308B\u3002\u7701\u7565\u53EF\u80FD\u3002\n           
+      `true`\u3002\n            ---@field lsp cytanb_local_shared_properties_t @deprecated
+      \u5EC3\u6B62\u4E88\u5B9A\u3002`LocalSharedProperties` \u3092\u4F7F\u7528\u3059\u308B\u5834\u5408\u306F\u6307\u5B9A\u3059\u308B\u3002\u7701\u7565\u53EF\u80FD\u3002\n           
       ---@field propertyName string @`LocalSharedProperties` \u3092\u4F7F\u7528\u3059\u308B\u5834\u5408\u306F\u3001\u30D7\u30ED\u30D1\u30C6\u30A3\u540D\u3092\u6307\u5B9A\u3059\u308B\u3002\u4F7F\u7528\u3057\u306A\u3044\u5834\u5408\u306F\u7701\u7565\u53EF\u80FD\u3002\n           
       ---@field valueTextName string @\u5024\u3092\u30C6\u30AD\u30B9\u30C8\u8868\u793A\u3059\u308B\u5834\u5408\u306F\u3001`TextMesh
       Pro` \u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u540D\u3092\u6307\u5B9A\u3059\u308B\u3002\u7701\u7565\u53EF\u80FD\u3002\n           
       ---@field valueToText fun(source: cytanb_slide_switch_t, value: string): string
-      @ \u5024\u3092\u30C6\u30AD\u30B9\u30C8\u8868\u793A\u3059\u308B\u969B\u306B\u3001\u5024\u3092\u6587\u5B57\u5217\u3078\u5909\u63DB\u3059\u308B\u305F\u3081\u306E\u95A2\u6570\u3092\u6307\u5B9A\u3059\u308B\u3053\u3068\u304C\u3067\u304D\u308B\u3002\u4F7F\u7528\u3057\u306A\u3044\u5834\u5408\u306F\u7701\u7565\u53EF\u80FD\u3002\n\n           
-      --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u306E\u305F\u3081\u5909\u66F4\u3055\u308C\u308B\u53EF\u80FD\u6027\u304C\u3042\u308B\u3002**
+      @\u5024\u3092\u30C6\u30AD\u30B9\u30C8\u8868\u793A\u3059\u308B\u969B\u306B\u3001\u5024\u3092\u6587\u5B57\u5217\u3078\u5909\u63DB\u3059\u308B\u305F\u3081\u306E\u95A2\u6570\u3092\u6307\u5B9A\u3059\u308B\u3053\u3068\u304C\u3067\u304D\u308B\u3002\u4F7F\u7528\u3057\u306A\u3044\u5834\u5408\u306F\u7701\u7565\u53EF\u80FD\u3002\n           
+      ---@field alignPeriod TimeSpan @\u30B9\u30A4\u30C3\u30C1\u306E\u30B3\u30E9\u30A4\u30C0\u30FC\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u6574\u5217\u3059\u308B\u9593\u9694\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F
+      500 \u30DF\u30EA\u79D2\u3002\n\n            --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u306E\u305F\u3081\u5909\u66F4\u3055\u308C\u308B\u53EF\u80FD\u6027\u304C\u3042\u308B\u3002**
       \u30B9\u30E9\u30A4\u30C9\u30B9\u30A4\u30C3\u30C1\u3092\u4F5C\u6210\u3059\u308B\u3002\u30C8\u30EA\u30AC\u30FC\u3067\u3064\u307E\u307F\u3092\u3064\u304B\u3093\u3067\u5024\u306E\u5909\u66F4\u3001\u304A\u3088\u3073\u3001\u30B0\u30EA\u30C3\u30D7\u306B\u3088\u308B\u5024\u306E\u5909\u66F4\u304C\u3067\u304D\u308B\u3002\u30E6\u30FC\u30B6\u30FC\u9593\u3067\u306E\u5024\u306E\u540C\u671F\u51E6\u7406\u306F\u884C\u308F\u306A\u3044\u305F\u3081\u3001\u5FC5\u8981\u3067\u3042\u308C\u3070\u5225\u9014\u5B9F\u88C5\u3059\u308B\u3053\u3068\u3002\n           
       ---@param parameters cytanb_slide_switch_parameters_t @\u30B9\u30E9\u30A4\u30C9\u30B9\u30A4\u30C3\u30C1\u3092\u4F5C\u6210\u3059\u308B\u305F\u3081\u306E\u30D1\u30E9\u30E1\u30FC\u30BF\u30FC\u30C6\u30FC\u30D6\u30EB\u3092\u6307\u5B9A\u3059\u308B\u3002\n           
       CreateSlideSwitch = function (parameters)\n                local colliderItem
@@ -21606,23 +21617,25 @@ MonoBehaviour:
       local nillableValueTextName = parameters.valueTextName\n                local
       valueToText = cytanb.NillableValueOrDefault(parameters.valueToText, tostring)\n\n               
       local gripWaitTime = TimeSpan.FromMilliseconds(1000)\n                local
-      gripTickPeriod = TimeSpan.FromMilliseconds(50)\n\n                local propertyGetter,
-      propertySetter\n                local listenerMap = {}\n\n                local
-      self\n\n                local grabbed = false\n                local grabbedDeltaTicks
-      = 0\n                local gripPressed = false\n                local gripStartTime
-      = TimeSpan.Zero\n                local gripChangeTime = TimeSpan.Zero\n\n               
+      gripTickPeriod = TimeSpan.FromMilliseconds(50)\n                local alignPeriod
+      = cytanb.NillableValueOrDefault(parameters.alignPeriod, TimeSpan.FromMilliseconds(500))\n\n               
+      local propertyGetter, propertySetter\n                local listenerMap = {}\n\n               
+      local self\n\n                local grabbed = false\n                local
+      grabbedDeltaTicks = 0\n                local gripPressed = false\n               
+      local gripStartTime = TimeSpan.Zero\n                local gripChangeTime =
+      TimeSpan.Zero\n                local prevAlignTime = TimeSpan.Zero\n\n               
       local UpdateValue = function (newValue, forceNotification)\n                   
-      if forceNotification or newValue ~= value then\n                        local
-      oldValue = value\n                        value = newValue\n                       
-      for listener, v in pairs(listenerMap) do\n                            listener(self,
-      value, oldValue)\n                        end\n                    end\n\n                   
       -- \u4E2D\u592E\u5024\u3092\u57FA\u6E96\u4F4D\u7F6E\u306E\u539F\u70B9\u3068\u3057\u3066\u8A08\u7B97\u3059\u308B\n                   
       knobItem.SetLocalPosition((newValue - halfValue) / tickFrequency * tickVector)\n                   
       -- cytanb.LogInfo('on update value [', colliderItem.GetName(), ']: value =
       ', value)\n\n                    if nillableValueTextName then\n                       
       vci.assets.SetText(nillableValueTextName, valueToText(newValue, self))\n                   
-      end\n                end\n\n                local NextTickByUse = function
-      ()\n                    -- \u6700\u5C0F\u5024/\u6700\u5927\u5024\u3067\u6298\u308A\u8FD4\u3059\u3068\u304D\u306B\u306F\u3001\u6700\u5C0F\u5024/\u6700\u5927\u5024\u3092\u8E0F\u3080\u3088\u3046\u306B\u3059\u308B\u3002\n                   
+      end\n\n                    if forceNotification or newValue ~= value then\n                       
+      local oldValue = value\n                        value = newValue\n                       
+      for listener, v in pairs(listenerMap) do\n                            listener(self,
+      value, oldValue)\n                        end\n                    end\n               
+      end\n\n                local NextTickByUse = function ()\n                   
+      -- \u6700\u5C0F\u5024/\u6700\u5927\u5024\u3067\u6298\u308A\u8FD4\u3059\u3068\u304D\u306B\u306F\u3001\u6700\u5C0F\u5024/\u6700\u5927\u5024\u3092\u8E0F\u3080\u3088\u3046\u306B\u3059\u308B\u3002\n                   
       local curp = propertyGetter()\n                    local cpp, cpd = CalcValue(curp)\n                   
       local nextp = curp + tickFrequency\n                    local npp, npd = CalcValue(nextp)\n                   
       assert(npp)\n                    local newValue\n                    if cpd
@@ -21722,10 +21735,13 @@ MonoBehaviour:
       NextTickByUse()\n                                end\n                           
       else\n                                gripPressed = false\n                           
       end\n                        elseif colliderItem.IsMine then\n                           
-      cytanb.AlignSubItemOrigin(baseItem, colliderItem)\n                       
-      end\n                    end\n                }\n\n                UpdateValue(CalcValue(propertyGetter()),
-      false)\n                return self\n            end,\n\n            -- @deprecated
-      \u975E\u63A8\u5968\u3002 \u30B5\u30D6\u30A2\u30A4\u30C6\u30E0\u9593\u306E\u4F4D\u7F6E\u3068\u56DE\u8EE2\u3092\u76F8\u4E92\u306B\u4F5C\u7528\u3055\u305B\u308B\u305F\u3081\u306E\u30B3\u30CD\u30AF\u30BF\u30FC\u3092\u4F5C\u6210\u3059\u308B\u3002\u30B9\u30B1\u30FC\u30EB\u306F\u975E\u5BFE\u5FDC\u3002\u30B5\u30D6\u30A2\u30A4\u30C6\u30E0\u306E\u30B0\u30EB\u30FC\u30D7ID\u306F\u3001\u30BC\u30ED\u4EE5\u5916\u306E\u540C\u3058\u5024\u3092\u8A2D\u5B9A\u3057\u3066\u304A\u304F\u5FC5\u8981\u304C\u3042\u308B\u3002\n           
+      local unow = vci.me.UnscaledTime\n                            if unow - alignPeriod
+      >= prevAlignTime then\n                                prevAlignTime = unow\n                               
+      cytanb.AlignSubItemOrigin(baseItem, colliderItem)\n                           
+      end\n                        end\n                    end\n               
+      }\n\n                UpdateValue(CalcValue(propertyGetter()), false)\n               
+      return self\n            end,\n\n            -- @deprecated \u975E\u63A8\u5968\u3002
+      \u30B5\u30D6\u30A2\u30A4\u30C6\u30E0\u9593\u306E\u4F4D\u7F6E\u3068\u56DE\u8EE2\u3092\u76F8\u4E92\u306B\u4F5C\u7528\u3055\u305B\u308B\u305F\u3081\u306E\u30B3\u30CD\u30AF\u30BF\u30FC\u3092\u4F5C\u6210\u3059\u308B\u3002\u30B9\u30B1\u30FC\u30EB\u306F\u975E\u5BFE\u5FDC\u3002\u30B5\u30D6\u30A2\u30A4\u30C6\u30E0\u306E\u30B0\u30EB\u30FC\u30D7ID\u306F\u3001\u30BC\u30ED\u4EE5\u5916\u306E\u540C\u3058\u5024\u3092\u8A2D\u5B9A\u3057\u3066\u304A\u304F\u5FC5\u8981\u304C\u3042\u308B\u3002\n           
       CreateSubItemConnector = function ()\n                local SetItemStatus =
       function (status, item, propagation)\n                    status.item = item\n\n                   
       status.position = item.GetPosition()\n                    status.rotation =
@@ -21877,14 +21893,8 @@ MonoBehaviour:
       [cytanb.LogLevelFatal] = 'FATAL',\n            [cytanb.LogLevelError] = 'ERROR',\n           
       [cytanb.LogLevelWarn] = 'WARN',\n            [cytanb.LogLevelInfo] = 'INFO',\n           
       [cytanb.LogLevelDebug] = 'DEBUG',\n            [cytanb.LogLevelTrace] = 'TRACE'\n       
-      }\n\n        clientID = (function ()\n            local lspid = 'eff3a188-bfc7-4b0e-93cb-90fd1adc508c'\n           
-      local pmap = _G[lspid]\n            if not pmap then\n                pmap
-      = {}\n                _G[lspid] = pmap\n            end\n\n            local
-      rClientID = pmap.clientID\n            if type(rClientID) ~= 'string' then\n               
-      rClientID = tostring(cytanb.RandomUUID())\n                pmap.clientID =
-      rClientID\n            end\n\n            return rClientID\n        end)()\n\n       
-      return cytanb\n    end\n\n    if __CYTANB_EXPORT_MODULE then\n        return
-      setmetatable({}, {\n            __call = function (self, main_env)\n               
+      }\n\n        return cytanb\n    end\n\n    if __CYTANB_EXPORT_MODULE then\n       
+      return setmetatable({}, {\n            __call = function (self, main_env)\n               
       return makeImpl(main_env)\n            end\n        })\n    else\n        return
       makeImpl(_ENV)\n    end\nend)()\n\nif __CYTANB_EXPORT_MODULE then\n    return
       cytanb\nend\n"

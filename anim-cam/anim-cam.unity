@@ -404,7 +404,7 @@ MonoBehaviour:
     contactInformation: 
     reference: 
     thumbnail: {fileID: 2800000, guid: e82d6ee6843a90345b370c64a47e8c88, type: 3}
-    version: 0.6.0
+    version: 0.6.1
     description: "- \u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u3067\u30AB\u30E1\u30E9\u3092\u52D5\u304B\u3059\u305F\u3081\u306E\u3001VCI
       \u306E\u30C6\u30F3\u30D7\u30EC\u30FC\u30C8\u3067\u3059\u3002\n- PV \u64AE\u5F71\u306A\u3069\u3001\u30AB\u30E1\u30E9\u30EF\u30FC\u30AF\u3092\u4E8B\u524D\u306B\u4F5C\u3063\u3066\u304A\u304F\u5834\u5408\u306B\u4F7F\u3048\u308B\u304B\u3082\u3057\u308C\u307E\u305B\u3093\u3002\n-
       Unity \u4E0A\u3067\u30AB\u30E1\u30E9\u8FFD\u5F93\u7528\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u306B\u5BFE\u3057\u3066\u3001\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u3092\u4F5C\u6210\u3057\u3066\u5229\u7528\u3057\u307E\u3059\u3002\n-
@@ -694,8 +694,7 @@ MonoBehaviour:
       local logLevel\n\n        --- \u30ED\u30B0\u51FA\u529B\u3059\u308B\u6642\u306B\u3001\u30ED\u30B0\u30EC\u30D9\u30EB\u306E\u6587\u5B57\u5217\u3092\u51FA\u529B\u3059\u308B\u304B\u3002\n       
       local outputLogLevelEnabled = false\n\n        --- \u30ED\u30B0\u30EC\u30D9\u30EB\u306E\u6587\u5B57\u5217\u30DE\u30C3\u30D7\u3002\n       
       local logLevelStringMap\n\n        --- \u81EA\u8EAB\u306E ID \u306E\u6587\u5B57\u5217\u3002\n       
-      local ownID = ''\n\n        --- \u30AF\u30E9\u30A4\u30A2\u30F3\u30C8 ID \u306E\u6587\u5B57\u5217\u3002\n       
-      local clientID\n\n        local cytanb\n\n        local SearchStartsWithPred
+      local ownID = ''\n\n        local cytanb\n\n        local SearchStartsWithPred
       = function (position, searchLen)\n            local ni = position + searchLen
       - 1\n            return position, ni, ni + 1\n        end\n\n        local
       SearchEndsWithPred = function (position, searchLen)\n            local ni =
@@ -954,23 +953,24 @@ MonoBehaviour:
       == '' then\n                    local ava_ = vci.studio.GetLocalAvatar()\n                   
       if ava_ then\n                        ownID = ava_.GetId() or ''\n                   
       end\n                end\n                return ownID\n            end,\n\n           
-      --- \u30AF\u30E9\u30A4\u30A2\u30F3\u30C8 ID \u3092\u53D6\u5F97\u3059\u308B\u3002\u30E6\u30FC\u30B6\u30FC\u30ED\u30FC\u30AB\u30EB\u3067\u751F\u6210\u3055\u308C\u308B\u3002\n           
-      -- @deprecated\n            ClientID = function ()\n                return
-      clientID\n            end,\n\n            NillableHasValue = function (nillable)\n               
-      return nillable ~= nil\n            end,\n\n            NillableValue = function
-      (nillable)\n                if nillable == nil then\n                    error('nillable:
-      value is nil', 2)\n                end\n                return nillable\n           
-      end,\n\n            NillableValueOrDefault = function (nillable, defaultValue)\n               
-      if nillable == nil then\n                    if defaultValue == nil then\n                       
-      error('nillable: defaultValue is nil', 2)\n                    end\n                   
-      return defaultValue\n                else\n                    return nillable\n               
-      end\n            end,\n\n            NillableIfHasValue = function (nillable,
-      callback)\n                if nillable == nil then\n                    return
-      nil\n                else\n                    return callback(nillable)\n               
-      end\n            end,\n\n            NillableIfHasValueOrElse = function (nillable,
-      callback, emptyCallback)\n                if nillable == nil then\n                   
-      return emptyCallback()\n                else\n                    return callback(nillable)\n               
-      end\n            end,\n\n            ---@class cytanb_search_pattern_t \u691C\u7D22\u30D1\u30BF\u30FC\u30F3\u3002\n\n           
+      --@deprecated \u5EC3\u6B62\u4E88\u5B9A\u3002\u30AF\u30E9\u30A4\u30A2\u30F3\u30C8
+      ID \u3092\u53D6\u5F97\u3059\u308B\u3002\n            ClientID = function ()\n               
+      return cytanb.OwnID()\n            end,\n\n            NillableHasValue = function
+      (nillable)\n                return nillable ~= nil\n            end,\n\n           
+      NillableValue = function (nillable)\n                if nillable == nil then\n                   
+      error('nillable: value is nil', 2)\n                end\n                return
+      nillable\n            end,\n\n            NillableValueOrDefault = function
+      (nillable, defaultValue)\n                if nillable == nil then\n                   
+      if defaultValue == nil then\n                        error('nillable: defaultValue
+      is nil', 2)\n                    end\n                    return defaultValue\n               
+      else\n                    return nillable\n                end\n           
+      end,\n\n            NillableIfHasValue = function (nillable, callback)\n               
+      if nillable == nil then\n                    return nil\n                else\n                   
+      return callback(nillable)\n                end\n            end,\n\n           
+      NillableIfHasValueOrElse = function (nillable, callback, emptyCallback)\n               
+      if nillable == nil then\n                    return emptyCallback()\n               
+      else\n                    return callback(nillable)\n                end\n           
+      end,\n\n            ---@class cytanb_search_pattern_t \u691C\u7D22\u30D1\u30BF\u30FC\u30F3\u3002\n\n           
       --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u3002\u691C\u7D22\u30D1\u30BF\u30FC\u30F3\u3092\u4F5C\u6210\u3059\u308B\u3002\n           
       ---@param searchList string[] @\u691C\u7D22\u3059\u308B\u6587\u5B57\u5217\u306E\u30EA\u30B9\u30C8\u3002\n           
       ---@param optRepeatMin number @\u7E70\u308A\u8FD4\u3057\u56DE\u6570\u306E\u6700\u5C0F\u5024\u3002\u30BC\u30ED\u4EE5\u4E0A\u306E\u5024\u3092\u6307\u5B9A\u3059\u308B\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306E\u5024\u306F
@@ -1551,9 +1551,8 @@ MonoBehaviour:
       1000)), 1 - baseIndex, unitLength - baseIndex)\n                    return
       (exp == 0 and num or num / (1000 ^ exp)), unitList[baseIndex + exp], exp *
       3\n                end\n            end)(),\n\n            ---@class cytanb_local_shared_properties_t
-      \u30ED\u30FC\u30AB\u30EB\u306E\u5171\u6709\u30D7\u30ED\u30D1\u30C6\u30A3\n\n           
-      --- **EXPERIMENTAL:\u5B9F\u9A13\u7684\u306A\u6A5F\u80FD\u306E\u305F\u3081\u5909\u66F4\u3055\u308C\u308B\u53EF\u80FD\u6027\u304C\u3042\u308B\u3002**
-      \u30ED\u30FC\u30AB\u30EB\u306E\u5171\u6709\u30D7\u30ED\u30D1\u30C6\u30A3\u3092\u4F5C\u6210\u3059\u308B\u3002\n           
+      deprecated \u5EC3\u6B62\u4E88\u5B9A\u3002\u30ED\u30FC\u30AB\u30EB\u306E\u5171\u6709\u30D7\u30ED\u30D1\u30C6\u30A3\n\n           
+      --- deprecated \u5EC3\u6B62\u4E88\u5B9A\u3002\u30ED\u30FC\u30AB\u30EB\u306E\u5171\u6709\u30D7\u30ED\u30D1\u30C6\u30A3\u3092\u4F5C\u6210\u3059\u308B\u3002\n           
       ---@param lspid string @\u30D7\u30ED\u30D1\u30C6\u30A3 ID \u306E\u6587\u5B57\u5217\u3092\u6307\u5B9A\u3059\u308B\u3002\u30D7\u30ED\u30D1\u30C6\u30A3\u3092\u8B58\u5225\u3059\u308B\u305F\u3081\u306E\u56FA\u5B9A
       ID\u3002\n            ---@param loadid string @\u30ED\u30FC\u30C9 ID \u306E\u6587\u5B57\u5217\u3092\u6307\u5B9A\u3059\u308B\u3002\u30B9\u30AF\u30EA\u30D7\u30C8\u304C\u30ED\u30FC\u30C9\u3055\u308C\u308B\u3054\u3068\u306B\u751F\u6210\u3055\u308C\u308B\u4E00\u610F\u306A
       ID\u3002\n            ---@return cytanb_local_shared_properties_t\n           
@@ -1894,8 +1893,8 @@ MonoBehaviour:
       10 \u7B49\u5206\u3057\u305F\u5024\u3002\n            ---@field tickVector Vector3
       @1 \u76EE\u76DB\u308A\u306E\u30D9\u30AF\u30C8\u30EB\u3002\u30BC\u30ED\u306B\u8FD1\u3044\u30D9\u30AF\u30C8\u30EB\u3092\u6307\u5B9A\u3057\u305F\u5834\u5408\u306F\u30A8\u30E9\u30FC\u3068\u306A\u308B\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F
       `Vector3.__new(0.01, 0.0, 0.0)`\n            ---@field snapToTick boolean @\u76EE\u76DB\u308A\u306B\u30B9\u30CA\u30C3\u30D7\u3059\u308B\u304B\u3092\u6307\u5B9A\u3059\u308B\u3002\u7701\u7565\u3057\u305F\u5834\u5408\u306F
-      `true`\u3002\n            ---@field lsp cytanb_local_shared_properties_t @`LocalSharedProperties`
-      \u3092\u4F7F\u7528\u3059\u308B\u5834\u5408\u306F\u6307\u5B9A\u3059\u308B\u3002\u7701\u7565\u53EF\u80FD\u3002\n           
+      `true`\u3002\n            ---@field lsp cytanb_local_shared_properties_t @deprecated
+      \u5EC3\u6B62\u4E88\u5B9A\u3002`LocalSharedProperties` \u3092\u4F7F\u7528\u3059\u308B\u5834\u5408\u306F\u6307\u5B9A\u3059\u308B\u3002\u7701\u7565\u53EF\u80FD\u3002\n           
       ---@field propertyName string @`LocalSharedProperties` \u3092\u4F7F\u7528\u3059\u308B\u5834\u5408\u306F\u3001\u30D7\u30ED\u30D1\u30C6\u30A3\u540D\u3092\u6307\u5B9A\u3059\u308B\u3002\u4F7F\u7528\u3057\u306A\u3044\u5834\u5408\u306F\u7701\u7565\u53EF\u80FD\u3002\n           
       ---@field valueTextName string @\u5024\u3092\u30C6\u30AD\u30B9\u30C8\u8868\u793A\u3059\u308B\u5834\u5408\u306F\u3001`TextMesh
       Pro` \u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u540D\u3092\u6307\u5B9A\u3059\u308B\u3002\u7701\u7565\u53EF\u80FD\u3002\n           
@@ -2210,14 +2209,8 @@ MonoBehaviour:
       [cytanb.LogLevelFatal] = 'FATAL',\n            [cytanb.LogLevelError] = 'ERROR',\n           
       [cytanb.LogLevelWarn] = 'WARN',\n            [cytanb.LogLevelInfo] = 'INFO',\n           
       [cytanb.LogLevelDebug] = 'DEBUG',\n            [cytanb.LogLevelTrace] = 'TRACE'\n       
-      }\n\n        clientID = (function ()\n            local lspid = 'eff3a188-bfc7-4b0e-93cb-90fd1adc508c'\n           
-      local pmap = _G[lspid]\n            if not pmap then\n                pmap
-      = {}\n                _G[lspid] = pmap\n            end\n\n            local
-      rClientID = pmap.clientID\n            if type(rClientID) ~= 'string' then\n               
-      rClientID = tostring(cytanb.RandomUUID())\n                pmap.clientID =
-      rClientID\n            end\n\n            return rClientID\n        end)()\n\n       
-      return cytanb\n    end\n\n    if __CYTANB_EXPORT_MODULE then\n        return
-      setmetatable({}, {\n            __call = function (self, main_env)\n               
+      }\n\n        return cytanb\n    end\n\n    if __CYTANB_EXPORT_MODULE then\n       
+      return setmetatable({}, {\n            __call = function (self, main_env)\n               
       return makeImpl(main_env)\n            end\n        })\n    else\n        return
       makeImpl(_ENV)\n    end\nend)()\n\nif __CYTANB_EXPORT_MODULE then\n    return
       cytanb\nend\n"
